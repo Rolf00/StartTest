@@ -17,6 +17,7 @@ import {
   TableRow,
   TableSortLabel,
   Typography,
+  Checkbox
 } from '@mui/material';
 import { status_color } from './styles';
 import {
@@ -25,7 +26,6 @@ import {
   DeleteOutline,
 } from '@mui/icons-material';
 
-import { CheckBoxIcon } from 'components';
 import { green } from '@mui/material/colors';
 class ConfigAnnotage extends React.Component {
   constructor(props) {
@@ -42,12 +42,19 @@ class ConfigAnnotage extends React.Component {
         { id: 6, name: 'Flaminio Pinila', status: 'Evaluated' },
         { id: 7, name: 'Rodrigo Meier', status: 'In Process' },
         { id: 8, name: 'Stephan Peres', status: 'Evaluated' },
+        { id: 8, name: 'Stephan Peres', status: 'Evaluated' },
+        { id: 8, name: 'Stephan Peres', status: 'Evaluated' },
+        { id: 8, name: 'Stephan Peres', status: 'Evaluated' },
+        { id: 8, name: 'Stephan Peres', status: 'Evaluated' },
+        { id: 8, name: 'Stephan Peres', status: 'Evaluated' },
+        { id: 8, name: 'Stephan Peres', status: 'Evaluated' },
+        { id: 8, name: 'Stephan Peres', status: 'Evaluated' },
+        { id: 8, name: 'Stephan Peres', status: 'Evaluated' },
       ],
     };
   }
 
   render() {
-    if (this.props.view !== 'Configuration') return null;
     const { classes } = this.props;
     const { page, limit } = this.state;
     const data = this.state.data.slice(page * limit, page * limit + limit);
@@ -80,7 +87,7 @@ class ConfigAnnotage extends React.Component {
                 <TableCell
                   className={classes.table_head_check}
                   style={{ paddingLeft: 5, paddingRight: 0 }}>
-                  <CheckBoxIcon
+                  <Checkbox
                     color_checked={green[400]}
                     color_uncheck={green[600]}
                     size="small"
@@ -112,7 +119,7 @@ class ConfigAnnotage extends React.Component {
                     <TableCell
                       className={classes.table_check_cell}
                       style={{ paddingRight: 0, paddingLeft: 0 }}>
-                      <CheckBoxIcon
+                      <Checkbox
                         color_checked={green[400]}
                         color_uncheck={green[600]}
                         size="small"

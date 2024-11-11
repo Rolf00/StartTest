@@ -19,7 +19,6 @@ import { SparkLineChart } from '@mui/x-charts/SparkLineChart';
     return days;
   }
   
-
   function renderStatus(status) {
     const colors = {
       Online: '#0d0',

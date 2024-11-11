@@ -2,8 +2,14 @@ import * as React from 'react';
 import { Button, Grid } from "@mui/material";
 import Dashboard from './dashboard/Dashboard';
 
+// imports for dashboard table "DataGrid"
 import { DataGrid } from '@mui/x-data-grid';
 import { columnsRolf, rowsRolf } from './gridDataRolf';
+
+// customizable tables
+import ConfigAnnotage from './dashboard/components/Table/ConfigAnnotage';
+import ConfigAnnotageRolf from './dashboard/components/TableRolf/ConfigAnnotageRolf';
+import Chip from '@mui/material/Chip';
 
 
 // not found:
@@ -34,14 +40,39 @@ const App = ()=> {
     }}
   >
 
+  <Grid item>
+  <div style={{
+      paddingTop: 20,
+      fontSize:20,
+      fontWeight:'bold',
+      }}>Customizable Table created by Waldo.</div>
+    <div>
+    <ConfigAnnotage/>
+    </div>
+  </Grid>
+
+
+  <Grid item>
+  <div style={{
+      paddingTop: 20,
+      fontSize:20,
+      fontWeight:'bold',
+      }}>Customizable Table created by Rolf.</div>
+    <div>
+    <ConfigAnnotageRolf/>
+    </div>
+  </Grid>
+
+
   <Grid 
     item
     padding={'20px'}
   >
     <div style={{
+      paddingTop: 20,
       fontSize:20,
       fontWeight:'bold',
-      }}>Table example Dashboards Rolf.</div>
+      }}>Table example Dashboards created by Rolf.</div>
     <div>
       <DataGrid
         id="DataGridRolf"
@@ -62,7 +93,7 @@ const App = ()=> {
           { value: 1000, label: '1,000' }, 
           { value: -1, label: 'All' }]}
         pagination
-        disableColumnSorting        
+        //disableColumnSorting        
       >
       </DataGrid>
     </div>
