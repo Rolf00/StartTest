@@ -3,6 +3,7 @@ import PropTypes, { func } from 'prop-types';
 import { useStyles } from './styles';
 import { withStyles } from 'tss-react/mui';
 import styled from 'styled-components';
+import { useState } from 'react';
 import {
   Avatar,
   Box,
@@ -443,47 +444,7 @@ const dataRolf = [
          />;
   }
 
-  const hdlCheckboxClickHeader = e => {
-    alert("hdlCheckboxClickHeader");
-    for (let i = 0; i < dataRolf.length; i++)
-    {
-      //rows[i]
-    }
-  }
-
-  function hdlCheckboxClickRow(e, rowIndex, rowId)
-  {
-    //alert("hdlCheckboxClickRow index=" + rowIndex + ", ID=" + rowId);
-    let newvalue = e.target.value;
-    let tbl = document.getElementById("mainTableName");
-    let allRowsHasSameValue = true;
-
-    for (let i = 0; i < dataRolf.length; i++)
-    {
-      if (newvalue !== tbl.rows[i][0].selected)
-      {
-        let allRowsHasSameValue = false;
-        break;
-      }
-    }
-
-    if (allRowsHasSameValue)
-    {
-      if (newvalue)
-      {
-        // make "SELECTED" sign in header
-      }
-      else
-      {
-        // make "NOT SELECTED" sign in header
-      }
-    }
-    else
-    {
-      // make "-" sign in header
-    }
-  }
-
+  
 
 class ConfigAnnotageRolf extends React.Component {
   constructor(props) {
@@ -491,16 +452,125 @@ class ConfigAnnotageRolf extends React.Component {
     this.state = {
       page: 0,
       limit: 5,
-      data: dataRolf
+      data: dataRolf,
+      selectedRows: [],
+      mainChecked: false,
+      mainIndeterminated: false,
     };
+  }
+
+  getRowSelection(idx)
+  {
+    const index = this.state.selectedRows.findIndex(d => d === idx);
+    return (index > -1);
+  }
+
+  hdlCheckboxClickHeader(e)
+  {
+    /*
+    if (this.state.mainIndeterminated)
+
+    {
+      alert("mainIndeterminated");
+    }
+    else
+    {
+    }
+    */
+
+    /*
+    if (this.state.mainChecked)
+    {
+      alert("mainChecked = true");
+    }
+    else
+    {
+      alert("mainChecked = false");
+    }
+      */
+
+    let ischecked = this.state.mainChecked;
+    ischecked = !ischecked;
+    this.setState({mainIndeterminated: false});
+    this.setState({mainChecked: ischecked});
+
+    let newlist = [];
+    if (ischecked)
+    {
+      this.state.data.forEach((row) => {
+        newlist = [...newlist, row.id];
+      });
+    }
+    // now update the main list
+    this.setState({selectedRows: newlist});
+  }
+
+  hdlCheckboxClickRow(e, idx)
+  {
+    // create a new list in order to be up to date
+    let newlist = this.state.selectedRows;
+
+    const selected = this.state.data[idx].id;
+    let isSelected = (newlist.findIndex(d => d === selected) > -1);
+
+    if (!isSelected)
+    {
+      newlist = [...newlist, selected];
+      /*
+      this.setState({selectedRows: newlist}, () => {
+        this.state.selectedRows
+      });
+      */
+      isSelected = true;
+    }
+    else
+    {
+      // new selection = FALSE
+      newlist = newlist.filter(item => item !== selected);
+      isSelected = false;
+    }
+
+    let allAreSame = true;
+    this.state.data.forEach((row) => {
+      const thisRowIsSelected = newlist.findIndex(d => d === row.id) > -1;
+      if (isSelected !== thisRowIsSelected)
+      {
+        allAreSame = false;
+      }
+    });
+
+    if (allAreSame)
+    {
+      this.setState({mainIndeterminated: false});
+      if (isSelected)
+      {
+        // all rows are selected
+        this.setState({mainChecked: true});
+      }
+      else
+      {
+        // no row is selected
+        this.setState({mainChecked: false});
+      }
+    }
+    else
+    {
+      // different states exists
+      this.setState({mainIndeterminated: true});
+    }
+
+    // now update the main list
+    this.setState({selectedRows: newlist});
   }
 
   render() {
     const dataDays = getDaysInMonth(4, 2024);
-
     const { classes } = this.props;
     const { page, limit } = this.state;
     const data = this.state.data.slice(page * limit, page * limit + limit);
+    const mainChecked = this.state.mainChecked;
+    const mainIndeterminated = this.state.mainIndeterminated;
+
     return (
       <Paper className={classes.paper}>
         <TableContainer
@@ -534,9 +604,11 @@ class ConfigAnnotageRolf extends React.Component {
                     paddingRight: 0 
                   }}>
                   <Checkbox
+                    checked={mainChecked}
+                    indeterminate={mainIndeterminated}
                     color_checked={green[400]}
                     color_uncheck={green[600]}
-                    onClick={hdlCheckboxClickHeader}
+                    onClick={e => this.hdlCheckboxClickHeader(e)}
                     size="small"
                   />
                   {/* <StyledCheckbox checked size="small" sx={{ width: 24 }} /> */}
@@ -599,8 +671,6 @@ class ConfigAnnotageRolf extends React.Component {
                 </TableCell>
 
 
-
-
                 {/*  
                 <TableCell className={classes.table_head_cell}>
                   <TableSortLabel>Action</TableSortLabel>
@@ -610,7 +680,8 @@ class ConfigAnnotageRolf extends React.Component {
             </TableHead>
             <TableBody className={classes.table_body_row}>
               {data.map((row, index) => {
-                const { 
+                const isRowSelected = this.getRowSelection(row.id);
+                const {
                   id, name, moreInfo, status, 
                   users, eventCount, viewsPerUser, averageTime,
                   conversions
@@ -623,9 +694,10 @@ class ConfigAnnotageRolf extends React.Component {
                       className={classes.table_check_cell}
                       style={{ paddingRight: 5, paddingLeft: 5 }}>
                       <Checkbox
+                        checked={isRowSelected}
                         color_checked={green[400]}
                         color_uncheck={green[600]}
-                        onClick={(e) => hdlCheckboxClickRow(e, index, id)}
+                        onClick={e => this.hdlCheckboxClickRow(e, index)}
                         size="small"
                       />
                     </TableCell>

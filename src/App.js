@@ -9,7 +9,7 @@ import { columnsRolf, rowsRolf } from './gridDataRolf';
 // customizable tables
 import ConfigAnnotage from './dashboard/components/Table/ConfigAnnotage';
 import ConfigAnnotageRolf from './dashboard/components/TableRolf/ConfigAnnotageRolf';
-import Chip from '@mui/material/Chip';
+import { useState } from 'react';
 
 
 // not found:
