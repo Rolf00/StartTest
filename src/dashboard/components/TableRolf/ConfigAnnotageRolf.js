@@ -23,6 +23,18 @@ import {
   Chip
 } from '@mui/material';
 
+import { 
+  Dialog, 
+  DialogActions, 
+  DialogContent, 
+  DialogTitle, Button, 
+  TextField, 
+  Select, 
+  MenuItem, 
+  FormControl, 
+  InputLabel, 
+  FormControlLabel 
+} from '@mui/material';
 
 
 import { status_color } from './styles';
@@ -39,6 +51,23 @@ import {
 } from '@mui/icons-material';
 
 import { green } from '@mui/material/colors';
+
+// https://www.flaticon.com/free-icons/checkbox
+// https://icons8.com/icons/set/checkbox
+// https://icons8.com/icon/set/indeterminate-checkbox/group-filled--static--mint
+// https://de.freepik.com
+// https://stock.adobe.com/fr/stock-photo/id/399943838
+import imgChkboxChecked from './chkboxChecked48.png'; 
+import imgChkboxUnchecked from './chkboxUnchecked48.png'; 
+import imgChkboxIndeterminate from './chkboxIndeterminate48.png'; 
+import imgEditButton from './editButton48.png'; 
+import imgDeleteButton from './deleteButton48.png'; 
+
+
+
+
+//import { mainSheet } from 'styled-components/dist/models/StyleSheetManager';
+
 
 const RightText = styled.div`
   text-align: right;
@@ -112,7 +141,6 @@ const NumberFormatter = ({ number }) => {
 
   return <span>{formattedNumber}</span>;
 }
-
 
 const dataRolf = [
     {
@@ -444,7 +472,10 @@ const dataRolf = [
          />;
   }
 
-  
+// link customization
+// https://mui.com/material-ui/react-checkbox/  
+// https://icons8.com/icons/set/indeterminate-checkbox
+
 
 class ConfigAnnotageRolf extends React.Component {
   constructor(props) {
@@ -456,39 +487,30 @@ class ConfigAnnotageRolf extends React.Component {
       selectedRows: [],
       mainChecked: false,
       mainIndeterminated: false,
+      mainCheckIcon: imgChkboxUnchecked,
+      mainEditIcon: imgEditButton,
+      mainDeleteIcon: imgDeleteButton,
+      openDialog: false,
+      productName: "",
+      editId: 0,
     };
   }
-
+  
   getRowSelection(idx)
   {
     const index = this.state.selectedRows.findIndex(d => d === idx);
     return (index > -1);
   }
 
+  getIconSource(idx)
+  {
+    const index = this.state.selectedRows.findIndex(d => d === idx);
+    const path = "C:/Users/Rolf/Documents/Projects/StartTest/";
+    return ((index > -1) ? imgChkboxChecked : imgChkboxUnchecked);
+  }
+
   hdlCheckboxClickHeader(e)
   {
-    /*
-    if (this.state.mainIndeterminated)
-
-    {
-      alert("mainIndeterminated");
-    }
-    else
-    {
-    }
-    */
-
-    /*
-    if (this.state.mainChecked)
-    {
-      alert("mainChecked = true");
-    }
-    else
-    {
-      alert("mainChecked = false");
-    }
-      */
-
     let ischecked = this.state.mainChecked;
     ischecked = !ischecked;
     this.setState({mainIndeterminated: false});
@@ -503,6 +525,8 @@ class ConfigAnnotageRolf extends React.Component {
     }
     // now update the main list
     this.setState({selectedRows: newlist});
+    this.setState({mainCheckIcon: 
+      ischecked ? imgChkboxChecked : imgChkboxUnchecked});
   }
 
   hdlCheckboxClickRow(e, idx)
@@ -539,6 +563,7 @@ class ConfigAnnotageRolf extends React.Component {
       }
     });
 
+    const path = "C:/Users/Rolf/Documents/Projects/StartTest/";
     if (allAreSame)
     {
       this.setState({mainIndeterminated: false});
@@ -546,21 +571,62 @@ class ConfigAnnotageRolf extends React.Component {
       {
         // all rows are selected
         this.setState({mainChecked: true});
+        this.setState({mainCheckIcon: imgChkboxChecked});
       }
       else
       {
         // no row is selected
         this.setState({mainChecked: false});
+        this.setState({mainCheckIcon: imgChkboxUnchecked});
       }
     }
     else
     {
       // different states exists
       this.setState({mainIndeterminated: true});
+      this.setState({mainCheckIcon: imgChkboxIndeterminate});
     }
 
     // now update the main list
     this.setState({selectedRows: newlist});
+  }
+
+  handleEditClick(e, id, name, users, events, views, time)
+  {
+    // first set the row
+    this.setState({editId: id});
+    this.setState({dlgName: name});
+    this.setState({dlgUser: users});
+    this.setState({dlgEvents: events});
+    this.setState({dlgViews: views});
+    this.setState({dlgTime: time});
+
+    // now open
+    this.setState({openDialog: true});
+  }
+
+  handleSubmit = () => {
+    const idx = this.state.data.findIndex(d => d.id === this.state.editId);
+    this.state.data[idx].name = this.state.dlgName;
+    // TODO: fill other fields
+
+    this.setState({openDialog: false});
+  };
+
+  handleClose = () => {
+    this.setState({openDialog: false});
+  };  
+
+  handleDialogChange = (e, field) => {
+    if (field === "dlgName") this.setState({dlgName: e.target.value});
+    if (field === "dlgUser") this.setState({dlgUser: e.target.value});
+  };  
+
+  handleTableMainKeyUp = (e) => {
+    if (e.key === "c" && e.ctrlKey) {
+      const txt = window.getSelection().toString();
+      navigator.clipboard.writeText(txt);
+    }
   }
 
   render() {
@@ -570,10 +636,18 @@ class ConfigAnnotageRolf extends React.Component {
     const data = this.state.data.slice(page * limit, page * limit + limit);
     const mainChecked = this.state.mainChecked;
     const mainIndeterminated = this.state.mainIndeterminated;
-
+    const mainCheckIcon = this.state.mainCheckIcon;
+    const mainEditIcon = this.state.mainEditIcon;
+    const mainDeleteIcon = this.state.mainDeleteIcon;
+   
+    
     return (
-      <Paper className={classes.paper}>
+      <Paper 
+        className={classes.paper}
+        >
         <TableContainer
+          tabIndex={0}
+          onKeyUp={this.handleTableMainKeyUp}
           className={classes.table_container}
           style={{
             height: 350, // Set the max height to allow scrolling after 5 items
@@ -594,6 +668,11 @@ class ConfigAnnotageRolf extends React.Component {
               },
             },
           }}>
+
+{/* ================================================================================ */}
+{/* start of table header ========================================================== */}
+{/* ================================================================================ */}
+
           <Table className={classes.table} stickyHeader>
             <TableHead className={classes.table_head}>
               <TableRow className={classes.table_head_row}>
@@ -613,6 +692,20 @@ class ConfigAnnotageRolf extends React.Component {
                   />
                   {/* <StyledCheckbox checked size="small" sx={{ width: 24 }} /> */}
                 </TableCell>
+
+
+{/* checkbox images */}
+                <TableCell
+                  className={classes.table_head_cell}
+                  style={{ paddingLeft: 5 }}>
+                  <IconButton>
+                  <img 
+                    src={mainCheckIcon}
+                    style={{ width: '48px', height: '48px' }} 
+                  />
+                  </IconButton>
+                </TableCell>
+
                 <TableCell
                   className={classes.table_head_cell}
                   style={{ paddingLeft: 5 }}>
@@ -620,16 +713,21 @@ class ConfigAnnotageRolf extends React.Component {
                 </TableCell>
                 <TableCell
                   className={classes.table_head_cell}
-                  style={{ paddingLeft: 5 }}>
+                  style={{ 
+                    width: 100,
+                    paddingLeft: 2, 
+                    paddingRight: 2, 
+                    textAlign: 'center',
+                    verticalAlign: 'bottom'
+                  }}>
                   <TableSortLabel>Status</TableSortLabel>
                 </TableCell>
                 <TableCell
                   className={classes.table_head_cell}
-                  // TODO: why this is not working 
                   style={{ 
                     width: 100,
-                    paddingLeft: 5, 
-                    paddingRight: 5, 
+                    paddingLeft: 2, 
+                    paddingRight: 2, 
                     textAlign: 'right',
                     verticalAlign: 'bottom'
                   }}>
@@ -637,14 +735,22 @@ class ConfigAnnotageRolf extends React.Component {
                 </TableCell>
                 <TableCell
                   className={classes.table_head_cell}
-                  style={{ paddingLeft: 5 }}>
+                  style={{ 
+                    width: 100,
+                    paddingLeft: 2, 
+                    paddingRight: 2, 
+                    textAlign: 'right',
+                    verticalAlign: 'bottom'
+                  }}>
                   <TableSortLabel>Event count</TableSortLabel>
                 </TableCell>
                 <TableCell
                   width={50}
                   className={classes.table_head_cell}
                   style={{ 
-                    paddingLeft: 5,
+                    width: 100,
+                    paddingLeft: 2, 
+                    paddingRight: 2, 
                     textAlign: 'right',
                     verticalAlign: 'bottom'
                   }}>
@@ -653,9 +759,10 @@ class ConfigAnnotageRolf extends React.Component {
                 <TableCell
                   className={classes.table_head_cell}
                   style={{ 
-                    paddingLeft: 5,
-                    paddingRight: 5,
-                    textAlign: 'center',
+                    width: 100,
+                    paddingLeft: 2, 
+                    paddingRight: 2, 
+                    textAlign: 'right',
                     verticalAlign: 'bottom'
                   }}>
                   <TableSortLabel>Average time</TableSortLabel>
@@ -663,11 +770,36 @@ class ConfigAnnotageRolf extends React.Component {
                 <TableCell
                   className={classes.table_head_cell}
                   style={{ 
-                    paddingLeft: 5, 
-                    textAlign: 'center',
+                    width: 100,
+                    paddingLeft: 2, 
+                    paddingRight: 2, 
+                    textAlign: 'right',
                     verticalAlign: 'bottom'
                   }}>
                   <TableSortLabel>Conversions</TableSortLabel>
+                </TableCell>
+
+                <TableCell
+                  className={classes.table_head_cell}
+                  style={{ 
+                    width: 100,
+                    paddingLeft: 2, 
+                    paddingRight: 2, 
+                    textAlign: 'right',
+                    verticalAlign: 'bottom'
+                  }}>
+                    Edit
+                </TableCell>
+                <TableCell
+                  className={classes.table_head_cell}
+                  style={{ 
+                    width: 100,
+                    paddingLeft: 2, 
+                    paddingRight: 2, 
+                    textAlign: 'right',
+                    verticalAlign: 'bottom'
+                  }}>
+                    Delete
                 </TableCell>
 
 
@@ -678,9 +810,19 @@ class ConfigAnnotageRolf extends React.Component {
                 */}
               </TableRow>
             </TableHead>
+
+
+
+
+{/* ================================================================================ */}
+{/* Start of the rows ============================================================== */}
+{/* ================================================================================ */}
+
+
             <TableBody className={classes.table_body_row}>
               {data.map((row, index) => {
                 const isRowSelected = this.getRowSelection(row.id);
+                const iconSource = this.getIconSource(row.id);
                 const {
                   id, name, moreInfo, status, 
                   users, eventCount, viewsPerUser, averageTime,
@@ -701,6 +843,18 @@ class ConfigAnnotageRolf extends React.Component {
                         size="small"
                       />
                     </TableCell>
+
+                    <TableCell
+                      className={classes.table_row_cell}
+                      style={{ paddingLeft: 5 }}>
+                      <IconButton>
+                      <img 
+                        src={iconSource}
+                        style={{ width: '48px', height: '48px' }} 
+                      />
+                      </IconButton>
+                    </TableCell>
+
                     <TableCell
                       className={classes.table_row_cell}
                       style={{ paddingLeft: 0, paddingRight: 0 }}>
@@ -760,7 +914,12 @@ class ConfigAnnotageRolf extends React.Component {
                     </TableCell>
                     <TableCell
                       className={classes.table_row_cell}
-                      style={{ paddingRight: 0, paddingLeft: 5 }}>
+                      style={{ 
+                        paddingLeft: 2, 
+                        paddingRight: 2, 
+                        textAlign: 'center',
+                        verticalAlign: 'bottom'
+                      }}>
                       {/* 
                       <Box className={classes.table_box_cell}>
                         <Box
@@ -784,33 +943,12 @@ class ConfigAnnotageRolf extends React.Component {
                     </TableCell>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-                    {/* TODO: why does textAlign not work??? */}
-
-
-
-
-
-
-
                     <TableCell
                       className={classes.table_row_cell}
                       style={{ 
-                        paddingLeft: 5, 
-                        paddingRight: 5,
+                        paddingLeft: 2, 
+                        paddingRight: 2, 
                         textAlign: 'right',
-                        justifyContent: 'right',
                       }}>
                       <Box className={classes.table_box_cell}>
                         <div
@@ -823,7 +961,6 @@ class ConfigAnnotageRolf extends React.Component {
                             boxSizing: 'border-box',
                             scrollHehavior: 'smooth',
                             textAlign: 'right',
-                            justifyContent: 'right',
                             marginBlock: 'right',
                           }}>
                           <Box
@@ -846,12 +983,14 @@ class ConfigAnnotageRolf extends React.Component {
                             {/* TODO: solution Rolf */}
                             <div><RightText>{users}</RightText></div>
 
+
+                            {/*
                             <div 
                             style={{ 
                                 width: '100%', height: '100%', 
-                                //textAlign: 'right',
-                                justifyContent: 'right',
-                              }}>{users}</div>                            
+                                textAlign: 'right',
+                              }}>{users}</div>         
+                              */}                   
                             
                           </Box>
                           </div>
@@ -866,7 +1005,11 @@ class ConfigAnnotageRolf extends React.Component {
                     {/* TODO: do we need 2 elements BOX??? */}
                     <TableCell
                       className={classes.table_row_cell}
-                      style={{ paddingLeft: 0, paddingRight: 0 }}>
+                      style={{ 
+                        paddingLeft: 0, 
+                        paddingRight: 0, 
+                        textAlign: 'right',
+                      }}>
                       <Box className={classes.table_box_cell}>
                         <div
                           style={{
@@ -876,6 +1019,8 @@ class ConfigAnnotageRolf extends React.Component {
                             paddingRight: 5,
                             boxSizing: 'border-box',
                             scrollHehavior: 'smooth',
+                            textAlign: 'right',
+                            marginBlock: 'right',
                           }}>
                           <Box
                             component="p"
@@ -887,8 +1032,11 @@ class ConfigAnnotageRolf extends React.Component {
                               whiteSpace: 'nowrap',
                               overflow: 'hidden',
                               textOverflow: 'ellipsis',
+                              textAlign: 'right',
+                              justifyContent: 'right',
+                              marginBlock: 'right',
                             }}>
-                            {eventCount}
+                            <div><RightText>{eventCount}</RightText></div>
                           </Box>
                         </div>
                       </Box>
@@ -1001,15 +1149,38 @@ class ConfigAnnotageRolf extends React.Component {
         }}
       />
     </div>
-    
-    
 
                           </Box>
                         </div>
                       </Box>
                     </TableCell>
 
+                    <TableCell
+                      className={classes.table_row_cell}
+                      style={{ paddingLeft: 5 }}>
+                      <IconButton
+                        >
+                      <img 
+                        src={mainEditIcon}
+                        title="Edit this row by clicking here"
+                        style={{ width: '48px', height: '48px' }} 
+                        onClick={e => this.handleEditClick(e, id,
+                          name, users, eventCount, viewsPerUser, averageTime)}
+                      />
+                      </IconButton>
+                    </TableCell>
 
+                    <TableCell
+                      className={classes.table_row_cell}
+                      style={{ paddingLeft: 5 }}>
+                      <IconButton>
+                      <img 
+                        src={mainDeleteIcon}
+                        title="Delete this row by clicking here"
+                        style={{ width: '48px', height: '48px' }} 
+                      />
+                      </IconButton>
+                    </TableCell>
 
 
 
@@ -1292,6 +1463,137 @@ class ConfigAnnotageRolf extends React.Component {
             </TableRow>
           </TableFooter>
         </Table>
+
+
+{/* ================================================================================ */}
+{/* modal dialog =================================================================== */}
+{/* ================================================================================ */}
+
+        {/* Dialog component for the modal */}
+        <Dialog 
+          width={720}
+          maxWidth={720}
+          minWidth={720}
+          open={this.state.openDialog} 
+          BackdropProps={{
+            style: {
+              backgroundColor: 'rgba(0, 0, 0, 0.4)', // Custom backdrop color (darker)
+            }
+          }}          
+          sx={{
+            '& .MuiDialog-paper': {
+              border: '5px solid #1976d2', // Set border color
+              borderRadius: '20px',         // Optional: set border radius for rounded corners
+            }
+          }}          >
+          <DialogTitle
+            textAlign={'center'}
+          >Sample Modal</DialogTitle>
+          <DialogContent>
+            <Typography 
+              variant="h6"
+              textAlign={'center'}
+            >Edit the row:</Typography>
+            <Table>
+              <TableRow>
+                <TableCell >Product</TableCell>
+                <TableCell colSpan={3}>
+                  <TextField
+                    label="Productname"
+                    type="text"
+                    value={this.state.dlgName}
+                    sx={{ width: '720px' }}
+                    helperText="Enter the product here. Don't enter any comments."
+                    onChange={(e) => this.handleDialogChange(e, 'dlgName')}
+                  />
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Users</TableCell>
+                <TableCell>
+                  <TextField
+                    label="Users"
+                    type="text"
+                    value={this.state.dlgUser}
+                    helperText="Percentages: enter only values between 0 and 100"
+                    onChange={(e) => this.handleDialogChange(e, 'dlgUser')}
+                  />
+                </TableCell>
+                <TableCell>Events</TableCell>
+                <TableCell>
+                  <TextField
+                    label="Events"
+                    type="text"
+                    value={this.state.dlgEvents}
+                    helperText="Count of events must be bigger than 0"
+                  />
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Views</TableCell>
+                <TableCell>
+                  <TextField
+                    label="Views"
+                    type="text"
+                    value={this.state.dlgViews}
+                    helperText="Average of views is a decimal number (format XX.YYYY)"
+                  />
+                </TableCell>
+                <TableCell>Time</TableCell>
+                <TableCell>
+                  <TextField
+                    label="Time"
+                    type="text"
+                    value={this.state.dlgTime}
+                    helperText="Time format: XXm YYs"
+                  />
+                </TableCell>
+              </TableRow>
+
+              <TableRow>
+                <TableCell>Checks</TableCell>
+                <TableCell colSpan={3}>
+                  <FormControlLabel
+                    control={<Checkbox/>}
+                    label="Checkbox1"/>
+                  <FormControlLabel
+                    control={<Checkbox/>}
+                    label="Checkbox2"/>
+                  <FormControlLabel
+                    control={<Checkbox/>}
+                    label="Checkbox3"/>
+                  <FormControlLabel
+                    control={<Checkbox/>}
+                    label="Checkbox4"/>
+                </TableCell>
+              </TableRow>
+
+              <TableRow>
+                <TableCell>Comments</TableCell>
+                <TableCell colSpan={3}>
+                  <TextField
+                    multiline
+                    rows={5}
+                    label="enter comments here text multiline"
+                    sx={{ width: '720px' }}
+                    helperText="Enter free comments about your observations"
+                  />
+                </TableCell>
+              </TableRow>
+            </Table>
+
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.handleClose} color="primary">
+              Cancel
+            </Button>
+            <Button onClick={this.handleSubmit} color="primary">
+              Submit
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+
       </Paper>
     );
   }

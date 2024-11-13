@@ -9,13 +9,18 @@ import { columnsRolf, rowsRolf } from './gridDataRolf';
 // customizable tables
 import ConfigAnnotage from './dashboard/components/Table/ConfigAnnotage';
 import ConfigAnnotageRolf from './dashboard/components/TableRolf/ConfigAnnotageRolf';
-import { useState } from 'react';
 
 
 // not found:
 //import { dataDisplayCustomizations } from './customizations/dataDisplay';
 //import { feedbackCustomizations } from './customizations/feedback';
 
+
+function handleMainKeyUp(e) 
+{
+  //alert("handleMainKeyUp");
+  //setKeyPressed(`Key pressed: ${event.key}`);
+};      
 
 const App = ()=> {
 
@@ -29,6 +34,8 @@ const App = ()=> {
   }
 
   return(
+
+
   <Grid
     container
     direction="column"
@@ -38,6 +45,7 @@ const App = ()=> {
       // when spacing between grid rows is needed
       // height: window.innerHeight
     }}
+    //onKeyUp={e => handleMainKeyUp(e)}
   >
 
   <Grid item>
