@@ -62,8 +62,14 @@ import imgChkboxUnchecked from './chkboxUnchecked48.png';
 import imgChkboxIndeterminate from './chkboxIndeterminate48.png'; 
 import imgEditButton from './editButton48.png'; 
 import imgDeleteButton from './deleteButton48.png'; 
+import imgSaveButton from './imgSave48.png'; 
+import imgUndoButton from './imgUndo48.png'; 
 
 
+import { ResizableBox } from 'react-resizable';
+import {ColumnResizer} from 'react-table-column-resizer';
+
+import 'react-resizable/css/styles.css';
 
 
 //import { mainSheet } from 'styled-components/dist/models/StyleSheetManager';
@@ -141,6 +147,7 @@ const NumberFormatter = ({ number }) => {
 
   return <span>{formattedNumber}</span>;
 }
+
 
 const dataRolf = [
     {
@@ -485,17 +492,36 @@ class ConfigAnnotageRolf extends React.Component {
       limit: 5,
       data: dataRolf,
       selectedRows: [],
+      editingFieldList_User: [],
       mainChecked: false,
       mainIndeterminated: false,
       mainCheckIcon: imgChkboxUnchecked,
       mainEditIcon: imgEditButton,
       mainDeleteIcon: imgDeleteButton,
+      mainSaveIcon: imgSaveButton,
+      mainUndoIcon: imgUndoButton,
       openDialog: false,
       productName: "",
-      editId: 0,
+      isCellEditingUser: false,
+      editedValue_Users: "",
+      newvalue_Users: "",
+      rowsWereEdited : false
     };
   }
   
+  fieldnameUsers = 'users';
+  
+
+  getCellEditing(id, fieldname)
+  {
+    if (fieldname === this.fieldnameUsers)
+    {
+      const index = this.state.editingFieldList_User.findIndex(d => d === id);
+      return (index > -1);
+    }
+    return false;
+  }
+
   getRowSelection(idx)
   {
     const index = this.state.selectedRows.findIndex(d => d === idx);
@@ -605,6 +631,11 @@ class ConfigAnnotageRolf extends React.Component {
     this.setState({openDialog: true});
   }
 
+  handleEditRowClick(e, id, name, users, events, views, time)
+  {
+    
+  }
+
   handleSubmit = () => {
     const idx = this.state.data.findIndex(d => d.id === this.state.editId);
     this.state.data[idx].name = this.state.dlgName;
@@ -620,6 +651,7 @@ class ConfigAnnotageRolf extends React.Component {
   handleDialogChange = (e, field) => {
     if (field === "dlgName") this.setState({dlgName: e.target.value});
     if (field === "dlgUser") this.setState({dlgUser: e.target.value});
+    // TODO other fields
   };  
 
   handleTableMainKeyUp = (e) => {
@@ -628,6 +660,63 @@ class ConfigAnnotageRolf extends React.Component {
       navigator.clipboard.writeText(txt);
     }
   }
+
+  // cell editing events -------------------------------------------------------------------------------------
+
+  handleCellEditChange(e, rowId, fieldname)
+  {
+    if (fieldname === this.fieldnameUsers)
+    {
+      //alert(e.target.value);
+      this.setState({newvalue_Users: e.target.value});
+      //this.setState({rowsWereEdited: true});
+    }
+  }
+ 
+  handleCellEditKeyUp(e, rowId, fieldname)
+  {
+    if (e.key === 'Enter' || e.keyCode === 13)
+    {
+      const idx = this.state.data.findIndex(d => d.id === rowId);
+      if (fieldname === this.fieldnameUsers)
+      {
+        const newList = [];
+        this.setState({editingFieldList_User: newList});
+        this.state.data[idx].users = e.target.value;
+      }
+    }
+  }
+
+  handleCellDoubleClick(rowId, rowIndex, fieldname, oldvalue)
+  {
+    if (this.state.editingFieldList_User.length > 0)
+    {
+      let checksAreOk = false;
+      if (!checksAreOk)
+      {
+        alert("checks are not ok. edit field again.");
+        return false;
+      }
+
+      const idx = this.state.editingFieldList_User[0];
+      const oldidx = this.state.data.findIndex(d => d.id === idx);
+      this.state.data[oldidx].users = this.state.newvalue_Users;
+    }
+
+    if (fieldname === this.fieldnameUsers)
+    {
+      //const newList = [...this.state.rowsWereEdited, rowId];
+      const newList = [rowId];
+      this.setState({editingFieldList_User: newList});
+      this.setState({newvalue_Users: oldvalue});
+    }
+  }
+
+
+
+
+
+
 
   render() {
     const dataDays = getDaysInMonth(4, 2024);
@@ -639,8 +728,10 @@ class ConfigAnnotageRolf extends React.Component {
     const mainCheckIcon = this.state.mainCheckIcon;
     const mainEditIcon = this.state.mainEditIcon;
     const mainDeleteIcon = this.state.mainDeleteIcon;
-   
-    
+    const mainSaveIcon = this.state.mainSaveIcon;
+    const mainUndoIcon = this.state.mainUndoIcon;
+
+
     return (
       <Paper 
         className={classes.paper}
@@ -680,7 +771,8 @@ class ConfigAnnotageRolf extends React.Component {
                   className={classes.table_head_check}
                   style={{ 
                     paddingLeft: 5, 
-                    paddingRight: 0 
+                    paddingRight: 0,
+
                   }}>
                   <Checkbox
                     checked={mainChecked}
@@ -701,7 +793,7 @@ class ConfigAnnotageRolf extends React.Component {
                   <IconButton>
                   <img 
                     src={mainCheckIcon}
-                    style={{ width: '48px', height: '48px' }} 
+                    style={{ width: '32px', height: '32px' }} 
                   />
                   </IconButton>
                 </TableCell>
@@ -709,7 +801,21 @@ class ConfigAnnotageRolf extends React.Component {
                 <TableCell
                   className={classes.table_head_cell}
                   style={{ paddingLeft: 5 }}>
-                  <TableSortLabel>Products</TableSortLabel>
+                  <ResizableBox 
+                    width={200} 
+                    height={30} 
+                    axis="x"
+                    style={{
+                      //cursor: ew-resize !important;
+                      cursor: 'col-resize'
+                    }}
+                  >
+
+                  {/*<ColumnResizer>*/}
+
+                    <TableSortLabel>Products</TableSortLabel>
+
+                  </ResizableBox>                  
                 </TableCell>
                 <TableCell
                   className={classes.table_head_cell}
@@ -782,21 +888,58 @@ class ConfigAnnotageRolf extends React.Component {
                 <TableCell
                   className={classes.table_head_cell}
                   style={{ 
-                    width: 100,
+                    width: 56,
                     paddingLeft: 2, 
                     paddingRight: 2, 
-                    textAlign: 'right',
+                    textAlign: 'center',
                     verticalAlign: 'bottom'
                   }}>
-                    Edit
+                    Edit Dialog
                 </TableCell>
+
                 <TableCell
                   className={classes.table_head_cell}
                   style={{ 
-                    width: 100,
+                    width: 56,
                     paddingLeft: 2, 
                     paddingRight: 2, 
-                    textAlign: 'right',
+                    textAlign: 'center',
+                    verticalAlign: 'bottom'
+                  }}>
+                    Edit Row
+                </TableCell>
+
+                <TableCell
+                  className={classes.table_head_cell}
+                  style={{ 
+                    width: 56,
+                    paddingLeft: 2, 
+                    paddingRight: 2, 
+                    textAlign: 'center',
+                    verticalAlign: 'bottom'
+                  }}>
+                     Save
+                </TableCell>
+
+                <TableCell
+                  className={classes.table_head_cell}
+                  style={{ 
+                    width: 56,
+                    paddingLeft: 2, 
+                    paddingRight: 2, 
+                    textAlign: 'center',
+                    verticalAlign: 'bottom'
+                  }}>
+                    Undo
+                </TableCell>
+
+                <TableCell
+                  className={classes.table_head_cell}
+                  style={{ 
+                    width: 56,
+                    paddingLeft: 2, 
+                    paddingRight: 2, 
+                    textAlign: 'center',
                     verticalAlign: 'bottom'
                   }}>
                     Delete
@@ -821,6 +964,8 @@ class ConfigAnnotageRolf extends React.Component {
 
             <TableBody className={classes.table_body_row}>
               {data.map((row, index) => {
+                const isCellEditingUser = this.getCellEditing(row.id, this.fieldnameUsers);
+                const isRowChanged = this.getCellEditing(row.id, this.fieldnameUsers);
                 const isRowSelected = this.getRowSelection(row.id);
                 const iconSource = this.getIconSource(row.id);
                 const {
@@ -828,13 +973,21 @@ class ConfigAnnotageRolf extends React.Component {
                   users, eventCount, viewsPerUser, averageTime,
                   conversions
                 } = row;
+                const editvalue_Users = isCellEditingUser ? this.newvalue_Users : users;
+                //if (isCellEditingUser) value users = "newValue";
                 return (
                   <TableRow
                     className={classes.table_row}
+                    style={{
+                      backgroundColor: isCellEditingUser ? '#efe' : 'white',
+                    }}
                     key={`table-row-${index}-${id}`}>
                     <TableCell
                       className={classes.table_check_cell}
-                      style={{ paddingRight: 5, paddingLeft: 5 }}>
+                      style={{ 
+                        paddingRight: 5, 
+                        paddingLeft: 5,
+                         }}>
                       <Checkbox
                         checked={isRowSelected}
                         color_checked={green[400]}
@@ -850,7 +1003,7 @@ class ConfigAnnotageRolf extends React.Component {
                       <IconButton>
                       <img 
                         src={iconSource}
-                        style={{ width: '48px', height: '48px' }} 
+                        style={{ width: '32px', height: '32px' }} 
                       />
                       </IconButton>
                     </TableCell>
@@ -918,7 +1071,7 @@ class ConfigAnnotageRolf extends React.Component {
                         paddingLeft: 2, 
                         paddingRight: 2, 
                         textAlign: 'center',
-                        verticalAlign: 'bottom'
+                        verticalAlign: 'center'
                       }}>
                       {/* 
                       <Box className={classes.table_box_cell}>
@@ -943,12 +1096,22 @@ class ConfigAnnotageRolf extends React.Component {
                     </TableCell>
 
 
+
+
+
+
+
+
+
+
+{/* editing one cell ------------------------------------------------------------------------------------------------ */}
                     <TableCell
                       className={classes.table_row_cell}
                       style={{ 
                         paddingLeft: 2, 
                         paddingRight: 2, 
                         textAlign: 'right',
+
                       }}>
                       <Box className={classes.table_box_cell}>
                         <div
@@ -981,8 +1144,43 @@ class ConfigAnnotageRolf extends React.Component {
                             }}>
                             
                             {/* TODO: solution Rolf */}
-                            <div><RightText>{users}</RightText></div>
-
+                            {/* 
+                            <div
+                              onCellDoubleClick={e => this.handleCellDoubleClick(row.id, this.fieldnameUsers)}
+                              style = {{
+                                display: isCellEditingUser ? 'none' : 'visible'
+                              }}
+                            ><RightText
+                            >{users}</RightText></div>
+                            */}
+                            <div
+                              style = {{
+                                //display: isCellEditingUser === false ? 'none' : 'visible'
+                              }}
+                            >
+                              <input
+                                type='text'
+                                value={editvalue_Users}
+                                readOnly={!isCellEditingUser}
+                                style = {{
+                                  textAlign: 'right',
+                                  width: '100%',
+                                  height: 35,
+                                  outline: 'none',
+                                  borderLeftStyle: 'none',
+                                  borderRightStyle: 'none',
+                                  borderTopStyle: isCellEditingUser === false ? 'none': 'solid',
+                                  borderBottomStyle: isCellEditingUser === false ? 'none': 'solid',
+                                  borderTopColor: '#cfc',
+                                  borderBottomColor: '#00ff00',
+                                  backgroundColor: isCellEditingUser === false ? 'white': '#cfc',
+                                  //display: isCellEditingUser === false ? 'none' : 'visible'
+                                }}
+                                onDoubleClick={e => this.handleCellDoubleClick(row.id, index, this.fieldnameUsers, users)}
+                                onChange={e => this.handleCellEditChange(e, row.id, this.fieldnameUsers)}                                
+                                onKeyUp={e => this.handleCellEditKeyUp(e, row.id, this.fieldnameUsers)}                                
+                                >
+                              </input></div>
 
                             {/*
                             <div 
@@ -1157,13 +1355,16 @@ class ConfigAnnotageRolf extends React.Component {
 
                     <TableCell
                       className={classes.table_row_cell}
-                      style={{ paddingLeft: 5 }}>
-                      <IconButton
-                        >
+                      style={{ 
+                        paddingLeft: 2, 
+                        paddingRight: 2,
+                        textAlign: 'center',
+                      }}>
+                      <IconButton>
                       <img 
                         src={mainEditIcon}
                         title="Edit this row by clicking here"
-                        style={{ width: '48px', height: '48px' }} 
+                        style={{ width: '32px', height: '32px' }} 
                         onClick={e => this.handleEditClick(e, id,
                           name, users, eventCount, viewsPerUser, averageTime)}
                       />
@@ -1172,12 +1373,80 @@ class ConfigAnnotageRolf extends React.Component {
 
                     <TableCell
                       className={classes.table_row_cell}
-                      style={{ paddingLeft: 5 }}>
+                      style={{ 
+                        paddingLeft: 2, 
+                        paddingRight: 2,
+                        textAlign: 'center',
+                      }}>
+                      <IconButton>
+                      <img 
+                        src={mainEditIcon}
+                        title="Edit this row by clicking here"
+                        style={{ width: '32px', height: '32px' }} 
+                        onClick={e => this.handleEditRowClick(e, id,
+                          name, users, eventCount, viewsPerUser, averageTime)}
+                      />
+                      </IconButton>
+                    </TableCell>
+
+                    {/* save button on row ------------------------------------------------------*/}
+                    <TableCell
+                      className={classes.table_row_cell}
+                      style={{ 
+                        paddingLeft: 2, 
+                        paddingRight: 2,
+                        textAlign: 'center',
+                      }}>
+                      <IconButton
+                        disabled={!isRowChanged}
+                      >
+                      <img 
+                        src={mainSaveIcon}
+                        title="Save this row by clicking here"
+                        style={{ 
+                          width: '32px', 
+                          height: '32px',
+                          opacity: (isRowChanged ? 1 : 0.2) 
+                        }} 
+                      />
+                      </IconButton>
+                    </TableCell>
+
+                    {/* undo button on row ------------------------------------------------------*/}
+                    <TableCell
+                      className={classes.table_row_cell}
+                      style={{ 
+                        paddingLeft: 2, 
+                        paddingRight: 2,
+                        textAlign: 'center',
+                      }}>
+                      <IconButton
+                        disabled={!isRowChanged}
+                      >
+                      <img 
+                        src={mainUndoIcon}
+                        title="Undo this row by clicking here"
+                        style={{ 
+                          width: '32px', 
+                          height: '32px',
+                          opacity: (isRowChanged ? 1 : 0.2) 
+                        }} 
+                      />
+                      </IconButton>
+                    </TableCell>
+
+                    <TableCell
+                      className={classes.table_row_cell}
+                      style={{ 
+                        paddingLeft: 2, 
+                        paddingRight: 2,
+                        textAlign: 'center',
+                      }}>
                       <IconButton>
                       <img 
                         src={mainDeleteIcon}
                         title="Delete this row by clicking here"
-                        style={{ width: '48px', height: '48px' }} 
+                        style={{ width: '32px', height: '32px' }} 
                       />
                       </IconButton>
                     </TableCell>
@@ -1380,6 +1649,41 @@ class ConfigAnnotageRolf extends React.Component {
           }}>
           <TableFooter>
             <TableRow>
+
+              <IconButton
+                //disabled={!this.state.rowsWereEdited}
+                disabled
+                style={{
+                  fontSize: 16,
+                  fontWeight: 'bold'
+                }}
+              >
+              <img 
+                src={mainSaveIcon}
+                style={{ 
+                  width: '48px', 
+                  height: '48px',
+                  opacity: (false ? 1 : 0.2) 
+                 }} 
+              />Save all</IconButton>
+
+              <IconButton
+                //disabled={!this.state.rowsWereEdited}
+                disabled
+                style={{
+                  fontSize: 16,
+                  fontWeight: 'bold',
+                }}
+              >
+              <img 
+                src={mainUndoIcon}
+                style={{ 
+                  width: '48px', 
+                  height: '48px',
+                  opacity: (false ? 1 : 0.2) 
+                 }} 
+              />&nbsp;Undo all</IconButton>
+
               <TablePagination
                 component="div"
                 count={this.state.data.length}

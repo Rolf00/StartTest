@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Button, Grid } from "@mui/material";
+//import { MaterialReactTable } from "material-react-table";
 import Dashboard from './dashboard/Dashboard';
 
 // imports for dashboard table "DataGrid"
@@ -28,12 +29,9 @@ const App = ()=> {
   const user = { name: "John", age: 30 };
 
 
-  const handleOnClick = e => {
-    // TODO
-    // show selectioncont  
-  }
+  
+return(
 
-  return(
 
 
   <Grid
@@ -47,6 +45,7 @@ const App = ()=> {
     }}
     //onKeyUp={e => handleMainKeyUp(e)}
   >
+
 
   <Grid item>
   <div style={{
@@ -68,6 +67,16 @@ const App = ()=> {
       }}>Customizable Table created by Rolf.</div>
     <div>
     <ConfigAnnotageRolf/>
+    </div>
+  </Grid>
+
+  <Grid item>
+  <div style={{
+      paddingTop: 20,
+      fontSize:20,
+      fontWeight:'bold',
+      }}>Customizable MaterialReactTable.</div>
+    <div>
     </div>
   </Grid>
 
@@ -105,9 +114,6 @@ const App = ()=> {
       >
       </DataGrid>
     </div>
-    <div><Button 
-      onclick={handleOnClick}>show selected
-      </Button></div>
   </Grid>
 
   <Grid 
