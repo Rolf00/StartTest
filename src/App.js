@@ -116,6 +116,7 @@ return(
     </div>
   </Grid>
 
+{/* 
   <Grid 
     item
     padding={'20px'}
@@ -132,6 +133,7 @@ return(
       userInfo={user}
     ></Dashboard>
   </Grid>
+*/}  
 
   </Grid>
   )

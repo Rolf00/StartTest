@@ -20,8 +20,14 @@ import {
   TableSortLabel,
   Typography,
   Checkbox,
-  Chip
+  Chip,
+  Stack
 } from '@mui/material';
+
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import 'dayjs/locale/de';
 
 import { 
   Dialog, 
@@ -493,6 +499,8 @@ class ConfigAnnotageRolf extends React.Component {
       data: dataRolf,
       selectedRows: [],
       editingFieldList_User: [],
+      editableFields: ["name", "users", "eventCount", "viewsPerUser", "averageTime"],
+      newRowData: [],
       mainChecked: false,
       mainIndeterminated: false,
       mainCheckIcon: imgChkboxUnchecked,
@@ -505,13 +513,16 @@ class ConfigAnnotageRolf extends React.Component {
       isCellEditingUser: false,
       editedValue_Users: "",
       newvalue_Users: "",
-      rowsWereEdited : false
+      rowsWereEdited : false,
+      colwidthName: 100,
+      colheightName: 50,
     };
   }
   
   fieldnameUsers = 'users';
   
 
+  
   getCellEditing(id, fieldname)
   {
     if (fieldname === this.fieldnameUsers)
@@ -520,6 +531,12 @@ class ConfigAnnotageRolf extends React.Component {
       return (index > -1);
     }
     return false;
+  }
+
+  isRowEdited(rowid)
+  {
+    const index = this.state.newRowData.findIndex(d => d.id === rowid);
+    return (index > -1);
   }
 
   getRowSelection(idx)
@@ -663,6 +680,35 @@ class ConfigAnnotageRolf extends React.Component {
 
   // cell editing events -------------------------------------------------------------------------------------
 
+  setNewEditingRow(rowId, fieldname, newvalue)
+  {
+    // now add the new data to the list of edited values (newRowData)
+    const indexNewData = this.state.newRowData.findIndex(dr => dr.id === rowId);
+    if (indexNewData === -1)
+    {
+      // the new data doesnt exist yet, we need to add a new one
+      let obj = {};
+      obj['id'] = rowId;
+      for (let i = 0; i < this.state.editableFields.count; i++)
+      {
+        if (fieldname === this.state.editableFields[i])
+        {
+          obj[this.state.editableFields[i]] = newvalue;
+        }
+        else
+        {
+          obj[this.state.editableFields[i]] = null;
+        }
+      }
+      this.state.newRowData.push(obj);
+    }
+    else
+    {
+      // the new data exists already, we add the new value
+      this.state.newRowData[indexNewData][fieldname] = newvalue;
+    }
+  }
+
   handleCellEditChange(e, rowId, fieldname)
   {
     if (fieldname === this.fieldnameUsers)
@@ -670,6 +716,12 @@ class ConfigAnnotageRolf extends React.Component {
       //alert(e.target.value);
       this.setState({newvalue_Users: e.target.value});
       //this.setState({rowsWereEdited: true});
+
+      const newList = [rowId];
+      this.setState({editingFieldList_User: newList});
+      //this.setState({newvalue_Users: oldvalue});
+
+      this.setNewEditingRow(rowId, fieldname, e.target.value);
     }
   }
  
@@ -684,6 +736,11 @@ class ConfigAnnotageRolf extends React.Component {
         this.setState({editingFieldList_User: newList});
         this.state.data[idx].users = e.target.value;
       }
+      this.setNewEditingRow(rowId, fieldname, e.target.value);
+    }
+    else if (e.key === 'Escape')
+    {
+      alert("TODO escape pressed");
     }
   }
 
@@ -691,7 +748,7 @@ class ConfigAnnotageRolf extends React.Component {
   {
     if (this.state.editingFieldList_User.length > 0)
     {
-      let checksAreOk = false;
+      let checksAreOk = true;
       if (!checksAreOk)
       {
         alert("checks are not ok. edit field again.");
@@ -713,9 +770,79 @@ class ConfigAnnotageRolf extends React.Component {
   }
 
 
+  handleOnDragStart(e, cell)
+  {
+    //alert("handleOnDragStart");
+  }
 
+  handleOnDragLeave(e, cell)
+  {
+    //alert("onDragLeave");
+  }
 
+  handleMouseDown(e)
+  {
+    let posXstart = e.clientX;
+    let start = this.state.colwidthName;
+    let posLeft = posXstart - start;
 
+    const onMouseMove = (moveEvent) => {
+      const newwidth = moveEvent.clientX - posLeft;
+      this.setState({colwidthName: newwidth});
+    }
+
+    const onMouseUp = () => {
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+    };    
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);    
+  }
+
+  handleMouseDownNS(e)
+  {
+    let posYstart = e.clientY;
+    let start = this.state.colheightName;
+    let posTop = posYstart - start;
+
+    const onMouseMoveNS = (moveEvent) => {
+      const newheight = moveEvent.clientY - posTop;
+      this.setState({colheightName: newheight});
+    }
+
+    const onMouseUpNS = () => {
+      document.removeEventListener('mousemove', onMouseMoveNS);
+      document.removeEventListener('mouseup', onMouseUpNS);
+    };    
+
+    document.addEventListener('mousemove', onMouseMoveNS);
+    document.addEventListener('mouseup', onMouseUpNS);    
+  }
+  
+  handleOnDrag(e, cell)
+  {
+    //alert("handleOnMouseMoveEW");
+    let x = e.clientX;
+
+    let c = document.getElementById(cell);
+    c.innerHTML = "Resize " + x;
+
+    let dtr = document.getElementById("divToSize");
+    dtr.style.width = x;
+
+  }
+
+  handleOnMouseMoveEW(e, cell)
+  {
+    //alert("handleOnMouseMoveEW");
+    let x = e.clientX;
+    let c = document.getElementById(cell);
+    //c.style.width = c.style.width + x;
+    //c.innerHTML = "Resize " + x;
+    c = document.getElementById(cell + "Bottom");
+    //c.style.width = c.style.width + x;
+  }
 
 
   render() {
@@ -730,6 +857,9 @@ class ConfigAnnotageRolf extends React.Component {
     const mainDeleteIcon = this.state.mainDeleteIcon;
     const mainSaveIcon = this.state.mainSaveIcon;
     const mainUndoIcon = this.state.mainUndoIcon;
+    const colwidthName = this.state.colwidthName;
+    const colheightName = this.state.colheightName;
+    
 
 
     return (
@@ -766,7 +896,9 @@ class ConfigAnnotageRolf extends React.Component {
 
           <Table className={classes.table} stickyHeader>
             <TableHead className={classes.table_head}>
-              <TableRow className={classes.table_head_row}>
+              <TableRow 
+                className={classes.table_head_row}
+                >
                 <TableCell
                   className={classes.table_head_check}
                   style={{ 
@@ -786,7 +918,7 @@ class ConfigAnnotageRolf extends React.Component {
                 </TableCell>
 
 
-{/* checkbox images */}
+{/* checkbox with images */}
                 <TableCell
                   className={classes.table_head_cell}
                   style={{ paddingLeft: 5 }}>
@@ -798,16 +930,112 @@ class ConfigAnnotageRolf extends React.Component {
                   </IconButton>
                 </TableCell>
 
+{/* own implementation of resizing cell */}
+                <TableCell
+                  id="divToSize" 
+                  className={classes.table_head_cell}
+                  width={colwidthName}
+                  height={colheightName}
+                  style={{ paddingLeft: 5 }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      height: '100%',
+                    }}>
+                    <div 
+                    style={{
+                        flex: '100%',
+                        verticalAlign: 'center',
+                      }}
+                      >Resizing</div>
+                    <div
+                      onMouseDown={(e) => this.handleMouseDown(e)} 
+                      style={{
+                        flex: '5px',
+                        backgroundColor: '#999',
+                        cursor: 'ew-resize',
+                      }}
+                      ></div>
+                  </div>
+
+                  <div
+                    style={{
+                      display: 'flex',
+                      height: '5px',
+                    }}>
+                    <div
+                    onMouseDown={(e) => this.handleMouseDownNS(e)} 
+                    style={{
+                        flex: '100%',
+                        height: '5px',
+                        backgroundColor: '#999',
+                        cursor: 'ns-resize',
+                          }}
+                      ></div>
+                    <div 
+                      style={{
+                        flex: '5px',
+                        backgroundColor: '#999',
+                        cursor: 'nwse-resize',
+                      }}
+                      ></div>
+                  </div>
+                    
+                </TableCell>
+
+
+{/* Textarea */}
+                <TableCell
+                  className={classes.table_head_cell}
+                  height={'100%'}
+                  style={{ 
+                    paddingLeft: 5,
+                    height: '100%',
+                  }}>
+                  <textarea 
+                    style={{
+                      backgroundColor: 'transparent',
+                      width: '100%',
+                      height: '100%',
+                      resize: 'none',
+                      boxSizing: 'border-box',
+                    }}
+                    >textarea autosize</textarea>
+                    
+
+                </TableCell>
+
+{/* Textarea */}
+                <TableCell
+                  className={classes.table_head_cell}
+                  style={{ paddingLeft: 5 }}>
+                    Textfield multiline
+                </TableCell>
+
+{/* dropdown component */}
+                <TableCell
+                  className={classes.table_head_cell}
+                  style={{ paddingLeft: 5 }}>
+                    dropdown
+                </TableCell>
+
+{/* datetime picker component */}
+                <TableCell
+                  className={classes.table_head_cell}
+                  style={{ paddingLeft: 5 }}>
+                    datetime
+                </TableCell>
+
                 <TableCell
                   className={classes.table_head_cell}
                   style={{ paddingLeft: 5 }}>
                   <ResizableBox 
                     width={200} 
                     height={30} 
-                    axis="x"
+                    axis="both"
                     style={{
                       //cursor: ew-resize !important;
-                      cursor: 'col-resize'
+                      //cursor: 'col-resize'
                     }}
                   >
 
@@ -965,7 +1193,7 @@ class ConfigAnnotageRolf extends React.Component {
             <TableBody className={classes.table_body_row}>
               {data.map((row, index) => {
                 const isCellEditingUser = this.getCellEditing(row.id, this.fieldnameUsers);
-                const isRowChanged = this.getCellEditing(row.id, this.fieldnameUsers);
+                const isRowChanged = this.isRowEdited(row.id);
                 const isRowSelected = this.getRowSelection(row.id);
                 const iconSource = this.getIconSource(row.id);
                 const {
@@ -979,7 +1207,7 @@ class ConfigAnnotageRolf extends React.Component {
                   <TableRow
                     className={classes.table_row}
                     style={{
-                      backgroundColor: isCellEditingUser ? '#efe' : 'white',
+                      backgroundColor: isRowChanged ? '#efe' : 'white',
                     }}
                     key={`table-row-${index}-${id}`}>
                     <TableCell
@@ -1006,6 +1234,71 @@ class ConfigAnnotageRolf extends React.Component {
                         style={{ width: '32px', height: '32px' }} 
                       />
                       </IconButton>
+                    </TableCell>
+
+{/* resizing */}
+                    <TableCell
+                      className={classes.table_row_cell}
+                      style={{ paddingLeft: 5 }}>
+                        <TextField 
+                        multiline
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                        }}
+                        >sdfk ödlfk df dfksdlökf sdfklösdf löf ösldf ks </TextField>
+                    </TableCell>
+
+
+{/* textarea */}
+                    <TableCell
+                      className={classes.table_row_cell}
+                      style={{ paddingLeft: 5 }}>
+                        <textarea 
+                          rows={5}
+                          style={{
+                            backgroundColor: 'transparent'
+                            //sbackgroundColor: isRowChanged ? '#efe' : 'white'
+                          }}
+                          >klj d fjlkf slfkjdf lskfj lfj</textarea>
+                    </TableCell>
+
+{/* textfield */}
+                    <TableCell
+                      className={classes.table_row_cell}
+                      style={{ paddingLeft: 5 }}>
+                        <TextField 
+                        multiline
+                        >sdfk ödlfk df dfksdlökf sdfklösdf löf ösldf ks </TextField>
+                    </TableCell>
+
+{/* dropdown component */}
+                    <TableCell
+                      className={classes.table_row_cell}
+                      style={{ paddingLeft: 5 }}>
+                        <FormControl sx={{ m: 1, minWidth: 180 }}>
+                        <InputLabel id="demo-simple-select-required-label">select example</InputLabel>
+                        <Select
+                        labelId="demo-simple-select-required-label"
+                        label="select example"
+                        minWidth={100}>
+                          <MenuItem value={10}>value 10</MenuItem>
+                          <MenuItem value={20}>value 20</MenuItem>
+                          <MenuItem value={30}>value 30</MenuItem>
+                        </Select> 
+                        </FormControl>
+                    </TableCell>
+
+{/* datetime picker */}
+                    <TableCell
+                      className={classes.table_row_cell}
+                      style={{ paddingLeft: 5 }}>
+                      <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="de">
+                      <DateTimePicker 
+                      label="name"
+                      views={['year', 'month', 'day']}  
+                      name="startDateTime" />
+                      </LocalizationProvider>
                     </TableCell>
 
                     <TableCell
@@ -1040,6 +1333,17 @@ class ConfigAnnotageRolf extends React.Component {
                             boxSizing: 'border-box',
                             scrollHehavior: 'smooth',
                           }}>
+
+                          <ResizableBox 
+                            width={200} 
+                            height={30} 
+                            axis="both"
+                            style={{
+                              //cursor: ew-resize !important;
+                              //cursor: 'col-resize'
+                            }}
+                          >
+
                           <Box
                             component="p"
                             sx={{
@@ -1062,6 +1366,7 @@ class ConfigAnnotageRolf extends React.Component {
                             }}>
                             {moreInfo}
                           </Box>
+                          </ResizableBox>
                         </div>
                       </Box>
                     </TableCell>
@@ -1173,7 +1478,8 @@ class ConfigAnnotageRolf extends React.Component {
                                   borderBottomStyle: isCellEditingUser === false ? 'none': 'solid',
                                   borderTopColor: '#cfc',
                                   borderBottomColor: '#00ff00',
-                                  backgroundColor: isCellEditingUser === false ? 'white': '#cfc',
+                                  backgroundColor: isCellEditingUser === true ? '#cfc' : 
+                                    isRowChanged ? '#efe' : 'white',
                                   //display: isCellEditingUser === false ? 'none' : 'visible'
                                 }}
                                 onDoubleClick={e => this.handleCellDoubleClick(row.id, index, this.fieldnameUsers, users)}
