@@ -516,6 +516,8 @@ class ConfigAnnotageRolf extends React.Component {
       rowsWereEdited : false,
       colwidthName: 100,
       colheightName: 50,
+      listChangedRows: [],
+      mainDisabled: true,
     };
   }
   
@@ -533,10 +535,19 @@ class ConfigAnnotageRolf extends React.Component {
     return false;
   }
 
+  isRowDeleted(rowid)
+  {
+    const index = this.state.listChangedRows.findIndex(d => d['id'] === rowid);
+    if (index === -1) return false;
+    if (this.state.listChangedRows[index]['action'] === 2) return true;
+    return false;
+  }
+
   isRowEdited(rowid)
   {
-    const index = this.state.newRowData.findIndex(d => d.id === rowid);
-    return (index > -1);
+    const index = this.state.listChangedRows.findIndex(d => d['id'] === rowid);
+    if (index === -1) return false;
+    return true;
   }
 
   getRowSelection(idx)
@@ -723,7 +734,11 @@ class ConfigAnnotageRolf extends React.Component {
 
       this.setNewEditingRow(rowId, fieldname, e.target.value);
     }
-  }
+
+    const newlist = this.AddChangedRows(rowId, 1);
+    const lengthEdited = newlist.length;
+    this.SetMainButtons(lengthEdited);
+}
  
   handleCellEditKeyUp(e, rowId, fieldname)
   {
@@ -762,7 +777,6 @@ class ConfigAnnotageRolf extends React.Component {
 
     if (fieldname === this.fieldnameUsers)
     {
-      //const newList = [...this.state.rowsWereEdited, rowId];
       const newList = [rowId];
       this.setState({editingFieldList_User: newList});
       this.setState({newvalue_Users: oldvalue});
@@ -780,20 +794,38 @@ class ConfigAnnotageRolf extends React.Component {
     //alert("onDragLeave");
   }
 
+  handleTouchStart(e)
+  {
+
+  }
+
+  
   handleMouseDown(e)
   {
     let posXstart = e.clientX;
     let start = this.state.colwidthName;
     let posLeft = posXstart - start;
 
+    const updateCursor = () => {
+      document.body.style.cursor = 'ew-resize';
+      document.body.style.userSelect = 'none';
+    };
+  
+    const resetCursor = () => {
+      document.body.style.removeProperty('cursor');
+      document.body.style.removeProperty('user-select');
+    };
+  
     const onMouseMove = (moveEvent) => {
       const newwidth = moveEvent.clientX - posLeft;
       this.setState({colwidthName: newwidth});
+      updateCursor();
     }
 
     const onMouseUp = () => {
       document.removeEventListener('mousemove', onMouseMove);
       document.removeEventListener('mouseup', onMouseUp);
+      resetCursor();
     };    
 
     document.addEventListener('mousemove', onMouseMove);
@@ -814,10 +846,19 @@ class ConfigAnnotageRolf extends React.Component {
     const onMouseUpNS = () => {
       document.removeEventListener('mousemove', onMouseMoveNS);
       document.removeEventListener('mouseup', onMouseUpNS);
+      /*document.removeEventListener('selectstart', function(e) {
+        e.preventDefault();
+        return false;
+      });      
+      */
     };    
 
     document.addEventListener('mousemove', onMouseMoveNS);
     document.addEventListener('mouseup', onMouseUpNS);    
+    document.addEventListener('selectstart', function(e) {
+      e.preventDefault();
+      return false;
+    });      
   }
   
   handleOnDrag(e, cell)
@@ -844,6 +885,54 @@ class ConfigAnnotageRolf extends React.Component {
     //c.style.width = c.style.width + x;
   }
 
+  handleDeleteRow(e, rowid)
+  {
+    const isDeleted = this.isRowDeleted(rowid);
+    if (!isDeleted)
+    {
+      const newlist = this.AddChangedRows(rowid, 2);
+      const lengthEdited = newlist.length;
+      this.SetMainButtons(lengthEdited);
+    }
+  }
+
+  AddChangedRows(rowid, action)
+  {
+    let obj = {};
+    obj['id'] = rowid;
+    obj['action'] = action;
+
+    const newlist = this.state.listChangedRows;
+    newlist.push(obj);
+    this.setState({listChangedRows: newlist});
+    return newlist;
+  }
+
+
+  handleUndoRow(e, rowid)
+  {
+    const newlist = this.state.listChangedRows.filter(item => item['id'] !== rowid);
+    this.setState({listChangedRows: newlist});
+    const lengthEdited = newlist.length;
+    this.SetMainButtons(lengthEdited);
+  }
+
+  SetMainButtons(newlistlenght)
+  {
+    const disable = newlistlenght === 0;
+    this.setState({mainDisabled: disable});
+  }
+
+  handleSaveAll(e)
+  {
+    this.setState({listChangedRows: []});
+    alert("All data was saved");
+  }
+
+  handleUndoAll(e)
+  {
+    this.setState({listChangedRows: []});
+  }
 
   render() {
     const dataDays = getDaysInMonth(4, 2024);
@@ -859,7 +948,8 @@ class ConfigAnnotageRolf extends React.Component {
     const mainUndoIcon = this.state.mainUndoIcon;
     const colwidthName = this.state.colwidthName;
     const colheightName = this.state.colheightName;
-    
+    const mainDisabled = this.state.mainDisabled;
+ 
 
 
     return (
@@ -950,6 +1040,7 @@ class ConfigAnnotageRolf extends React.Component {
                       >Resizing</div>
                     <div
                       onMouseDown={(e) => this.handleMouseDown(e)} 
+                      onTouchStart={(e) => this.handleTouchStart(e)}
                       style={{
                         flex: '5px',
                         backgroundColor: '#999',
@@ -987,22 +1078,17 @@ class ConfigAnnotageRolf extends React.Component {
 {/* Textarea */}
                 <TableCell
                   className={classes.table_head_cell}
-                  height={'100%'}
+                  height={colheightName}
                   style={{ 
                     paddingLeft: 5,
-                    height: '100%',
                   }}>
-                  <textarea 
+                  <textarea
                     style={{
                       backgroundColor: 'transparent',
                       width: '100%',
                       height: '100%',
-                      resize: 'none',
-                      boxSizing: 'border-box',
                     }}
                     >textarea autosize</textarea>
-                    
-
                 </TableCell>
 
 {/* Textarea */}
@@ -1035,7 +1121,7 @@ class ConfigAnnotageRolf extends React.Component {
                     axis="both"
                     style={{
                       //cursor: ew-resize !important;
-                      //cursor: 'col-resize'
+                      cursor: 'col-resize'
                     }}
                   >
 
@@ -1195,6 +1281,7 @@ class ConfigAnnotageRolf extends React.Component {
                 const isCellEditingUser = this.getCellEditing(row.id, this.fieldnameUsers);
                 const isRowChanged = this.isRowEdited(row.id);
                 const isRowSelected = this.getRowSelection(row.id);
+                const isRDeleted = this.isRowDeleted(row.id);
                 const iconSource = this.getIconSource(row.id);
                 const {
                   id, name, moreInfo, status, 
@@ -1207,7 +1294,8 @@ class ConfigAnnotageRolf extends React.Component {
                   <TableRow
                     className={classes.table_row}
                     style={{
-                      backgroundColor: isRowChanged ? '#efe' : 'white',
+                      backgroundColor: isRDeleted ? '#fee' : isRowChanged ? '#efe' : 'white',
+                      //backgroundColor: isRDeleted ? '#fee' : 'white',
                     }}
                     key={`table-row-${index}-${id}`}>
                     <TableCell
@@ -1253,12 +1341,15 @@ class ConfigAnnotageRolf extends React.Component {
 {/* textarea */}
                     <TableCell
                       className={classes.table_row_cell}
-                      style={{ paddingLeft: 5 }}>
+                      style={{ 
+                        paddingLeft: 5,
+                        }}>
                         <textarea 
                           rows={5}
                           style={{
+                            width: '100%',
+                            height: '100%',
                             backgroundColor: 'transparent'
-                            //sbackgroundColor: isRowChanged ? '#efe' : 'white'
                           }}
                           >klj d fjlkf slfkjdf lskfj lfj</textarea>
                     </TableCell>
@@ -1659,6 +1750,7 @@ class ConfigAnnotageRolf extends React.Component {
                       </Box>
                     </TableCell>
 
+{/* edit with dialog */}
                     <TableCell
                       className={classes.table_row_cell}
                       style={{ 
@@ -1666,17 +1758,24 @@ class ConfigAnnotageRolf extends React.Component {
                         paddingRight: 2,
                         textAlign: 'center',
                       }}>
-                      <IconButton>
+                      <IconButton
+                        disabled={isRDeleted}
+                      >
                       <img 
                         src={mainEditIcon}
                         title="Edit this row by clicking here"
-                        style={{ width: '32px', height: '32px' }} 
+                        style={{ 
+                          width: '32px', 
+                          height: '32px', 
+                          opacity: (!isRDeleted ? 1 : 0.2) 
+                        }} 
                         onClick={e => this.handleEditClick(e, id,
                           name, users, eventCount, viewsPerUser, averageTime)}
                       />
                       </IconButton>
                     </TableCell>
 
+{/* edit on the row */}
                     <TableCell
                       className={classes.table_row_cell}
                       style={{ 
@@ -1684,18 +1783,24 @@ class ConfigAnnotageRolf extends React.Component {
                         paddingRight: 2,
                         textAlign: 'center',
                       }}>
-                      <IconButton>
+                      <IconButton
+                        disabled={isRDeleted}
+                      >
                       <img 
                         src={mainEditIcon}
                         title="Edit this row by clicking here"
-                        style={{ width: '32px', height: '32px' }} 
+                        style={{ 
+                          width: '32px', 
+                          height: '32px',
+                          opacity: (!isRDeleted ? 1 : 0.2) 
+                        }} 
                         onClick={e => this.handleEditRowClick(e, id,
                           name, users, eventCount, viewsPerUser, averageTime)}
                       />
                       </IconButton>
                     </TableCell>
 
-                    {/* save button on row ------------------------------------------------------*/}
+{/* save button on row */}
                     <TableCell
                       className={classes.table_row_cell}
                       style={{ 
@@ -1718,7 +1823,7 @@ class ConfigAnnotageRolf extends React.Component {
                       </IconButton>
                     </TableCell>
 
-                    {/* undo button on row ------------------------------------------------------*/}
+{/* undo button on row */}
                     <TableCell
                       className={classes.table_row_cell}
                       style={{ 
@@ -1728,6 +1833,7 @@ class ConfigAnnotageRolf extends React.Component {
                       }}>
                       <IconButton
                         disabled={!isRowChanged}
+                        onClick={e => this.handleUndoRow(e, id)}
                       >
                       <img 
                         src={mainUndoIcon}
@@ -1741,6 +1847,7 @@ class ConfigAnnotageRolf extends React.Component {
                       </IconButton>
                     </TableCell>
 
+{/* delete row */}
                     <TableCell
                       className={classes.table_row_cell}
                       style={{ 
@@ -1748,11 +1855,18 @@ class ConfigAnnotageRolf extends React.Component {
                         paddingRight: 2,
                         textAlign: 'center',
                       }}>
-                      <IconButton>
+                      <IconButton
+                        disabled={isRDeleted}
+                        onClick={e => this.handleDeleteRow(e, id)}
+                      >
                       <img 
                         src={mainDeleteIcon}
                         title="Delete this row by clicking here"
-                        style={{ width: '32px', height: '32px' }} 
+                        style={{ 
+                          width: '32px', 
+                          height: '32px',
+                          opacity: (!isRDeleted ? 1 : 0.2) 
+                       }} 
                       />
                       </IconButton>
                     </TableCell>
@@ -1958,7 +2072,8 @@ class ConfigAnnotageRolf extends React.Component {
 
               <IconButton
                 //disabled={!this.state.rowsWereEdited}
-                disabled
+                disabled={mainDisabled}
+                onClick={e => this.handleSaveAll(e)}
                 style={{
                   fontSize: 16,
                   fontWeight: 'bold'
@@ -1969,13 +2084,14 @@ class ConfigAnnotageRolf extends React.Component {
                 style={{ 
                   width: '48px', 
                   height: '48px',
-                  opacity: (false ? 1 : 0.2) 
+                  opacity: (!mainDisabled ? 1 : 0.2) 
                  }} 
               />Save all</IconButton>
 
               <IconButton
                 //disabled={!this.state.rowsWereEdited}
-                disabled
+                disabled={mainDisabled}
+                onClick={e => this.handleUndoAll(e)}
                 style={{
                   fontSize: 16,
                   fontWeight: 'bold',
@@ -1986,7 +2102,7 @@ class ConfigAnnotageRolf extends React.Component {
                 style={{ 
                   width: '48px', 
                   height: '48px',
-                  opacity: (false ? 1 : 0.2) 
+                  opacity: (!mainDisabled ? 1 : 0.2) 
                  }} 
               />&nbsp;Undo all</IconButton>
 

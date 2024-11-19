@@ -11,10 +11,41 @@ import { columnsRolf, rowsRolf } from './gridDataRolf';
 import ConfigAnnotage from './dashboard/components/Table/ConfigAnnotage';
 import ConfigAnnotageRolf from './dashboard/components/TableRolf/ConfigAnnotageRolf';
 
+//import { DataGrid } from '@mui/x-data-grid';
+
 
 // not found:
 //import { dataDisplayCustomizations } from './customizations/dataDisplay';
 //import { feedbackCustomizations } from './customizations/feedback';
+
+
+//import { ResizableTableRolf } from './ResizableTableRolf';
+
+
+const columnsRTR = [
+  {
+    Header: 'Name',
+    accessor: 'name',
+    canResize: true, // Enable resizing for this column
+  },
+  {
+    Header: 'Age',
+    accessor: 'age',
+    canResize: true, // Enable resizing for this column
+  },
+  {
+    Header: 'Country',
+    accessor: 'country',
+    canResize: true, // Enable resizing for this column
+  },
+];
+
+const dataRTR = [
+  { name: 'John', age: 28, country: 'USA' },
+  { name: 'Jane', age: 34, country: 'Canada' },
+  { name: 'Bob', age: 45, country: 'UK' },
+  // Add more rows here
+];
 
 
 function handleMainKeyUp(e) 
@@ -70,13 +101,29 @@ return(
     </div>
   </Grid>
 
-  <Grid item>
-  <div style={{
+
+
+
+
+
+
+
+
+
+
+
+
+{/* ============================================================================================*/}
+{/* ResizableTableRolf =========================================================================*/}
+{/* ============================================================================================*/}
+<Grid item>
+    <div style={{
       paddingTop: 20,
       fontSize:20,
       fontWeight:'bold',
       }}>Customizable MaterialReactTable.</div>
     <div>
+      {/* <ResizableTableRolf columns={columnsRTR} data={dataRTR} ></ResizableTableRolf> */}
     </div>
   </Grid>
 

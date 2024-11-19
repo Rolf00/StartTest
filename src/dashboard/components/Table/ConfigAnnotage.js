@@ -27,6 +27,7 @@ import {
 } from '@mui/icons-material';
 
 import { green } from '@mui/material/colors';
+
 class ConfigAnnotage extends React.Component {
   constructor(props) {
     super(props);
