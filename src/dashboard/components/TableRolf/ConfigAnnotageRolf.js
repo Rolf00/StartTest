@@ -70,6 +70,7 @@ import imgEditButton from './editButton48.png';
 import imgDeleteButton from './deleteButton48.png'; 
 import imgSaveButton from './imgSave48.png'; 
 import imgUndoButton from './imgUndo48.png'; 
+import imgAddButton from './imgAdd48.png'; 
 
 
 import { ResizableBox } from 'react-resizable';
@@ -508,6 +509,7 @@ class ConfigAnnotageRolf extends React.Component {
       mainDeleteIcon: imgDeleteButton,
       mainSaveIcon: imgSaveButton,
       mainUndoIcon: imgUndoButton,
+      mainAddIcon: imgAddButton,
       openDialog: false,
       productName: "",
       isCellEditingUser: false,
@@ -518,6 +520,7 @@ class ConfigAnnotageRolf extends React.Component {
       colheightName: 50,
       listChangedRows: [],
       mainDisabled: true,
+      rowHeight: 200,
     };
   }
   
@@ -860,6 +863,34 @@ class ConfigAnnotageRolf extends React.Component {
       return false;
     });      
   }
+
+  handleMouseDownRowNS(e)
+  {
+    let mouseStart = e.clientY;
+    let cellHeight = e.target.parentElement.clientHeight;
+
+    const onMouseMoveRowNS = (e) => {
+      const newheight = e.clientY - mouseStart + cellHeight;
+      this.setState({rowHeight : newheight});
+    }
+
+    const onMouseUpRowNS = (e) => {
+      document.removeEventListener('mousemove', onMouseMoveRowNS);
+      document.removeEventListener('mouseup', onMouseUpRowNS);
+      /*document.removeEventListener('selectstart', function(e) {
+        e.preventDefault();
+        return false;
+      });      
+      */
+    };    
+
+    document.addEventListener('mousemove', onMouseMoveRowNS);
+    document.addEventListener('mouseup', onMouseUpRowNS);    
+    document.addEventListener('selectstart', function(e) {
+      //e.preventDefault();
+      return false;
+    });      
+  }
   
   handleOnDrag(e, cell)
   {
@@ -945,10 +976,12 @@ class ConfigAnnotageRolf extends React.Component {
     const mainEditIcon = this.state.mainEditIcon;
     const mainDeleteIcon = this.state.mainDeleteIcon;
     const mainSaveIcon = this.state.mainSaveIcon;
+    const mainAddIcon = this.state.mainAddIcon;
     const mainUndoIcon = this.state.mainUndoIcon;
     const colwidthName = this.state.colwidthName;
     const colheightName = this.state.colheightName;
     const mainDisabled = this.state.mainDisabled;
+    const rowHeight = this.state.rowHeight;
  
 
 
@@ -1022,15 +1055,14 @@ class ConfigAnnotageRolf extends React.Component {
 
 {/* own implementation of resizing cell */}
                 <TableCell
-                  id="divToSize" 
                   className={classes.table_head_cell}
                   width={colwidthName}
                   height={colheightName}
-                  style={{ paddingLeft: 5 }}>
+                  style={{ paddingLeft: 0 }}>
                   <div
                     style={{
                       display: 'flex',
-                      height: '100%',
+                      width: '100%',
                     }}>
                     <div 
                     style={{
@@ -1040,7 +1072,6 @@ class ConfigAnnotageRolf extends React.Component {
                       >Resizing</div>
                     <div
                       onMouseDown={(e) => this.handleMouseDown(e)} 
-                      onTouchStart={(e) => this.handleTouchStart(e)}
                       style={{
                         flex: '5px',
                         backgroundColor: '#999',
@@ -1071,8 +1102,51 @@ class ConfigAnnotageRolf extends React.Component {
                       }}
                       ></div>
                   </div>
-                    
                 </TableCell>
+
+
+
+{/* own implementation of resizing column width */}
+                <TableCell
+                  className={classes.table_head_cell}
+                  width={colwidthName}
+                  style={{ padding: '0px', margin: '0px' }}>
+
+
+    <div
+      style={{
+        margin: '0px', padding: '0px',
+        display: 'flex',
+        //width: '100%',
+        height: '100%',
+      }}>
+      <div 
+      style={{
+        display: 'flex', 
+        justifyContent: 'left',
+        }}
+        >
+          
+          Column width
+      </div>
+      <div
+        onMouseDown={(e) => this.handleMouseDown(e)} 
+        width={5}
+        style={{
+          //marginRight: 'auto',
+          display: 'flex',
+          justifyContent: 'right',
+          width: '5',
+          height: '100%',
+          backgroundColor: '#999',
+          cursor: 'col-resize',
+        }}
+        >&nbsp;</div>
+    </div>
+
+
+                </TableCell>
+
 
 
 {/* Textarea */}
@@ -1082,13 +1156,7 @@ class ConfigAnnotageRolf extends React.Component {
                   style={{ 
                     paddingLeft: 5,
                   }}>
-                  <textarea
-                    style={{
-                      backgroundColor: 'transparent',
-                      width: '100%',
-                      height: '100%',
-                    }}
-                    >textarea autosize</textarea>
+                    textarea autosize
                 </TableCell>
 
 {/* Textarea */}
@@ -1289,11 +1357,12 @@ class ConfigAnnotageRolf extends React.Component {
                   conversions
                 } = row;
                 const editvalue_Users = isCellEditingUser ? this.newvalue_Users : users;
-                //if (isCellEditingUser) value users = "newValue";
+
                 return (
                   <TableRow
                     className={classes.table_row}
                     style={{
+                      height: rowHeight,
                       backgroundColor: isRDeleted ? '#fee' : isRowChanged ? '#efe' : 'white',
                       //backgroundColor: isRDeleted ? '#fee' : 'white',
                     }}
@@ -1324,17 +1393,52 @@ class ConfigAnnotageRolf extends React.Component {
                       </IconButton>
                     </TableCell>
 
-{/* resizing */}
                     <TableCell
                       className={classes.table_row_cell}
                       style={{ paddingLeft: 5 }}>
-                        <TextField 
+                    </TableCell>
+
+
+{/* resizing */}
+                    <TableCell
+                      className={classes.table_row_cell}
+                      style={{ 
+                        padding: 0,
+                        height: rowHeight,
+                      }}>
+
+<div style={{ 
+  display: 'flex', flexDirection: 'column', 
+  height: '100%', width: '100%', 
+  margin: '0px', padding: '0px'}}>
+
+<div style={{ 
+  padding: '10px 10px 2px 10px',
+  display: 'flex',
+  justifyContent: 'top',
+  height: '100%', }}>
+
+
+                      <TextField 
                         multiline
                         style={{
-                          width: '100%',
-                          height: '100%',
                         }}
-                        >sdfk ödlfk df dfksdlökf sdfklösdf löf ösldf ks </TextField>
+                        ></TextField>
+</div>
+
+  <div
+    onMouseDown={(e) => this.handleMouseDownRowNS(e)} 
+    style={{
+      display: 'flex',
+      justifyContent: 'bottom',
+      width: '100%',
+      height: '5px',
+      backgroundColor: '#999',
+      cursor: 'row-resize',
+    }}
+  ></div>
+</div>
+
                     </TableCell>
 
 
@@ -1342,25 +1446,93 @@ class ConfigAnnotageRolf extends React.Component {
                     <TableCell
                       className={classes.table_row_cell}
                       style={{ 
-                        paddingLeft: 5,
+                        padding: 0,
+                        height: rowHeight,
                         }}>
+
+
+
+<div style={{ 
+  display: 'flex', flexDirection: 'column', 
+  height: '100%', width: '100%', 
+  margin: '0px', padding: '0px'}}>
+
+<div style={{ 
+  padding: '10px 10px 2px 10px',
+  display: 'flex',
+  justifyContent: 'top',
+  height: '100%', }}>
+
                         <textarea 
-                          rows={5}
+                          rows={3}
                           style={{
                             width: '100%',
-                            height: '100%',
                             backgroundColor: 'transparent'
                           }}
                           >klj d fjlkf slfkjdf lskfj lfj</textarea>
+  </div>
+  <div
+    onMouseDown={(e) => this.handleMouseDownRowNS(e)} 
+    bottom={0}
+    style={{
+      marginBottom: 'auto',
+      display: 'flex',
+      justifyContent: 'bottom',
+      width: '100%',
+      height: '5px',
+      backgroundColor: '#999',
+      cursor: 'row-resize',
+      margin: '0px', padding: '0px',
+    }}
+  ></div>
+</div>
+
                     </TableCell>
 
 {/* textfield */}
                     <TableCell
                       className={classes.table_row_cell}
-                      style={{ paddingLeft: 5 }}>
+                      style={{ 
+                        padding: 0,
+                        height: rowHeight,
+                        }}>
+
+<div style={{ 
+  display: 'flex', flexDirection: 'column', 
+  height: '100%', width: '100%', 
+  margin: '0px', padding: '0px'}}>
+
+<div style={{ 
+  padding: '10px 10px 2px 10px',
+  display: 'flex',
+  justifyContent: 'top',
+  height: '100%', }}>
+
                         <TextField 
                         multiline
-                        >sdfk ödlfk df dfksdlökf sdfklösdf löf ösldf ks </TextField>
+                        style={{
+                          height: '100%',
+                        }}
+                        ></TextField>
+
+</div>
+  <div
+    onMouseDown={(e) => this.handleMouseDownRowNS(e)} 
+    bottom={0}
+    style={{
+      marginBottom: 'auto',
+      display: 'flex',
+      justifyContent: 'bottom',
+      width: '100%',
+      height: '5px',
+      backgroundColor: '#999',
+      cursor: 'row-resize',
+      margin: '0px', padding: '0px',
+    }}
+  ></div>
+</div>
+
+
                     </TableCell>
 
 {/* dropdown component */}
@@ -2039,6 +2211,7 @@ class ConfigAnnotageRolf extends React.Component {
                     </TableCell>
                     */}
 
+
                   </TableRow>
                 );
               })}
@@ -2070,6 +2243,27 @@ class ConfigAnnotageRolf extends React.Component {
           <TableFooter>
             <TableRow>
 
+{/* new button */}
+<IconButton
+                //disabled={!this.state.rowsWereEdited}
+                //disabled={mainDisabled}
+                //onClick={e => this.handleNewRow(e)}
+                style={{
+                  fontSize: 16,
+                  fontWeight: 'bold',
+                }}
+              >
+              <img 
+                src={mainAddIcon}
+                style={{ 
+                  width: '48px', 
+                  height: '48px',
+                  //opacity: (!mainDisabled ? 1 : 0.2) 
+                 }} 
+              />&nbsp;new row</IconButton>
+
+
+{/* save all */}    
               <IconButton
                 //disabled={!this.state.rowsWereEdited}
                 disabled={mainDisabled}
@@ -2088,6 +2282,7 @@ class ConfigAnnotageRolf extends React.Component {
                  }} 
               />Save all</IconButton>
 
+{/* undo all */}     
               <IconButton
                 //disabled={!this.state.rowsWereEdited}
                 disabled={mainDisabled}
