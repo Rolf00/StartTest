@@ -4,6 +4,9 @@ import { useStyles } from './styles';
 import { withStyles } from 'tss-react/mui';
 import styled from 'styled-components';
 import { useState } from 'react';
+import { useRef } from 'react';
+//import React, { useRef, useState, useEffect } from 'react';
+
 import {
   Avatar,
   Box,
@@ -155,10 +158,41 @@ const NumberFormatter = ({ number }) => {
     minimumFractionDigits: 3,
     maximumFractionDigits: 3,
   });
-
   return <span>{formattedNumber}</span>;
 }
 
+const columns = [
+  {
+    id: 0,
+    title: "",
+    resizable: false,
+  },
+  {
+    id: 1,
+    title: "",
+    resizable: false,
+  },
+  {
+    id: 2,
+    title: "Resizing Resizing Resizing Resizing Resizing Resizing Resizing Resizing",
+    resizable: true,
+  },
+  {
+    id: 3,
+    title: "Column width",
+    resizable: true,
+  },
+  {
+    id: 4,
+    title: "Textarea autosize",
+    resizable: true,
+  },
+  {
+    id: 4,
+    title: "Textfield multiline",
+    resizable: true,
+  },
+];
 
 const dataRolf = [
     {
@@ -495,6 +529,21 @@ const dataRolf = [
 // https://icons8.com/icons/set/indeterminate-checkbox
 
 
+
+function getRowHeightList()
+{
+  let newlist = [];
+  for (let i = 0; i < dataRolf.length; i++)
+  {
+    let obj = {};
+    obj['id'] =  dataRolf[i].id; 
+    obj['height'] = 55; 
+    newlist.push(obj);
+  }
+  return newlist;
+}
+
+
 class ConfigAnnotageRolf extends React.Component {
   constructor(props) {
     super(props);
@@ -502,6 +551,7 @@ class ConfigAnnotageRolf extends React.Component {
       page: 0,
       limit: 5,
       data: dataRolf,
+      columns: columns,
       selectedRows: [],
       editingFieldList_User: [],
       editableFields: ["name", "users", "eventCount", "viewsPerUser", "averageTime"],
@@ -525,12 +575,15 @@ class ConfigAnnotageRolf extends React.Component {
       listChangedRows: [],
       mainDisabled: true,
       rowHeight: 200,
+      colwidth: 120,
+      headerHeight: 35,
+      headerHeightList: [25, 25, 80, 35, 35, 35],
+      headerWidthList: [25, 25, 120, 80, 80, 80],
+      rowHeightList: getRowHeightList(),
     };
   }
   
   fieldnameUsers = 'users';
-  
-
   
   getCellEditing(id, fieldname)
   {
@@ -556,6 +609,15 @@ class ConfigAnnotageRolf extends React.Component {
     if (index === -1) return false;
     return true;
   }
+  
+  getRowHeight(rowid)
+  {
+    const index = this.state.rowHeightList.findIndex(d => d['id'] === rowid);
+    if (index === -1) return 45;
+    //alert("rowHeightList = " + this.state.rowHeightList[index]['height']);
+    return this.state.rowHeightList[index]['height'];
+  }
+
 
   getRowSelection(idx)
   {
@@ -731,7 +793,6 @@ class ConfigAnnotageRolf extends React.Component {
   {
     if (fieldname === this.fieldnameUsers)
     {
-      //alert(e.target.value);
       this.setState({newvalue_Users: e.target.value});
       //this.setState({rowsWereEdited: true});
 
@@ -871,43 +932,81 @@ class ConfigAnnotageRolf extends React.Component {
   }
       */
 
-  handleMouseDownRowNS(e)
+  handleMouseDownRowNS(e, rowid)
   {
     let mouseStart = e.clientY;
-    //let cellHeight = e.target.parentElement.clientHeight;
-    let cellHeight = this.state.rowHeight;
-    
+    const startIndex = this.state.rowHeightList.findIndex(dr => dr.id === rowid);
+    let cellHeight = 55;
+    if (startIndex > -1) cellHeight = this.state.rowHeightList[startIndex].height;
+
+//alert("e.cellHeight = " + cellHeight);
+//alert("newList[index].height = " + newList[index].height);
+
     const onMouseMoveRowNS = (e) => {
       const newheight = e.clientY - mouseStart + cellHeight;
-      this.setState({rowHeight : newheight});
+      //if (newheight > this.state.rowHeight)
+      //{
+        const newList = this.state.rowHeightList;
+        const index = this.state.rowHeightList.findIndex(dr => dr.id === rowid);
+        newList[index].height = newheight;
+        this.setState({rowHeightList : newList});
+      //}
     }
 
     const onMouseUpRowNS = (e) => {
       document.removeEventListener('mousemove', onMouseMoveRowNS);
       document.removeEventListener('mouseup', onMouseUpRowNS);
+      document.body.style.userSelect = "auto";  
+
+      //const newheight = e.clientY - mouseStart + cellHeight;
+      //const newList = this.state.rowHeightList;
+      //const index = this.state.rowHeightList.findIndex(dr => dr.id === rowid);
+      //newList[index].height = newheight;
+
+//alert("newList[index].height = " + newList[index].height);
+
+//alert("e.clientY = " + e.clientY);
+
     };    
 
     document.addEventListener('mousemove', onMouseMoveRowNS);
-    document.addEventListener('mouseup', onMouseUpRowNS);    
+    document.addEventListener('mouseup', onMouseUpRowNS);  
+    document.body.style.userSelect = "none";  
   }
 
-  handleMouseDownRowEW(e)
+  setNewHeaderHeight(newHeight)
+  {
+    //this.setState({headerHeight : newHeight});
+  }
+
+
+  handleMouseDownRowEW(e, index)
   {
     let mouseStart = e.clientX;
-    let cellWidth = this.state.colwidthName;
-    
+    let cellWidth = this.state.colwidth;
+
+    //alert("start index height = " + index);
+
     const onMouseMoveRowEW = (e) => {
       const newwidth = e.clientX - mouseStart + cellWidth;
-      this.setState({colwidthName : newwidth});
+      const newList = this.state.headerWidthList;
+      newList[index] = newwidth;
+      this.setState({headerWidthList : newList});
     }
+
+
+    //headerHeightList
 
     const onMouseUpRowEW = (e) => {
       document.removeEventListener('mousemove', onMouseMoveRowEW);
       document.removeEventListener('mouseup', onMouseUpRowEW);
+      document.body.style.userSelect = "auto"; 
+      this.setNewHeaderHeight(e.target.clientHeight);
     };    
 
     document.addEventListener('mousemove', onMouseMoveRowEW);
     document.addEventListener('mouseup', onMouseUpRowEW);    
+    document.body.style.userSelect = "none";  
   }
 
 
@@ -974,6 +1073,17 @@ class ConfigAnnotageRolf extends React.Component {
     this.setState({listChangedRows: []});
   }
 
+  getHeaderHeight()
+  {
+    let maxHeight = 0;
+    for (let i = 0; i < this.state.headerHeightList.length; i++)
+    {
+      if (maxHeight < this.state.headerHeightList[i])
+        maxHeight = this.state.headerHeightList[i];
+    }
+    return maxHeight;
+  }
+
   render() {
     const dataDays = getDaysInMonth(4, 2024);
     const { classes } = this.props;
@@ -987,12 +1097,18 @@ class ConfigAnnotageRolf extends React.Component {
     const mainSaveIcon = this.state.mainSaveIcon;
     const mainAddIcon = this.state.mainAddIcon;
     const mainUndoIcon = this.state.mainUndoIcon;
-    const colwidth = this.state.colwidthName;
     const colheightName = this.state.colheightName;
     const mainDisabled = this.state.mainDisabled;
+    const colwidth = this.state.colwidth;
     const rowHeight = this.state.rowHeight;
- 
-
+    const headerHeightList = this.state.headerHeightList;
+    const headerWidthList = this.state.headerWidthList;
+    //const headerHeight = this.state.headerHeight;
+    const headerHeight = this.getHeaderHeight();
+    const columns = this.state.columns;
+    //this.setRowHeightList();
+    const rowHeightList = this.state.rowHeightList;
+    
 
     return (
       <Paper 
@@ -1026,18 +1142,25 @@ class ConfigAnnotageRolf extends React.Component {
 {/* start of table header ========================================================== */}
 {/* ================================================================================ */}
 
-          <Table className={classes.table} stickyHeader>
+          <Table 
+          className={classes.table} 
+          stickyHeader
+          style={{
+            height: '800px',
+
+          }}
+          >
             <TableHead className={classes.table_head}>
               <TableRow 
                 className={classes.table_head_row}
                 >
-                <TableCell
-                  className={classes.table_head_check}
-                  style={{ 
-                    paddingLeft: 5, 
-                    paddingRight: 0,
-
-                  }}>
+                <InselTableCellWidthResizer
+                  className={classes.table_head_cell}
+                  notResizable
+                  width={headerWidthList[0]}
+                  height= {headerHeight}
+                  setHeight={(colwidth) => this.setState({colwidth: colwidth})}
+                  handleMouseDownRowEW={(e)=>this.handleMouseDownRowEW(e, 0)}>
                   <Checkbox
                     checked={mainChecked}
                     indeterminate={mainIndeterminated}
@@ -1046,18 +1169,16 @@ class ConfigAnnotageRolf extends React.Component {
                     onClick={e => this.hdlCheckboxClickHeader(e)}
                     size="small"
                   />
-                  {/* <StyledCheckbox checked size="small" sx={{ width: 24 }} /> */}
-                </TableCell>
+                </InselTableCellWidthResizer>
 
 
 {/* checkbox with images */}
                 <InselTableCellWidthResizer
                   className={classes.table_head_cell}
-                  width={colwidth}
-                  style={{ paddingLeft: 5 }}
+                  width={headerWidthList[1]}
+                  height= {headerHeight}
                   setHeight={(colwidth) => this.setState({colwidth: colwidth})}
-                  handleMouseDownRowEW={(e)=>this.handleMouseDownRowEW(e)}
-                  >
+                  handleMouseDownRowEW={(e)=>this.handleMouseDownRowEW(e, 1)}>
                   <IconButton>
                   <img 
                     src={mainCheckIcon}
@@ -1067,44 +1188,51 @@ class ConfigAnnotageRolf extends React.Component {
                 </InselTableCellWidthResizer>
 
 {/* own implementation of resizing cell */}
-                <TableCell
+                <InselTableCellWidthResizer
                   className={classes.table_head_cell}
-                  width={colwidth}
-                  height={colheightName}
-                  style={{ paddingLeft: 0 }}>
-                  Resizing
-                </TableCell>
-
+                  width={headerWidthList[2]}
+                  height={headerHeight}
+                  horizontalAlign={'center'}
+                  setHeight={(colwidth) => this.setState({colwidth: colwidth})}
+                  handleMouseDownRowEW={(e)=>this.handleMouseDownRowEW(e, 2)}>
+                  {/*this.state.columns[2]*/}
+                  ddddddddd
+                </InselTableCellWidthResizer>
 
 
 {/* own implementation of resizing column width */}
                 <InselTableCellWidthResizer
                   className={classes.table_head_cell}
-                  width={colwidth}
+                  width={headerWidthList[3]}
+                  height= {headerHeight}
                   setHeight={(colwidth) => this.setState({colwidth: colwidth})}
-                  handleMouseDownRowEW={(e)=>this.handleMouseDownRowEW(e)}
-                >
-                Column width
+                  handleMouseDownRowEW={(e)=>this.handleMouseDownRowEW(e, 3)}>
+                  Column width
                 </InselTableCellWidthResizer>
 
 
+{/* Textarea */}
+                <InselTableCellWidthResizer
+                  className={classes.table_head_cell}
+                  width={headerWidthList[4]}
+                  height= {headerHeight}
+                  horizontalAlign={'right'}
+                  verticalAlign={'bottom'}
+                  setHeight={(colwidth) => this.setState({colwidth: colwidth})}
+                  handleMouseDownRowEW={(e)=>this.handleMouseDownRowEW(e, 4)}>
+                  textarea autosize
+                </InselTableCellWidthResizer>
 
 {/* Textarea */}
-                <TableCell
+                <InselTableCellWidthResizer
                   className={classes.table_head_cell}
-                  height={colheightName}
-                  style={{ 
-                    paddingLeft: 5,
-                  }}>
-                    textarea autosize
-                </TableCell>
-
-{/* Textarea */}
-                <TableCell
-                  className={classes.table_head_cell}
-                  style={{ paddingLeft: 5 }}>
+                  width={headerWidthList[5]}
+                  height= {headerHeight}
+                  verticalAlign={'center'}
+                  setHeight={(colwidth) => this.setState({colwidth: colwidth})}
+                  handleMouseDownRowEW={(e)=>this.handleMouseDownRowEW(e, 5)}>
                     Textfield multiline
-                </TableCell>
+                </InselTableCellWidthResizer>
 
 {/* dropdown component */}
                 <TableCell
@@ -1123,21 +1251,7 @@ class ConfigAnnotageRolf extends React.Component {
                 <TableCell
                   className={classes.table_head_cell}
                   style={{ paddingLeft: 5 }}>
-                  <ResizableBox 
-                    width={200} 
-                    height={30} 
-                    axis="both"
-                    style={{
-                      //cursor: ew-resize !important;
-                      cursor: 'col-resize'
-                    }}
-                  >
-
-                  {/*<ColumnResizer>*/}
-
                     <TableSortLabel>Products</TableSortLabel>
-
-                  </ResizableBox>                  
                 </TableCell>
                 <TableCell
                   className={classes.table_head_cell}
@@ -1297,6 +1411,7 @@ class ConfigAnnotageRolf extends React.Component {
                   conversions
                 } = row;
                 const editvalue_Users = isCellEditingUser ? this.newvalue_Users : users;
+                const rowHeight = this.getRowHeight(row.id);
 
                 return (
                   <TableRow
@@ -1305,7 +1420,6 @@ class ConfigAnnotageRolf extends React.Component {
                     style={{
                       height: rowHeight,
                       backgroundColor: isRDeleted ? '#fee' : isRowChanged ? '#efe' : 'white',
-                      //backgroundColor: isRDeleted ? '#fee' : 'white',
                     }}
                     key={`table-row-${index}-${id}`}>
 
@@ -1314,11 +1428,7 @@ class ConfigAnnotageRolf extends React.Component {
                       className={classes.table_check_cell}
                       height={rowHeight}
                       setHeight={(height) => this.setState({rowHeight: height})}
-                      handleMouseDownRowNS={(e)=>this.handleMouseDownRowNS(e)}
-                      style={{ 
-                        paddingRight: 5, 
-                        paddingLeft: 5,
-                      }}>
+                      handleMouseDownRowNS={(e)=>this.handleMouseDownRowNS(e, row.id)}>
                       <Checkbox
                         checked={isRowSelected}
                         color_checked={green[400]}
@@ -1328,87 +1438,47 @@ class ConfigAnnotageRolf extends React.Component {
                       />
                     </InselTableCellHeightResizer>
 
-                    <TableCell
-                      className={classes.table_row_cell}
-                      style={{ paddingLeft: 5 }}>
+                    <InselTableCellHeightResizer
+                      className={classes.table_check_cell}
+                      height={rowHeight}
+                      setHeight={(height) => this.setState({rowHeight: height})}
+                      handleMouseDownRowNS={(e)=>this.handleMouseDownRowNS(e, row.id)}>
                       <IconButton>
                       <img 
                         src={iconSource}
                         style={{ width: '32px', height: '32px' }} 
                       />
                       </IconButton>
-                    </TableCell>
+                    </InselTableCellHeightResizer>
 
-                    <TableCell
-                      className={classes.table_row_cell}
-                      style={{ paddingLeft: 5 }}>
-                    </TableCell>
+                    <InselTableCellHeightResizer
+                      className={classes.table_check_cell}
+                      height={rowHeight}
+                      setHeight={(height) => this.setState({rowHeight: height})}
+                      handleMouseDownRowNS={(e)=>this.handleMouseDownRowNS(e, row.id)}>
+                    </InselTableCellHeightResizer>
 
 
 {/* resizing */}
-                    <TableCell
-                      className={classes.table_row_cell}
-                      style={{ 
-                        padding: 0,
-                        height: rowHeight,
-                      }}>
-
-<div style={{ 
-  display: 'flex', flexDirection: 'column', 
-  height: '100%', width: '100%', 
-  margin: '0px', padding: '0px'}}>
-
-<div style={{ 
-  padding: '10px 10px 2px 10px',
-  display: 'flex',
-  justifyContent: 'top',
-  height: '100%', }}>
-
+                    <InselTableCellHeightResizer
+                      className={classes.table_check_cell}
+                      height={rowHeight}
+                      setHeight={(height) => this.setState({rowHeight: height})}
+                      handleMouseDownRowNS={(e)=>this.handleMouseDownRowNS(e, row.id)}>
                       <TextField 
                         multiline
                         style={{
                         }}
                         ></TextField>
-</div>
-
-  <div
-    onMouseDown={(e) => this.handleMouseDownRowNS(e)} 
-    style={{
-      display: 'flex',
-      justifyContent: 'bottom',
-      width: '100%',
-      height: '5px',
-      backgroundColor: '#999',
-      cursor: 'row-resize',
-    }}
-  ></div>
-</div>
-
-                    </TableCell>
+                    </InselTableCellHeightResizer>
 
 
 {/* textarea */}
                     <InselTableCellHeightResizer
-                      className={classes.table_row_cell}
+                      className={classes.table_check_cell}
                       height={rowHeight}
                       setHeight={(height) => this.setState({rowHeight: height})}
-                      handleMouseDownRowNS={(e)=>this.handleMouseDownRowNS(e)}
-                    >
-
-
-{/* 
-
-<div style={{ 
-  display: 'flex', flexDirection: 'column', 
-  height: '100%', width: '100%', 
-  margin: '0px', padding: '0px'}}>
-
-<div style={{ 
-  padding: '10px 10px 2px 10px',
-  display: 'flex',
-  justifyContent: 'top',
-  height: '100%', }}>
-*/}
+                      handleMouseDownRowNS={(e)=>this.handleMouseDownRowNS(e, row.id)}>
                         <textarea 
                           rows={3}
                           style={{
@@ -1416,90 +1486,29 @@ class ConfigAnnotageRolf extends React.Component {
                             backgroundColor: 'transparent'
                           }}
                           >klj d fjlkf slfkjdf lskfj lfj</textarea>
-
-{/*                          
-  </div>
-  <div
-    onMouseDown={(e) => this.handleMouseDownRowNS(e)} 
-    bottom={0}
-    style={{
-      marginBottom: 'auto',
-      display: 'flex',
-      justifyContent: 'bottom',
-      width: '100%',
-      height: '5px',
-      backgroundColor: '#999',
-      cursor: 'row-resize',
-      margin: '0px', padding: '0px',
-    }}
-  ></div>
-</div>
-*/}
                     </InselTableCellHeightResizer>
 
 {/* textfield */}
-                    <TableCell
-                      className={classes.table_row_cell}
-                      style={{ 
-                        padding: 0,
-                        height: rowHeight,
-                      }}>
-
-<div style={{ 
-  display: 'flex', flexDirection: 'column', 
-  height: '100%', width: '100%', 
-  margin: '0px', padding: '0px'}}>
-
-<div style={{ 
-  padding: '10px 10px 2px 10px',
-  display: 'flex',
-  justifyContent: 'top',
-  height: '100%', }}>
-
+                    <InselTableCellHeightResizer
+                      className={classes.table_check_cell}
+                      height={rowHeight}
+                      setHeight={(height) => this.setState({rowHeight: height})}
+                      handleMouseDownRowNS={(e)=>this.handleMouseDownRowNS(e, row.id)}>
                         <TextField 
                         multiline
                         style={{
                           height: '100%',
                         }}
                         ></TextField>
+                    </InselTableCellHeightResizer>
 
-  </div>
-  <div
-    onMouseDown={(e) => this.handleMouseDownRowNS(e)} 
-    bottom={0}
-    style={{
-      marginBottom: 'auto',
-      display: 'flex',
-      justifyContent: 'bottom',
-      width: '100%',
-      height: '5px',
-      backgroundColor: '#999',
-      cursor: 'row-resize',
-      margin: '0px', padding: '0px',
-    }}
-  ></div>
-</div>
-
-
-                    </TableCell>
 
 {/* dropdown component */}
-
                     <InselTableCellHeightResizer
-                      className={classes.table_row_cell}
+                      className={classes.table_check_cell}
                       height={rowHeight}
-                      style={{ 
-                        padding: 0,
-                        //height: rowHeight,
-                        }}
                       setHeight={(height) => this.setState({rowHeight: height})}
-                      handleMouseDownRowNS={(e)=>this.handleMouseDownRowNS(e)}
-                      sx={{
-                        borderTopTopColor: 'black',
-                        borderTopStyle: 'solid',
-                        borderTopWidth: 2,
-                      }}                      
-                      >
+                      handleMouseDownRowNS={(e)=>this.handleMouseDownRowNS(e, row.id)}>
                         <FormControl
                           sx={{ m: 1, minWidth: 180,  }}>
                         <InputLabel id="demo-simple-select-required-label">select example</InputLabel>
@@ -1519,20 +1528,24 @@ class ConfigAnnotageRolf extends React.Component {
 
 
 {/* datetime picker */}
-                    <TableCell
-                      className={classes.table_row_cell}
-                      style={{ paddingLeft: 5 }}>
+                    <InselTableCellHeightResizer
+                      className={classes.table_check_cell}
+                      height={rowHeight}
+                      setHeight={(height) => this.setState({rowHeight: height})}
+                      handleMouseDownRowNS={(e)=>this.handleMouseDownRowNS(e, row.id)}>
                       <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="de">
                       <DateTimePicker 
                       label="name"
                       views={['year', 'month', 'day']}  
                       name="startDateTime" />
                       </LocalizationProvider>
-                    </TableCell>
+                    </InselTableCellHeightResizer>
 
-                    <TableCell
-                      className={classes.table_row_cell}
-                      style={{ paddingLeft: 0, paddingRight: 0 }}>
+                    <InselTableCellHeightResizer
+                      className={classes.table_check_cell}
+                      height={rowHeight}
+                      setHeight={(height) => this.setState({rowHeight: height})}
+                      handleMouseDownRowNS={(e)=>this.handleMouseDownRowNS(e, row.id)}>
                       <Box className={classes.table_box_cell}>
                         {/*  
                         <Avatar
@@ -1563,6 +1576,7 @@ class ConfigAnnotageRolf extends React.Component {
                             scrollHehavior: 'smooth',
                           }}>
 
+                          {/* 
                           <ResizableBox 
                             width={200} 
                             height={30} 
@@ -1571,7 +1585,7 @@ class ConfigAnnotageRolf extends React.Component {
                               //cursor: ew-resize !important;
                               //cursor: 'col-resize'
                             }}
-                          >
+                          >*/}
 
                           <Box
                             component="p"
@@ -1595,18 +1609,16 @@ class ConfigAnnotageRolf extends React.Component {
                             }}>
                             {moreInfo}
                           </Box>
-                          </ResizableBox>
                         </div>
                       </Box>
-                    </TableCell>
-                    <TableCell
-                      className={classes.table_row_cell}
-                      style={{ 
-                        paddingLeft: 2, 
-                        paddingRight: 2, 
-                        textAlign: 'center',
-                        verticalAlign: 'center'
-                      }}>
+                    </InselTableCellHeightResizer>
+
+
+                    <InselTableCellHeightResizer
+                      className={classes.table_check_cell}
+                      height={rowHeight}
+                      setHeight={(height) => this.setState({rowHeight: height})}
+                      handleMouseDownRowNS={(e)=>this.handleMouseDownRowNS(e, row.id)}>
                       {/* 
                       <Box className={classes.table_box_cell}>
                         <Box
@@ -1627,7 +1639,7 @@ class ConfigAnnotageRolf extends React.Component {
                           backgroundColor: chipcolorsbg[status] 
                         }}
                         size="small" />
-                    </TableCell>
+                    </InselTableCellHeightResizer>
 
 
 
@@ -1639,14 +1651,11 @@ class ConfigAnnotageRolf extends React.Component {
 
 
 {/* editing one cell ------------------------------------------------------------------------------------------------ */}
-                    <TableCell
-                      className={classes.table_row_cell}
-                      style={{ 
-                        paddingLeft: 2, 
-                        paddingRight: 2, 
-                        textAlign: 'right',
-
-                      }}>
+                    <InselTableCellHeightResizer
+                      className={classes.table_check_cell}
+                      height={rowHeight}
+                      setHeight={(height) => this.setState({rowHeight: height})}
+                      handleMouseDownRowNS={(e)=>this.handleMouseDownRowNS(e, row.id)}>
                       <Box className={classes.table_box_cell}>
                         <div
                           style={{
@@ -1728,7 +1737,7 @@ class ConfigAnnotageRolf extends React.Component {
                           </Box>
                           </div>
                       </Box>
-                    </TableCell>
+                    </InselTableCellHeightResizer>
 
 
 
@@ -1736,13 +1745,11 @@ class ConfigAnnotageRolf extends React.Component {
 
 
                     {/* TODO: do we need 2 elements BOX??? */}
-                    <TableCell
-                      className={classes.table_row_cell}
-                      style={{ 
-                        paddingLeft: 0, 
-                        paddingRight: 0, 
-                        textAlign: 'right',
-                      }}>
+                    <InselTableCellHeightResizer
+                      className={classes.table_check_cell}
+                      height={rowHeight}
+                      setHeight={(height) => this.setState({rowHeight: height})}
+                      handleMouseDownRowNS={(e)=>this.handleMouseDownRowNS(e, row.id)}>
                       <Box className={classes.table_box_cell}>
                         <div
                           style={{
@@ -1773,11 +1780,13 @@ class ConfigAnnotageRolf extends React.Component {
                           </Box>
                         </div>
                       </Box>
-                    </TableCell>
+                    </InselTableCellHeightResizer>
 
-                    <TableCell
-                      className={classes.table_row_cell}
-                      style={{ paddingLeft: 0, paddingRight: 0 }}>
+                    <InselTableCellHeightResizer
+                      className={classes.table_check_cell}
+                      height={rowHeight}
+                      setHeight={(height) => this.setState({rowHeight: height})}
+                      handleMouseDownRowNS={(e)=>this.handleMouseDownRowNS(e, row.id)}>
                       <Box className={classes.table_box_cell}>
                         <div
                           style={{
@@ -1805,11 +1814,13 @@ class ConfigAnnotageRolf extends React.Component {
                           </Box>
                         </div>
                       </Box>
-                    </TableCell>
+                    </InselTableCellHeightResizer>
 
-                    <TableCell
-                      className={classes.table_row_cell}
-                      style={{ paddingLeft: 0, paddingRight: 0 }}>
+                    <InselTableCellHeightResizer
+                      className={classes.table_check_cell}
+                      height={rowHeight}
+                      setHeight={(height) => this.setState({rowHeight: height})}
+                      handleMouseDownRowNS={(e)=>this.handleMouseDownRowNS(e, row.id)}>
                       <Box className={classes.table_box_cell}>
                         <div
                           style={{
@@ -1836,11 +1847,13 @@ class ConfigAnnotageRolf extends React.Component {
                           </Box>
                         </div>
                       </Box>
-                    </TableCell>
+                    </InselTableCellHeightResizer>
 
-                    <TableCell
-                      className={classes.table_row_cell}
-                      style={{ paddingLeft: 0, paddingRight: 0 }}>
+                    <InselTableCellHeightResizer
+                      className={classes.table_check_cell}
+                      height={rowHeight}
+                      setHeight={(height) => this.setState({rowHeight: height})}
+                      handleMouseDownRowNS={(e)=>this.handleMouseDownRowNS(e, row.id)}>
                       <Box className={classes.table_box_cell}>
                         <div
                           style={{
@@ -1886,16 +1899,14 @@ class ConfigAnnotageRolf extends React.Component {
                           </Box>
                         </div>
                       </Box>
-                    </TableCell>
+                    </InselTableCellHeightResizer>
 
 {/* edit with dialog */}
-                    <TableCell
-                      className={classes.table_row_cell}
-                      style={{ 
-                        paddingLeft: 2, 
-                        paddingRight: 2,
-                        textAlign: 'center',
-                      }}>
+                    <InselTableCellHeightResizer
+                      className={classes.table_check_cell}
+                      height={rowHeight}
+                      setHeight={(height) => this.setState({rowHeight: height})}
+                      handleMouseDownRowNS={(e)=>this.handleMouseDownRowNS(e, row.id)}>
                       <IconButton
                         disabled={isRDeleted}
                       >
@@ -1911,16 +1922,14 @@ class ConfigAnnotageRolf extends React.Component {
                           name, users, eventCount, viewsPerUser, averageTime)}
                       />
                       </IconButton>
-                    </TableCell>
+                    </InselTableCellHeightResizer>
 
 {/* edit on the row */}
-                    <TableCell
-                      className={classes.table_row_cell}
-                      style={{ 
-                        paddingLeft: 2, 
-                        paddingRight: 2,
-                        textAlign: 'center',
-                      }}>
+                    <InselTableCellHeightResizer
+                      className={classes.table_check_cell}
+                      height={rowHeight}
+                      setHeight={(height) => this.setState({rowHeight: height})}
+                      handleMouseDownRowNS={(e)=>this.handleMouseDownRowNS(e, row.id)}>
                       <IconButton
                         disabled={isRDeleted}
                       >
@@ -1936,16 +1945,14 @@ class ConfigAnnotageRolf extends React.Component {
                           name, users, eventCount, viewsPerUser, averageTime)}
                       />
                       </IconButton>
-                    </TableCell>
+                    </InselTableCellHeightResizer>
 
 {/* save button on row */}
-                    <TableCell
-                      className={classes.table_row_cell}
-                      style={{ 
-                        paddingLeft: 2, 
-                        paddingRight: 2,
-                        textAlign: 'center',
-                      }}>
+                    <InselTableCellHeightResizer
+                      className={classes.table_check_cell}
+                      height={rowHeight}
+                      setHeight={(height) => this.setState({rowHeight: height})}
+                      handleMouseDownRowNS={(e)=>this.handleMouseDownRowNS(e, row.id)}>
                       <IconButton
                         disabled={!isRowChanged}
                       >
@@ -1959,16 +1966,14 @@ class ConfigAnnotageRolf extends React.Component {
                         }} 
                       />
                       </IconButton>
-                    </TableCell>
+                    </InselTableCellHeightResizer>
 
 {/* undo button on row */}
-                    <TableCell
-                      className={classes.table_row_cell}
-                      style={{ 
-                        paddingLeft: 2, 
-                        paddingRight: 2,
-                        textAlign: 'center',
-                      }}>
+                    <InselTableCellHeightResizer
+                      className={classes.table_check_cell}
+                      height={rowHeight}
+                      setHeight={(height) => this.setState({rowHeight: height})}
+                      handleMouseDownRowNS={(e)=>this.handleMouseDownRowNS(e, row.id)}>
                       <IconButton
                         disabled={!isRowChanged}
                         onClick={e => this.handleUndoRow(e, id)}
@@ -1983,16 +1988,14 @@ class ConfigAnnotageRolf extends React.Component {
                         }} 
                       />
                       </IconButton>
-                    </TableCell>
+                    </InselTableCellHeightResizer>
 
 {/* delete row */}
-                    <TableCell
-                      className={classes.table_row_cell}
-                      style={{ 
-                        paddingLeft: 2, 
-                        paddingRight: 2,
-                        textAlign: 'center',
-                      }}>
+                    <InselTableCellHeightResizer
+                      className={classes.table_check_cell}
+                      height={rowHeight}
+                      setHeight={(height) => this.setState({rowHeight: height})}
+                      handleMouseDownRowNS={(e)=>this.handleMouseDownRowNS(e, row.id)}>
                       <IconButton
                         disabled={isRDeleted}
                         onClick={e => this.handleDeleteRow(e, id)}
@@ -2007,7 +2010,7 @@ class ConfigAnnotageRolf extends React.Component {
                        }} 
                       />
                       </IconButton>
-                    </TableCell>
+                    </InselTableCellHeightResizer>
 
 
 
@@ -2176,9 +2179,8 @@ class ConfigAnnotageRolf extends React.Component {
                       </Box>
                     </TableCell>
                     */}
-
-
                   </TableRow>
+
                 );
               })}
               <TableRow className={classes.table_body_row}>

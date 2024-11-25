@@ -38,7 +38,7 @@ class InselTableCellHeightResizer extends React.Component {
  
   
     //const {value} = this.state;
-    const {height, className, children } = this.props;
+    const {id, height, className, children } = this.props;
     //const ResizerBorderTopStyle = this.props.sx(borderTopStyle);
     return (
       <TableCell
@@ -60,11 +60,12 @@ class InselTableCellHeightResizer extends React.Component {
           justifyContent: 'top',
           padding: '10px 10px 2px 10px',
           height: '100%', 
+          padding: '5px',
           }}>
           {children}
         </div>
         <div
-          onMouseDown={(e) => this.props.handleMouseDownRowNS(e)} 
+          onMouseDown={(e) => this.props.handleMouseDownRowNS(e, id)} 
           style={{
             marginBottom: 'auto',
             display: 'flex',
@@ -72,7 +73,7 @@ class InselTableCellHeightResizer extends React.Component {
             width: '100%',
             height: '5px',
             paddingBottom: '3px',
-            backgroundColor: 'transparent',
+            backgroundColor: 'blue',
             //borderTopTopColor: 'black',
             //borderTopStyle: {ResizerBorderTopStyle},
             //borderTopWidth: 2,

@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import { TableCell } from "@mui/material";
 
 class InselTableCellWidthResizer extends React.Component {
@@ -20,7 +20,13 @@ class InselTableCellWidthResizer extends React.Component {
     componentWillUnmount() {
      
     }
-  
+
+    /*
+    handleMouseDownRowEW = e => {
+        this.props.handleMouseDownRowEW
+    }
+        */
+
     render() 
     {
   
@@ -36,55 +42,67 @@ class InselTableCellWidthResizer extends React.Component {
    
     
       //const {value} = this.state;
-      const {className, children } = this.props;
-      const width = this.props.width;
+      const {
+        index,
+        className, 
+        children, 
+        height, 
+        width, 
+        notResizable, 
+        horizontalAlign, 
+        verticalAlign } = this.props;
+
+      const textResizer = notResizable ? '' : '&nbsp;';
+      const verticalAlignText = 
+        verticalAlign === 'center' ? 'center' : 
+        verticalAlign === 'bottom' ? 'flex-end' : '';
+
       return (
         <TableCell
           className={className}
           style={{ 
+            //width: width,
+            height: 'auto',
             padding: 0,
-            width: width,
-          }}
-        >
-        <div style={{ 
-          //display: 'flex', 
-          //flexWrap: 'wrap',
-          //flexDirection: 'row', 
-          display: 'inline-block',
-          height: '100%', 
-          width: '100%', 
-          margin: '0px', 
-          padding: '0px'}}>
+          }}>
+        
           <div style={{ 
-            //display: 'flex', 
-            //justifyContent: 'left',
-            //float: 'left',
-            //flex: '100%',
-            display: 'inline-block',
-            padding: '10px 10px 10px 10px',
+            padding: 0,
+            display: 'flex',
+            //flexDirection: 'column',
+            //justifyContent: 'flex-end',
+            //minHeight: height, 
             height: '100%', 
-            width: '50%',
-            backgroundColor: 'yellow',
+            width: width,
+            //width: '100%',
+
             }}>
-            {children}
+            <div
+              style={{
+                flexGrow: 1, 
+                backgroundColor: 'yellow', 
+                minHeight: height, 
+                textAlign: horizontalAlign,
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: verticalAlignText,
+                padding: 5,
+                }}>
+                <div>
+                {children}
+                </div>
+            </div>
+            <div 
+              onMouseDown={(e) => this.props.handleMouseDownRowEW(e, index)} 
+              style={{
+              minHeight: height, 
+              width: notResizable ? '0px' : '5px',
+              padding: 0,
+              backgroundColor: 'blue',
+              cursor: 'col-resize',
+            }}>{textResizer}
+            </div>
           </div>
-          <div
-            onMouseDown={(e) => this.props.handleMouseDownRowEW(e)} 
-            style={{
-            //display: 'flex',
-            //justifyContent: 'right',
-            //flex: '5px',
-            //float: 'right',
-            display: 'inline-block',
-            width: '15px',
-            height: '100%',
-            backgroundColor: '#999',
-            cursor: 'col-resize',
-            margin: '0px', 
-            padding: '0px',
-            }}>
-          </div>
-        </div>
         </TableCell>
       )
     }
