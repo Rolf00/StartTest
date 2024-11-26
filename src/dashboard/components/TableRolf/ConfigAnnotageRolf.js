@@ -161,42 +161,230 @@ const NumberFormatter = ({ number }) => {
   return <span>{formattedNumber}</span>;
 }
 
+const settings = [
+  {
+    headerVerticalAlign: 'top',
+    resizerBackgroundColor: 'lightblue',
+    resizerSize: 5,
+    resizerBorderWidth: 1,
+    initialRowHeight: 65,
+    rowVerticalAlign: 'top',
+  }
+];
+
 const columns = [
   {
-    id: 0,
-    title: "",
-    resizable: false,
+    databaseField: "",
+    columnTitle: "",
+    columnIsResizable: false,
+    fieldIsEditable: true,
+    width: 45,
+    minWidth: 45,
+    textmaxLength: 0,
+    numberMinValue: 0,
+    numberMaxValue: 0,
+    editType: 'checkbox',
+    dataFieldName: '',
+    horizontalAlign: 'center',
+    dropDownSelection: [],
+    //valueGetter: (value, row) => `${row.firstName || ''} ${row.lastName || ''}`,
   },
   {
-    id: 1,
-    title: "",
-    resizable: false,
+    databaseField: "",
+    columnTitle: "",
+    columnIsResizable: false,
+    fieldIsEditable: true,
+    width: 32,
+    minWidth: 32,
+    textmaxLength: 0,
+    numberMinValue: 0,
+    numberMaxValue: 0,
+    editType: 'checkboxIcon',
+    dataFieldName: '',
+    horizontalAlign: 'center',
+    dropDownSelection: [],
   },
   {
-    id: 2,
-    title: "Resizing Resizing Resizing Resizing Resizing Resizing Resizing Resizing",
-    resizable: true,
+    databaseField: "primaryKey",
+    columnTitle: "db ID",
+    columnIsResizable: true,
+    fieldIsEditable: false,
+    width: 65,
+    minWidth: 65,
+    textmaxLength: 0,
+    numberMinValue: 0,
+    numberMaxValue: 0,
+    editType: 'none',
+    dataFieldName: 'id',
+    horizontalAlign: 'center',
+    dropDownSelection: [],
   },
   {
-    id: 3,
-    title: "Column width",
-    resizable: true,
+    databaseField: "columnWidth",
+    columnTitle: "Column width",
+    columnIsResizable: true,
+    fieldIsEditable: true,
+    width: 180,
+    minWidth: 100,
+    textmaxLength: 200,
+    numberMinValue: 0,
+    numberMaxValue: 0,
+    editType: 'textfield',
+    dataFieldName: 'field1',
+    horizontalAlign: 'left',
+    dropDownSelection: [],
   },
   {
-    id: 4,
-    title: "Textarea autosize",
-    resizable: true,
+    databaseField: "textarea",
+    columnTitle: "Textarea autosize",
+    columnIsResizable: true,
+    fieldIsEditable: true,
+    width: 180,
+    minWidth: 145,
+    textmaxLength: 200,
+    numberMinValue: 0,
+    numberMaxValue: 0,
+    editType: 'textarea',
+    dataFieldName: 'fieldtextarea',
+    horizontalAlign: 'left',
+    dropDownSelection: [],
   },
   {
-    id: 4,
-    title: "Textfield multiline",
-    resizable: true,
+    databaseField: "comment",
+    columnTitle: "Textfield multiline",
+    columnIsResizable: true,
+    fieldIsEditable: true,
+    width: 180,
+    minWidth: 180,
+    textmaxLength: 100,
+    numberMinValue: 0,
+    numberMaxValue: 0,
+    editType: 'textfieldmultiline',
+    dataFieldName: 'field2',
+    horizontalAlign: 'left',
+    dropDownSelection: [],
+  },
+  {
+    databaseField: "numbervalue",
+    columnTitle: "Count events",
+    columnIsResizable: true,
+    fieldIsEditable: true,
+    width: 120,
+    minWidth: 120,
+    textmaxLength: 100,
+    numberMinValue: 0,
+    numberMaxValue: 10000,
+    editType: 'integer',
+    dataFieldName: 'eventCount',
+    horizontalAlign: 'right',
+    dropDownSelection: [],
+  },
+  {
+    databaseField: "decimalvalue",
+    columnTitle: "Average",
+    columnIsResizable: true,
+    fieldIsEditable: true,
+    width: 120,
+    minWidth: 120,
+    textmaxLength: 20,
+    numberMinValue: 0,
+    numberMaxValue: 10000,
+    editType: 'decimal',
+    dataFieldName: 'viewsPerUser',
+    horizontalAlign: 'right',
+    dropDownSelection: [],
+  },
+  {
+    databaseField: "dropdown",
+    columnTitle: "Dropdown",
+    columnIsResizable: true,
+    fieldIsEditable: true,
+    width: 180,
+    minWidth: 180,
+    textmaxLength: 100,
+    numberMinValue: 0,
+    numberMaxValue: 10000,
+    editType: 'dropdown',
+    dataFieldName: 'dropdownvalue',
+    horizontalAlign: 'left',
+    dropDownSelection: [
+      { id: 1, value: 'Dropdown 1', },
+      { id: 2, value: 'Dropdown 2', },
+      { id: 3, value: 'Dropdown 3', },
+      { id: 4, value: 'Dropdown 4', },
+      { id: 5, value: 'Dropdown 5', },
+      { id: 6, value: 'Dropdown 6', },
+    ],
+  },
+  {
+    databaseField: "",
+    columnTitle: "Edit",
+    columnIsResizable: false,
+    fieldIsEditable: false,
+    width: 32,
+    minWidth: 32,
+    textmaxLength: 0,
+    numberMinValue: 0,
+    numberMaxValue: 0,
+    editType: 'btnEdit',
+    dataFieldName: '',
+    horizontalAlign: 'center',
+    dropDownSelection: [],
+  },
+  {
+    databaseField: "",
+    columnTitle: "Save",
+    columnIsResizable: false,
+    fieldIsEditable: false,
+    width: 32,
+    minWidth: 32,
+    textmaxLength: 0,
+    numberMinValue: 0,
+    numberMaxValue: 0,
+    editType: 'btnSave',
+    dataFieldName: '',
+    horizontalAlign: 'center',
+    dropDownSelection: [],
+  },
+  {
+    databaseField: "",
+    columnTitle: "Undo",
+    columnIsResizable: false,
+    fieldIsEditable: false,
+    width: 32,
+    minWidth: 32,
+    textmaxLength: 0,
+    numberMinValue: 0,
+    numberMaxValue: 0,
+    editType: 'btnUndo',
+    dataFieldName: '',
+    horizontalAlign: 'center',
+    dropDownSelection: [],
+  },
+  {
+    databaseField: "",
+    columnTitle: "Delete",
+    columnIsResizable: false,
+    fieldIsEditable: false,
+    width: 32,
+    minWidth: 32,
+    textmaxLength: 0,
+    numberMinValue: 0,
+    numberMaxValue: 0,
+    editType: 'btnDelete',
+    dataFieldName: '',
+    horizontalAlign: 'center',
+    dropDownSelection: [],
   },
 ];
 
 const dataRolf = [
     {
       id: 4,
+      field1: 'Field4',
+      fieldtextarea: 'Textarea ... ... ... ',
+      field2: 'Field 2 long text multiline ....',
+      dropdownvalue: 1,
       name: 'User Profile Dashboard',
       moreInfo: 'more info about "Dashboard"',
       status: 'Online',
@@ -213,6 +401,10 @@ const dataRolf = [
     },
     {
       id: 5,
+      field1: 'Field5',
+      fieldtextarea: 'Textarea ... ... ... ',
+      field2: 'Field 2 long text multiline ....',
+      dropdownvalue: 2,
       name: 'Article Listing - Tech News',
       moreInfo: 'more info about "Listing"',
       status: 'Offline',
@@ -229,6 +421,10 @@ const dataRolf = [
     },
     {
       id: 6,
+      field1: 'Field6',
+      fieldtextarea: 'Textarea ... ... ... ',
+      field2: 'Field 2 long text multiline ....',
+      dropdownvalue: 4,
       name: 'FAQs - Customer Support',
       moreInfo: 'more info about "FAQs"',
       status: 'Online',
@@ -244,6 +440,10 @@ const dataRolf = [
     },
     {
       id: 7,
+      field1: 'Field7',
+      fieldtextarea: 'Textarea ... ... ... ',
+      field2: 'Field 2 long text multiline ....',
+      dropdownvalue: 2,
       name: 'Product Comparison - Laptops',
       moreInfo: 'more info about "Laptops"',
       status: 'Offline',
@@ -259,6 +459,10 @@ const dataRolf = [
     },
     {
       id: 8,
+      field1: 'Field8',
+      fieldtextarea: 'Textarea ... ... ... ',
+      field2: 'Field 2 long text multiline ....',
+      dropdownvalue: 1,
       name: 'Shopping Cart - Electronics',
       moreInfo: 'more info about "Electronics"',
       status: 'Online',
@@ -275,6 +479,10 @@ const dataRolf = [
     },
     {
       id: 9,
+      field1: 'Field9',
+      fieldtextarea: 'Textarea ... ... ... ',
+      field2: 'Field 2 long text multiline ....',
+      dropdownvalue: 1,
       name: 'Payment Confirmation - Bank Transfer',
       moreInfo: 'more info about "Bank"',
       status: 'Offline',
@@ -290,6 +498,10 @@ const dataRolf = [
     },
     {
       id: 10,
+      field1: 'Field10',
+      fieldtextarea: 'Textarea ... ... ... ',
+      field2: 'Field 2 long text multiline ....',
+      dropdownvalue: 1,
       name: 'Product Reviews - Smartphones',
       moreInfo: 'more info about "Smartphones"',
       status: 'Online',
@@ -306,6 +518,10 @@ const dataRolf = [
     },
     {
       id: 11,
+      field1: 'Field11',
+      fieldtextarea: 'Textarea ... ... ... ',
+      field2: 'Field 2 long text multiline ....',
+      dropdownvalue: 1,
       name: 'Subscription Management - Services',
       moreInfo: 'more info about "Services"',
       status: 'Offline',
@@ -322,6 +538,10 @@ const dataRolf = [
     },
     {
       id: 12,
+      field1: 'Field12',
+      fieldtextarea: 'Textarea ... ... ... ',
+      field2: 'Field 2 long text multiline ....',
+      dropdownvalue: 1,
       name: 'Order Tracking - Shipments',
       moreInfo: 'more info about "Shipments"',
       status: 'Online',
@@ -338,6 +558,10 @@ const dataRolf = [
     },
     {
       id: 13,
+      field1: 'Field13',
+      fieldtextarea: 'Textarea ... ... ... ',
+      field2: 'Field 2 long text multiline ....',
+      dropdownvalue: 1,
       name: 'Customer Feedback - Surveys',
       moreInfo: 'more info about "Surveys"',
       status: 'Offline',
@@ -353,6 +577,10 @@ const dataRolf = [
     },
     {
       id: 14,
+      field1: 'Field14',
+      fieldtextarea: 'Textarea ... ... ... ',
+      field2: 'Field 2 long text multiline ....',
+      dropdownvalue: 1,
       name: 'Account Settings - Preferences',
       moreInfo: 'more info about "Preferences"',
       status: 'Online',
@@ -368,6 +596,10 @@ const dataRolf = [
     },
     {
       id: 15,
+      field1: 'Field15',
+      fieldtextarea: 'Textarea ... ... ... ',
+      field2: 'Field 2 long text multiline ....',
+      dropdownvalue: 1,
       name: 'Login Page - Authentication',
       moreInfo: 'more info about "Authentication"',
       status: 'Offline',
@@ -384,6 +616,10 @@ const dataRolf = [
     },
     {
       id: 16,
+      field1: 'Field16',
+      fieldtextarea: 'Textarea ... ... ... ',
+      field2: 'Field 2 long text multiline ....',
+      dropdownvalue: 1,
       name: 'Promotions - Seasonal Sales',
       moreInfo: 'more info about "Promotions"',
       status: 'Online',
@@ -399,6 +635,10 @@ const dataRolf = [
     },
     {
       id: 17,
+      field1: 'Field17',
+      fieldtextarea: 'Textarea ... ... ... ',
+      field2: 'Field 2 long text multiline ....',
+      dropdownvalue: 1,
       name: 'Tutorials - How to Guides',
       moreInfo: 'more info about "Tutorials"',
       status: 'Offline',
@@ -414,6 +654,10 @@ const dataRolf = [
     },
     {
       id: 18,
+      field1: 'Field18',
+      fieldtextarea: 'Textarea ... ... ... ',
+      field2: 'Field 2 long text multiline ....',
+      dropdownvalue: 1,
       name: 'Blog Posts - Tech Insights',
       moreInfo: 'more info about "Blog"',
       status: 'Online',
@@ -429,6 +673,10 @@ const dataRolf = [
     },
     {
       id: 19,
+      field1: 'Field19',
+      fieldtextarea: 'Textarea ... ... ... ',
+      field2: 'Field 2 long text multiline ....',
+      dropdownvalue: 1,
       name: 'Events - Webinars',
       moreInfo: 'more info about "Webinars"',
       status: 'Offline',
@@ -444,6 +692,10 @@ const dataRolf = [
     },
     {
       id: 20,
+      field1: 'Field20',
+      fieldtextarea: 'Textarea ... ... ... ',
+      field2: 'Field 2 long text multiline ....',
+      dropdownvalue: 1,
       name: 'Support - Contact Us',
       moreInfo: 'more info about "Support"',
       status: 'Online',
@@ -459,6 +711,10 @@ const dataRolf = [
     },
     {
       id: 21,
+      field1: 'Field21',
+      fieldtextarea: 'Textarea ... ... ... ',
+      field2: 'Field 2 long text multiline ....',
+      dropdownvalue: 1,
       name: 'Case Studies - Success Stories',
       moreInfo: 'more info about "Success"',
       status: 'Offline',
@@ -474,6 +730,10 @@ const dataRolf = [
     },
     {
       id: 22,
+      field1: 'Field22',
+      fieldtextarea: 'Textarea ... ... ... ',
+      field2: 'Field 2 long text multiline ....',
+      dropdownvalue: 1,
       name: 'News - Industry Updates',
       moreInfo: 'more info about "Updates"',
       status: 'Online',
@@ -489,6 +749,10 @@ const dataRolf = [
     },
     {
       id: 23,
+      field1: 'Field23',
+      fieldtextarea: 'Textarea ... ... ... ',
+      field2: 'Field 2 long text multiline ....',
+      dropdownvalue: 1,
       name: 'Forum - User Discussions',
       moreInfo: 'more info about "Discussions"',
       status: 'Offline',
@@ -578,7 +842,7 @@ class ConfigAnnotageRolf extends React.Component {
       colwidth: 120,
       headerHeight: 35,
       headerHeightList: [25, 25, 80, 35, 35, 35],
-      headerWidthList: [25, 25, 120, 80, 80, 80],
+      //headerWidthList: [25, 25, 120, 80, 80, 80],
       rowHeightList: getRowHeightList(),
     };
   }
@@ -939,7 +1203,9 @@ class ConfigAnnotageRolf extends React.Component {
     let cellHeight = 55;
     if (startIndex > -1) cellHeight = this.state.rowHeightList[startIndex].height;
 
-//alert("e.cellHeight = " + cellHeight);
+
+    //alert("e.startIndex = " + startIndex);
+    //alert("e.cellHeight = " + cellHeight);
 //alert("newList[index].height = " + newList[index].height);
 
     const onMouseMoveRowNS = (e) => {
@@ -967,6 +1233,14 @@ class ConfigAnnotageRolf extends React.Component {
 
 //alert("e.clientY = " + e.clientY);
 
+const startIndex = this.state.rowHeightList.findIndex(dr => dr.id === rowid);
+let cellHeight = 55;
+if (startIndex > -1) cellHeight = this.state.rowHeightList[startIndex].height;
+//alert("e.rowid = " + rowid);
+//alert("e.startIndex = " + startIndex);
+//alert("e.cellHeight = " + cellHeight);
+
+
     };    
 
     document.addEventListener('mousemove', onMouseMoveRowNS);
@@ -982,26 +1256,34 @@ class ConfigAnnotageRolf extends React.Component {
 
   handleMouseDownRowEW(e, index)
   {
-    let mouseStart = e.clientX;
-    let cellWidth = this.state.colwidth;
+    const mouseStart = e.clientX;
+    const colindex = index;
+    //const cellWidth = this.state.headerWidthList[colindex];
+    const cellWidth = this.state.columns[colindex];
 
-    //alert("start index height = " + index);
+    //alert("e.clientX = " + mouseStart + ", cellWidth = " + cellWidth);
 
     const onMouseMoveRowEW = (e) => {
       const newwidth = e.clientX - mouseStart + cellWidth;
-      const newList = this.state.headerWidthList;
+      //const newList = this.state.headerWidthList;
+      const newList = this.state.columns;
       newList[index] = newwidth;
-      this.setState({headerWidthList : newList});
+      //this.setState({headerWidthList : newList});
+      this.setState({columns : newList});
+      
     }
-
-
-    //headerHeightList
 
     const onMouseUpRowEW = (e) => {
       document.removeEventListener('mousemove', onMouseMoveRowEW);
       document.removeEventListener('mouseup', onMouseUpRowEW);
       document.body.style.userSelect = "auto"; 
       this.setNewHeaderHeight(e.target.clientHeight);
+
+      //const cellWidth = this.state.headerWidthList[colindex];
+      //alert("colindex = " + colindex);
+      //alert("cellWidth = " + cellWidth);
+      //alert("colNumber = " + colNumber + ", cellWidth = " + cellWidth);
+      //alert("this.state.headerWidthList = " + this.state.headerWidthList);
     };    
 
     document.addEventListener('mousemove', onMouseMoveRowEW);
@@ -1102,11 +1384,9 @@ class ConfigAnnotageRolf extends React.Component {
     const colwidth = this.state.colwidth;
     const rowHeight = this.state.rowHeight;
     const headerHeightList = this.state.headerHeightList;
-    const headerWidthList = this.state.headerWidthList;
-    //const headerHeight = this.state.headerHeight;
+    //const headerWidthList = this.state.headerWidthList;
     const headerHeight = this.getHeaderHeight();
     const columns = this.state.columns;
-    //this.setRowHeightList();
     const rowHeightList = this.state.rowHeightList;
     
 
@@ -1119,7 +1399,7 @@ class ConfigAnnotageRolf extends React.Component {
           onKeyUp={this.handleTableMainKeyUp}
           className={classes.table_container}
           style={{
-            height: 350, // Set the max height to allow scrolling after 5 items
+            height: 650, // Set the max height to allow scrolling after 5 items
             overflowY: 'auto', // Enables vertical scrolling
             overflow: 'auto',
             '&::-webkit-scrollbar': {
@@ -1154,6 +1434,54 @@ class ConfigAnnotageRolf extends React.Component {
               <TableRow 
                 className={classes.table_head_row}
                 >
+
+                {columns.map((column, colHeadIndex) => {
+                  const isCheckbox = column.editType === 'checkbox';
+                  const isCheckboxIcon = column.editType === 'checkboxIcon';
+                  const isNoEdit = (!isCheckbox) && (!isCheckboxIcon);
+
+                  const columnTitle = columns[colHeadIndex].columnTitle;
+                  const isColumnIsResizable = columns[colHeadIndex].columnIsResizable;
+                  const columnMinWidth = columns[colHeadIndex].minWidth;
+                  const columnHorizontalAlign = columns[colHeadIndex].horizontalAlign;
+                  const newWidth = columns[colHeadIndex].width;
+
+                  return (
+                    <InselTableCellWidthResizer
+                    className={classes.table_head_cell}
+                    notResizable={!isColumnIsResizable}
+                    width={newWidth}
+                    minWidth={columnMinWidth}
+                    horizontalAlign={columnHorizontalAlign}
+                    verticalAlign={'bottom'}
+                    height= {85}
+                    setWidth={(colwidth) => this.setState({colwidth: colwidth})}
+                    handleMouseDownRowEW={(e)=>this.handleMouseDownRowEW(e, colHeadIndex)}>
+                    {isCheckbox &&
+                      <Checkbox
+                      checked={mainChecked}
+                      indeterminate={mainIndeterminated}
+                      color_checked={green[400]}
+                      color_uncheck={green[600]}
+                      onClick={e => this.hdlCheckboxClickHeader(e)}
+                      size="small"/>
+                    }
+                    {isCheckboxIcon &&
+                      <IconButton
+                        style={{ width: column.width, height: column.width }} 
+                      >
+                      <img 
+                        src={mainCheckIcon}
+                        style={{ width: column.width, height: column.width }} 
+                        />
+                      </IconButton>
+                    }
+                    {isNoEdit && columnTitle }
+                    </InselTableCellWidthResizer>
+                  );
+                })}
+
+{/* 
                 <InselTableCellWidthResizer
                   className={classes.table_head_cell}
                   notResizable
@@ -1161,18 +1489,11 @@ class ConfigAnnotageRolf extends React.Component {
                   height= {headerHeight}
                   setHeight={(colwidth) => this.setState({colwidth: colwidth})}
                   handleMouseDownRowEW={(e)=>this.handleMouseDownRowEW(e, 0)}>
-                  <Checkbox
-                    checked={mainChecked}
-                    indeterminate={mainIndeterminated}
-                    color_checked={green[400]}
-                    color_uncheck={green[600]}
-                    onClick={e => this.hdlCheckboxClickHeader(e)}
-                    size="small"
-                  />
                 </InselTableCellWidthResizer>
+                */}                
 
 
-{/* checkbox with images */}
+{/* checkbox with images 
                 <InselTableCellWidthResizer
                   className={classes.table_head_cell}
                   width={headerWidthList[1]}
@@ -1186,21 +1507,23 @@ class ConfigAnnotageRolf extends React.Component {
                   />
                   </IconButton>
                 </InselTableCellWidthResizer>
+                */}
 
-{/* own implementation of resizing cell */}
+{/* own implementation of resizing cell 
                 <InselTableCellWidthResizer
                   className={classes.table_head_cell}
                   width={headerWidthList[2]}
                   height={headerHeight}
                   horizontalAlign={'center'}
                   setHeight={(colwidth) => this.setState({colwidth: colwidth})}
-                  handleMouseDownRowEW={(e)=>this.handleMouseDownRowEW(e, 2)}>
-                  {/*this.state.columns[2]*/}
-                  ddddddddd
+                  handleMouseDownRowEW={(e)=>this.handleMouseDownRowEW(e, 2)}
+                  resizerBackgroundColor='red'>
+                  {columns[2].title}
                 </InselTableCellWidthResizer>
+                */}
 
 
-{/* own implementation of resizing column width */}
+{/* own implementation of resizing column width
                 <InselTableCellWidthResizer
                   className={classes.table_head_cell}
                   width={headerWidthList[3]}
@@ -1208,10 +1531,10 @@ class ConfigAnnotageRolf extends React.Component {
                   setHeight={(colwidth) => this.setState({colwidth: colwidth})}
                   handleMouseDownRowEW={(e)=>this.handleMouseDownRowEW(e, 3)}>
                   Column width
-                </InselTableCellWidthResizer>
+                </InselTableCellWidthResizer> */}
 
 
-{/* Textarea */}
+{/* Textarea 
                 <InselTableCellWidthResizer
                   className={classes.table_head_cell}
                   width={headerWidthList[4]}
@@ -1221,9 +1544,9 @@ class ConfigAnnotageRolf extends React.Component {
                   setHeight={(colwidth) => this.setState({colwidth: colwidth})}
                   handleMouseDownRowEW={(e)=>this.handleMouseDownRowEW(e, 4)}>
                   textarea autosize
-                </InselTableCellWidthResizer>
+                </InselTableCellWidthResizer>*/}
 
-{/* Textarea */}
+{/* Textarea 
                 <InselTableCellWidthResizer
                   className={classes.table_head_cell}
                   width={headerWidthList[5]}
@@ -1232,16 +1555,16 @@ class ConfigAnnotageRolf extends React.Component {
                   setHeight={(colwidth) => this.setState({colwidth: colwidth})}
                   handleMouseDownRowEW={(e)=>this.handleMouseDownRowEW(e, 5)}>
                     Textfield multiline
-                </InselTableCellWidthResizer>
+                </InselTableCellWidthResizer>*/}
 
-{/* dropdown component */}
+{/* dropdown component 
                 <TableCell
                   className={classes.table_head_cell}
                   style={{ paddingLeft: 5 }}>
                     dropdown
-                </TableCell>
+                </TableCell>*/}
 
-{/* datetime picker component */}
+{/* datetime picker component 
                 <TableCell
                   className={classes.table_head_cell}
                   style={{ paddingLeft: 5 }}>
@@ -1380,6 +1703,7 @@ class ConfigAnnotageRolf extends React.Component {
                   }}>
                     Delete
                 </TableCell>
+                */}
 
 
                 {/*  
@@ -1387,6 +1711,8 @@ class ConfigAnnotageRolf extends React.Component {
                   <TableSortLabel>Action</TableSortLabel>
                 </TableCell>
                 */}
+
+
               </TableRow>
             </TableHead>
 
@@ -1399,7 +1725,7 @@ class ConfigAnnotageRolf extends React.Component {
 
 
             <TableBody className={classes.table_body_row}>
-              {data.map((row, index) => {
+              {data.map((row, rowindex) => {
                 const isCellEditingUser = this.getCellEditing(row.id, this.fieldnameUsers);
                 const isRowChanged = this.isRowEdited(row.id);
                 const isRowSelected = this.getRowSelection(row.id);
@@ -1412,6 +1738,8 @@ class ConfigAnnotageRolf extends React.Component {
                 } = row;
                 const editvalue_Users = isCellEditingUser ? this.newvalue_Users : users;
                 const rowHeight = this.getRowHeight(row.id);
+                //const reszBgColor = (index === 1 ) ? 'red' : 'blue';
+                const reszBgColor = 'lightblue';
 
                 return (
                   <TableRow
@@ -1421,14 +1749,211 @@ class ConfigAnnotageRolf extends React.Component {
                       height: rowHeight,
                       backgroundColor: isRDeleted ? '#fee' : isRowChanged ? '#efe' : 'white',
                     }}
-                    key={`table-row-${index}-${id}`}>
+                    key={`table-row-${rowindex}-${id}`} 
+                  >
+
+                  {columns.map((column, colindex) => {
+
+                    //const {
+                    //  editType, dropDownSelection, horizontalAlign, 
+                    //} = column;
 
 
-                    <InselTableCellHeightResizer
+                    const isCheckbox = column.editType === 'checkbox';
+                    const isCheckboxIcon = column.editType === 'checkboxIcon';
+                    const isNoEdit = column.editType === 'none';
+                    const isTextfield = column.editType === 'textfield';
+                    const isTextarea = column.editType === 'textarea';
+                    const isTextfieldMultiline = column.editType === 'textfieldmultiline';
+                    const isInteger = column.editType === 'integer';
+                    const isDecimal = column.editType === 'decimal';
+                    const isDropdown = column.editType === 'dropdown';
+                    const isButtonEdit = column.editType === 'btnEdit';
+                    const isButtonSave = column.editType === 'btnSave';
+                    const isButtonUndo = column.editType === 'btnUndo';
+                    const isButtonDelete = column.editType === 'btnDelete';
+
+                    const typeFound = (
+                      isCheckbox || isCheckboxIcon || isNoEdit || 
+                      isTextfield || isTextarea || isTextfieldMultiline ||
+                      isInteger || isDecimal || isDropdown ||
+                      isButtonEdit || isButtonSave || isButtonUndo || isButtonDelete
+                    );
+                    
+                    let tmp = row[column.dataFieldName];
+                    if (isDecimal)
+                    {
+                      tmp = tmp.toFixed(3);
+                    }
+                    const value = tmp;
+
+                    
+
+                    return (
+                      <InselTableCellHeightResizer
+                        className={classes.table_check_cell}
+                        height={rowHeight}
+                        setHeight={(height) => this.setState({rowHeight: height})}
+                        handleMouseDownRowNS={(e)=>this.handleMouseDownRowNS(e, row.id)}
+                        resizerBackgroundColor={reszBgColor}>
+                        {isCheckbox &&
+                          <Checkbox
+                          checked={isRowSelected}
+                          color_checked={green[400]}
+                          color_uncheck={green[600]}
+                          onClick={e => this.hdlCheckboxClickRow(e, rowindex)}
+                          size="small"/>
+                        }
+                        {isCheckboxIcon &&
+                          <IconButton
+                          style={{ width: column.width, height: column.width }} >
+                          <img 
+                            src={iconSource}
+                            style={{ width: column.width, height: column.width }} 
+                          />
+                          </IconButton>
+                        }
+                        {isNoEdit && 
+                          <TextField
+                            value={value}
+                            disabled
+                            fullWidth
+                            style={{ textAlign: column.horizontalAlign, }}
+                          ></TextField>}
+
+                        {isTextfield && 
+                          <TextField
+                            value={value}
+                            fullWidth
+                            style={{ textAlign: column.horizontalAlign, }}
+                          ></TextField>}
+
+                        {isTextarea && 
+                          <textarea>{value}</textarea>}
+
+                        {isTextfieldMultiline && 
+                          <TextField 
+                            multiline
+                            value={value}
+                            fullWidth
+                            style={{ textAlign: column.horizontalAlign, }}
+                            >
+                          </TextField>
+                        }
+                        {isInteger && 
+                          <TextField
+                            value={value}
+                            fullWidth
+                            style={{ textAlign: column.horizontalAlign, }}
+                          >
+                          </TextField>
+                        }
+                        {isDecimal && 
+                          <TextField
+                            value={value}
+                            fullWidth
+                            style={{ textAlign: column.horizontalAlign, }}
+                          >
+                          </TextField>
+                        }
+                        {isDropdown && 
+                          <FormControl
+                            style={{ width: column.width, }}
+                            sx={{ m: 1, minWidth: column.minWidth, }}>
+                          <InputLabel id="demo-simple-select-required-label">select example</InputLabel>
+                          <Select
+                            //labelId="demo-simple-select-required-label"
+                            //label="select example"
+                            width={column.width}
+                            //minWidth={100}
+                            value={value}
+                            style={{ width: column.width, }}>
+                            {column.dropDownSelection.map((item, itemIndex) =>
+                            {
+                              const ddId = column.dropDownSelection[itemIndex].id;
+                              const ddValue = column.dropDownSelection[itemIndex].value;
+                              return (
+                                <MenuItem 
+                                  value={ddId}
+                                  >{ddValue}</MenuItem>
+                              );
+                            })}
+                          </Select> 
+                          </FormControl>
+                        }
+
+                        {isButtonEdit &&
+                          <IconButton
+                            disabled={isRDeleted}
+                            onClick={e => this.handleEditClick(e, id,
+                              name, users, eventCount, viewsPerUser, averageTime)}
+                            style={{ width: column.width, height: column.width }} >
+                          <img 
+                            src={mainEditIcon}
+                            title="Edit this in the dialog"
+                            style={{ 
+                              width: column.width, height: column.width,
+                              opacity: (!isRDeleted ? 1 : 0.2) }} 
+                          />
+                          </IconButton>
+                        }
+
+                        {isButtonSave &&
+                          <IconButton
+                          disabled={!isRowChanged}
+                          style={{ width: column.width, height: column.width }} >
+                          <img 
+                            src={mainSaveIcon}
+                            title="Save this row by clicking here"
+                            style={{ 
+                              width: column.width, height: column.width,
+                              opacity: (isRowChanged ? 1 : 0.2) }} 
+                          />
+                          </IconButton>
+                        }
+
+                        {isButtonUndo &&
+                          <IconButton
+                            disabled={!isRowChanged}
+                            onClick={e => this.handleUndoRow(e, id)}
+                            style={{ width: column.width, height: column.width }} >
+                          <img 
+                            src={mainUndoIcon}
+                            title="Undo this row by clicking here"
+                            style={{ 
+                              width: column.width, height: column.width,
+                              opacity: (isRowChanged ? 1 : 0.2) }} 
+                          />
+                          </IconButton>
+                        }
+
+                        {isButtonDelete &&
+                          <IconButton
+                            disabled={isRDeleted}
+                            onClick={e => this.handleDeleteRow(e, id)}
+                            style={{ width: column.width, height: column.width }} >
+                          <img 
+                            src={mainDeleteIcon}
+                            title="Delete this row by clicking here"
+                            style={{ width: column.width, height: column.width,
+                              opacity: (!isRDeleted ? 1 : 0.2)
+                             }} 
+                          />
+                          </IconButton>
+                        }
+
+
+                        {!typeFound && <span>TYPE ERROR</span>}
+                      </InselTableCellHeightResizer>
+                    );
+                  })} {/* end map columns */}
+
+{/*                    <InselTableCellHeightResizer
                       className={classes.table_check_cell}
                       height={rowHeight}
                       setHeight={(height) => this.setState({rowHeight: height})}
-                      handleMouseDownRowNS={(e)=>this.handleMouseDownRowNS(e, row.id)}>
+                      handleMouseDownRowNS={(e)=>this.handleMouseDownRowNS(e, row.id)}
+                      resizerBackgroundColor={reszBgColor}>
                       <Checkbox
                         checked={isRowSelected}
                         color_checked={green[400]}
@@ -1442,7 +1967,8 @@ class ConfigAnnotageRolf extends React.Component {
                       className={classes.table_check_cell}
                       height={rowHeight}
                       setHeight={(height) => this.setState({rowHeight: height})}
-                      handleMouseDownRowNS={(e)=>this.handleMouseDownRowNS(e, row.id)}>
+                      handleMouseDownRowNS={(e)=>this.handleMouseDownRowNS(e, row.id)}
+                      resizerBackgroundColor={reszBgColor}>
                       <IconButton>
                       <img 
                         src={iconSource}
@@ -1455,16 +1981,18 @@ class ConfigAnnotageRolf extends React.Component {
                       className={classes.table_check_cell}
                       height={rowHeight}
                       setHeight={(height) => this.setState({rowHeight: height})}
-                      handleMouseDownRowNS={(e)=>this.handleMouseDownRowNS(e, row.id)}>
+                      handleMouseDownRowNS={(e)=>this.handleMouseDownRowNS(e, row.id)}
+                      resizerBackgroundColor={reszBgColor}>
                     </InselTableCellHeightResizer>
 
 
-{/* resizing */}
+{/* resizing 
                     <InselTableCellHeightResizer
                       className={classes.table_check_cell}
                       height={rowHeight}
                       setHeight={(height) => this.setState({rowHeight: height})}
-                      handleMouseDownRowNS={(e)=>this.handleMouseDownRowNS(e, row.id)}>
+                      handleMouseDownRowNS={(e)=>this.handleMouseDownRowNS(e, row.id)}
+                      resizerBackgroundColor={reszBgColor}>
                       <TextField 
                         multiline
                         style={{
@@ -1473,7 +2001,7 @@ class ConfigAnnotageRolf extends React.Component {
                     </InselTableCellHeightResizer>
 
 
-{/* textarea */}
+{/* textarea 
                     <InselTableCellHeightResizer
                       className={classes.table_check_cell}
                       height={rowHeight}
@@ -1488,7 +2016,7 @@ class ConfigAnnotageRolf extends React.Component {
                           >klj d fjlkf slfkjdf lskfj lfj</textarea>
                     </InselTableCellHeightResizer>
 
-{/* textfield */}
+{/* textfield 
                     <InselTableCellHeightResizer
                       className={classes.table_check_cell}
                       height={rowHeight}
@@ -1503,7 +2031,7 @@ class ConfigAnnotageRolf extends React.Component {
                     </InselTableCellHeightResizer>
 
 
-{/* dropdown component */}
+{/* dropdown component 
                     <InselTableCellHeightResizer
                       className={classes.table_check_cell}
                       height={rowHeight}
@@ -1527,7 +2055,7 @@ class ConfigAnnotageRolf extends React.Component {
 
 
 
-{/* datetime picker */}
+{/* datetime picker 
                     <InselTableCellHeightResizer
                       className={classes.table_check_cell}
                       height={rowHeight}
@@ -1565,7 +2093,6 @@ class ConfigAnnotageRolf extends React.Component {
                             borderRadius: '4px',
                           }}
                         />
-                        */}
                         <div
                           style={{
                             margin: 0,
@@ -1576,7 +2103,6 @@ class ConfigAnnotageRolf extends React.Component {
                             scrollHehavior: 'smooth',
                           }}>
 
-                          {/* 
                           <ResizableBox 
                             width={200} 
                             height={30} 
@@ -1585,7 +2111,7 @@ class ConfigAnnotageRolf extends React.Component {
                               //cursor: ew-resize !important;
                               //cursor: 'col-resize'
                             }}
-                          >*/}
+                          >
 
                           <Box
                             component="p"
@@ -1631,7 +2157,7 @@ class ConfigAnnotageRolf extends React.Component {
                           {status}
                         </Typography>
                       </Box>
-                      */}
+                      
                       <Chip 
                         label={status} 
                         style={{
@@ -1640,7 +2166,7 @@ class ConfigAnnotageRolf extends React.Component {
                         }}
                         size="small" />
                     </InselTableCellHeightResizer>
-
+*/}
 
 
 
@@ -1651,6 +2177,7 @@ class ConfigAnnotageRolf extends React.Component {
 
 
 {/* editing one cell ------------------------------------------------------------------------------------------------ */}
+{/*
                     <InselTableCellHeightResizer
                       className={classes.table_check_cell}
                       height={rowHeight}
@@ -1685,9 +2212,8 @@ class ConfigAnnotageRolf extends React.Component {
                               justifyContent: 'right',
                               marginBlock: 'right',
                             }}>
-                            
-                            {/* TODO: solution Rolf */}
-                            {/* 
+*/}                            
+                            {/* TODO: solution Rolf
                             <div
                               onCellDoubleClick={e => this.handleCellDoubleClick(row.id, this.fieldnameUsers)}
                               style = {{
@@ -1696,6 +2222,7 @@ class ConfigAnnotageRolf extends React.Component {
                             ><RightText
                             >{users}</RightText></div>
                             */}
+{/*                            
                             <div
                               style = {{
                                 //display: isCellEditingUser === false ? 'none' : 'visible'
@@ -1726,25 +2253,24 @@ class ConfigAnnotageRolf extends React.Component {
                                 >
                               </input></div>
 
-                            {/*
                             <div 
                             style={{ 
                                 width: '100%', height: '100%', 
                                 textAlign: 'right',
                               }}>{users}</div>         
-                              */}                   
                             
                           </Box>
                           </div>
                       </Box>
                     </InselTableCellHeightResizer>
-
+*/}
 
 
 
 
 
                     {/* TODO: do we need 2 elements BOX??? */}
+
                     <InselTableCellHeightResizer
                       className={classes.table_check_cell}
                       height={rowHeight}
@@ -1947,7 +2473,7 @@ class ConfigAnnotageRolf extends React.Component {
                       </IconButton>
                     </InselTableCellHeightResizer>
 
-{/* save button on row */}
+{/* save button on row 
                     <InselTableCellHeightResizer
                       className={classes.table_check_cell}
                       height={rowHeight}
@@ -1968,7 +2494,7 @@ class ConfigAnnotageRolf extends React.Component {
                       </IconButton>
                     </InselTableCellHeightResizer>
 
-{/* undo button on row */}
+{/* undo button on row 
                     <InselTableCellHeightResizer
                       className={classes.table_check_cell}
                       height={rowHeight}
@@ -1990,7 +2516,7 @@ class ConfigAnnotageRolf extends React.Component {
                       </IconButton>
                     </InselTableCellHeightResizer>
 
-{/* delete row */}
+{/* delete row 
                     <InselTableCellHeightResizer
                       className={classes.table_check_cell}
                       height={rowHeight}
@@ -2011,6 +2537,8 @@ class ConfigAnnotageRolf extends React.Component {
                       />
                       </IconButton>
                     </InselTableCellHeightResizer>
+
+                    */}
 
 
 

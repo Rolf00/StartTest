@@ -50,12 +50,13 @@ class InselTableCellWidthResizer extends React.Component {
         width, 
         notResizable, 
         horizontalAlign, 
-        verticalAlign } = this.props;
+        verticalAlign,
+        resizerBackgroundColor } = this.props;
 
-      const textResizer = notResizable ? '' : '&nbsp;';
       const verticalAlignText = 
         verticalAlign === 'center' ? 'center' : 
         verticalAlign === 'bottom' ? 'flex-end' : '';
+      const reszBackgroundColor = resizerBackgroundColor ? resizerBackgroundColor : 'blue';
 
       return (
         <TableCell
@@ -80,7 +81,7 @@ class InselTableCellWidthResizer extends React.Component {
             <div
               style={{
                 flexGrow: 1, 
-                backgroundColor: 'yellow', 
+                backgroundColor: 'lightgrey', 
                 minHeight: height, 
                 textAlign: horizontalAlign,
                 display: 'flex',
@@ -98,9 +99,11 @@ class InselTableCellWidthResizer extends React.Component {
               minHeight: height, 
               width: notResizable ? '0px' : '5px',
               padding: 0,
-              backgroundColor: 'blue',
+              backgroundColor: reszBackgroundColor,
               cursor: 'col-resize',
-            }}>{textResizer}
+            }}>
+            {/* textResizer */}
+            &nbsp;
             </div>
           </div>
         </TableCell>

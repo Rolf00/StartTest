@@ -57,6 +57,7 @@ const App = ()=> {
       </Grid>
       */}
 
+{/*
       <Grid item xs={12}>
       <div style={{ paddingTop: 30, fontSize: 24, fontWeight: 'bold'}}>Examples A</div>
       <A setExternalValue={setExternalValue}/>
@@ -79,6 +80,7 @@ const App = ()=> {
           </MyClassTableCell>
       </Grid>
       </Grid>
+      */}
 
 
       <Grid item >

@@ -38,8 +38,15 @@ class InselTableCellHeightResizer extends React.Component {
  
   
     //const {value} = this.state;
-    const {id, height, className, children } = this.props;
-    //const ResizerBorderTopStyle = this.props.sx(borderTopStyle);
+    const {
+      id, 
+      height, 
+      className, 
+      children,
+      resizerBackgroundColor } = this.props;
+
+    const reszBackgroundColor = resizerBackgroundColor ? resizerBackgroundColor : 'blue';
+      
     return (
       <TableCell
         className={className}
@@ -73,7 +80,7 @@ class InselTableCellHeightResizer extends React.Component {
             width: '100%',
             height: '5px',
             paddingBottom: '3px',
-            backgroundColor: 'blue',
+            backgroundColor: reszBackgroundColor,
             //borderTopTopColor: 'black',
             //borderTopStyle: {ResizerBorderTopStyle},
             //borderTopWidth: 2,
