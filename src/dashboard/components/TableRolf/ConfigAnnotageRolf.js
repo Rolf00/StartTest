@@ -79,7 +79,7 @@ import imgAddButton from './imgAdd48.png';
 
 
 import { ResizableBox } from 'react-resizable';
-import {ColumnResizer} from 'react-table-column-resizer';
+//import {headerResizer} from 'react-table-header-resizer';
 
 import 'react-resizable/css/styles.css';
 import InselTableCellHeightResizer from './InselTableCellHeightResizer';
@@ -166,24 +166,73 @@ const settings = [
     headerVerticalAlign: 'top',
     resizerBackgroundColor: 'lightblue',
     resizerSize: 5,
-    resizerBorderWidth: 1,
+    resizerBorderBottomRightWidth: 1,
     initialRowHeight: 65,
-    rowVerticalAlign: 'top',
+    rowsVerticalAlign: 'top',
+    dialogName: '',
   }
 ];
 
-const columns = [
+/*
+
+READ ME: Information about header definitions
+=============================================
+The headers will be create in the order of theirs definition.
+The fields have the following meaning:
+
+- databaseField: 
+  The field name on the database, needed for UPDATE and INSERT statements.
+  It can be empty for calculated fields or for row selection checkboxes
+
+- headerTitle:
+  The title which will be displayed in the table header
+  It can be empty for the row selection checkbox
+
+- isResizable: 
+  The header width is resizable in the header
+
+- isEditable: true,
+- isRequired: true,
+- isVisible: true,
+- isSortable
+- defaultSorting: 'asc',
+
+- width: 45,
+- minWidth: 45,
+- textMaxLength: 0,
+- numberMinValue: 0,
+- numberMaxValue: 0,
+- editType: 'checkbox',
+- defaultValue: false,
+- dataFieldName: '',
+- horizontalAlign: 'center',
+- dropDownSelection: [],
+*/
+
+
+/*
+maxwidth
+*/
+
+
+const headers = [
   {
     databaseField: "",
-    columnTitle: "",
-    columnIsResizable: false,
-    fieldIsEditable: true,
+    headerTitle: "",
+    isResizable: false,
+    isEditable: true,
+    isRequired: true,
+    isVisible: true,
+    isSortable: false,
+    defaultSorting: '',
     width: 45,
     minWidth: 45,
-    textmaxLength: 0,
+    maxWidth: 300,
+    textMaxLength: 0,
     numberMinValue: 0,
     numberMaxValue: 0,
     editType: 'checkbox',
+    defaultValue: false,
     dataFieldName: '',
     horizontalAlign: 'center',
     dropDownSelection: [],
@@ -191,120 +240,168 @@ const columns = [
   },
   {
     databaseField: "",
-    columnTitle: "",
-    columnIsResizable: false,
-    fieldIsEditable: true,
+    headerTitle: "",
+    isResizable: false,
+    isEditable: true,
+    isRequired: true,
+    isVisible: true,
+    isSortable: false,
+    defaultSorting: '',
     width: 32,
     minWidth: 32,
-    textmaxLength: 0,
+    maxWidth: 300,
+    textMaxLength: 0,
     numberMinValue: 0,
     numberMaxValue: 0,
     editType: 'checkboxIcon',
+    defaultValue: false,
     dataFieldName: '',
     horizontalAlign: 'center',
     dropDownSelection: [],
   },
   {
     databaseField: "primaryKey",
-    columnTitle: "db ID",
-    columnIsResizable: true,
-    fieldIsEditable: false,
+    headerTitle: "db ID",
+    isResizable: true,
+    isEditable: false,
+    isRequired: true,
+    isVisible: true,
+    isSortable: true,
+    defaultSorting: 'asc',
     width: 65,
     minWidth: 65,
-    textmaxLength: 0,
+    maxWidth: 300,
+    textMaxLength: 0,
     numberMinValue: 0,
     numberMaxValue: 0,
     editType: 'none',
+    defaultValue: 'none',
     dataFieldName: 'id',
     horizontalAlign: 'center',
     dropDownSelection: [],
   },
   {
-    databaseField: "columnWidth",
-    columnTitle: "Column width",
-    columnIsResizable: true,
-    fieldIsEditable: true,
+    databaseField: "FieldXY",
+    headerTitle: "Name FIELD",
+    isResizable: true,
+    isEditable: true,
+    isRequired: true,
+    isVisible: true,
+    isSortable: true,
+    defaultSorting: 'asc',
     width: 180,
     minWidth: 100,
-    textmaxLength: 200,
+    maxWidth: 300,
+    textMaxLength: 200,
     numberMinValue: 0,
     numberMaxValue: 0,
     editType: 'textfield',
+    defaultValue: 'default field x',
     dataFieldName: 'field1',
     horizontalAlign: 'left',
     dropDownSelection: [],
   },
   {
     databaseField: "textarea",
-    columnTitle: "Textarea autosize",
-    columnIsResizable: true,
-    fieldIsEditable: true,
+    headerTitle: "Textarea autosize",
+    isResizable: true,
+    isEditable: true,
+    isRequired: true,
+    isVisible: true,
+    isSortable: true,
+    defaultSorting: 'asc',
     width: 180,
     minWidth: 145,
-    textmaxLength: 200,
+    maxWidth: 300,
+    textMaxLength: 200,
     numberMinValue: 0,
     numberMaxValue: 0,
     editType: 'textarea',
+    defaultValue: 'default field textarea',
     dataFieldName: 'fieldtextarea',
     horizontalAlign: 'left',
     dropDownSelection: [],
   },
   {
     databaseField: "comment",
-    columnTitle: "Textfield multiline",
-    columnIsResizable: true,
-    fieldIsEditable: true,
+    headerTitle: "Textfield multiline",
+    isResizable: true,
+    isEditable: true,
+    isRequired: true,
+    isVisible: true,
+    isSortable: true,
+    defaultSorting: 'asc',
     width: 180,
     minWidth: 180,
-    textmaxLength: 100,
+    maxWidth: 300,
+    textMaxLength: 100,
     numberMinValue: 0,
     numberMaxValue: 0,
     editType: 'textfieldmultiline',
+    defaultValue: 'default field textfieldmultiline',
     dataFieldName: 'field2',
     horizontalAlign: 'left',
     dropDownSelection: [],
   },
   {
     databaseField: "numbervalue",
-    columnTitle: "Count events",
-    columnIsResizable: true,
-    fieldIsEditable: true,
+    headerTitle: "Count events",
+    isResizable: true,
+    isEditable: true,
+    isRequired: true,
+    isVisible: true,
+    isSortable: true,
+    defaultSorting: 'asc',
     width: 120,
     minWidth: 120,
-    textmaxLength: 100,
+    maxWidth: 300,
+    textMaxLength: 100,
     numberMinValue: 0,
     numberMaxValue: 10000,
     editType: 'integer',
+    defaultValue: 0,
     dataFieldName: 'eventCount',
     horizontalAlign: 'right',
     dropDownSelection: [],
   },
   {
     databaseField: "decimalvalue",
-    columnTitle: "Average",
-    columnIsResizable: true,
-    fieldIsEditable: true,
+    headerTitle: "Average",
+    isResizable: true,
+    isEditable: true,
+    isRequired: true,
+    isVisible: true,
+    isSortable: true,
+    defaultSorting: 'asc',
     width: 120,
     minWidth: 120,
-    textmaxLength: 20,
+    maxWidth: 300,
+    textMaxLength: 20,
     numberMinValue: 0,
     numberMaxValue: 10000,
     editType: 'decimal',
+    defaultValue: 1.1111,
     dataFieldName: 'viewsPerUser',
     horizontalAlign: 'right',
     dropDownSelection: [],
   },
   {
     databaseField: "dropdown",
-    columnTitle: "Dropdown",
-    columnIsResizable: true,
-    fieldIsEditable: true,
+    headerTitle: "Dropdown",
+    isResizable: true,
+    isEditable: true,
+    isRequired: true,
+    isVisible: true,
+    isSortable: true,
+    defaultSorting: 'asc',
     width: 180,
     minWidth: 180,
-    textmaxLength: 100,
+    maxWidth: 300,
+    textMaxLength: 100,
     numberMinValue: 0,
     numberMaxValue: 10000,
     editType: 'dropdown',
+    defaultValue: -1,
     dataFieldName: 'dropdownvalue',
     horizontalAlign: 'left',
     dropDownSelection: [
@@ -315,68 +412,100 @@ const columns = [
       { id: 5, value: 'Dropdown 5', },
       { id: 6, value: 'Dropdown 6', },
     ],
-  },
+
+  }, 
   {
     databaseField: "",
-    columnTitle: "Edit",
-    columnIsResizable: false,
-    fieldIsEditable: false,
+    headerTitle: "Edit",
+    isResizable: false,
+    isEditable: false,
+    isRequired: false,
+    isVisible: true,
+    isSortable: false,
+    defaultSorting: '',
     width: 32,
     minWidth: 32,
-    textmaxLength: 0,
+    maxWidth: 42,
+    textMaxLength: 0,
     numberMinValue: 0,
     numberMaxValue: 0,
     editType: 'btnEdit',
+    defaultValue: 'none',
     dataFieldName: '',
     horizontalAlign: 'center',
     dropDownSelection: [],
   },
   {
     databaseField: "",
-    columnTitle: "Save",
-    columnIsResizable: false,
-    fieldIsEditable: false,
+    headerTitle: "Save",
+    isResizable: false,
+    isEditable: false,
+    isRequired: false,
+    isVisible: true,
+    isSortable: false,
+    defaultSorting: '',
     width: 32,
     minWidth: 32,
-    textmaxLength: 0,
+    maxWidth: 42,
+    textMaxLength: 0,
     numberMinValue: 0,
     numberMaxValue: 0,
     editType: 'btnSave',
+    defaultValue: 'none',
     dataFieldName: '',
     horizontalAlign: 'center',
     dropDownSelection: [],
   },
   {
     databaseField: "",
-    columnTitle: "Undo",
-    columnIsResizable: false,
-    fieldIsEditable: false,
+    headerTitle: "Undo",
+    isResizable: false,
+    isEditable: false,
+    isRequired: false,
+    isVisible: true,
+    isSortable: false,
+    defaultSorting: '',
     width: 32,
     minWidth: 32,
-    textmaxLength: 0,
+    maxWidth: 42,
+    textMaxLength: 0,
     numberMinValue: 0,
     numberMaxValue: 0,
     editType: 'btnUndo',
+    defaultValue: 'none',
     dataFieldName: '',
     horizontalAlign: 'center',
     dropDownSelection: [],
   },
   {
     databaseField: "",
-    columnTitle: "Delete",
-    columnIsResizable: false,
-    fieldIsEditable: false,
+    headerTitle: "Delete",
+    isResizable: false,
+    isEditable: false,
+    isRequired: false,
+    isVisible: true,
+    isSortable: false,
+    defaultSorting: '',
     width: 32,
     minWidth: 32,
-    textmaxLength: 0,
+    maxWidth: 42,
+    textMaxLength: 0,
     numberMinValue: 0,
     numberMaxValue: 0,
     editType: 'btnDelete',
+    defaultValue: 'none',
     dataFieldName: '',
     horizontalAlign: 'center',
     dropDownSelection: [],
   },
 ];
+
+/*
+valueGetter: (parmas) => {
+  const value = params.getValue('user')
+  return `${value.firstname} ${value.lastname}`
+}
+  */
 
 const dataRolf = [
     {
@@ -398,6 +527,11 @@ const dataRolf = [
         1145309, 1195630, 1358925, 1373160, 1172679, 1340106, 1396974, 1623641,
         1687545, 1581634, 1550291,
       ],
+      user: {
+        id: 1,
+        firstname: 'John',
+        lastname: 'doe'
+      }
     },
     {
       id: 5,
@@ -815,7 +949,7 @@ class ConfigAnnotageRolf extends React.Component {
       page: 0,
       limit: 5,
       data: dataRolf,
-      columns: columns,
+      headers: headers,
       selectedRows: [],
       editingFieldList_User: [],
       editableFields: ["name", "users", "eventCount", "viewsPerUser", "averageTime"],
@@ -844,9 +978,11 @@ class ConfigAnnotageRolf extends React.Component {
       headerHeightList: [25, 25, 80, 35, 35, 35],
       //headerWidthList: [25, 25, 120, 80, 80, 80],
       rowHeightList: getRowHeightList(),
+      minRowHeight: 19,
     };
   }
-  
+  data
+  selected
   fieldnameUsers = 'users';
   
   getCellEditing(id, fieldname)
@@ -881,7 +1017,6 @@ class ConfigAnnotageRolf extends React.Component {
     //alert("rowHeightList = " + this.state.rowHeightList[index]['height']);
     return this.state.rowHeightList[index]['height'];
   }
-
 
   getRowSelection(idx)
   {
@@ -1203,44 +1338,21 @@ class ConfigAnnotageRolf extends React.Component {
     let cellHeight = 55;
     if (startIndex > -1) cellHeight = this.state.rowHeightList[startIndex].height;
 
-
-    //alert("e.startIndex = " + startIndex);
-    //alert("e.cellHeight = " + cellHeight);
-//alert("newList[index].height = " + newList[index].height);
-
     const onMouseMoveRowNS = (e) => {
       const newheight = e.clientY - mouseStart + cellHeight;
-      //if (newheight > this.state.rowHeight)
-      //{
+      if (newheight > this.state.minRowHeight)
+      {
         const newList = this.state.rowHeightList;
         const index = this.state.rowHeightList.findIndex(dr => dr.id === rowid);
         newList[index].height = newheight;
         this.setState({rowHeightList : newList});
-      //}
+      }
     }
 
     const onMouseUpRowNS = (e) => {
       document.removeEventListener('mousemove', onMouseMoveRowNS);
       document.removeEventListener('mouseup', onMouseUpRowNS);
       document.body.style.userSelect = "auto";  
-
-      //const newheight = e.clientY - mouseStart + cellHeight;
-      //const newList = this.state.rowHeightList;
-      //const index = this.state.rowHeightList.findIndex(dr => dr.id === rowid);
-      //newList[index].height = newheight;
-
-//alert("newList[index].height = " + newList[index].height);
-
-//alert("e.clientY = " + e.clientY);
-
-const startIndex = this.state.rowHeightList.findIndex(dr => dr.id === rowid);
-let cellHeight = 55;
-if (startIndex > -1) cellHeight = this.state.rowHeightList[startIndex].height;
-//alert("e.rowid = " + rowid);
-//alert("e.startIndex = " + startIndex);
-//alert("e.cellHeight = " + cellHeight);
-
-
     };    
 
     document.addEventListener('mousemove', onMouseMoveRowNS);
@@ -1259,17 +1371,20 @@ if (startIndex > -1) cellHeight = this.state.rowHeightList[startIndex].height;
     const mouseStart = e.clientX;
     const colindex = index;
     //const cellWidth = this.state.headerWidthList[colindex];
-    const cellWidth = this.state.columns[colindex];
+    const cellWidth = this.state.headers[colindex].width;
 
     //alert("e.clientX = " + mouseStart + ", cellWidth = " + cellWidth);
 
     const onMouseMoveRowEW = (e) => {
       const newwidth = e.clientX - mouseStart + cellWidth;
-      //const newList = this.state.headerWidthList;
-      const newList = this.state.columns;
-      newList[index] = newwidth;
-      //this.setState({headerWidthList : newList});
-      this.setState({columns : newList});
+      
+      //const newList1 = this.state.headerWidthList;
+      //newList1[index] = newwidth;
+      //this.setState({headerWidthList : newList1});
+
+      const newList2 = this.state.headers;
+      newList2[index].width = newwidth;
+      this.setState({headers : newList2});
       
     }
 
@@ -1366,6 +1481,13 @@ if (startIndex > -1) cellHeight = this.state.rowHeightList[startIndex].height;
     return maxHeight;
   }
 
+  Sort(sortOrder, colHeadIndex)
+  {
+    const newlist = this.state.headers;
+    newlist[colHeadIndex].defaultSorting = sortOrder === 'asc' ? 'desc' : 'asc';
+    this.setState({headers, newlist});
+  }
+
   render() {
     const dataDays = getDaysInMonth(4, 2024);
     const { classes } = this.props;
@@ -1386,7 +1508,8 @@ if (startIndex > -1) cellHeight = this.state.rowHeightList[startIndex].height;
     const headerHeightList = this.state.headerHeightList;
     //const headerWidthList = this.state.headerWidthList;
     const headerHeight = this.getHeaderHeight();
-    const columns = this.state.columns;
+    // TODO are same names allowed?
+    const headers = this.state.headers;
     const rowHeightList = this.state.rowHeightList;
     
 
@@ -1435,28 +1558,58 @@ if (startIndex > -1) cellHeight = this.state.rowHeightList[startIndex].height;
                 className={classes.table_head_row}
                 >
 
-                {columns.map((column, colHeadIndex) => {
-                  const isCheckbox = column.editType === 'checkbox';
-                  const isCheckboxIcon = column.editType === 'checkboxIcon';
+                {headers.map((header, colHeadIndex) => {
+                  const isCheckbox = header.editType === 'checkbox';
+                  const isCheckboxIcon = header.editType === 'checkboxIcon';
+                  const isSortable = header.isSortable;
+                  const sortOrder = header.defaultSorting;
                   const isNoEdit = (!isCheckbox) && (!isCheckboxIcon);
+                  const isButtonheader = (
+                    header.editType === 'btnEdit' ||
+                    header.editType === 'btnSave' ||
+                    header.editType === 'btnUndo' ||
+                    header.editType === 'btnDelete' 
+                  );
 
-                  const columnTitle = columns[colHeadIndex].columnTitle;
-                  const isColumnIsResizable = columns[colHeadIndex].columnIsResizable;
-                  const columnMinWidth = columns[colHeadIndex].minWidth;
-                  const columnHorizontalAlign = columns[colHeadIndex].horizontalAlign;
-                  const newWidth = columns[colHeadIndex].width;
+                  const headerTitle = headers[colHeadIndex].headerTitle;
+                  const isisResizable = headers[colHeadIndex].isResizable;
+                  const headerMinWidth = headers[colHeadIndex].minWidth;
+                  const headerHorizontalAlign = headers[colHeadIndex].horizontalAlign;
+                  const newheaderWidth = 
+                    isButtonheader ? header.width + 18 : header.width;
+
+                  {/*
+                    &uarr; ARRAY UP
+                    &darr; ARRAY DOWN
+                  */}
 
                   return (
                     <InselTableCellWidthResizer
                     className={classes.table_head_cell}
-                    notResizable={!isColumnIsResizable}
-                    width={newWidth}
-                    minWidth={columnMinWidth}
-                    horizontalAlign={columnHorizontalAlign}
+                    notResizable={!isisResizable}
+                    width={newheaderWidth}
+                    minWidth={headerMinWidth}
+                    horizontalAlign={headerHorizontalAlign}
                     verticalAlign={'bottom'}
                     height= {85}
                     setWidth={(colwidth) => this.setState({colwidth: colwidth})}
                     handleMouseDownRowEW={(e)=>this.handleMouseDownRowEW(e, colHeadIndex)}>
+                    {isSortable && 
+                      headerHorizontalAlign === 'right' &&
+                      sortOrder === 'asc' &&
+                      <span>&nbsp;<button 
+                        //href={this.Sort(sortOrder, colHeadIndex)}
+                        style={{fontSize: '18px', fontWeight: 'bold'}}
+                        >&darr;</button>&nbsp;</span>
+                    }
+                    {isSortable && 
+                      headerHorizontalAlign === 'right' &&
+                      sortOrder === 'desc' &&
+                      <span>&nbsp;<button 
+                        //href={this.Sort(sortOrder, colHeadIndex)}
+                        style={{fontSize: '18px', fontWeight: 'bold'}}
+                        >&uarr;</button>&nbsp;</span>
+                    }
                     {isCheckbox &&
                       <Checkbox
                       checked={mainChecked}
@@ -1468,15 +1621,31 @@ if (startIndex > -1) cellHeight = this.state.rowHeightList[startIndex].height;
                     }
                     {isCheckboxIcon &&
                       <IconButton
-                        style={{ width: column.width, height: column.width }} 
+                        style={{ width: newheaderWidth, height: newheaderWidth }} 
                       >
                       <img 
                         src={mainCheckIcon}
-                        style={{ width: column.width, height: column.width }} 
+                        style={{ width: header.width, height: header.width }} 
                         />
                       </IconButton>
                     }
-                    {isNoEdit && columnTitle }
+                    {isNoEdit && headerTitle }
+                    {isSortable && 
+                      headerHorizontalAlign === 'left' &&
+                      sortOrder === 'asc' &&
+                      <span>&nbsp;<button 
+                        //href={this.Sort(sortOrder, colHeadIndex)}
+                        style={{fontSize: '18px', fontWeight: 'bold'}}
+                        >&darr;</button>&nbsp;</span>
+                    }
+                    {isSortable && 
+                      headerHorizontalAlign === 'left' &&
+                      sortOrder === 'desc' &&
+                      <span>&nbsp;<button 
+                        //href={this.Sort(sortOrder, colHeadIndex)}
+                        style={{fontSize: '18px', fontWeight: 'bold'}}
+                        >&uarr;</button>&nbsp;</span>
+                    }
                     </InselTableCellWidthResizer>
                   );
                 })}
@@ -1518,19 +1687,19 @@ if (startIndex > -1) cellHeight = this.state.rowHeightList[startIndex].height;
                   setHeight={(colwidth) => this.setState({colwidth: colwidth})}
                   handleMouseDownRowEW={(e)=>this.handleMouseDownRowEW(e, 2)}
                   resizerBackgroundColor='red'>
-                  {columns[2].title}
+                  {headers[2].title}
                 </InselTableCellWidthResizer>
                 */}
 
 
-{/* own implementation of resizing column width
+{/* own implementation of resizing header width
                 <InselTableCellWidthResizer
                   className={classes.table_head_cell}
                   width={headerWidthList[3]}
                   height= {headerHeight}
                   setHeight={(colwidth) => this.setState({colwidth: colwidth})}
                   handleMouseDownRowEW={(e)=>this.handleMouseDownRowEW(e, 3)}>
-                  Column width
+                  header width
                 </InselTableCellWidthResizer> */}
 
 
@@ -1752,26 +1921,28 @@ if (startIndex > -1) cellHeight = this.state.rowHeightList[startIndex].height;
                     key={`table-row-${rowindex}-${id}`} 
                   >
 
-                  {columns.map((column, colindex) => {
+                  {headers.map((header, colindex) => {
 
                     //const {
                     //  editType, dropDownSelection, horizontalAlign, 
-                    //} = column;
+                    //} = header;
 
 
-                    const isCheckbox = column.editType === 'checkbox';
-                    const isCheckboxIcon = column.editType === 'checkboxIcon';
-                    const isNoEdit = column.editType === 'none';
-                    const isTextfield = column.editType === 'textfield';
-                    const isTextarea = column.editType === 'textarea';
-                    const isTextfieldMultiline = column.editType === 'textfieldmultiline';
-                    const isInteger = column.editType === 'integer';
-                    const isDecimal = column.editType === 'decimal';
-                    const isDropdown = column.editType === 'dropdown';
-                    const isButtonEdit = column.editType === 'btnEdit';
-                    const isButtonSave = column.editType === 'btnSave';
-                    const isButtonUndo = column.editType === 'btnUndo';
-                    const isButtonDelete = column.editType === 'btnDelete';
+                    const isCheckbox = header.editType === 'checkbox';
+                    const isCheckboxIcon = header.editType === 'checkboxIcon';
+                    const isNoEdit = header.editType === 'none';
+                    const isTextfield = header.editType === 'textfield';
+                    const isTextarea = header.editType === 'textarea';
+                    const isTextfieldMultiline = header.editType === 'textfieldmultiline';
+                    const isInteger = header.editType === 'integer';
+                    const isDecimal = header.editType === 'decimal';
+                    const isDropdown = header.editType === 'dropdown';
+                    const isButtonEdit = header.editType === 'btnEdit';
+                    const isButtonSave = header.editType === 'btnSave';
+                    const isButtonUndo = header.editType === 'btnUndo';
+                    const isButtonDelete = header.editType === 'btnDelete';
+                    const btnHoverWidth = header.width + 8;
+                    const dropdownWidth = header.width - 10;
 
                     const typeFound = (
                       isCheckbox || isCheckboxIcon || isNoEdit || 
@@ -1780,13 +1951,12 @@ if (startIndex > -1) cellHeight = this.state.rowHeightList[startIndex].height;
                       isButtonEdit || isButtonSave || isButtonUndo || isButtonDelete
                     );
                     
-                    let tmp = row[column.dataFieldName];
+                    let tmp = row[header.dataFieldName];
                     if (isDecimal)
                     {
                       tmp = tmp.toFixed(3);
                     }
                     const value = tmp;
-
                     
 
                     return (
@@ -1806,10 +1976,10 @@ if (startIndex > -1) cellHeight = this.state.rowHeightList[startIndex].height;
                         }
                         {isCheckboxIcon &&
                           <IconButton
-                          style={{ width: column.width, height: column.width }} >
+                          style={{ width: header.width, height: header.width }} >
                           <img 
                             src={iconSource}
-                            style={{ width: column.width, height: column.width }} 
+                            style={{ width: header.width, height: header.width }} 
                           />
                           </IconButton>
                         }
@@ -1818,14 +1988,14 @@ if (startIndex > -1) cellHeight = this.state.rowHeightList[startIndex].height;
                             value={value}
                             disabled
                             fullWidth
-                            style={{ textAlign: column.horizontalAlign, }}
+                            style={{ textAlign: header.horizontalAlign, }}
                           ></TextField>}
 
                         {isTextfield && 
                           <TextField
                             value={value}
                             fullWidth
-                            style={{ textAlign: column.horizontalAlign, }}
+                            style={{ textAlign: header.horizontalAlign, }}
                           ></TextField>}
 
                         {isTextarea && 
@@ -1836,7 +2006,11 @@ if (startIndex > -1) cellHeight = this.state.rowHeightList[startIndex].height;
                             multiline
                             value={value}
                             fullWidth
-                            style={{ textAlign: column.horizontalAlign, }}
+                            style={{ 
+                              textAlign: header.horizontalAlign, 
+                            }}
+                            //InputProps={{ height: '300px' }}
+                            inputProps={{ style: { height: rowHeight } }}
                             >
                           </TextField>
                         }
@@ -1844,7 +2018,14 @@ if (startIndex > -1) cellHeight = this.state.rowHeightList[startIndex].height;
                           <TextField
                             value={value}
                             fullWidth
-                            style={{ textAlign: column.horizontalAlign, }}
+                            inputProps={{
+                              sx: {
+                                textAlign: header.horizontalAlign,
+                                "&::placeholder": {
+                                  textAlign: header.horizontalAlign,
+                                },
+                              },
+                            }}                            
                           >
                           </TextField>
                         }
@@ -1852,26 +2033,36 @@ if (startIndex > -1) cellHeight = this.state.rowHeightList[startIndex].height;
                           <TextField
                             value={value}
                             fullWidth
-                            style={{ textAlign: column.horizontalAlign, }}
+                            inputProps={{
+                              sx: {
+                                textAlign: header.horizontalAlign,
+                                "&::placeholder": {
+                                  textAlign: header.horizontalAlign,
+                                },
+                              },
+                            }}                            
                           >
                           </TextField>
                         }
                         {isDropdown && 
                           <FormControl
-                            style={{ width: column.width, }}
-                            sx={{ m: 1, minWidth: column.minWidth, }}>
-                          <InputLabel id="demo-simple-select-required-label">select example</InputLabel>
+                            style={{ width: dropdownWidth, }}
+                            //sx={{ m: 1, minWidth: header.minWidth, }}
+                          >
+                          {/* 
+                          <InputLabel 
+                            id="demo-simple-select-isRequired-label">select example</InputLabel>*/}
                           <Select
-                            //labelId="demo-simple-select-required-label"
+                            //labelId="demo-simple-select-isRequired-label"
                             //label="select example"
-                            width={column.width}
                             //minWidth={100}
                             value={value}
-                            style={{ width: column.width, }}>
-                            {column.dropDownSelection.map((item, itemIndex) =>
+                            //style={{ width: header.width, }}
+                            >
+                            {header.dropDownSelection.map((item, itemIndex) =>
                             {
-                              const ddId = column.dropDownSelection[itemIndex].id;
-                              const ddValue = column.dropDownSelection[itemIndex].value;
+                              const ddId = header.dropDownSelection[itemIndex].id;
+                              const ddValue = header.dropDownSelection[itemIndex].value;
                               return (
                                 <MenuItem 
                                   value={ddId}
@@ -1887,12 +2078,12 @@ if (startIndex > -1) cellHeight = this.state.rowHeightList[startIndex].height;
                             disabled={isRDeleted}
                             onClick={e => this.handleEditClick(e, id,
                               name, users, eventCount, viewsPerUser, averageTime)}
-                            style={{ width: column.width, height: column.width }} >
+                              style={{ width: btnHoverWidth, height: btnHoverWidth }} >
                           <img 
                             src={mainEditIcon}
                             title="Edit this in the dialog"
                             style={{ 
-                              width: column.width, height: column.width,
+                              width: header.width, height: header.width,
                               opacity: (!isRDeleted ? 1 : 0.2) }} 
                           />
                           </IconButton>
@@ -1901,12 +2092,12 @@ if (startIndex > -1) cellHeight = this.state.rowHeightList[startIndex].height;
                         {isButtonSave &&
                           <IconButton
                           disabled={!isRowChanged}
-                          style={{ width: column.width, height: column.width }} >
+                          style={{ width: btnHoverWidth, height: btnHoverWidth }} >
                           <img 
                             src={mainSaveIcon}
                             title="Save this row by clicking here"
                             style={{ 
-                              width: column.width, height: column.width,
+                              width: header.width, height: header.width,
                               opacity: (isRowChanged ? 1 : 0.2) }} 
                           />
                           </IconButton>
@@ -1916,12 +2107,12 @@ if (startIndex > -1) cellHeight = this.state.rowHeightList[startIndex].height;
                           <IconButton
                             disabled={!isRowChanged}
                             onClick={e => this.handleUndoRow(e, id)}
-                            style={{ width: column.width, height: column.width }} >
+                            style={{ width: btnHoverWidth, height: btnHoverWidth }} >
                           <img 
                             src={mainUndoIcon}
                             title="Undo this row by clicking here"
                             style={{ 
-                              width: column.width, height: column.width,
+                              width: header.width, height: header.width,
                               opacity: (isRowChanged ? 1 : 0.2) }} 
                           />
                           </IconButton>
@@ -1931,11 +2122,11 @@ if (startIndex > -1) cellHeight = this.state.rowHeightList[startIndex].height;
                           <IconButton
                             disabled={isRDeleted}
                             onClick={e => this.handleDeleteRow(e, id)}
-                            style={{ width: column.width, height: column.width }} >
+                            style={{ width: btnHoverWidth, height: btnHoverWidth }} >
                           <img 
                             src={mainDeleteIcon}
                             title="Delete this row by clicking here"
-                            style={{ width: column.width, height: column.width,
+                            style={{ width: header.width, height: header.width,
                               opacity: (!isRDeleted ? 1 : 0.2)
                              }} 
                           />
@@ -1946,7 +2137,7 @@ if (startIndex > -1) cellHeight = this.state.rowHeightList[startIndex].height;
                         {!typeFound && <span>TYPE ERROR</span>}
                       </InselTableCellHeightResizer>
                     );
-                  })} {/* end map columns */}
+                  })} {/* end map headers */}
 
 {/*                    <InselTableCellHeightResizer
                       className={classes.table_check_cell}
@@ -2039,9 +2230,9 @@ if (startIndex > -1) cellHeight = this.state.rowHeightList[startIndex].height;
                       handleMouseDownRowNS={(e)=>this.handleMouseDownRowNS(e, row.id)}>
                         <FormControl
                           sx={{ m: 1, minWidth: 180,  }}>
-                        <InputLabel id="demo-simple-select-required-label">select example</InputLabel>
+                        <InputLabel id="demo-simple-select-isRequired-label">select example</InputLabel>
                         <Select
-                        labelId="demo-simple-select-required-label"
+                        labelId="demo-simple-select-isRequired-label"
                         label="select example"
                         minWidth={100}>
                           <MenuItem value={10}>value 10</MenuItem>
@@ -2217,7 +2408,7 @@ if (startIndex > -1) cellHeight = this.state.rowHeightList[startIndex].height;
                             <div
                               onCellDoubleClick={e => this.handleCellDoubleClick(row.id, this.fieldnameUsers)}
                               style = {{
-                                display: isCellEditingUser ? 'none' : 'visible'
+                                display: isCellEditingUser ? 'none' : 'isVisible'
                               }}
                             ><RightText
                             >{users}</RightText></div>
@@ -2225,7 +2416,7 @@ if (startIndex > -1) cellHeight = this.state.rowHeightList[startIndex].height;
 {/*                            
                             <div
                               style = {{
-                                //display: isCellEditingUser === false ? 'none' : 'visible'
+                                //display: isCellEditingUser === false ? 'none' : 'isVisible'
                               }}
                             >
                               <input
@@ -2245,7 +2436,7 @@ if (startIndex > -1) cellHeight = this.state.rowHeightList[startIndex].height;
                                   borderBottomColor: '#00ff00',
                                   backgroundColor: isCellEditingUser === true ? '#cfc' : 
                                     isRowChanged ? '#efe' : 'white',
-                                  //display: isCellEditingUser === false ? 'none' : 'visible'
+                                  //display: isCellEditingUser === false ? 'none' : 'isVisible'
                                 }}
                                 onDoubleClick={e => this.handleCellDoubleClick(row.id, index, this.fieldnameUsers, users)}
                                 onChange={e => this.handleCellEditChange(e, row.id, this.fieldnameUsers)}                                
@@ -2593,7 +2784,7 @@ if (startIndex > -1) cellHeight = this.state.rowHeightList[startIndex].height;
                             textAlign: 'center',
                             flex: '0 0 auto',
                             borderRadius: '50%',
-                            overflow: 'visible',
+                            overflow: 'isVisible',
                             transition:
                               'background-color 150ms cubic-bezier(0.4, 0, 0.2, 1)',
                             color: 'rgb(33, 150, 243)',
@@ -2638,7 +2829,7 @@ if (startIndex > -1) cellHeight = this.state.rowHeightList[startIndex].height;
                             textAlign: 'center',
                             flex: '0 0 auto',
                             borderRadius: '50%',
-                            overflow: 'visible',
+                            overflow: 'isVisible',
                             transition:
                               'background-color 150ms cubic-bezier(0.4, 0, 0.2, 1)',
                             color: 'rgb(103, 58, 183)',
@@ -2683,7 +2874,7 @@ if (startIndex > -1) cellHeight = this.state.rowHeightList[startIndex].height;
                             textAlign: 'center',
                             flex: '0 0 auto',
                             borderRadius: '50%',
-                            overflow: 'visible',
+                            overflow: 'isVisible',
                             transition:
                               'background-color 150ms cubic-bezier(0.4, 0, 0.2, 1)',
                             color: 'rgb(244, 67, 54)',
@@ -2860,7 +3051,7 @@ if (startIndex > -1) cellHeight = this.state.rowHeightList[startIndex].height;
                   '.MuiIconButton-root': {
                     padding: '4px', // Reduced from 12px
                     borderRadius: '50%',
-                    overflow: 'visible',
+                    overflow: 'isVisible',
                     color: 'inherit',
                     transition:
                       'background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
