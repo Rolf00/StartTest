@@ -1,5 +1,6 @@
 import React from 'react';
 import { TableCell } from "@mui/material";
+import InselTableMenu from './InselTableMenu';
 
 class InselTableCellWidthResizer extends React.Component {
     constructor(props) {
@@ -51,7 +52,8 @@ class InselTableCellWidthResizer extends React.Component {
         notResizable, 
         horizontalAlign, 
         verticalAlign,
-        resizerBackgroundColor } = this.props;
+        resizerBackgroundColor,
+        hasHeaderMenu } = this.props;
 
       const verticalAlignText = 
         verticalAlign === 'center' ? 'center' : 
@@ -70,6 +72,7 @@ class InselTableCellWidthResizer extends React.Component {
           <div style={{ 
             padding: 0,
             display: 'flex',
+            flexDirection: 'row',
             //flexDirection: 'column',
             //justifyContent: 'flex-end',
             //minHeight: height, 
@@ -78,6 +81,24 @@ class InselTableCellWidthResizer extends React.Component {
             //width: '100%',
 
             }}>
+
+            {hasHeaderMenu && horizontalAlign == 'right' &&
+              <div
+              style={{
+                flexGrow: 1, 
+                backgroundColor: 'lightgrey', 
+                minHeight: height, 
+                maxWidth: 40,
+                textAlign: horizontalAlign,
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: verticalAlignText,
+                padding: 0,
+                }}>
+                <InselTableMenu></InselTableMenu>
+              </div>
+            }
+
             <div
               style={{
                 flexGrow: 1, 
@@ -93,18 +114,41 @@ class InselTableCellWidthResizer extends React.Component {
                 {children}
                 </div>
             </div>
+
+            {hasHeaderMenu && 
+              (horizontalAlign == 'left' || horizontalAlign == 'center') &&
+              <div style={{ display: 'flex', flexDirection: 'column', minHeight: height, }}>
+                <div 
+                  style={{ 
+                    flex: 1, 
+                    backgroundColor: 'lightgrey', 
+                  }}></div>
+                <div 
+                  style={{
+                    backgroundColor: 'lightgrey', 
+                    //minHeight: height, 
+                    maxWidth: 40,
+                    padding: 0,
+                    //flexDirection: 'column',
+                    justifyContent: verticalAlignText,
+                    }}>
+                  <InselTableMenu></InselTableMenu>
+                </div>
+              </div>
+            }
+
             {(!notResizable) &&
             <div 
               onMouseDown={(e) => this.props.handleMouseDownRowEW(e, index)} 
               style={{
-              display: notResizable ? 'none' : 'block',
+              //display: notResizable ? 'none' : 'block',
               minHeight: height, 
-              width: notResizable ? '0px' : '5px',
+              //width: notResizable ? '0px' : '5px',
+              width: '5px',
               padding: 0,
               backgroundColor: reszBackgroundColor,
               cursor: 'col-resize',
             }}>
-            {/* textResizer */}
             &nbsp;
             </div>
             }

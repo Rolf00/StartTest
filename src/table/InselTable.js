@@ -38,6 +38,7 @@ import {
 
 
 // TODO : is this component free ware?
+// TODO : do we need it?
 import { SparkLineChart } from '@mui/x-charts/SparkLineChart';
 
 import { green } from '@mui/material/colors';
@@ -52,7 +53,8 @@ import imgUndoButton from './imgUndo48.png';
 import imgAddButton from './imgAdd48.png'; 
 import 'react-resizable/css/styles.css';
 import InselTableCellHeightResizer from './InselTableCellHeightResizer';
-import InselTableCellWidthResizer from './InselTableCellWidthResizer'
+import InselTableCellWidthResizer from './InselTableCellWidthResizer';
+import InselTableMenu from './InselTableMenu';
 
 
 const RightText = styled.div`
@@ -60,6 +62,7 @@ const RightText = styled.div`
   justify-content: right;
 `;
 
+// TODO do we need it?
 const chipcolors = {
   Online: '#0d0',
   Offline: '#d00',
@@ -85,7 +88,6 @@ function getDaysInMonth(month, year) {
   }
   return days;
 }
-
 
 
 function renderSparklineCell(params) {
@@ -132,7 +134,7 @@ const NumberFormatter = ({ number }) => {
 
 READ ME: Information about header definitions
 =============================================
-The headers will be create in the order of theirs definition.
+The headers will be created in the order of theirs definition.
 The fields have the following meaning:
 
 - databaseField: 
@@ -157,11 +159,13 @@ The fields have the following meaning:
 - textMaxLength: 0,
 - numberMinValue: 0,
 - numberMaxValue: 0,
+- decimals
 - editType: 'checkbox',
 - defaultValue: false,
 - dataFieldName: '',
 - horizontalAlign: 'center',
 - dropdownSelection: [],
+- hasHeaderMenu
 */
 
 
@@ -185,12 +189,10 @@ The fields have the following meaning:
          />;
   }
 
-  const rowStates = [
-    '',
-    'edited',
-    'deleted',
-    'inserted',
-  ];
+const rowStateUnchanged = 0;  
+const rowStateEdited = 1;  
+const rowStateDeleted = 2;  
+const rowStateInserted = 3;  
 
 class InselTable extends React.Component {
   constructor(props) {
@@ -203,10 +205,10 @@ class InselTable extends React.Component {
       data } = this.props;
   
     this.state = {
-      settings: settings,
       headers: headers,
       primaryKey: primaryKey,
       data: data,
+      //data: this.getDataList(),
       page: 0,
       limit: 5,
       selectedRows: [],
@@ -229,18 +231,29 @@ class InselTable extends React.Component {
       rowsWereEdited : false,
       colwidthName: 100,
       colheightName: 50,
-      listChangedRows: [],
       mainDisabled: true,
       rowHeight: 200,
       colwidth: 120,
       headerHeight: 35,
+      minRowHeight: 19,
+
       headerWidthList: this.setHeaderWidthList(),
       rowInfoList: this.setRowInfoList(),
-      minRowHeight: 19,
     };
   }
 
-  
+  // ---------------------------------------------------------------------------------------
+  // preparing
+
+  getDataList()
+  {
+    let newlist = [];
+    for (let i = 0; i < this.props.data.length; i++)
+    {
+      newlist = [...newlist, this.props.data[i]];
+    }
+    return newlist;
+  }
 
   setHeaderWidthList()
   {
@@ -260,50 +273,237 @@ class InselTable extends React.Component {
       let obj = {};
       obj['id'] = this.props.data[i][this.props.primaryKey];
       obj['height'] = this.props.settings.initialRowHeight;
-      obj['state'] = rowStates[0]; // edited, deleted, inserted, 
+      obj['state'] = rowStateUnchanged; // edited, deleted, inserted, 
       newlist.push(obj);
     }
-    //console.log({x:this.props.settings});
+    //console.log({x:this.primaryKeyIndex});
     return newlist;
   }
+
+  /*
+  getPrimaryKeyIndex()
+  {
+    if (this.props.data.length === 0)
+    {
+      alert("ERROR no data was delivered.");
+      return -1;
+    }
+
+    let index = -1;
+    for (let d = 0; d < this.props.data[0].length; d++)
+    {
+      if (this.props.data[0][])
+
+    }
+
+
+    const index = this.props.headers.findIndex(h => h.dataFieldName === this.props.primaryKey);
+    if (index === -1) alert("ERROR missing field primaryKey in header definition.");
+    alert("index = " + index);
+    return index;
+  }
+    */
+
+
+  // ---------------------------------------------------------------------------------------
+  // button clicks 
+
+  getRowIndex(rowid)
+  {
+    // get the index of the row 
+    const index = this.state.rowInfoList.findIndex(r => r[this.props.primaryKey] === rowid);
+    return index;
+  }
+
+  handleDeleteRow(e, rowid)
+  {
+    // button DELETE for one row was clicked
+    const oldState = this.getRowState(rowid);
+    if (oldState === rowStateInserted)
+    {
+      // new rows cannot be deleted
+      alert("This is a new row. Just UNDO if you don't want it to be saved.");
+      return;
+    }
+
+    const isDeleted = this.getRowState(rowid) === rowStateDeleted;
+    if (!isDeleted)
+    {
+      // delete it now
+      this.changeRowState(rowid, rowStateDeleted);
+    }
+  }
+
+  handleUndoRow(e, rowid)
+  {
+    // button UNDO for one row was clicked
+    const oldState = this.getRowState(rowid);
+    const index = this.getRowIndex(rowid);
+
+
+    if (index === -1)
+    {
+      alert("ERROR handleUndoRow: index = -1.")
+      return;
+    }
+
+    if (oldState === rowStateEdited)
+    {
+
+      console.log("handleUndoRow start props", this.props.data);      
+
+      // row was edited, thus we restore the old values
+      this.state.rowInfoList[index].state = rowStateUnchanged;
+
+      // restore the old data
+      const oldRow = this.props.data[index];
+
+      const newlist = this.state.data;
+      const keys = Object.keys(oldRow);
+
+
+
+      // TODO how to get the original values
+      for (let f = 0; f < keys.length; f++)
+      {
+        const field = keys[f];
+        newlist[index][field] = this.props.data[index][field];
+      }
+
+      //newlist[index] = this.props.data[index];
+      console.log("handleUndoRow end props", this.props.data);      
+      console.log("handleUndoRow new data", newlist);      
+
+      this.setState({data: newlist});
+    }
+    else if (oldState === rowStateInserted)
+    {
+      // row was inserted, thus we remove it from the data list
+      const newlist = this.state.data.select(r => r[this.props.primaryKey] !== rowid);
+      this.setState({data: newlist});
+
+      // also delete the info list
+      const newStatelist = this.state.rowInfoList.select(r => r[this.props.primaryKey] !== rowid);
+      this.setState({rowInfoList: newStatelist});
+    }
+    else if (oldState === rowStateDeleted)
+    {
+      // row was deleted, thus we restore the old values
+      this.state.rowInfoList[index].state = rowStateUnchanged;
+
+      // restore the old data
+      const newlist = this.state.data;
+      newlist[index] = this.props.data[index];
+      this.setState({data: newlist});
+    }
+
+    this.SetMainButtons();
+  }
+
+  handleInsertRow(e, rowid)
+  {
+    // button INSERT a new row was clicked
+    // first get a new primaryKey => the minimum -1, -2, -3, ... 
+    let min = 0;
+    for (let r = 0; r < this.state.data.length; r++)
+    {
+      if (min > this.state.data[r][this.props.primaryKexIndex])
+        min = this.state.data[r][this.props.primaryKexIndex];
+    }
+    min = min - 1;
+    
+    // get the default values for each field and min for the primary key
+    let obj = {};
+    for (let h = 0; h < this.props.headers; h++)
+    {
+      const head = this.props.headers[h];
+      obj[head.dataFieldName] = 
+        head.fieldname === this.props.primaryKey ? min : head.defaultValue;
+    }
+
+    // now also add a new row for the rowInfoList list
+    let newlistState = [];
+    let objState = {};
+    objState['id'] = min;
+    objState['height'] = this.props.settings.initialRowHeight;
+    objState['state'] = rowStateInserted; // edited, deleted, inserted, 
+    newlistState.push(objState);
+    this.setState({rowInfoList: newlist});
+
+    // add a new row
+    let newlist = this.state.data;
+    newlist.push(obj);
+    this.setState({data: newlist});
+  }
+
+  changeRowState(rowid, newRowState)
+  {
+    const index = this.state.rowInfoList.findIndex(r => r.id === rowid);
+    if (index === -1) 
+    {
+      alert("ERROR changeRowState: index = -1.");
+      return;
+    }
+    this.state.rowInfoList[index].state = newRowState;
+    this.SetMainButtons();
+  }
+
+  handleSaveAll(e)
+  {
+    alert("TODO: save all");
+    //alert("All data was saved");
+  }
+
+  handleUndoAll(e)
+  {
+    // undo all changes in all rows
+    let hasError = false;
+    const changedList = this.state.rowInfoList;
+    for (let i = changedList.length - 1; i >= 0; i--)
+    {
+      const state = changedList[i].state;
+      if (state === rowStateEdited)
+      {
+        this.changeRowState(changedList[i].id, rowStateUnchanged);
+      }
+      else if (state === rowStateDeleted)
+      {
+        this.changeRowState(changedList[i].id, rowStateUnchanged);
+      }
+      else if (state === rowStateInserted)
+      {
+        changedList.splice(i, 1);
+      }
+    }
+    
+    // now get old data for all rows
+    const olddatalist = this.props.data;
+    this.setState({data: olddatalist});
+
+    if (hasError) alert("ERROR while undoing all rows.");
+  }
+
+  SetMainButtons()
+  {
+    const newlist = this.state.rowInfoList.filter(r => r.state !== rowStateUnchanged);
+    const disable = newlist === 0;
+    this.setState({mainDisabled: disable});
+  }
+
+
+  // ---------------------------------------------------------------------------------------
+  // row procedures / functions
 
   getRowState(rowid)
   {
     const index = this.state.rowInfoList.findIndex(d => d.id === rowid);
-    if (index === -1)  return '';
+    if (index === -1) 
+    {
+      alert("ERROR getRowState: index = -1.")
+      return '';
+    } 
     return this.state.rowInfoList[index].state;
   }
-
-  getCellEditing(id, fieldname)
-  {
-    /*
-    if (fieldname === this.fieldnameUsers)
-    {
-      const index = this.state.editingFieldList_User.findIndex(d => d === id);
-      return (index > -1);
-    }
-    return false;
-    */
-  }
-
-  /*
-  isRowDeleted(rowid)
-  {
-    const index = this.state.rowInfoList.findIndex(d => d.id === rowid);
-    if (index === -1) return false;
-    newlist = this.state.rowInfoList;
-    return this.state.rowInfoList[index].isDeleted;
-  }
-    
-
-  isRowEdited(rowid)
-  {
-    const index = this.state.listChangedRows.findIndex(d => d['id'] === rowid);
-    if (index === -1) return false;
-    return true;
-  }
-    */
-
 
   getRowHeight(rowid)
   {
@@ -318,14 +518,16 @@ class InselTable extends React.Component {
     return (index > -1);
   }
 
+  // ---------------------------------------------------------------------------------------
+  // row selection procedures / functions
+
   getIconSource(idx)
   {
     const index = this.state.selectedRows.findIndex(d => d === idx);
-    const path = "C:/Users/Rolf/Documents/Projects/StartTest/";
     return ((index > -1) ? imgChkboxChecked : imgChkboxUnchecked);
   }
 
-  hdlCheckboxClickHeader(e)
+  handleCheckboxClickHeader(e)
   {
     let ischecked = this.state.mainChecked;
     ischecked = !ischecked;
@@ -345,7 +547,7 @@ class InselTable extends React.Component {
       ischecked ? imgChkboxChecked : imgChkboxUnchecked});
   }
 
-  hdlCheckboxClickRow(e, idx)
+  handleSelectionClickRow(e, idx)
   {
     // create a new list in order to be up to date
     let newlist = this.state.selectedRows;
@@ -406,8 +608,13 @@ class InselTable extends React.Component {
     this.setState({selectedRows: newlist});
   }
 
-  handleEditClick(e, rowid, row)
+
+  // ---------------------------------------------------------------------------------------
+  // modal dialog
+
+  handleEditnModalDialogClick(e, rowid, row)
   {
+    alert("Modal Dialog: not implemented. Jus see an example.");
     // first set the row
     this.setState({editId: rowid});
     // TODO
@@ -423,12 +630,8 @@ class InselTable extends React.Component {
     this.setState({openDialog: true});
   }
 
-  handleEditRowClick(e, id, name, users, events, views, time)
+  handleSubmit = () => 
   {
-    
-  }
-
-  handleSubmit = () => {
     const idx = this.state.data.findIndex(d => d.id === this.state.editId);
     this.state.data[idx].name = this.state.dlgName;
     // TODO: fill other fields
@@ -436,111 +639,132 @@ class InselTable extends React.Component {
     this.setState({openDialog: false});
   };
 
-  handleClose = () => {
+  handleClose = () => 
+  {
     this.setState({openDialog: false});
   };  
 
-  handleDialogChange = (e, field) => {
+  handleDialogChange = (e, field) => 
+  {
     if (field === "dlgName") this.setState({dlgName: e.target.value});
     if (field === "dlgUser") this.setState({dlgUser: e.target.value});
     // TODO other fields
   };  
 
-  handleTableMainKeyUp = (e) => {
+  // ---------------------------------------------------------------------------------------
+  // copy selection
+
+  handleTableMainKeyUp = (e) => 
+  {
     if (e.key === "c" && e.ctrlKey) {
       const txt = window.getSelection().toString();
       navigator.clipboard.writeText(txt);
     }
   }
 
-  // cell editing events -------------------------------------------------------------------------------------
 
-  setNewEditingRow(rowId, fieldname, newvalue)
+  // ---------------------------------------------------------------------------------------
+  // cell editing procedures and functions
+
+  setRowState(rowid, state)
   {
-    // now add the new data to the list of edited values (newRowData)
-    const indexNewData = this.state.newRowData.findIndex(dr => dr.id === rowId);
-    if (indexNewData === -1)
-    {
-      // the new data doesnt exist yet, we need to add a new one
-      let obj = {};
-      obj['id'] = rowId;
-      for (let i = 0; i < this.state.editableFields.count; i++)
-      {
-        if (fieldname === this.state.editableFields[i])
-        {
-          obj[this.state.editableFields[i]] = newvalue;
-        }
-        else
-        {
-          obj[this.state.editableFields[i]] = null;
-        }
-      }
-      this.state.newRowData.push(obj);
-    }
-    else
-    {
-      // the new data exists already, we add the new value
-      this.state.newRowData[indexNewData][fieldname] = newvalue;
-    }
+    // set a new row state
+    // if the old state is INSERTED, then we dont change it to edited
+    const oldState = this.getRowState(rowid);
+    if (oldState === rowStateInserted) return;
+
+    // set a new row state
+    const index = this.getRowIndex(rowid);
+    const newlist = this.state.rowInfoList;
+    newlist[index].state = state;
+    this.setState({rowInfoList: newlist});
+  }  
+  
+  handleTextfieldChange(e, rowid, fieldName)
+  {
+
+    console.log("handleTextfieldChange start props", this.props.data);      
+
+    // change the data when a field was selected
+    const index = this.getRowIndex(rowid);
+    const newList = [...this.state.data];
+    
+    //newList[index][fieldName] = e.target.value;
+
+    this.state.data[index][fieldName] = e.target.value;
+
+    this.setState({data: newList});
+
+
+    console.log("handleTextfieldChange end props", this.props.data);      
+    console.log("handleTextfieldChange end state", this.state.data);      
+
+
+    // now also change the state of the row
+    const rowState = this.getRowState(rowid);
+    if (rowState === rowStateUnchanged) this.setRowState(rowid, rowStateEdited);
   }
 
-  handleCellEditChange(e, rowId, fieldname)
+  handleTextfieldNumberChange(e, rowid, fieldName)
   {
-    if (fieldname === this.fieldnameUsers)
-    {
-      this.setState({newvalue_Users: e.target.value});
-      const newList = [rowId];
-      this.setState({editingFieldList_User: newList});
-      this.setNewEditingRow(rowId, fieldname, e.target.value);
-    }
-    this.SetMainButtons();
+    // change the data when a field was selected
+    const index = this.getRowIndex(rowid);
+    const newList = this.state.data;
+    const number = parseFloat(e.target.value);
+    newList[index][fieldName] = number;
+    this.setState({data: newList});
+
+    // now also change the state of the row
+    const rowState = this.getRowState(rowid);
+    if (rowState === rowStateUnchanged) this.setRowState(rowid, rowStateEdited);
   }
- 
+
+  handleDropdownChange(e, rowIndex, fieldName)
+  {
+    // change the data when a field was selected
+    const newList = this.state.data;
+    newList[rowIndex][fieldName] = e.target.value;
+    this.setState({data: newList});
+
+    // now also change the state of the row
+    const rowState = this.getRowState(rowIndex);
+    if (rowState === rowStateUnchanged) this.setRowState(rowIndex, rowStateEdited);
+  }
+
+  handleCheckboxChange(e, rowIndex, fieldName)
+  {
+    // change the data when a field was selected
+    const newList = this.state.data;
+    newList[rowIndex][fieldName] = e.target.value;
+    this.setState({data: newList});
+
+    // now also change the state of the row
+    const rowState = this.getRowState(rowIndex);
+    if (rowState === rowStateUnchanged) this.setRowState(rowIndex, rowStateEdited);
+  }
+
+
+  // ---------------------------------------------------------------------------------------
+  // common key events
+
   handleCellEditKeyUp(e, rowId, fieldname)
   {
     if (e.key === 'Enter' || e.keyCode === 13)
     {
-      const idx = this.state.data.findIndex(d => d.id === rowId);
-      if (fieldname === this.fieldnameUsers)
-      {
-        const newList = [];
-        this.setState({editingFieldList_User: newList});
-        this.state.data[idx].users = e.target.value;
-      }
-      this.setNewEditingRow(rowId, fieldname, e.target.value);
+
     }
     else if (e.key === 'Escape')
     {
-      alert("TODO escape pressed");
+      
     }
   }
 
-  handleCellDoubleClick(rowId, rowIndex, fieldname, oldvalue)
-  {
-    if (this.state.editingFieldList_User.length > 0)
-    {
-      let checksAreOk = true;
-      if (!checksAreOk)
-      {
-        alert("checks are not ok. edit field again.");
-        return false;
-      }
-
-      const idx = this.state.editingFieldList_User[0];
-      const oldidx = this.state.data.findIndex(d => d.id === idx);
-      this.state.data[oldidx].users = this.state.newvalue_Users;
-    }
-
-    if (fieldname === this.fieldnameUsers)
-    {
-      const newList = [rowId];
-      this.setState({editingFieldList_User: newList});
-      this.setState({newvalue_Users: oldvalue});
-    }
-  }
-
+  // ---------------------------------------------------------------------------------------
+  // resizing row heights and column widths events
+ 
   handleMouseDownRowNS(e, rowid)
   {
+    // resizing row height
     let mouseStart = e.clientY;
     let oldRowHeight = this.getRowHeight(rowid);
 
@@ -568,6 +792,7 @@ class InselTable extends React.Component {
 
   handleMouseDownRowEW(e, index)
   {
+    // resizing column width
     const mouseStart = e.clientX;
     const colindex = index;
     const cellWidth = this.state.headers[colindex].width;
@@ -592,67 +817,8 @@ class InselTable extends React.Component {
     document.body.style.userSelect = "none";  
   }
 
-
-  handleDeleteRow(e, rowid)
-  {
-    const isDeleted = this.getRowState(rowid) === 'deleted';
-    if (!isDeleted)
-    {
-      this.changeRowState(rowid, 'deleted');
-      this.SetMainButtons();
-    }
-  }
-
-  changeRowState(rowid, action)
-  {
-    const index = this.state.rowInfoList.filter(r => r.id === rowid);
-    if (index === -1) return;
-    this.state.rowInfoList[index].state = action;
-    //this.setState({listChangedRows: newlist});
-    //return newlist;
-  }
-
-
-  handleUndoRow(e, rowid)
-  {
-    const newlist = this.state.listChangedRows.filter(item => item['id'] !== rowid);
-    this.setState({listChangedRows: newlist});
-    this.SetMainButtons();
-  }
-
-  SetMainButtons()
-  {
-    const newlist = this.state.rowInfoList.filter(r => r.state === '');
-    const disable = newlist === 0;
-    this.setState({mainDisabled: disable});
-  }
-
-  handleSaveAll(e)
-  {
-    alert("TODO");
-    //this.setState({listChangedRows: []});
-    //alert("All data was saved");
-  }
-
-  handleUndoAll(e)
-  {
-    alert("TODO");
-    //const newList = this.state.
-    //this.setState({listChangedRows: []});
-  }
-
-  /*
-  getHeaderHeight()
-  {
-    let maxHeight = 0;
-    for (let i = 0; i < this.state.headerHeightList.length; i++)
-    {
-      if (maxHeight < this.state.headerHeightList[i])
-        maxHeight = this.state.headerHeightList[i];
-    }
-    return maxHeight;
-  }
-    */
+  // ---------------------------------------------------------------------------------------
+  // header menu events
 
   Sort(sortOrder, colHeadIndex)
   {
@@ -661,7 +827,9 @@ class InselTable extends React.Component {
     //this.setState({headers, newlist});
   }
 
-  render() {
+
+  render() 
+  {
     const dataDays = getDaysInMonth(4, 2024);
     const { classes } = this.props;
     const { page, limit } = this.state;
@@ -676,8 +844,6 @@ class InselTable extends React.Component {
     const mainUndoIcon = this.state.mainUndoIcon;
     const mainDisabled = this.state.mainDisabled;
     const colwidth = this.state.colwidth;
-    // = this.state.rowHeight;
-    // TODO are same names allowed?
     const headers = this.state.headers;
     const rowInfoList = this.state.rowInfoList;
 
@@ -710,10 +876,6 @@ class InselTable extends React.Component {
             },
           }}>
 
-{/* ================================================================================ */}
-{/* start of table header ========================================================== */}
-{/* ================================================================================ */}
-
           <Table 
           className={classes.table} 
           stickyHeader
@@ -722,24 +884,28 @@ class InselTable extends React.Component {
 
           }}
           >
+            {/* ================================================================================ */}
+            {/* start of table header ========================================================== */}
+            {/* ================================================================================ */}
             <TableHead className={classes.table_head}>
               <TableRow 
                 className={classes.table_head_row}
                 >
 
                 {headers.map((header, colHeadIndex) => {
-                  const isCheckbox = header.editType === 'checkbox';
-                  const isCheckboxIcon = header.editType === 'checkboxIcon';
+                  const isSelection = header.editType === 'selection';
+                  const isSelectionIcon = header.editType === 'selectionIcon';
                   const isSortable = header.isSortable;
                   const sortOrder = header.defaultSorting;
-                  const isNoEdit = (!isCheckbox) && (!isCheckboxIcon);
+                  const isNoEdit = (!isSelection) && (!isSelectionIcon);
                   const isButtonheader = (
                     header.editType === 'btnEdit' ||
                     header.editType === 'btnSave' ||
                     header.editType === 'btnUndo' ||
-                    header.editType === 'btnDelete' 
+                    header.editType === 'btnDelete'
                   );
 
+                  const hasHeaderMenu = header.hasHeaderMenu;
                   const headerTitle = headers[colHeadIndex].headerTitle;
                   const isisResizable = headers[colHeadIndex].isResizable;
                   const headerMinWidth = headers[colHeadIndex].minWidth;
@@ -747,11 +913,6 @@ class InselTable extends React.Component {
                   const newheaderWidth = 
                     isButtonheader ? header.width + 18 : header.width;
                   const headerRowHeight = this.props.settings.initialHeaderHeight;
-
-                  {/*
-                    &uarr; ARRAY UP
-                    &darr; ARRAY DOWN
-                  */}
 
                   return (
                     <InselTableCellWidthResizer
@@ -763,33 +924,20 @@ class InselTable extends React.Component {
                     verticalAlign={'bottom'}
                     height= {headerRowHeight}
                     setWidth={(colwidth) => this.setState({colwidth: colwidth})}
-                    handleMouseDownRowEW={(e)=>this.handleMouseDownRowEW(e, colHeadIndex)}>
-                    {isSortable && 
-                      headerHorizontalAlign === 'right' &&
-                      sortOrder === 'asc' &&
-                      <span>&nbsp;<button 
-                        //href={this.Sort(sortOrder, colHeadIndex)}
-                        style={{fontSize: '18px', fontWeight: 'bold'}}
-                        >&darr;</button>&nbsp;</span>
-                    }
-                    {isSortable && 
-                      headerHorizontalAlign === 'right' &&
-                      sortOrder === 'desc' &&
-                      <span>&nbsp;<button 
-                        //href={this.Sort(sortOrder, colHeadIndex)}
-                        style={{fontSize: '18px', fontWeight: 'bold'}}
-                        >&uarr;</button>&nbsp;</span>
-                    }
-                    {isCheckbox &&
+                    handleMouseDownRowEW={(e)=>this.handleMouseDownRowEW(e, colHeadIndex)}
+                    hasHeaderMenu={hasHeaderMenu}>
+
+                    {isSelection &&
                       <Checkbox
                       checked={mainChecked}
                       indeterminate={mainIndeterminated}
                       color_checked={green[400]}
                       color_uncheck={green[600]}
-                      onClick={e => this.hdlCheckboxClickHeader(e)}
+                      onClick={e => this.handleCheckboxClickHeader(e)}
                       size="small"/>
                     }
-                    {isCheckboxIcon &&
+
+                    {isSelectionIcon &&
                       <IconButton
                         style={{ width: newheaderWidth, height: newheaderWidth }} 
                       >
@@ -799,40 +947,21 @@ class InselTable extends React.Component {
                         />
                       </IconButton>
                     }
+
                     {isNoEdit && headerTitle }
-                    {isSortable && 
-                      headerHorizontalAlign === 'left' &&
-                      sortOrder === 'asc' &&
-                      <span>&nbsp;<button 
-                        //href={this.Sort(sortOrder, colHeadIndex)}
-                        style={{fontSize: '18px', fontWeight: 'bold'}}
-                        >&darr;</button>&nbsp;</span>
-                    }
-                    {isSortable && 
-                      headerHorizontalAlign === 'left' &&
-                      sortOrder === 'desc' &&
-                      <span>&nbsp;<button 
-                        //href={this.Sort(sortOrder, colHeadIndex)}
-                        style={{fontSize: '18px', fontWeight: 'bold'}}
-                        >&uarr;</button>&nbsp;</span>
-                    }
+
                     </InselTableCellWidthResizer>
                   );
                 })}
               </TableRow>
             </TableHead>
+
+
             {/* ================================================================================ */}
             {/* Start of the rows ============================================================== */}
             {/* ================================================================================ */}
             <TableBody className={classes.table_body_row}>
-              {data.map((row, rowindex) => {
-                /*
-                const {
-                  id, name, moreInfo, status, 
-                  users, eventCount, viewsPerUser, averageTime,
-                  conversions
-                } = row;
-                 */
+              {data.map((row, rowIndex) => {
 
                 // unique identifier for the rows
                 const rowid = row[this.props.primaryKey];
@@ -840,11 +969,11 @@ class InselTable extends React.Component {
                 // main row selection 
                 const isRowSelected = this.getRowSelection(row.id);
                 
-                // to get the background of the whole row color depending the row state
+                // to get the background color for the row depending on its state
                 const rowState = this.getRowState(rowid);
-                const isRowChanged = rowState === 'edited';
-                const isRDeleted = rowState === 'deleted';
-                const isRowInserted = rowState === 'inserted';
+                const isRowDeleted = rowState === rowStateDeleted;
+                const isRowInserted = rowState === rowStateInserted;
+                const isRowChanged = rowState === rowStateEdited || isRowDeleted || isRowInserted;
 
                 const iconSource = this.getIconSource(row.id);
                 //const editvalue_Users = isCellEditingUser ? this.newvalue_Users : users;
@@ -859,7 +988,7 @@ class InselTable extends React.Component {
                     style={{
                       height: rowHeight,
                       backgroundColor: 
-                        isRDeleted ? '#fee' : 
+                        isRowDeleted ? '#fee' : 
                         isRowChanged ? '#efe' : 
                         isRowInserted ? '#ffe' : 'white',
                     }}
@@ -868,9 +997,9 @@ class InselTable extends React.Component {
 
                   {headers.map((header, colindex) => {
 
-                    const isCheckbox = header.editType === 'checkbox';
                     const isPrimaryKey = header.editType === 'primaryKey';
-                    const isCheckboxIcon = header.editType === 'checkboxIcon';
+                    const isSelection = header.editType === 'selection';
+                    const isSelectionIcon = header.editType === 'selectionIcon';
                     const isNoEdit = header.editType === 'none';
                     const isTextfield = header.editType === 'textfield';
                     const isTextarea = header.editType === 'textarea';
@@ -878,24 +1007,33 @@ class InselTable extends React.Component {
                     const isInteger = header.editType === 'integer';
                     const isDecimal = header.editType === 'decimal';
                     const isDropdown = header.editType === 'dropdown';
+                    const isCheckbox = header.editType === 'checkbox';
+
                     const isButtonEdit = header.editType === 'btnEdit';
                     const isButtonSave = header.editType === 'btnSave';
                     const isButtonUndo = header.editType === 'btnUndo';
                     const isButtonDelete = header.editType === 'btnDelete';
                     const btnHoverWidth = header.width + 8;
                     const dropdownWidth = header.width - 10;
+                    //const decimalCnt = 
 
                     const typeFound = (
-                      isPrimaryKey || isCheckbox || isCheckboxIcon || isNoEdit || 
+                      isPrimaryKey || isSelection || isSelectionIcon || isNoEdit || 
                       isTextfield || isTextarea || isTextfieldMultiline ||
                       isInteger || isDecimal || isDropdown ||
-                      isButtonEdit || isButtonSave || isButtonUndo || isButtonDelete
+                      isButtonEdit || isButtonSave || isButtonUndo || isButtonDelete ||
+                      isCheckbox
                     );
                     
                     let tmp = row[header.dataFieldName];
-                    if (isDecimal) tmp = tmp.toFixed(3);
+                    if (isDecimal) tmp = tmp.toFixed(header.decimalCount);
                     if (isPrimaryKey) tmp = row[this.props.primaryKey];
                     const value = tmp;
+
+                    const field = header.dataFieldName;
+
+                    const iconCheckbox = isCheckbox ? 
+                      value ? imgChkboxChecked : imgChkboxUnchecked :  null;
 
                     return (
                       <InselTableCellHeightResizer
@@ -905,19 +1043,19 @@ class InselTable extends React.Component {
                         handleMouseDownRowNS={(e)=>this.handleMouseDownRowNS(e, rowid)}
                         resizerBackgroundColor={reszBgColor}>
                         
-                        {isCheckbox &&
+                        {isSelection &&
                           <Checkbox
                           checked={isRowSelected}
                           color_checked={green[400]}
                           color_uncheck={green[600]}
-                          onClick={e => this.hdlCheckboxClickRow(e, rowindex)}
+                          onClick={e => this.handleSelectionClickRow(e, rowid)}
                           size="small"/>
-                        
                         }
 
-                        {isCheckboxIcon &&
+                        {isSelectionIcon &&
                           <IconButton
-                          style={{ width: header.width, height: header.width }} >
+                            onClick={e => this.handleSelectionClickRow(e, rowid)}
+                            style={{ width: header.width, height: header.width }} >
                           <img 
                             src={iconSource}
                             style={{ width: header.width, height: header.width }} 
@@ -939,11 +1077,15 @@ class InselTable extends React.Component {
                             value={value}
                             fullWidth
                             style={{ textAlign: header.horizontalAlign, }}
+                            onChange={e => this.handleTextfieldChange(e, rowid, field)}
                           ></TextField>
                         }
 
                         {isTextarea && 
-                          <textarea style={{ height: rowHeight}}>{value}</textarea>
+                          <textarea 
+                            onChange={e => this.handleTextfieldChange(e, rowid, field)}
+                            style={{ height: rowHeight}}
+                          >{value}</textarea>
                         }
 
                         {isTextfieldMultiline && 
@@ -956,6 +1098,7 @@ class InselTable extends React.Component {
                             }}
                             //InputProps={{ height: '300px' }}
                             inputProps={{ style: { height: rowHeight } }}
+                            onChange={e => this.handleTextfieldChange(e, rowid, field)}
                             >
                           </TextField>
                         }
@@ -971,7 +1114,8 @@ class InselTable extends React.Component {
                                   textAlign: header.horizontalAlign,
                                 },
                               },
-                            }}                            
+                            }}
+                            onChange={e => this.handleTextfieldNumberChange(e, rowid, field)}
                           >
                           </TextField>
                         }
@@ -988,6 +1132,7 @@ class InselTable extends React.Component {
                                 },
                               },
                             }}                            
+                            onChange={e => this.handleTextfieldNumberChange(e, rowid, field)}
                           >
                           </TextField>
                         }
@@ -1005,6 +1150,8 @@ class InselTable extends React.Component {
                             //label="select example"
                             //minWidth={100}
                             value={value}
+                            onChange={e => this.handleDropdownChange(e, rowid, colindex)}
+
                             //style={{ width: header.width, }}
                             >
                             {header.dropdownSelection.map((item, itemIndex) =>
@@ -1021,17 +1168,28 @@ class InselTable extends React.Component {
                           </FormControl>
                         }
 
+                        {isCheckbox &&
+                          <IconButton
+                            onClick={e => this.handleCheckboxChange(e, rowid, colindex)}
+                            style={{ width: btnHoverWidth, height: btnHoverWidth }} >
+                          <img 
+                            src={iconCheckbox}
+                            style={{ width: header.width, height: header.width }} 
+                          />
+                          </IconButton>
+                        }
+
                         {isButtonEdit &&
                           <IconButton
-                            disabled={isRDeleted}
-                            onClick={e => this.handleEditClick(e, rowid, row)}
+                            disabled={isRowDeleted}
+                            onClick={e => this.handleEditnModalDialogClick(e, rowid, row)}
                               style={{ width: btnHoverWidth, height: btnHoverWidth }} >
                           <img 
                             src={mainEditIcon}
                             title="Edit this in the dialog"
                             style={{ 
                               width: header.width, height: header.width,
-                              opacity: (!isRDeleted ? 1 : 0.2) }} 
+                              opacity: (!isRowDeleted ? 1 : 0.2) }} 
                           />
                           </IconButton>
                         }
@@ -1069,14 +1227,14 @@ class InselTable extends React.Component {
 
                         {isButtonDelete &&
                           <IconButton
-                            disabled={isRDeleted}
+                            disabled={isRowDeleted}
                             onClick={e => this.handleDeleteRow(e, rowid)}
                             style={{ width: btnHoverWidth, height: btnHoverWidth }} >
                           <img 
                             src={mainDeleteIcon}
                             title="Delete this row by clicking here"
                             style={{ width: header.width, height: header.width,
-                              opacity: (!isRDeleted ? 1 : 0.2)
+                              opacity: (!isRowDeleted ? 1 : 0.2)
                              }} 
                           />
                           </IconButton>
@@ -1120,7 +1278,7 @@ class InselTable extends React.Component {
             <TableRow>
 
 {/* new button */}
-<IconButton
+              <IconButton
                 //disabled={!this.state.rowsWereEdited}
                 //disabled={mainDisabled}
                 //onClick={e => this.handleNewRow(e)}

@@ -44,11 +44,13 @@ const App = ()=> {
       textMaxLength: 0,
       numberMinValue: 0,
       numberMaxValue: 0,
-      editType: 'checkbox',
+      decimalCount: 0,
+      editType: 'selection',
       defaultValue: false,
       dataFieldName: '',
       horizontalAlign: 'center',
       dropdownSelection: [],
+      hasHeaderMenu: false,
       //valueGetter: (value, row) => `${row.firstName || ''} ${row.lastName || ''}`,
     },
     {
@@ -66,11 +68,13 @@ const App = ()=> {
       textMaxLength: 0,
       numberMinValue: 0,
       numberMaxValue: 0,
-      editType: 'checkboxIcon',
+      decimalCount: 0,
+      editType: 'selectionIcon',
       defaultValue: false,
       dataFieldName: '',
       horizontalAlign: 'center',
       dropdownSelection: [],
+      hasHeaderMenu: false,
     },
     {
       databaseField: "primaryKey",
@@ -87,11 +91,13 @@ const App = ()=> {
       textMaxLength: 0,
       numberMinValue: 0,
       numberMaxValue: 0,
+      decimalCount: 0,
       editType: 'primaryKey',
       defaultValue: 'none',
       dataFieldName: 'id',
       horizontalAlign: 'center',
       dropdownSelection: [],
+      hasHeaderMenu: false,
     },
     {
       databaseField: "FieldXY",
@@ -108,11 +114,13 @@ const App = ()=> {
       textMaxLength: 200,
       numberMinValue: 0,
       numberMaxValue: 0,
+      decimalCount: 0,
       editType: 'textfield',
       defaultValue: 'default field x',
       dataFieldName: 'field1',
       horizontalAlign: 'left',
       dropdownSelection: [],
+      hasHeaderMenu: true,
     },
     {
       databaseField: "textarea",
@@ -129,11 +137,13 @@ const App = ()=> {
       textMaxLength: 200,
       numberMinValue: 0,
       numberMaxValue: 0,
+      decimalCount: 0,
       editType: 'textarea',
       defaultValue: 'default field textarea',
       dataFieldName: 'fieldtextarea',
       horizontalAlign: 'left',
       dropdownSelection: [],
+      hasHeaderMenu: true,
     },
     {
       databaseField: "comment",
@@ -150,11 +160,13 @@ const App = ()=> {
       textMaxLength: 100,
       numberMinValue: 0,
       numberMaxValue: 0,
+      decimalCount: 0,
       editType: 'textfieldmultiline',
       defaultValue: 'default field textfieldmultiline',
       dataFieldName: 'field2',
       horizontalAlign: 'left',
       dropdownSelection: [],
+      hasHeaderMenu: true,
     },
     {
       databaseField: "numbervalue",
@@ -171,11 +183,13 @@ const App = ()=> {
       textMaxLength: 100,
       numberMinValue: 0,
       numberMaxValue: 10000,
+      decimalCount: 0,
       editType: 'integer',
       defaultValue: 0,
       dataFieldName: 'eventCount',
       horizontalAlign: 'right',
       dropdownSelection: [],
+      hasHeaderMenu: true,
     },
     {
       databaseField: "decimalvalue",
@@ -192,11 +206,13 @@ const App = ()=> {
       textMaxLength: 20,
       numberMinValue: 0,
       numberMaxValue: 10000,
+      decimalCount: 3,
       editType: 'decimal',
       defaultValue: 1.1111,
       dataFieldName: 'viewsPerUser',
       horizontalAlign: 'right',
       dropdownSelection: [],
+      hasHeaderMenu: true,
     },
     {
       databaseField: "dropdown",
@@ -213,6 +229,7 @@ const App = ()=> {
       textMaxLength: 100,
       numberMinValue: 0,
       numberMaxValue: 10000,
+      decimalCount: 0,
       editType: 'dropdown',
       defaultValue: -1,
       dataFieldName: 'dropdownvalue',
@@ -225,8 +242,31 @@ const App = ()=> {
         { id: 5, value: 'Dropdown 5', },
         { id: 6, value: 'Dropdown 6', },
       ],
-  
+      hasHeaderMenu: true,
     }, 
+    {
+      databaseField: "",
+      headerTitle: "was in hospital",
+      isResizable: true,
+      isEditable: false,
+      isRequired: false,
+      isVisible: true,
+      isSortable: false,
+      defaultSorting: '',
+      width: 32,
+      minWidth: 32,
+      maxWidth: 80,
+      textMaxLength: 0,
+      numberMinValue: 0,
+      numberMaxValue: 0,
+      decimalCount: 0,
+      editType: 'checkbox',
+      defaultValue: 'none',
+      dataFieldName: 'wasInHospital',
+      horizontalAlign: 'center',
+      dropdownSelection: [],
+      hasHeaderMenu: true,
+    },
     {
       databaseField: "",
       headerTitle: "Edit",
@@ -242,11 +282,13 @@ const App = ()=> {
       textMaxLength: 0,
       numberMinValue: 0,
       numberMaxValue: 0,
+      decimalCount: 0,
       editType: 'btnEdit',
       defaultValue: 'none',
       dataFieldName: '',
       horizontalAlign: 'center',
       dropdownSelection: [],
+      hasHeaderMenu: false,
     },
     {
       databaseField: "",
@@ -263,11 +305,13 @@ const App = ()=> {
       textMaxLength: 0,
       numberMinValue: 0,
       numberMaxValue: 0,
+      decimalCount: 0,
       editType: 'btnSave',
       defaultValue: 'none',
       dataFieldName: '',
       horizontalAlign: 'center',
       dropdownSelection: [],
+      hasHeaderMenu: false,
     },
     {
       databaseField: "",
@@ -284,11 +328,13 @@ const App = ()=> {
       textMaxLength: 0,
       numberMinValue: 0,
       numberMaxValue: 0,
+      decimalCount: 0,
       editType: 'btnUndo',
       defaultValue: 'none',
       dataFieldName: '',
       horizontalAlign: 'center',
       dropdownSelection: [],
+      hasHeaderMenu: false,
     },
     {
       databaseField: "",
@@ -305,11 +351,13 @@ const App = ()=> {
       textMaxLength: 0,
       numberMinValue: 0,
       numberMaxValue: 0,
+      decimalCount: 0,
       editType: 'btnDelete',
       defaultValue: 'none',
       dataFieldName: '',
       horizontalAlign: 'center',
       dropdownSelection: [],
+      hasHeaderMenu: false,
     },
   ];
   
@@ -318,7 +366,7 @@ const App = ()=> {
     const value = params.getValue('user')
     return `${value.firstname} ${value.lastname}`
   }
-    */
+  */
   
   const data = [
       {
@@ -340,6 +388,7 @@ const App = ()=> {
           1145309, 1195630, 1358925, 1373160, 1172679, 1340106, 1396974, 1623641,
           1687545, 1581634, 1550291,
         ],
+        wasInHospital: false,
         user: {
           id: 1,
           firstname: 'John',
@@ -365,6 +414,7 @@ const App = ()=> {
           1014831, 1027570, 1189068, 1119099, 987244, 1197954, 1310721, 1480816, 1577547,
           1854053, 1791831,
         ],
+        wasInHospital: true,
       },
       {
         id: 6,
@@ -384,6 +434,7 @@ const App = ()=> {
           94734, 132289, 133860, 147706, 158504, 192578, 207173, 220052, 233496, 250091,
           285557, 268555, 259482, 274019, 321648, 359801, 399502, 447249, 497403,
         ],
+        wasInHospital: true,
       },
       {
         id: 7,
@@ -403,6 +454,7 @@ const App = ()=> {
           309600, 278050, 331964, 356826, 404896, 428090, 470245, 485582, 539056, 582112,
           594289, 671915, 649510, 574911, 713843, 754965, 853020, 916793, 960158, 984265,
         ],
+        wasInHospital: false,
       },
       {
         id: 8,
@@ -423,6 +475,7 @@ const App = ()=> {
           591019, 681506, 653332, 581234, 719038, 783496, 911609, 973328, 1056071,
           1112940,
         ],
+        wasInHospital: false,
       },
       {
         id: 9,
@@ -442,6 +495,7 @@ const App = ()=> {
           129957, 143568, 158509, 174822, 192488, 211512, 234702, 258812, 284328, 310431,
           338186, 366582, 396749, 428788, 462880, 499125, 537723, 578884, 622825,
         ],
+        wasInHospital: false,
       },
       {
         id: 10,
@@ -462,6 +516,7 @@ const App = ()=> {
           686539, 788615, 754813, 687955, 883645, 978347, 1142551, 1233074, 1278155,
           1356724,
         ],
+        wasInHospital: false,
       },
       {
         id: 11,
@@ -482,6 +537,7 @@ const App = ()=> {
           580591, 671635, 655812, 576431, 741632, 819296, 971762, 1052605, 1099234,
           1173591,
         ],
+        wasInHospital: false,
       },
       {
         id: 12,
@@ -502,6 +558,7 @@ const App = ()=> {
           495920, 564785, 541022, 491680, 618096, 704926, 833365, 904313, 974622,
           1036567,
         ],
+        wasInHospital: false,
       },
       {
         id: 13,
@@ -521,6 +578,7 @@ const App = ()=> {
           65731, 76021, 85579, 96876, 108515, 119572, 131826, 145328, 160192, 176528,
           196662, 217929, 239731, 262920, 289258, 315691, 342199, 370752, 402319,
         ],
+        wasInHospital: false,
       },
       {
         id: 14,
@@ -540,6 +598,7 @@ const App = ()=> {
           55734, 60780, 66421, 72680, 79584, 87233, 95711, 105285, 115814, 127509,
           140260, 154086, 169495, 186445, 205109, 225580, 247983, 272484, 299280,
         ],
+        wasInHospital: false,
       },
       {
         id: 15,
@@ -560,6 +619,7 @@ const App = ()=> {
           938542, 1111291, 1313329, 1543835, 1812156, 2123349, 2484926, 2907023, 3399566,
           3973545,
         ],
+        wasInHospital: false,
       },
       {
         id: 16,
@@ -579,6 +639,7 @@ const App = ()=> {
           495374, 510283, 532489, 559672, 587312, 610982, 629385, 654732, 678925, 704362,
           725182, 749384, 772361, 798234, 819472, 846291, 872183, 894673, 919283, 945672,
         ],
+        wasInHospital: false,
       },
       {
         id: 17,
@@ -598,6 +659,7 @@ const App = ()=> {
           35867, 37989, 40101, 42223, 44345, 46467, 48589, 50701, 52823, 54945, 57067,
           59189, 61301, 63423, 65545, 67667, 69789, 71901, 74023,
         ],
+        wasInHospital: false,
       },
       {
         id: 18,
@@ -617,6 +679,7 @@ const App = ()=> {
           47868, 50080, 52302, 54524, 56746, 58968, 61180, 63402, 65624, 67846, 70068,
           72290, 74502, 76724, 78946, 81168, 83380, 85602, 87824,
         ],
+        wasInHospital: false,
       },
       {
         id: 19,
@@ -636,6 +699,7 @@ const App = ()=> {
           345646, 367868, 390080, 412302, 434524, 456746, 478968, 501180, 523402, 545624,
           567846, 590068, 612290, 634502, 656724, 678946, 701168, 723380, 745602, 767824,
         ],
+        wasInHospital: false,
       },
       {
         id: 20,
@@ -655,6 +719,7 @@ const App = ()=> {
           456467, 478689, 500801, 523023, 545245, 567467, 589689, 611801, 634023, 656245,
           678467, 700689, 722801, 745023, 767245, 789467, 811689, 833801, 856023, 878245,
         ],
+        wasInHospital: false,
       },
       {
         id: 21,
@@ -674,6 +739,7 @@ const App = ()=> {
           57989, 60101, 62223, 64345, 66467, 68589, 70701, 72823, 74945, 77067, 79189,
           81301, 83423, 85545, 87667, 89789, 91901, 94023, 96145,
         ],
+        wasInHospital: false,
       },
       {
         id: 22,
@@ -693,6 +759,7 @@ const App = ()=> {
           70080, 72302, 74524, 76746, 78968, 81180, 83402, 85624, 87846, 90068, 92290,
           94502, 96724, 98946, 101168, 103380, 105602, 107824, 110046,
         ],
+        wasInHospital: false,
       },
       {
         id: 23,
@@ -712,10 +779,9 @@ const App = ()=> {
           80101, 82223, 84345, 86467, 88589, 90701, 92823, 94945, 97067, 99189, 101301,
           103423, 105545, 107667, 109789, 111901, 114023, 116145, 118267,
         ],
+        wasInHospital: false,
       },
     ];
-  
-
   
   return(
     <Grid container >
