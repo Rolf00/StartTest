@@ -28,7 +28,7 @@ class InselTableCellWidthResizer extends React.Component {
     }
         */
 
-    render() 
+  render() 
     {
   
       function handleMouseEnter(e)
@@ -141,9 +141,7 @@ class InselTableCellWidthResizer extends React.Component {
             <div 
               onMouseDown={(e) => this.props.handleMouseDownRowEW(e, index)} 
               style={{
-              //display: notResizable ? 'none' : 'block',
               minHeight: height, 
-              //width: notResizable ? '0px' : '5px',
               width: '5px',
               padding: 0,
               backgroundColor: reszBackgroundColor,
@@ -154,9 +152,9 @@ class InselTableCellWidthResizer extends React.Component {
             }
           </div>
         </TableCell>
-      )
-    }
+    )
   }
+}
   
-  export default InselTableCellWidthResizer;
+export default InselTableCellWidthResizer;
   

@@ -19,12 +19,12 @@ const App = ()=> {
     headerVerticalAlign: 'top',
     initialHeaderHeight: 55,
     initialRowHeight: 25,
+    dialogName: 'InselDialog_MainData',
 
     resizerBackgroundColor: 'lightblue',
     resizerSize: 5,
     resizerBorderBottomRightWidth: 1,
     rowsVerticalAlign: 'top',
-    dialogName: '',
   }
   ;
   
@@ -79,6 +79,7 @@ const App = ()=> {
     {
       databaseField: "primaryKey",
       headerTitle: "dbID",
+      helperText: "",
       isResizable: true,
       isEditable: false,
       isRequired: true,
@@ -101,7 +102,8 @@ const App = ()=> {
     },
     {
       databaseField: "FieldXY",
-      headerTitle: "Name FIELD",
+      headerTitle: "Name",
+      helperText: "up to 20 characters only",
       isResizable: true,
       isEditable: true,
       isRequired: true,
@@ -111,7 +113,7 @@ const App = ()=> {
       width: 180,
       minWidth: 100,
       maxWidth: 300,
-      textMaxLength: 200,
+      textMaxLength: 20,
       numberMinValue: 0,
       numberMaxValue: 0,
       decimalCount: 0,
@@ -171,6 +173,7 @@ const App = ()=> {
     {
       databaseField: "numbervalue",
       headerTitle: "Count events",
+      helperText: "Only values between 0 and 100",
       isResizable: true,
       isEditable: true,
       isRequired: true,
@@ -182,7 +185,7 @@ const App = ()=> {
       maxWidth: 300,
       textMaxLength: 100,
       numberMinValue: 0,
-      numberMaxValue: 10000,
+      numberMaxValue: 100,
       decimalCount: 0,
       editType: 'integer',
       defaultValue: 0,
@@ -246,7 +249,7 @@ const App = ()=> {
     }, 
     {
       databaseField: "",
-      headerTitle: "was in hospital",
+      headerTitle: "was in hosp.",
       isResizable: true,
       isEditable: false,
       isRequired: false,
@@ -367,7 +370,23 @@ const App = ()=> {
     return `${value.firstname} ${value.lastname}`
   }
   */
-  
+  const emptyData = {
+    id: null,
+    field1: null,
+    fieldtextarea: null,
+    field2: null,
+    dropdownvalue: null,
+    name: null,
+    moreInfo: null,
+    status: null,
+    eventCount: null,
+    users: null,
+    viewsPerUser: null,
+    averageTime: null,
+    conversions: [],
+    wasInHospital: null,
+  };
+
   const data = [
       {
         id: 4,
@@ -793,6 +812,7 @@ const App = ()=> {
           headers={headers} 
           primaryKey="id"
           data={data}  
+          dialogName="InselDialog_MainData"
         />
       </Grid>
 

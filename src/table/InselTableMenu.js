@@ -4,6 +4,8 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Divider from '@mui/material/Divider';
+// TODO
+//import ArrowDropRight from '@mui/material/ArrowDropRight';
 
 export default function InselTableMenu() {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -52,7 +54,18 @@ export default function InselTableMenu() {
         <MenuItem key='' onClick={handleClose}>Filter value</MenuItem>
         <Divider sx={{ my: 0.5 }} />
         <MenuItem key='' onClick={handleClose}>Hide column</MenuItem>
-        <MenuItem key='' onClick={handleClose}>Manage columns</MenuItem>
+        {/* TODO */} 
+        <MenuItem 
+          key=''
+          primaryText="Dropdown" 
+         // rightIcon={<ArrowDropRight />}
+          menuItems={[
+            <MenuItem key={1} primaryText="Show hided column 1"/>,
+            <MenuItem key={1} primaryText="Show hided column 2"/>,
+            <MenuItem key={1} primaryText="Show hided column 3"/>,
+            <MenuItem key={1} primaryText="Show hided column 4"/>,
+          ]}
+        >Manage columns</MenuItem>
       </Menu>
     </div>
   );
