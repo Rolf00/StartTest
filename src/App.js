@@ -21,7 +21,9 @@ const App = ()=> {
     initialRowHeight: 25,
     dialogName: 'InselDialog_MainData',
 
-    resizerBackgroundColor: 'lightblue',
+    resizerEWBackgroundColor: 'transparent',
+    resizerNSBackgroundColor: 'transparent',
+
     resizerSize: 5,
     resizerBorderBottomRightWidth: 1,
     rowsVerticalAlign: 'top',
@@ -423,7 +425,7 @@ const App = ()=> {
         name: 'Article Listing - Tech News',
         moreInfo: 'more info about "Listing"',
         status: 'Offline',
-        eventCount: 3653,
+        eventCount: 53,
         users: 142240,
         viewsPerUser: 3.1,
         averageTime: '2m 55s',
@@ -814,8 +816,10 @@ const App = ()=> {
           data={data}  
           dialogName="InselDialog_MainData"
         />
+        <div style={{ textAlign: 'center'}}>
+        <a target="_blank" href="https://icons8.com">Icons are from Icons8.com</a>
+        </div>
       </Grid>
-
 
     </Grid>
   )

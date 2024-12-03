@@ -71,10 +71,27 @@ const avaiableDialogs = {
 };
 
 
+// colors for row backgrounds
+const rowColorDeleted = "#FFEEEE";
+const rowColorChanged = "#EEFFEE";
+const rowColorInserted = "#FFFFEE";
+const rowColorSelected = "#EEEEFF";
+
+const rowColorSelDeleted = "#FFCCCC";
+const rowColorSelChanged = "#CCFFCC";
+const rowColorSelInserted = "#FFFFCC";
+
 // types for button dialog 
 const buttonDialogTypeOk = 0;
 const buttonDialogTypeYesNo = 1;
 const buttonDialogTypeYesNoCancel = 2;
+
+// types of icons for button dialog 
+const buttonDialogTypenNone = 0;
+const buttonDialogTypeInfo = 1;
+const buttonDialogTypeWarning = 2;
+const buttonDialogTypeError = 3;
+
 
 const RightText = styled.div`
   text-align: right;
@@ -199,19 +216,11 @@ class InselTable extends React.Component {
       data: this.getDataList(),
       page: 0,
       limit: 5,
-      selectedRows: [],
-      editingFieldList_User: [],
-      editableFields: ["name", "users", "eventCount", "viewsPerUser", "averageTime"],
-      newRowData: [],
 
+      // selectio in header
       mainChecked: false,
       mainIndeterminated: false,
       mainCheckIcon: imgChkboxUnchecked,
-      //mainEditIcon: imgEditButton,
-      //mainDeleteIcon: imgDeleteButton,
-      //mainSaveIcon: imgSaveButton,
-      //mainUndoIcon: imgUndoButton,
-      //mainAddIcon: imgAddButton,
 
       // props for button dialog
       openButtonDialog: false,
@@ -219,22 +228,16 @@ class InselTable extends React.Component {
       buttonDialogTitle: "",
       buttonDialogQuestion: "",
       buttonDialogType: 0,
+      buttonDialogIconType: 0,
       buttonDialogButtons: [],
 
-      // props for dit dialog
+      // props for edit dialog
       openEditDialog: false,
       selectedRow: null,
 
-      openDialog: false,
-      productName: "",
-      isCellEditingUser: false,
-      editedValue_Users: "",
-      newvalue_Users: "",
-      rowsWereEdited : false,
-      colwidthName: 100,
-      colheightName: 50,
+      //openDialog: false,
 
-      // enabling / disabling buttons save all / undo all
+      // enabling / disabling buttons "save all" / "undo all"
       mainButtonsDisabled: true,
 
       rowHeight: 200,
@@ -319,6 +322,7 @@ class InselTable extends React.Component {
   {
     // get the index of the row 
     const index = this.state.rowInfoList.findIndex(r => r[this.props.primaryKey] === rowid);
+    if (index === -1) alert("ERROR getRowIndex: index = -1");
     return index;
   }
 
@@ -387,7 +391,7 @@ class InselTable extends React.Component {
     {
       // row was deleted, thus we restore the old values
       this.state.rowInfoList[index].state = rowStateUnchanged;
-
+      
       // restore the old data
       const newlist = this.state.data;
       newlist[index] = this.props.data[index];
@@ -506,7 +510,7 @@ class InselTable extends React.Component {
     this.setState({buttonDialogType: buttonDialogTypeYesNo});
     this.setState({openButtonDialog: true});
 
-    alert("dialog open");
+    //alert("dialog open");
   }
 
   handleCopyForExcel(all)
@@ -587,21 +591,23 @@ class InselTable extends React.Component {
   // ---------------------------------------------------------------------------------------
   // clicks from button dialog
 
-  handleDialogButtons(buttonIndex, id)
+  handleDialogButtons(buttonIndex, dialogID)
   {
+    // close the dialog
     this.setState({openButtonDialog: false});
 
-    if (id === "UndoAll")
+    if (dialogID === "UndoAll")
     {
       if (buttonIndex === 0)
       {
-        // button yes
-        alert("undo all rows");
+        // button yes was pressed
+        alert("undo all rows: index = " + buttonIndex + ", dialogID = " + dialogID);
       }
       else if (buttonIndex === 1)
       {
-        // button no
+        // button no was pressed
         // nothing to do here
+        alert("undo all rows: index = " + buttonIndex + ", dialogID = " + dialogID);
       }
       return;
     }
@@ -614,35 +620,34 @@ class InselTable extends React.Component {
 
   getRowState(rowid)
   {
-    const index = this.state.rowInfoList.findIndex(d => d.id === rowid);
-    if (index === -1) 
-    {
-      alert("ERROR getRowState: index = -1.")
-      return '';
-    } 
+    const index = this.getRowIndex(rowid);
+    if (index === -1) return rowStateUnchanged;
     return this.state.rowInfoList[index].state;
   }
 
   getRowHeight(rowid)
   {
-    const index = this.state.rowInfoList.findIndex(d => d.id === rowid);
+    const index = this.getRowIndex(rowid);
     if (index === -1) return this.props.settings.initialRowHeight;
-    return this.state.rowInfoList[index]['height'];
+    return this.state.rowInfoList[index].height;
   }
 
-  getRowSelection(idx)
+  getRowSelection(rowid)
   {
-    const index = this.state.selectedRows.findIndex(d => d === idx);
-    return (index > -1);
+    const index = this.getRowIndex(rowid);
+    if (index === -1) return false;
+    return this.state.rowInfoList[index].selected;
   }
 
   // ---------------------------------------------------------------------------------------
   // row selection procedures / functions
 
-  getIconSource(idx)
+  getIconSource(rowid)
   {
-    const index = this.state.selectedRows.findIndex(d => d === idx);
-    return ((index > -1) ? imgChkboxChecked : imgChkboxUnchecked);
+    const index = this.getRowIndex(rowid);
+    if (index === -1) return null;
+    const selected = this.state.rowInfoList[index].selected;
+    return selected ? imgChkboxChecked : imgChkboxUnchecked;
   }
 
   handleCheckboxClickHeader(e)
@@ -652,48 +657,29 @@ class InselTable extends React.Component {
     this.setState({mainIndeterminated: false});
     this.setState({mainChecked: ischecked});
 
-    let newlist = [];
-    if (ischecked)
-    {
-      this.state.data.forEach((row) => {
-        newlist = [...newlist, row.id];
-      });
-    }
-    // now update the main list
-    this.setState({selectedRows: newlist});
+    const newlist = [...this.state.rowInfoList];
+    //for (let i = 0; i < newlist.length; i++) newlist[i].selected = 
+    newlist.forEach((row) => {row.selected = ischecked});
+    this.setState({rowInfoList: newlist});
+
     this.setState({mainCheckIcon: 
       ischecked ? imgChkboxChecked : imgChkboxUnchecked});
   }
 
-  handleSelectionClickRow(e, idx)
+  handleSelectionClickRow(e, rowid)
   {
     // create a new list in order to be up to date
-    let newlist = this.state.selectedRows;
+    const rowIndex = this.getRowIndex(rowid);
 
-    const selected = this.state.data[idx].id;
-    let isSelected = (newlist.findIndex(d => d === selected) > -1);
-
-    if (!isSelected)
-    {
-      newlist = [...newlist, selected];
-      /*
-      this.setState({selectedRows: newlist}, () => {
-        this.state.selectedRows
-      });
-      */
-      isSelected = true;
-    }
-    else
-    {
-      // new selection = FALSE
-      newlist = newlist.filter(item => item !== selected);
-      isSelected = false;
-    }
+    let newlist = [...this.state.rowInfoList];
+    let oldSelected = newlist[rowIndex].selected;
+    oldSelected = !oldSelected;
+    newlist[rowIndex].selected = oldSelected;
 
     let allAreSame = true;
-    this.state.data.forEach((row) => {
-      const thisRowIsSelected = newlist.findIndex(d => d === row.id) > -1;
-      if (isSelected !== thisRowIsSelected)
+    newlist.forEach((row) => {
+      const thisRowIsSelected = row.selected;
+      if (row.selected !== oldSelected)
       {
         allAreSame = false;
       }
@@ -702,7 +688,7 @@ class InselTable extends React.Component {
     if (allAreSame)
     {
       this.setState({mainIndeterminated: false});
-      if (isSelected)
+      if (oldSelected)
       {
         // all rows are selected
         this.setState({mainChecked: true});
@@ -723,7 +709,7 @@ class InselTable extends React.Component {
     }
 
     // now update the main list
-    this.setState({selectedRows: newlist});
+    this.setState({rowInfoList: newlist});
   }
 
 
@@ -748,7 +734,8 @@ class InselTable extends React.Component {
 
 
     // open the new edit dialog
-    this.setState({selectedRow: row});
+    const rowIndex = this.state.data.findIndex(r => r[this.props.primaryKey] === rowid);
+    this.setState({selectedRow: this.state.data[rowIndex]});
     this.setState({openEditDialog: true});
   }
 
@@ -771,7 +758,16 @@ class InselTable extends React.Component {
     if (field === "dlgName") this.setState({dlgName: e.target.value});
     if (field === "dlgUser") this.setState({dlgUser: e.target.value});
     // TODO other fields
-  };  
+  }; 
+  
+  setDataFromDialog(row, save)
+  {
+    this.setState({openEditDialog: false});
+    if (save)
+    {
+      alert("TODO : row will be saved: save = " + save + ", row = " + row);
+    }
+  }  
 
   // ---------------------------------------------------------------------------------------
   // copy selection
@@ -1076,9 +1072,6 @@ class InselTable extends React.Component {
     //const mainUndoIcon = this.state.mainUndoIcon;
 
     const mainButtonsDisabled = this.state.mainButtonsDisabled;
-    const openEditDialog = this.state.openEditDialog;
-    console.log("openEditDialog in render", openEditDialog);
-
     const colwidth = this.state.colwidth;
     const headers = this.state.headers;
     const rowInfoList = this.state.rowInfoList;
@@ -1161,7 +1154,8 @@ class InselTable extends React.Component {
                     height= {headerRowHeight}
                     setWidth={(colwidth) => this.setState({colwidth: colwidth})}
                     handleMouseDownRowEW={(e)=>this.handleMouseDownRowEW(e, colHeadIndex)}
-                    hasHeaderMenu={hasHeaderMenu}>
+                    hasHeaderMenu={hasHeaderMenu}
+                    resizerBackgroundColor={this.props.settings.resizerEWBackgroundColor}>
 
                     {isSelection &&
                       <Checkbox
@@ -1176,7 +1170,8 @@ class InselTable extends React.Component {
                     {isSelectionIcon &&
                       <IconButton
                         style={{ width: newheaderWidth, height: newheaderWidth }} 
-                      >
+                        onClick={e => this.handleCheckboxClickHeader(e)}
+                        >
                       <img 
                         src={this.state.mainCheckIcon}
                         style={{ width: header.width, height: header.width }} 
@@ -1204,10 +1199,18 @@ class InselTable extends React.Component {
 
                 // main row selection 
                 const isRowSelected = this.getRowSelection(row.id);
+
+                //console.log("rowid", rowid);
+                //console.log("isRowSelected", isRowSelected);
                 
                 // to get the background color for the row depending on its state
                 const rowState = this.getRowState(rowid);
                 const isRowDeleted = rowState === rowStateDeleted;
+
+                //console.log("rowid", rowid);
+                //console.log("isRowDeleted", isRowDeleted);
+
+
                 const isRowInserted = rowState === rowStateInserted;
                 const isRowChanged = rowState === rowStateEdited || isRowDeleted || isRowInserted;
 
@@ -1215,7 +1218,20 @@ class InselTable extends React.Component {
                 //const editvalue_Users = isCellEditingUser ? this.newvalue_Users : users;
                 const rowHeight = this.getRowHeight(rowid);
                 //const reszBgColor = (index === 1 ) ? 'red' : 'blue';
-                const reszBgColor = 'lightblue';
+                const reszBgColor = this.props.settings.resizerNWBackgroundColor;
+
+                const rowBackgroundColor =
+                  isRowSelected && isRowDeleted ? rowColorSelDeleted :
+                  isRowSelected && isRowChanged ? rowColorSelChanged :
+                  isRowSelected && isRowInserted ? rowColorSelInserted :
+                  isRowSelected ? rowColorSelected :
+                  isRowDeleted ? rowColorDeleted :
+                  isRowChanged ? rowColorChanged :
+                  isRowInserted ? rowColorInserted : "#FFFFFF";
+
+                //console.log("rowid", rowid);
+                //console.log("rowBackgroundColor", rowBackgroundColor);
+                //console.log("buttonDialog data", data);
 
                 return (
                   <TableRow
@@ -1223,10 +1239,7 @@ class InselTable extends React.Component {
                     height={rowHeight}
                     style={{
                       height: rowHeight,
-                      backgroundColor: 
-                        isRowDeleted ? '#fee' : 
-                        isRowChanged ? '#efe' : 
-                        isRowInserted ? '#ffe' : 'white',
+                      backgroundColor: rowBackgroundColor,
                     }}
                     //key={`table-row-${rowindex}-${id}`} 
                   >
@@ -1244,6 +1257,7 @@ class InselTable extends React.Component {
                     const isDecimal = header.editType === 'decimal';
                     const isDropdown = header.editType === 'dropdown';
                     const isCheckbox = header.editType === 'checkbox';
+                    // TODO datetime picker in row
 
                     const isButtonEdit = header.editType === 'btnEdit';
                     const isButtonSave = header.editType === 'btnSave';
@@ -1274,6 +1288,8 @@ class InselTable extends React.Component {
                     const hasError = this.getHasError(header, value);
                     const helperText = hasError ? header.helperText : "";
                     const color = hasError ? 'red' : 'black';
+                    const background = hasError ? '#FFDDDD' : 'transparent';
+
 
                     return (
                       <InselTableCellHeightResizer
@@ -1325,6 +1341,7 @@ class InselTable extends React.Component {
                             inputProps={{
                               sx: {
                                 color: {color},
+                                backgroundColor: {background}
                               },
                             }}
                             onChange={e => this.handleTextfieldChange(e, rowid, field)}
@@ -1345,11 +1362,16 @@ class InselTable extends React.Component {
                             helperText={helperText} 
                             fullWidth
                             style={{ 
-                              color: {color},
                               textAlign: header.horizontalAlign, 
                             }}
                             //InputProps={{ height: '300px' }}
-                            inputProps={{ style: { height: rowHeight } }}
+                            inputProps={{
+                              style: { height: rowHeight },
+                              sx: {
+                                color: {color},
+                                backgroundColor: {background}
+                              },
+                            }}
                             onChange={e => this.handleTextfieldChange(e, rowid, field)}
                             >
                           </TextField>
@@ -1362,6 +1384,7 @@ class InselTable extends React.Component {
                             fullWidth
                             inputProps={{
                               sx: {
+                                backgroundColor: {background},
                                 color: {color},
                                 textAlign: header.horizontalAlign,
                                 "&::placeholder": {
@@ -1539,6 +1562,7 @@ class InselTable extends React.Component {
                 style={{
                   fontSize: 16,
                   fontWeight: 'bold',
+                  borderRadius: '16px'
                 }}
               >
               <img 
@@ -1556,7 +1580,8 @@ class InselTable extends React.Component {
                 onClick={e => this.handleSaveAll(e)}
                 style={{
                   fontSize: 16,
-                  fontWeight: 'bold'
+                  fontWeight: 'bold',
+                  borderRadius: '16px'
                 }}
               >
               <img 
@@ -1575,6 +1600,7 @@ class InselTable extends React.Component {
                 style={{
                   fontSize: 16,
                   fontWeight: 'bold',
+                  borderRadius: '16px'
                 }}
               >
               <img 
@@ -1592,6 +1618,7 @@ class InselTable extends React.Component {
                 style={{
                   fontSize: 16,
                   fontWeight: 'bold',
+                  borderRadius: '16px'
                 }}
               >
               <img 
@@ -1609,6 +1636,7 @@ class InselTable extends React.Component {
                 style={{
                   fontSize: 16,
                   fontWeight: 'bold',
+                  borderRadius: '16px'
                 }}
               >
               <img 
@@ -1834,27 +1862,27 @@ class InselTable extends React.Component {
           </DialogActions>
         </Dialog>
 
-        {/* button dialog 
-        
+        {/* button dialog */}
+        {this.state.buttonDialogId &&
         <InselButtonDialog
           id={this.state.buttonDialogId}
           open={this.state.openButtonDialog}
           title={this.state.buttonDialogTitle}
           question={this.state.buttonDialogQuestion}
+          dialogType={this.state.dialogType}
           buttonList={this.state.buttonDialogButtons}
           buttonType={this.state.buttonDialogType}
-          handleDialogButtonClicks={(index) => this.handleDialogButtons(index, this.state.buttonDialogId)}
+          handleDialogButtons={(index) => this.handleDialogButtons(index, this.state.buttonDialogId)}
         ></InselButtonDialog>
+        }
 
-        */}
-
-        {/* main button dialog */}     
-        {this.props.dialogName === 'InselDialog_MainData' && openEditDialog &&
+        {/* main edit dialog */}     
+        {this.props.dialogName === 'InselDialog_MainData' && // openEditDialog &&
           <InselDialog_MainData
-            open={openEditDialog}
+            open={this.state.openEditDialog}
             headers={this.props.headers}
-            row = {this.state.selectedRow}
-            //setDataFromDialog = {this.props.setDataFromDialog(row)}
+            row={this.state.selectedRow}
+            //setDataFromDialog = {(row, save) => this.setDataFromDialog(row, save)}
           >
           </InselDialog_MainData>
         }
