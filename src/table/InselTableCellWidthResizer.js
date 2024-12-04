@@ -22,29 +22,13 @@ class InselTableCellWidthResizer extends React.Component {
      
     }
 
-    /*
-    handleMouseDownRowEW = e => {
-        this.props.handleMouseDownRowEW
-    }
-        */
-
   render() 
     {
-  
-      function handleMouseEnter(e)
-      {
-        //e.target.style.backgroundColor = '#5555FF';
-      }
-    
-      function handleMouseLeave(e)
-      {
-        //e.target.style.backgroundColor = 'transparent';
-      }
-   
-    
+
       //const {value} = this.state;
       const {
-        index,
+        headerIndex,
+        headers,
         className, 
         children, 
         height, 
@@ -94,7 +78,10 @@ class InselTableCellWidthResizer extends React.Component {
                 justifyContent: verticalAlignText,
                 padding: 0,
                 }}>
-                <InselTableMenu></InselTableMenu>
+                <InselTableMenu
+                  headers={headers}
+                  headerIndex={headerIndex}
+                ></InselTableMenu> 
               </div>
             }
 
@@ -127,15 +114,22 @@ class InselTableCellWidthResizer extends React.Component {
                     padding: 0,
                     //flexDirection: 'column',
                     justifyContent: verticalAlignText,
-                    }}>
-                  <InselTableMenu></InselTableMenu>
+                    }}
+                  >
+
+                  
+                  <InselTableMenu
+                    headers={this.props.headers}
+                    headerIndex={-1}
+                    ></InselTableMenu>
+                  
                 </div>
               </div>
             }
 
             {(!notResizable) &&
             <div 
-              onMouseDown={(e) => this.props.handleMouseDownRowEW(e, index)} 
+              onMouseDown={(e) => this.props.handleMouseDownRowEW(e, headerIndex)} 
               style={{
               minHeight: height, 
               width: '5px',

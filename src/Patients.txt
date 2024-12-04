@@ -1,0 +1,37 @@
+generate a javascript array of 100 patients with fake clinical information, 
+withing this should be acolumn  that have survey: number, 
+where number is a ramdom number between 1-100, and several patients can have the same number
+
+it is missing birthday, last update, address, weight, nationality
+
+-------------------------------------------------------------------------------------------------------------------
+
+const patients = [];
+const countries = ["USA", "Canada", "Germany", "France", "UK", "India", "Australia", "Brazil", "Japan", "Mexico"];
+
+for (let i = 0; i < 100; i++) {
+  const randomAge = Math.floor(Math.random() * 60) + 18;  // Age between 18 and 77
+  const randomBirthday = new Date(2000 - randomAge, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1);
+  const randomWeight = Math.floor(Math.random() * 80) + 40;  // Weight between 40 and 120 kg
+  const randomAddress = `${Math.floor(Math.random() * 9999)} ${["Street", "Avenue", "Lane", "Boulevard"][Math.floor(Math.random() * 4)]} ${["Main", "Oak", "Pine", "Maple", "Elm"][Math.floor(Math.random() * 5)]}`;
+  const randomCountry = countries[Math.floor(Math.random() * countries.length)];
+  const randomUpdate = new Date(Date.now() - Math.floor(Math.random() * (1000 * 60 * 60 * 24 * 365)));  // Random last update within the past year
+
+  patients.push({
+    id: i + 1,
+    firstName: `Patient${i + 1}`,
+    lastName: `Lastname${i + 1}`,
+    age: randomAge,
+    birthday: randomBirthday.toISOString().split('T')[0],  // Convert to YYYY-MM-DD format
+    gender: Math.random() > 0.5 ? "Male" : "Female",
+    diagnosis: Math.random() > 0.5 ? "Hypertension" : "Diabetes",
+    bloodPressure: `${Math.floor(Math.random() * 50) + 110}/${Math.floor(Math.random() * 40) + 70}`,
+    weight: randomWeight,
+    address: randomAddress,
+    nationality: randomCountry,
+    survey: Math.floor(Math.random() * 100) + 1,  // Random number between 1-100
+    lastUpdate: randomUpdate.toISOString(),  // Date format: YYYY-MM-DDTHH:MM:SS.SSSZ
+  });
+}
+
+console.log(patients);

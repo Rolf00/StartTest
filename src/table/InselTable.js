@@ -4,6 +4,10 @@ import { useStyles } from './styles';
 import { withStyles } from 'tss-react/mui';
 import styled from 'styled-components';
 
+
+// TODO : SubMenu manage columns
+
+
 import {
   Box,
   IconButton,
@@ -56,14 +60,19 @@ import imgAddButton from './imgAdd48.png';
 import imgExcelButton from './imgExcel48.png'; 
 
 
+
 import 'react-resizable/css/styles.css';
+
+import InselTableHeader from './InselTableHeader';
+import InselTableRow from './InselTableRow'; 
+
 import InselTableCellHeightResizer from './InselTableCellHeightResizer';
 import InselTableCellWidthResizer from './InselTableCellWidthResizer';
 import InselButtonDialog from './InselButtonDialog';
 import InselDialog_MainData from './InselDialog_MainData';
 
 
-import InselTableMenu from './InselTableMenu';
+//import InselTableMenu from './InselTableMenu';
 
 const avaiableDialogs = {
   dialog_MainData: InselDialog_MainData,
@@ -72,6 +81,7 @@ const avaiableDialogs = {
 
 
 // colors for row backgrounds
+/*
 const rowColorDeleted = "#FFEEEE";
 const rowColorChanged = "#EEFFEE";
 const rowColorInserted = "#FFFFEE";
@@ -80,6 +90,7 @@ const rowColorSelected = "#EEEEFF";
 const rowColorSelDeleted = "#FFCCCC";
 const rowColorSelChanged = "#CCFFCC";
 const rowColorSelInserted = "#FFFFCC";
+*/
 
 // types for button dialog 
 const buttonDialogTypeOk = 0;
@@ -185,10 +196,6 @@ const NumberFormatter = ({ number }) => {
          />;
   }
 
-const rowStateUnchanged = 0;  
-const rowStateEdited = 1;  
-const rowStateDeleted = 2;  
-const rowStateInserted = 3;  
 
 class InselTable extends React.Component {
   constructor(props) {
@@ -642,6 +649,7 @@ class InselTable extends React.Component {
   // ---------------------------------------------------------------------------------------
   // row selection procedures / functions
 
+  /*
   getIconSource(rowid)
   {
     const index = this.getRowIndex(rowid);
@@ -649,6 +657,7 @@ class InselTable extends React.Component {
     const selected = this.state.rowInfoList[index].selected;
     return selected ? imgChkboxChecked : imgChkboxUnchecked;
   }
+    */
 
   handleCheckboxClickHeader(e)
   {
@@ -1064,13 +1073,6 @@ class InselTable extends React.Component {
     const data = this.state.data.slice(page * limit, page * limit + limit);
     const mainChecked = this.state.mainChecked;
     const mainIndeterminated = this.state.mainIndeterminated;
-    //const mainCheckIcon = this.state.mainCheckIcon;
-    //const mainEditIcon = this.state.mainEditIcon;
-    //const mainDeleteIcon = this.state.mainDeleteIcon;
-    //const mainSaveIcon = this.state.mainSaveIcon;
-    //const mainAddIcon = this.state.mainAddIcon;
-    //const mainUndoIcon = this.state.mainUndoIcon;
-
     const mainButtonsDisabled = this.state.mainButtonsDisabled;
     const colwidth = this.state.colwidth;
     const headers = this.state.headers;
@@ -1113,9 +1115,19 @@ class InselTable extends React.Component {
 
           }}
           >
+            {/* insert table header */}
+            <InselTableHeader
+              className={classes.table_head_row}
+              settings={this.props.settings}
+              headers={headers}
+              handleMouseDownRowEW={(e, colHeadIndex)=>this.handleMouseDownRowEW(e, colHeadIndex)}>
+              handleCheckboxClickHeader={(e)=>this.handleCheckboxClickHeader(e)}
+            </InselTableHeader>
+
             {/* ================================================================================ */}
             {/* start of table header ========================================================== */}
             {/* ================================================================================ */}
+            {/*
             <TableHead className={classes.table_head}>
               <TableRow 
                 className={classes.table_head_row}
@@ -1186,6 +1198,36 @@ class InselTable extends React.Component {
                 })}
               </TableRow>
             </TableHead>
+            */}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
             {/* ================================================================================ */}
@@ -1234,6 +1276,16 @@ class InselTable extends React.Component {
                 //console.log("buttonDialog data", data);
 
                 return (
+                  <InselTableRow
+                    classes={this.props.classes}
+                    headers={this.props.headers}
+                    row={row}
+                    >
+                  </InselTableRow>
+                );
+
+
+                  {/* 
                   <TableRow
                     className={classes.table_row}
                     height={rowHeight}
@@ -1421,9 +1473,6 @@ class InselTable extends React.Component {
                             style={{ width: dropdownWidth, }}
                             //sx={{ m: 1, minWidth: header.minWidth, }}
                           >
-                          {/* 
-                          <InputLabel 
-                            id="demo-simple-select-isRequired-label">select example</InputLabel>*/}
                           <Select
                             //labelId="demo-simple-select-isRequired-label"
                             //label="select example"
@@ -1524,9 +1573,10 @@ class InselTable extends React.Component {
                       </InselTableCellHeightResizer>
                     );
                   })} 
-                  {/* end map headers */}
+                  {/* end map headers 
                   </TableRow>
                 );
+                  */}
               })}
               <TableRow className={classes.table_body_row}>
                 <TableCell
