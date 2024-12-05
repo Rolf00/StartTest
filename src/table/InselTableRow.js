@@ -129,17 +129,31 @@ class InselTableRow  extends React.Component {
       //const decimalCnt = 
 
       const typeFound = (
-        isPrimaryKey || isSelectionIcon || isNoEdit || 
-        isTextfield || isTextfieldMultiline ||
+        isPrimaryKey || isSelection || isSelectionIcon || isNoEdit || 
+        isTextfield || isTextarea || isTextfieldMultiline ||
         isInteger || isDecimal || isDropdown ||
         isButtonEdit || isButtonSave || isButtonUndo || isButtonDelete ||
-        isCheckbox
+        isCheckbox || isDate || isChip
       );
 
       let tmp = row[header.dataFieldName];
       if (isDecimal) tmp = tmp.toFixed(header.decimalCount);
       if (isPrimaryKey) tmp = row[this.props.primaryKey];
       const value = tmp;
+
+      // chip
+      let chipItem = null;
+      if (isChip) 
+      {
+        let chipIndex = header.chipList.findIndex(c => c.id === value);
+        if (chipIndex === 1) chipIndex = header.chipList.findIndex(c => c.default);
+        chipItem = (chipIndex === -1) ? header.chipList[0] : header.chipList[chipIndex];
+      }
+      const chipLabel = (chipItem) ? chipItem.label : "";
+      const chipColor = (chipItem) ? chipItem.color : null;
+      const chipIcon = (chipItem) ? chipItem.icon : null;
+      const chipClickable = header.isEditable;
+
 
       const field = header.dataFieldName;
 
@@ -302,15 +316,19 @@ class InselTableRow  extends React.Component {
           <LocalizationProvider dateAdapter={AdapterLuxon} locale={'de'}>
           <DatePicker 
             label={header.headerTitle}
-            onChange={e => this.handleDatePickerChange(e, rowid, row)}
+            //onChange={e => this.handleDatePickerChange(e, rowid, row)}
           /></LocalizationProvider>                        
         }
 
         {isChip &&
-          <DateTimePicker
-            onClick={e => this.handleChipChange(e, rowid, colindex)}
-            style={{ width: btnHoverWidth, height: btnHoverWidth }} >
-          </DateTimePicker>
+        <Chip 
+          filled
+          label={chipLabel}
+          color={chipColor}
+          icon={chipIcon}
+          clickable={chipClickable}
+          onClick={e => this.handleChipClick(e, rowid, colindex)}
+        />
         }
 
 
