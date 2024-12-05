@@ -48,28 +48,24 @@ import { SparkLineChart } from '@mui/x-charts/SparkLineChart';
 
 import { green } from '@mui/material/colors';
 
-// images for buttons
-import imgChkboxChecked from './imgCheckboxChecked48.png'; 
-import imgChkboxUnchecked from './imgCheckboxUnchecked48.png'; 
-import imgChkboxIndeterminate from './imgCheckboxIndeterminate48.png'; 
-import imgEditButton from './imgEdit48.png'; 
-import imgDeleteButton from './imgDelete48.png'; 
-import imgSaveButton from './imgSave48.png'; 
-import imgUndoButton from './imgUndo48.png'; 
-import imgAddButton from './imgAdd48.png'; 
-import imgExcelButton from './imgExcel48.png'; 
-
-
-
 import 'react-resizable/css/styles.css';
 
 import InselTableHeader from './InselTableHeader';
-import InselTableRow from './InselTableRow'; 
+//import InselTableRow from './InselTableRow'; 
 
+import InselConstants from './InselConstants';
 import InselTableCellHeightResizer from './InselTableCellHeightResizer';
 import InselTableCellWidthResizer from './InselTableCellWidthResizer';
 import InselButtonDialog from './InselButtonDialog';
 import InselDialog_MainData from './InselDialog_MainData';
+import { DateTimePicker } from '@mui/x-date-pickers';
+
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+//import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
+//import { de } from 'date-fns/locale';
+import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon';
+import { DateTime } from 'luxon';
 
 
 //import InselTableMenu from './InselTableMenu';
@@ -227,7 +223,7 @@ class InselTable extends React.Component {
       // selectio in header
       mainChecked: false,
       mainIndeterminated: false,
-      mainCheckIcon: imgChkboxUnchecked,
+      mainCheckIcon: InselConstants.imgChkboxUnchecked,
 
       // props for button dialog
       openButtonDialog: false,
@@ -289,7 +285,7 @@ class InselTable extends React.Component {
       let obj = {};
       obj['id'] = this.props.data[i][this.props.primaryKey];
       obj['height'] = this.props.settings.initialRowHeight;
-      obj['state'] = rowStateUnchanged; // edited, deleted, inserted, 
+      obj['state'] = InselConstants.rowStateUnchanged; // edited, deleted, inserted, 
       obj['selected'] = false; 
       newlist.push(obj);
     }
@@ -337,18 +333,18 @@ class InselTable extends React.Component {
   {
     // button DELETE for one row was clicked
     const oldState = this.getRowState(rowid);
-    if (oldState === rowStateInserted)
+    if (oldState === InselConstants.rowStateInserted)
     {
       // new rows cannot be deleted
       alert("This is a new row. Just UNDO if you don't want it to be saved.");
       return;
     }
 
-    const isDeleted = this.getRowState(rowid) === rowStateDeleted;
+    const isDeleted = this.getRowState(rowid) === InselConstants.rowStateDeleted;
     if (!isDeleted)
     {
       // delete it now
-      this.changeRowState(rowid, rowStateDeleted);
+      this.changeRowState(rowid, InselConstants.rowStateDeleted);
     }
   }
 
@@ -364,12 +360,12 @@ class InselTable extends React.Component {
       return;
     }
 
-    if (oldState === rowStateEdited)
+    if (oldState === InselConstants.rowStateEdited)
     {
       //console.log("handleUndoRow start props", this.props.data); 
 
       // row was edited, thus we restore the old values
-      this.state.rowInfoList[index].state = rowStateUnchanged;
+      this.state.rowInfoList[index].state = InselConstants.rowStateUnchanged;
 
       // restore the old data
       const oldRow = this.props.data[index];
@@ -384,7 +380,7 @@ class InselTable extends React.Component {
       //console.log("handleUndoRow new data", newlist);      
       this.setState({data: newlist});
     }
-    else if (oldState === rowStateInserted)
+    else if (oldState === InselConstants.rowStateInserted)
     {
       // row was inserted, thus we remove it from the data list
       const newlist = this.state.data.select(r => r[this.props.primaryKey] !== rowid);
@@ -394,10 +390,10 @@ class InselTable extends React.Component {
       const newStatelist = this.state.rowInfoList.select(r => r[this.props.primaryKey] !== rowid);
       this.setState({rowInfoList: newStatelist});
     }
-    else if (oldState === rowStateDeleted)
+    else if (oldState === InselConstants.rowStateDeleted)
     {
       // row was deleted, thus we restore the old values
-      this.state.rowInfoList[index].state = rowStateUnchanged;
+      this.state.rowInfoList[index].state = InselConstants.rowStateUnchanged;
       
       // restore the old data
       const newlist = this.state.data;
@@ -447,7 +443,7 @@ class InselTable extends React.Component {
     let obj = {};
     obj['id'] = min;
     obj['height'] = this.props.settings.initialRowHeight;
-    obj['state'] = rowStateInserted; // edited, deleted, inserted, 
+    obj['state'] = InselConstants.rowStateInserted; // edited, deleted, inserted, 
     obj['selected'] = false; // edited, deleted, inserted, 
     newRowInfo.push(obj);
     this.setState({rowInfoList: [...this.state.rowInfoList, newRowInfo]});
@@ -590,7 +586,7 @@ class InselTable extends React.Component {
 
   SetMainButtons()
   {
-    const newlist = this.state.rowInfoList.filter(r => r.state !== rowStateUnchanged);
+    const newlist = this.state.rowInfoList.filter(r => r.state !== InselConstants.rowStateUnchanged);
     const disable = newlist.length === 0;
     this.setState({mainButtonsDisabled: disable});
   }
@@ -628,7 +624,7 @@ class InselTable extends React.Component {
   getRowState(rowid)
   {
     const index = this.getRowIndex(rowid);
-    if (index === -1) return rowStateUnchanged;
+    if (index === -1) return InselConstants.rowStateUnchanged;
     return this.state.rowInfoList[index].state;
   }
 
@@ -649,30 +645,29 @@ class InselTable extends React.Component {
   // ---------------------------------------------------------------------------------------
   // row selection procedures / functions
 
-  /*
   getIconSource(rowid)
   {
     const index = this.getRowIndex(rowid);
     if (index === -1) return null;
     const selected = this.state.rowInfoList[index].selected;
-    return selected ? imgChkboxChecked : imgChkboxUnchecked;
+    return selected ? InselConstants.imgChkboxChecked : InselConstants.imgChkboxUnchecked;
   }
-    */
 
   handleCheckboxClickHeader(e)
   {
+    // selection in the header was clicked
     let ischecked = this.state.mainChecked;
     ischecked = !ischecked;
     this.setState({mainIndeterminated: false});
     this.setState({mainChecked: ischecked});
 
+    // now set the same selection for all rows
     const newlist = [...this.state.rowInfoList];
-    //for (let i = 0; i < newlist.length; i++) newlist[i].selected = 
     newlist.forEach((row) => {row.selected = ischecked});
     this.setState({rowInfoList: newlist});
 
     this.setState({mainCheckIcon: 
-      ischecked ? imgChkboxChecked : imgChkboxUnchecked});
+      ischecked ? InselConstants.imgChkboxChecked : InselConstants.imgChkboxUnchecked});
   }
 
   handleSelectionClickRow(e, rowid)
@@ -701,20 +696,20 @@ class InselTable extends React.Component {
       {
         // all rows are selected
         this.setState({mainChecked: true});
-        this.setState({mainCheckIcon: imgChkboxChecked});
+        this.setState({mainCheckIcon: InselConstants.imgChkboxChecked});
       }
       else
       {
         // no row is selected
         this.setState({mainChecked: false});
-        this.setState({mainCheckIcon: imgChkboxUnchecked});
+        this.setState({mainCheckIcon: InselConstants.imgChkboxUnchecked});
       }
     }
     else
     {
       // different states exists
       this.setState({mainIndeterminated: true});
-      this.setState({mainCheckIcon: imgChkboxIndeterminate});
+      this.setState({mainCheckIcon: InselConstants.imgChkboxIndeterminate});
     }
 
     // now update the main list
@@ -830,7 +825,7 @@ class InselTable extends React.Component {
     // set a new row state
     // if the old state is INSERTED, then we dont change it to edited
     const oldState = this.getRowState(rowid);
-    if (oldState === rowStateInserted) return;
+    if (oldState === InselConstants.rowStateInserted) return;
 
     // set a new row state
     const index = this.getRowIndex(rowid);
@@ -922,7 +917,7 @@ class InselTable extends React.Component {
 
     // now also change the state of the row
     const rowState = this.getRowState(rowid);
-    if (rowState === rowStateUnchanged) this.setRowState(rowid, rowStateEdited);
+    if (rowState === InselConstants.rowStateUnchanged) this.setRowState(rowid, InselConstants.rowStateEdited);
   }
 
   handleTextfieldNumberChange(e, rowid, fieldName)
@@ -953,7 +948,7 @@ class InselTable extends React.Component {
 
     // now also change the state of the row
     const rowState = this.getRowState(rowid);
-    if (rowState === rowStateUnchanged) this.setRowState(rowid, rowStateEdited);
+    if (rowState === InselConstants.rowStateUnchanged) this.setRowState(rowid, InselConstants.rowStateEdited);
   }
 
   handleDropdownChange(e, rowIndex, fieldName)
@@ -965,7 +960,7 @@ class InselTable extends React.Component {
 
     // now also change the state of the row
     const rowState = this.getRowState(rowIndex);
-    if (rowState === rowStateUnchanged) this.setRowState(rowIndex, rowStateEdited);
+    if (rowState === InselConstants.rowStateUnchanged) this.setRowState(rowIndex, InselConstants.rowStateEdited);
   }
 
   handleCheckboxChange(e, rowIndex, fieldName)
@@ -977,9 +972,26 @@ class InselTable extends React.Component {
 
     // now also change the state of the row
     const rowState = this.getRowState(rowIndex);
-    if (rowState === rowStateUnchanged) this.setRowState(rowIndex, rowStateEdited);
+    if (rowState === InselConstants.rowStateUnchanged) this.setRowState(rowIndex, InselConstants.rowStateEdited);
   }
 
+  handleDatePickerChange(e, rowIndex, fieldName)
+  {
+    const newList = this.state.data;
+    newList[rowIndex][fieldName] = e.target.date;
+    this.setState({data: newList});
+
+    alert("handleDatePickerChange" +  e.target.date);
+
+    // now also change the state of the row
+    const rowState = this.getRowState(rowIndex);
+    if (rowState === InselConstants.rowStateUnchanged) this.setRowState(rowIndex, InselConstants.rowStateEdited);
+  }
+
+  handleChipClick(e, rowIndex, fieldName)
+  {
+    // TODO
+  }
 
   // ---------------------------------------------------------------------------------------
   // common key events
@@ -1110,9 +1122,10 @@ class InselTable extends React.Component {
           <Table 
           className={classes.table} 
           stickyHeader
+          width={600}
           style={{
             height: '800px',
-
+            //width: '800px'
           }}
           >
             {/* insert table header */}
@@ -1120,8 +1133,11 @@ class InselTable extends React.Component {
               className={classes.table_head_row}
               settings={this.props.settings}
               headers={headers}
-              handleMouseDownRowEW={(e, colHeadIndex)=>this.handleMouseDownRowEW(e, colHeadIndex)}>
+              mainChecked={mainChecked}
+              mainIndeterminated={mainIndeterminated}
+              handleMouseDownRowEW={(e, colHeadIndex)=>this.handleMouseDownRowEW(e, colHeadIndex)}
               handleCheckboxClickHeader={(e)=>this.handleCheckboxClickHeader(e)}
+            >
             </InselTableHeader>
 
             {/* ================================================================================ */}
@@ -1247,35 +1263,30 @@ class InselTable extends React.Component {
                 
                 // to get the background color for the row depending on its state
                 const rowState = this.getRowState(rowid);
-                const isRowDeleted = rowState === rowStateDeleted;
-
-                //console.log("rowid", rowid);
-                //console.log("isRowDeleted", isRowDeleted);
-
-
-                const isRowInserted = rowState === rowStateInserted;
-                const isRowChanged = rowState === rowStateEdited || isRowDeleted || isRowInserted;
+                const isRowDeleted = rowState === InselConstants.rowStateDeleted;
+                const isRowInserted = rowState === InselConstants.rowStateInserted;
+                const isRowChanged = rowState === InselConstants.rowStateEdited || isRowDeleted || isRowInserted;
 
                 const iconSource = this.getIconSource(row.id);
-                //const editvalue_Users = isCellEditingUser ? this.newvalue_Users : users;
                 const rowHeight = this.getRowHeight(rowid);
-                //const reszBgColor = (index === 1 ) ? 'red' : 'blue';
                 const reszBgColor = this.props.settings.resizerNWBackgroundColor;
 
                 const rowBackgroundColor =
-                  isRowSelected && isRowDeleted ? rowColorSelDeleted :
-                  isRowSelected && isRowChanged ? rowColorSelChanged :
-                  isRowSelected && isRowInserted ? rowColorSelInserted :
-                  isRowSelected ? rowColorSelected :
-                  isRowDeleted ? rowColorDeleted :
-                  isRowChanged ? rowColorChanged :
-                  isRowInserted ? rowColorInserted : "#FFFFFF";
+                  isRowSelected && isRowDeleted ? InselConstants.rowColorSelDeleted :
+                  isRowSelected && isRowChanged ? InselConstants.rowColorSelChanged :
+                  isRowSelected && isRowInserted ? InselConstants.rowColorSelInserted :
+                  isRowSelected ? InselConstants.rowColorSelected :
+                  isRowDeleted ? InselConstants.rowColorDeleted :
+                  isRowChanged ? InselConstants.rowColorChanged :
+                  isRowInserted ? InselConstants.rowColorInserted : "#FFFFFF";
 
                 //console.log("rowid", rowid);
                 //console.log("rowBackgroundColor", rowBackgroundColor);
                 //console.log("buttonDialog data", data);
 
+                {/*
                 return (
+                   
                   <InselTableRow
                     classes={this.props.classes}
                     headers={this.props.headers}
@@ -1283,9 +1294,9 @@ class InselTable extends React.Component {
                     >
                   </InselTableRow>
                 );
+                */}
 
-
-                  {/* 
+                return (
                   <TableRow
                     className={classes.table_row}
                     height={rowHeight}
@@ -1309,33 +1320,50 @@ class InselTable extends React.Component {
                     const isDecimal = header.editType === 'decimal';
                     const isDropdown = header.editType === 'dropdown';
                     const isCheckbox = header.editType === 'checkbox';
-                    // TODO datetime picker in row
+                    const isDate = header.editType === 'date';
+                    const isChip = header.editType === InselConstants.editType_Chip;
 
                     const isButtonEdit = header.editType === 'btnEdit';
                     const isButtonSave = header.editType === 'btnSave';
                     const isButtonUndo = header.editType === 'btnUndo';
                     const isButtonDelete = header.editType === 'btnDelete';
-                    const btnHoverWidth = header.width + 8;
+                    const btnHoverWidth = this.props.settings.buttonSizeOnRows + 8;
                     const dropdownWidth = header.width - 10;
-                    //const decimalCnt = 
 
                     const typeFound = (
                       isPrimaryKey || isSelection || isSelectionIcon || isNoEdit || 
                       isTextfield || isTextarea || isTextfieldMultiline ||
                       isInteger || isDecimal || isDropdown ||
                       isButtonEdit || isButtonSave || isButtonUndo || isButtonDelete ||
-                      isCheckbox
+                      isCheckbox || isDate || isChip
                     );
+
+
                     
                     let tmp = row[header.dataFieldName];
                     if (isDecimal) tmp = tmp.toFixed(header.decimalCount);
                     if (isPrimaryKey) tmp = row[this.props.primaryKey];
                     const value = tmp;
 
+                    // chip
+                    let chipItem = null;
+                    if (isChip) 
+                    {
+                      let chipIndex = header.chipList.findIndex(c => c.id === value);
+                      if (chipIndex === 1) chipIndex = header.chipList.findIndex(c => c.default);
+                      chipItem = (chipIndex === -1) ? header.chipList[0] : header.chipList[chipIndex];
+                    }
+                    const chipLabel = (chipItem) ? chipItem.label : "";
+                    const chipColor = (chipItem) ? chipItem.color : null;
+                    const chipIcon = (chipItem) ? chipItem.icon : null;
+                    const chipClickable = header.isEditable;
+
+                    console.log("chipColor", chipColor);
+
                     const field = header.dataFieldName;
 
                     const iconCheckbox = isCheckbox ? 
-                      value ? imgChkboxChecked : imgChkboxUnchecked :  null;
+                      value ? InselConstants.imgChkboxChecked : InselConstants.imgChkboxUnchecked :  null;
                     
                     const hasError = this.getHasError(header, value);
                     const helperText = hasError ? header.helperText : "";
@@ -1502,18 +1530,41 @@ class InselTable extends React.Component {
                             style={{ width: btnHoverWidth, height: btnHoverWidth }} >
                           <img 
                             src={iconCheckbox}
-                            style={{ width: header.width, height: header.width }} 
+                            style={{ 
+                              width: this.props.settings.buttonSizeOnRows, 
+                              height: this.props.settings.buttonSizeOnRows 
+                            }} 
                           />
                           </IconButton>
+                        }
+
+                        {isDate &&
+                          <LocalizationProvider dateAdapter={AdapterLuxon} locale={'de'}>
+                          <DatePicker 
+                            //onChange={(e, c) => this.handleDatePickerChange(e, rowid, row)}
+                          /></LocalizationProvider>                        
+                        }
+
+                        {isChip &&
+                        <Chip 
+                          label={chipLabel}
+                          icon={chipIcon}
+                          clickable={chipClickable}
+                          onClick={e => this.handleChipClick(e, rowid, colindex)}
+                          sx={{
+                            backgroundColor: chipColor, 
+                            color: 'black', 
+                          }}
+                        />
                         }
 
                         {isButtonEdit &&
                           <IconButton
                             disabled={isRowDeleted}
                             onClick={e => this.handleEditModalDialogClick(e, rowid, row)}
-                              style={{ width: btnHoverWidth, height: btnHoverWidth }} >
+                            style={{ width: btnHoverWidth, height: btnHoverWidth }} >
                           <img 
-                            src={imgEditButton}
+                            src={InselConstants.imgEditButton}
                             title="Edit this in the dialog"
                             style={{ 
                               width: header.width, height: header.width,
@@ -1527,7 +1578,7 @@ class InselTable extends React.Component {
                           disabled={!isRowChanged}
                           style={{ width: btnHoverWidth, height: btnHoverWidth }} >
                           <img 
-                            src={imgSaveButton}
+                            src={InselConstants.imgSaveButton}
                             title="Save this row by clicking here"
                             style={{ 
                               width: header.width, height: header.width,
@@ -1543,7 +1594,7 @@ class InselTable extends React.Component {
                             onClick={e => this.handleUndoRow(e, rowid)}
                             style={{ width: btnHoverWidth, height: btnHoverWidth }} >
                             <img 
-                              src={imgUndoButton}
+                              src={InselConstants.imgUndoButton}
                               title="Undo this row by clicking here"
                               style={{ 
                                 width: header.width, height: header.width,
@@ -1559,7 +1610,7 @@ class InselTable extends React.Component {
                             onClick={e => this.handleDeleteRow(e, rowid)}
                             style={{ width: btnHoverWidth, height: btnHoverWidth }} >
                           <img 
-                            src={imgDeleteButton}
+                            src={InselConstants.imgDeleteButton}
                             title="Delete this row by clicking here"
                             style={{ width: header.width, height: header.width,
                               opacity: (!isRowDeleted ? 1 : 0.2)
@@ -1573,10 +1624,8 @@ class InselTable extends React.Component {
                       </InselTableCellHeightResizer>
                     );
                   })} 
-                  {/* end map headers 
                   </TableRow>
                 );
-                  */}
               })}
               <TableRow className={classes.table_body_row}>
                 <TableCell
@@ -1607,6 +1656,7 @@ class InselTable extends React.Component {
             <TableRow>
 
               {/* new row button --------------------------------------------------------------- */}
+              {this.props.settings.hasButtonNewRow &&
               <IconButton
                 onClick={e => this.handleNewRow()}
                 style={{
@@ -1616,14 +1666,16 @@ class InselTable extends React.Component {
                 }}
               >
               <img 
-                src={imgAddButton}
+                src={InselConstants.imgAddButton}
                 style={{ 
                   width: '48px', 
-                  height: '48px'
+                  height: '48px',
                  }} 
               />&nbsp;New row (ctrl-i)</IconButton>
+              }
 
               {/* save all --------------------------------------------------------------------- */}    
+              {this.props.settings.hasButtonSaveAll &&
               <IconButton
                 //disabled={!this.state.rowsWereEdited}
                 disabled={mainButtonsDisabled}
@@ -1635,15 +1687,18 @@ class InselTable extends React.Component {
                 }}
               >
               <img 
-                src={imgSaveButton}
+                src={InselConstants.imgSaveButton}
+                title='Ctrl-S'
                 style={{ 
                   width: '48px', 
                   height: '48px',
                   opacity: (!mainButtonsDisabled ? 1 : 0.2) 
                  }} 
-              />Save all (ctrl-s)</IconButton>
+              />Save all</IconButton>
+              }
 
               {/* undo all ------------------------------------------------------------------ */}     
+              {this.props.settings.hasButtonUndoAll &&
               <IconButton
                 disabled={mainButtonsDisabled}
                 onClick={e => this.handleUndoAll(e)}
@@ -1654,15 +1709,18 @@ class InselTable extends React.Component {
                 }}
               >
               <img 
-                src={imgUndoButton}
+                src={InselConstants.imgUndoButton}
+                title='Ctrl-U'
                 style={{ 
                   width: '48px', 
                   height: '48px',
                   opacity: (!mainButtonsDisabled ? 1 : 0.2) 
                  }} 
-              />&nbsp;Undo all  (ctrl-u)</IconButton>
+              />&nbsp;Undo all</IconButton>
+              }
 
-              {/* export for excel all rows ----------------------------------------------------- */}     
+              {/* export for excel all rows ----------------------------------------------------- */}    
+              {this.props.settings.hasButtonExcelAll && 
               <IconButton
                 onClick={e => this.handleCopyForExcel(true)}
                 style={{
@@ -1672,15 +1730,18 @@ class InselTable extends React.Component {
                 }}
               >
               <img 
-                src={imgExcelButton}
+                src={InselConstants.imgExcelButton}
+                title='Ctrl-Shift-C'
                 style={{ 
                   width: '48px', 
                   height: '48px',
                   //opacity: (!mainButtonsDisabled ? 1 : 0.2) 
                  }} 
-              />&nbsp;Copy for Excel all (ctrl-shift-c)</IconButton>
+              />&nbsp;Copy all rows</IconButton>
+              }
 
-              {/* export for excel only selected rows --------------------------------------------- */}     
+              {/* export for excel only selected rows --------------------------------------------- */}
+              {this.props.settings.hasButtonExcelSelected &&
               <IconButton
                 onClick={e => this.handleCopyForExcel(false)}
                 style={{
@@ -1690,13 +1751,15 @@ class InselTable extends React.Component {
                 }}
               >
               <img 
-                src={imgExcelButton}
+                src={InselConstants.imgExcelButton}
+                title='Ctrl-Shift-E'
                 style={{ 
                   width: '48px', 
                   height: '48px',
                   //opacity: (!mainButtonsDisabled ? 1 : 0.2) 
                  }} 
-              />&nbsp;Copy for Excel selected rows (ctrl-shift-e)</IconButton>
+              />&nbsp;Copy selected rows</IconButton>
+              }
 
 
               <TablePagination

@@ -48,23 +48,21 @@ class InselTableCellWidthResizer extends React.Component {
         <TableCell
           className={className}
           style={{ 
-            //width: width,
-            height: 'auto',
+            //height: 'auto',
+            height: '100%',
             padding: 0,
+            borderBottomColor: 'black',
+            borderBottomStyle: 'solid',
+            borderBottomWidth: 1,
           }}>
         
           <div style={{ 
             padding: 0,
             display: 'flex',
             flexDirection: 'row',
-            //flexDirection: 'column',
-            //justifyContent: 'flex-end',
-            //minHeight: height, 
             height: '100%', 
             width: width,
-            //width: '100%',
-
-            }}>
+          }}>
 
             {hasHeaderMenu && horizontalAlign == 'right' &&
               <div
@@ -116,13 +114,10 @@ class InselTableCellWidthResizer extends React.Component {
                     justifyContent: verticalAlignText,
                     }}
                   >
-
-                  
                   <InselTableMenu
                     headers={this.props.headers}
                     headerIndex={-1}
                     ></InselTableMenu>
-                  
                 </div>
               </div>
             }
@@ -132,7 +127,7 @@ class InselTableCellWidthResizer extends React.Component {
               onMouseDown={(e) => this.props.handleMouseDownRowEW(e, headerIndex)} 
               style={{
               minHeight: height, 
-              width: '5px',
+              width: notResizable ? '0px' : '5px',
               padding: 0,
               backgroundColor: reszBackgroundColor,
               borderRightColor: 'black',

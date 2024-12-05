@@ -55,21 +55,22 @@ export default function InselTableMenu  (
 
     // sort the data for one field
     // TODO
-    /*
     const newData = this.state.data.sort((a, b) => {
       if (sortAscending)
       {
-        return a[fieldname].localeCompare(b[fieldname]);
+        return a[props.fieldname].localeCompare(b[props.fieldname]);
       }
       else
       {
-        return b[fieldname].localeCompare(a[fieldname]);
+        return b[props.fieldname].localeCompare(a[props.fieldname]);
       }
     });
 
-    // now re-render both together
-    this.setState({data: newData});
-    */
+    console.log("ordered newData", newData);
+
+    // now re-render data
+    // TODO how to render?
+    //this.setState({data: newData});
   }
 
   const handleFilter = () =>
@@ -86,10 +87,19 @@ export default function InselTableMenu  (
     // hide the menu 
     handleClose(); 
 
-    // TODO 
-    alert("Hiding columns is not implemented yet.");
+    handleClose(); 
+    props.headers[props.headerIndex].isVisible = true;
+    // TODO how to render headers?
   }
 
+  const handleUnhideColumn = () =>
+    {
+      // close the sub menu
+      setAnchorManageColumns(null);
+      props.headers[props.headerIndex].isVisible = true;
+      // TODO hot to render headers?
+    }
+  
   // TODO
   /*
   const headerIndex = this.props.headerIndex;
@@ -108,7 +118,7 @@ export default function InselTableMenu  (
         aria-controls={open ? 'long-menu' : undefined}
         aria-expanded={open ? 'true' : undefined}
         aria-haspopup="true"
-        onClick={handleClick}
+        onClick={(e) => handleClick(e)}
       >
         <MoreVertIcon />
       </IconButton>
@@ -119,7 +129,7 @@ export default function InselTableMenu  (
         }}
         anchorEl={anchorEl}
         open={open}
-        onClose={handleClose}
+        onClose={() => handleClose()}
         slotProps={{
           paper: {
             style: {
@@ -152,9 +162,9 @@ export default function InselTableMenu  (
           anchorEl={anchorManageColumns}
           disabled={getAllColumnsAreVisible()}
   
-          //onMouseIn={(e) => handleOpenCloseManageColumns(e, true)}
-          //onMouseOut={(e) => handleOpenCloseManageColumns(e, false)}
-          onClick={(e) => handleOpenCloseManageColumns(e, true)}
+          onmouseenter={(e) => handleOpenCloseManageColumns(e, true)}
+          onmouseleave={(e) => handleOpenCloseManageColumns(e, false)}
+          //onClick={(e) => handleOpenCloseManageColumns(e, true)}
           //primaryText="Manage columns"
           // TODO 
           //rightIcon={<ArrowDropRight />}
@@ -174,20 +184,43 @@ export default function InselTableMenu  (
             */
         >Manage columns
 
-        <Menu
-          //open={openManageColumns}
-          open={openManageColumns && open}
-          anchorEl={anchorManageColumns}
-        >
-          <MenuItem key={6} >Show hided column 1</MenuItem>
-          <MenuItem key={7} >Show hided column 2</MenuItem>
-          <MenuItem key={8} >Show hided column 3</MenuItem>
-          <MenuItem key={9} >Show hided column 4</MenuItem>
-        </Menu>
+          <div
+            id="submenu"
+            style={{
+              position: 'absolute',
+              top: '0px',
+              left: '100%',  // This places the submenu to the right 
+              display: 'none', 
+              minWidth: '150px'
+            }}
+          >
+{/*
+          {invisibleMenus.map((header, index) => {
+            const title = header.headerTitle;
+            const newIndex = index + 100;
+            return (
+              <MenuItem 
+                key={newIndex}
+                onclick={() => handleUnhideColumn()} 
+              >
+                Show column "{title}"
+              </MenuItem>
+            );
+          })}
+*/}
 
+            <Menu
+              //open={openManageColumns}
+              open={openManageColumns}
+              anchorEl={anchorManageColumns}
+            >
+              <MenuItem key={6} onClick={() => handleUnhideColumn()}>Show hided column 1</MenuItem>
+              <MenuItem key={7} onClick={() => handleUnhideColumn()}>Show hided column 2</MenuItem>
+              <MenuItem key={8} onClick={() => handleUnhideColumn()}>Show hided column 3</MenuItem>
+              <MenuItem key={9} onClick={() => handleUnhideColumn()}>Show hided column 4</MenuItem>
+            </Menu>
+          </div>
         </MenuItem>
-
-
       </Menu>
     </div>
   );

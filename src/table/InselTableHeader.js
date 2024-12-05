@@ -12,24 +12,10 @@ import InselConstants from './InselConstants';
 import InselTableCellWidthResizer from './InselTableCellWidthResizer';
 
 class InselTableHeader extends React.Component {
-  constructor(props) {
-    super(props)
 
-    // props
-    const {
-      classes,
-      settings,
-      headers,
-    } = this.props;
-  
-    // state
-    this.state = {
-      mainChecked: false,
-      mainIndeterminated: false,
-      mainCheckIcon: InselConstants.imgChkboxUnchecked,
-      headerWidthList: this.setHeaderWidthList(),
-    }
-  }
+  //constructor(props) {
+  //  super(props)
+  //}
 
   componentDidMount() {
   }
@@ -53,9 +39,22 @@ class InselTableHeader extends React.Component {
 
   render()
   {
-    const { classes } = this.props;
-    const { settings } = this.props;
-    const { headers } = this.props;
+
+    // props
+    const {
+      classes,
+      settings,
+      headers,
+      mainChecked,
+      mainIndeterminated,
+    } = this.props;
+  
+    // state
+    this.state = {
+      mainChecked: mainChecked,
+      mainIndeterminated: mainIndeterminated,
+      headerWidthList: this.setHeaderWidthList(),
+    }
 
     return(
       <TableHead className={classes.table_head}>
@@ -78,6 +77,10 @@ class InselTableHeader extends React.Component {
             const newheaderWidth = isButtonheader ? header.width + 18 : header.width;
             const headerRowHeight = settings.initialHeaderHeight;
 
+            const mainCheckIcon = 
+              this.state.mainIndeterminated ? InselConstants.imgChkboxIndeterminate :
+              this.state.mainChecked ? InselConstants.imgChkboxChecked : InselConstants.imgChkboxUnchecked;
+
             return (
               <InselTableCellWidthResizer
                 className={classes.table_head_cell}
@@ -97,9 +100,9 @@ class InselTableHeader extends React.Component {
               {isSelectionIcon &&
               <IconButton
                 style={{ width: newheaderWidth, height: newheaderWidth }} 
-                onClick={e => this.props.handleCheckboxClickHeader(e)}>
+                onClick={(e) => this.props.handleCheckboxClickHeader(e)}>
                 <img 
-                  src={this.state.mainCheckIcon}
+                  src={mainCheckIcon}
                   style={{ width: header.width, height: header.width }} 
                 />
               </IconButton>

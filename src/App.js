@@ -4,6 +4,12 @@ import * as React from 'react';
 
 import { A, D, MyClassTableCell, MyTableCell } from './components';
 
+import imgChipStatus1 from './table/imgYes48.png'; 
+import imgChipStatus2 from './table/imgYes48.png'; 
+import imgChipStatus3 from './table/imgYes48.png'; 
+import imgChipStatus4 from './table/imgYes48.png'; 
+import imgChipStatus5 from './table/imgYes48.png'; 
+import imgChipStatus6 from './table/imgYes48.png'; 
 
 
 import InselTable from './table/InselTable';
@@ -16,21 +22,34 @@ const App = ()=> {
 
   const settings = 
   {
+    // header settings
     headerVerticalAlign: 'top',
     initialHeaderHeight: 55,
     initialRowHeight: 25,
+
+    // rows settings
+    rowsVerticalAlign: 'top',
+
+    // dialog
     dialogName: 'InselDialog_MainData',
 
+    // resizer options
     resizerEWBackgroundColor: 'transparent',
     resizerNSBackgroundColor: 'transparent',
-
     resizerSize: 5,
     resizerBorderBottomRightWidth: 1,
-    rowsVerticalAlign: 'top',
-  }
-  ;
+
+    // main button options
+    buttonSizeOnRows: 32,
+    hasButtonNewRow: false,
+    hasButtonSaveAll: false,
+    hasButtonUndoAll: false,
+    hasButtonExcelAll: true,
+    hasButtonExcelSelected: false,
+  };
   
   const headers = [
+    /*
     {
       databaseField: "",
       headerTitle: "",
@@ -55,6 +74,7 @@ const App = ()=> {
       hasHeaderMenu: false,
       //valueGetter: (value, row) => `${row.firstName || ''} ${row.lastName || ''}`,
     },
+    */
     {
       databaseField: "",
       headerTitle: "",
@@ -126,6 +146,7 @@ const App = ()=> {
       dropdownSelection: [],
       hasHeaderMenu: true,
     },
+    /*
     {
       databaseField: "textarea",
       headerTitle: "Textarea autosize",
@@ -149,6 +170,7 @@ const App = ()=> {
       dropdownSelection: [],
       hasHeaderMenu: true,
     },
+    */
     {
       databaseField: "comment",
       headerTitle: "Textfield multiline",
@@ -258,19 +280,55 @@ const App = ()=> {
       isVisible: true,
       isSortable: false,
       defaultSorting: '',
-      width: 32,
-      minWidth: 32,
-      maxWidth: 80,
-      textMaxLength: 0,
-      numberMinValue: 0,
-      numberMaxValue: 0,
-      decimalCount: 0,
+      width: 90,
+      minWidth: 90,
+      maxWidth: 120,
       editType: 'checkbox',
       defaultValue: 'none',
       dataFieldName: 'wasInHospital',
       horizontalAlign: 'center',
       dropdownSelection: [],
       hasHeaderMenu: true,
+    },
+    {
+      databaseField: "",
+      headerTitle: "Birth",
+      isResizable: false,
+      isEditable: true,
+      isRequired: false,
+      isVisible: true,
+      isSortable: true,
+      defaultSorting: '',
+      width: 160,
+      minWidth: 160,
+      maxWidth: 160,
+      editType: 'date',
+      defaultValue: 'none',
+      dataFieldName: 'birthday',
+      hasHeaderMenu: true,
+    },
+    {
+      headerTitle: "Status",
+      isResizable: false,
+      isEditable: true,
+      isRequired: false,
+      isVisible: true,
+      defaultSorting: '',
+      width: 160,
+      minWidth: 160,
+      maxWidth: 160,
+      editType: 'chip',
+      defaultValue: '1',
+      dataFieldName: 'chipstatus',
+      chipList: [
+        { id: '1', label: 'Status 1', color: '#FFFFFF', icon: imgChipStatus1, },
+        { id: '2', label: 'Status 2', color: '#FF9999', icon: imgChipStatus2, },
+        { id: '3', label: 'Status 3', color: '#99FF99', icon: imgChipStatus3, },
+        { id: '4', label: 'Status 4', color: '#9999FF', icon: imgChipStatus4, },
+        { id: '5', label: 'Status 5', color: '#FF99FF', icon: imgChipStatus5, },
+        { id: '6', label: 'Status 6', color: '#99FFFF', icon: imgChipStatus6, },
+      ],
+      hasHeaderMenu: false,
     },
     {
       databaseField: "",
@@ -387,6 +445,7 @@ const App = ()=> {
     averageTime: null,
     conversions: [],
     wasInHospital: null,
+    chipstatus: null,
   };
 
   const data = [
@@ -410,6 +469,7 @@ const App = ()=> {
           1687545, 1581634, 1550291,
         ],
         wasInHospital: false,
+        chipstatus: '1',
         user: {
           id: 1,
           firstname: 'John',
@@ -436,6 +496,7 @@ const App = ()=> {
           1854053, 1791831,
         ],
         wasInHospital: true,
+        chipstatus: '2',
       },
       {
         id: 6,
@@ -456,6 +517,8 @@ const App = ()=> {
           285557, 268555, 259482, 274019, 321648, 359801, 399502, 447249, 497403,
         ],
         wasInHospital: true,
+        chipstatus: '3',
+        
       },
       {
         id: 7,
@@ -476,6 +539,8 @@ const App = ()=> {
           594289, 671915, 649510, 574911, 713843, 754965, 853020, 916793, 960158, 984265,
         ],
         wasInHospital: false,
+        chipstatus: '4',
+
       },
       {
         id: 8,
@@ -490,6 +555,7 @@ const App = ()=> {
         users: 48240,
         viewsPerUser: 4.3,
         averageTime: '3m 10s',
+        birthday: '1980-10-01', // YYYY-MM-DD
         conversions: [
           52394, 63357, 82800, 105466, 128729, 144472, 172148, 197919, 212302, 278153,
           290499, 249824, 317499, 333024, 388925, 410576, 462099, 488477, 533956, 572307,
@@ -497,6 +563,8 @@ const App = ()=> {
           1112940,
         ],
         wasInHospital: false,
+        chipstatus: '5',
+
       },
       {
         id: 9,
@@ -511,12 +579,15 @@ const App = ()=> {
         users: 18240,
         viewsPerUser: 2.7,
         averageTime: '3m 25s',
+        birthday: '1980-10-01', // YYYY-MM-DD
         conversions: [
           15372, 16901, 25489, 30148, 40857, 51136, 64627, 75804, 89633, 100407, 114908,
           129957, 143568, 158509, 174822, 192488, 211512, 234702, 258812, 284328, 310431,
           338186, 366582, 396749, 428788, 462880, 499125, 537723, 578884, 622825,
         ],
         wasInHospital: false,
+        chipstatus: '6',
+
       },
       {
         id: 10,
@@ -531,6 +602,7 @@ const App = ()=> {
         users: 28240,
         viewsPerUser: 5.1,
         averageTime: '3m 05s',
+        birthday: '1980-10-01', // YYYY-MM-DD
         conversions: [
           70211, 89234, 115676, 136021, 158744, 174682, 192890, 218073, 240926, 308190,
           317552, 279834, 334072, 354955, 422153, 443911, 501486, 538091, 593724, 642882,
@@ -538,6 +610,7 @@ const App = ()=> {
           1356724,
         ],
         wasInHospital: false,
+        chipstatus: null,
       },
       {
         id: 11,
@@ -552,6 +625,7 @@ const App = ()=> {
         users: 24240,
         viewsPerUser: 4.8,
         averageTime: '3m 15s',
+        birthday: '1980-10-01', // YYYY-MM-DD
         conversions: [
           49662, 58971, 78547, 93486, 108722, 124901, 146422, 167883, 189295, 230090,
           249837, 217828, 266494, 287537, 339586, 363299, 412855, 440900, 490111, 536729,
@@ -573,6 +647,7 @@ const App = ()=> {
         users: 38240,
         viewsPerUser: 3.5,
         averageTime: '3m 20s',
+        birthday: null, // YYYY-MM-DD
         conversions: [
           29589, 37965, 55800, 64672, 77995, 91126, 108203, 128900, 148232, 177159,
           193489, 164471, 210765, 229977, 273802, 299381, 341092, 371567, 413812, 457693,

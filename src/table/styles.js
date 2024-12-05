@@ -22,7 +22,7 @@ export const useStyles = () => ({
     width: '100%',
     borderCollapse: 'collapse',
     borderSpacing: '0px',
-    minWidth: '250px',
+    minWidth: '450px',
   },
   table_head: {
     backgroundColor: 'rgb(243, 244, 246)',

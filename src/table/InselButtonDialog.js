@@ -12,30 +12,20 @@ import {
   TableCell,
 } from '@mui/material';
 
-
-// TODO new image mgOk48.png ?
-import mainIconOk from './imgYes48.png'; 
-import mainIconYes from './imgYes48.png'; 
-import mainIconNo from './imgNo48.png'; 
-import mainIconCancel from './imgCancel48.png'; 
-
-import mainIconQuestion from './imgQuestion96.png'; 
-
+import InselConstants from './InselConstants';
 
 class InselButtonDialog extends React.Component {
-
-
-
   constructor(props) {
     super(props);
   
     const {
-      id,
-      open,
-      title, 
-      question, 
-      buttonList,
-      buttonType,
+      id: id,
+      open: open,
+      title: title,
+      question: question,
+      dialogIconType: dialogIconType,
+      buttonList: buttonList,
+      buttonType : buttonDialogType,
     } = this.props;
 
     this.state = {
@@ -49,10 +39,9 @@ class InselButtonDialog extends React.Component {
 
   handleOnClick(index)
   {
-    //this
     //console.log("handleOnClick", this.props.handleDialogButtons);
-    //this.setState({open: false});
-    //this.props.handleDialogButtons(index, this.state.id);
+    this.setState({open: false});
+    this.props.handleDialogButtons(index, this.state.id);
   }
 
   render ()
@@ -67,30 +56,14 @@ class InselButtonDialog extends React.Component {
     const buttonDialogTypeInfo = 1;
     const buttonDialogTypeWarning = 2;
     const buttonDialogTypeError = 3;
-    
-    
-    const defaultButtonsOk = [
-      { caption: "Close", icon: mainIconOk, horizontalAlign: 'left' }
-    ];
-    
-    const defaultButtonsYesNo = [
-      { caption: "Yes", icon: mainIconYes, horizontalAlign: 'left' },
-      { caption: "No", icon: mainIconNo, horizontalAlign: 'left' }
-    ];
-    
-    const defaultButtonsYesNoCancel = [
-      { caption: "Yes", icon: mainIconYes, horizontalAlign: 'left' },
-      { caption: "No", icon: mainIconNo, horizontalAlign: 'left' },
-      { caption: "Cancel", icon: mainIconCancel, horizontalAlign: 'left' }
-    ];
 
     const btnList = 
-      buttonDialogTypeOk ?  defaultButtonsOk :
-      buttonDialogTypeYesNo ?  defaultButtonsYesNo :
-      buttonDialogTypeYesNoCancel ?  defaultButtonsYesNoCancel :
+    buttonDialogTypeOk ?  InselConstants.defaultButtonsOk :
+    buttonDialogTypeYesNo ?  InselConstants.defaultButtonsYesNo :
+    buttonDialogTypeYesNoCancel ?  InselConstants.defaultButtonsYesNoCancel :
       this.state.buttonList;
-
-    //console.log("this.props.dialogName", this.state.id);
+  
+    console.log("Dialog btnList", btnList);
 
     const btnWidth = this.props.buttonWidth ? this.props.buttonWidth : 140;
     const dlgWidth = (btnWidth * btnList.length) + (30 * (btnList.length + 1));
@@ -128,71 +101,71 @@ class InselButtonDialog extends React.Component {
           >
 
           <Table>
-            <TableRow>
-              <TableCell 
-                //rowSpan={3}
-                style={{
-                  padding: '0px',
-                  fontSize: '24px',
-                  textAlign: 'center',
-                  borderStyle: 'none',
-                  //borderRightStyle: 'solid'
-                }}
-              >
+          <TableRow>
+            <TableCell 
+              rowSpan={2}
+              valign="middle"
+              style={{
+                padding: '10px',
+                textAlign: 'center',
+                borderStyle: 'none'
+              }}
+            >
               <img 
-                src={mainIconQuestion}
+                src={InselConstants.mainIconQuestion}
                 style={{ 
-                  width: '80px', 
-                  height: '80px',
-                }}></img>
-              </TableCell>
-              <TableCell 
-                style={{
-                  padding: '0px',
-                  fontSize: '24px',
-                  textAlign: 'center',
-                  borderStyle: 'none'
-                }}>{this.props.title}
-              </TableCell>
-            </TableRow>
+                  width: '50px', 
+                  height: '50px',
+                }}/>
+            </TableCell>
 
-            <TableRow>
-              <TableCell
-                colspan={2}
-                style={{
-                  padding: '0px',
-                  fontSize: '18px',
-                  textAlign: 'center',
-                  borderStyle: 'none'
-                }}>{this.props.question}
-              </TableCell>
-            </TableRow>
+            <TableCell 
+              style={{
+                padding: '10px',
+                fontSize: '24px',
+                fontWeight: 'bold',
+                textAlign: 'center',
+                borderStyle: 'none'
+              }}>
 
-            <TableRow>
-              <TableCell
-                colspan={2}
+              <div
                 style={{
-                  padding: '0px',
-                  fontSize: '18px',
+                  fontSize: 24,
+                  fontWeight: 'bold', 
+                  padding: '5px 10px',
                   textAlign: 'center',
-                  borderStyle: 'none'
+                }}>{this.props.title}</div>
+
+              <div
+                style={{
+                  fontSize: 24,
+                  fontWeight: 'bold', 
+                  padding: '5px 10px',
+                  textAlign: 'center',
+                }}>{this.props.question}</div>
+
+              <div
+                style={{
+                  fontSize: 36,
+                  fontWeight: 'bold', 
+                  padding: '5px 10px',
+                  textAlign: 'center',
                 }}>
                 <IconButton
-                  onClick={this.handleOnClick(0)}
+                  onClick={() => this.handleOnClick(0)}
                   style={{
                     fontSize: 16,
                     fontWeight: 'bold', 
                     width: btnWidth, 
                     height: '52px',
                     borderRadius: '16px',
-                    padding: '10px',
+                    padding: '5px 10px',
                   }}>
                   <img 
-                    src={mainIconYes}
+                    src={InselConstants.mainIconYes}
                     style={{ 
                       width: '32px', 
                       height: '32px',
-                      paddingRight: '10px',
                     }} 
                   />
                   Yes
@@ -201,17 +174,17 @@ class InselButtonDialog extends React.Component {
                 &nbsp;
                 &nbsp;
                 <IconButton
-                  onClick={this.handleOnClick(1)}
+                  onClick={() => this.handleOnClick(1)}
                   style={{
                     fontSize: 16,
                     fontWeight: 'bold', 
                     width: btnWidth, 
                     height: '52px',
                     borderRadius: '16px',
-                    padding: '10px',
+                    padding: '5px 10px',
                   }}>
                   <img 
-                    src={mainIconNo}
+                    src={InselConstants.mainIconNo}
                     style={{ 
                       width: '32px', 
                       height: '32px',
@@ -220,9 +193,12 @@ class InselButtonDialog extends React.Component {
                   />
                   No
                 </IconButton>
-                </TableCell>
+
+                </div>
+              </TableCell>
             </TableRow>
           </Table>
+
               
 
 
