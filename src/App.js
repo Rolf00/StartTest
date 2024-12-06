@@ -4,15 +4,330 @@ import * as React from 'react';
 
 import { A, D, MyClassTableCell, MyTableCell } from './components';
 
-import imgChipStatus1 from './table/imgYes48.png'; 
-import imgChipStatus2 from './table/imgYes48.png'; 
-import imgChipStatus3 from './table/imgYes48.png'; 
-import imgChipStatus4 from './table/imgYes48.png'; 
-import imgChipStatus5 from './table/imgYes48.png'; 
-import imgChipStatus6 from './table/imgYes48.png'; 
+
+// => icons für chip erstellen
+// #FFFF55 gelb
+// #FF7F00 orange
+// #FF0000 red
+// #FF00FF purple
+// #0000FF blue
+// #00FFFF turqoise
+// #00FF00 green
+// #FFFF00 yellow
+// #BFBFBF LightGrey
+import imgChipStatusLightGrey from './CircleLightGrey.png'; 
+import imgChipStatusYellow from './CircleYellow.png'; 
+import imgChipStatusOrange from './CircleOrange.png'; 
+import imgChipStatusRed from './CircleRed.png'; 
+import imgChipStatusPurple from './CirclePurple.png'; 
+import imgChipStatusBlue from './CircleBlue.png'; 
+import imgChipStatusTurqoise from './CircleTurqoise.png'; 
+import imgChipStatusGreen from './CircleGreen.png'; 
 
 
 import InselTable from './table/InselTable';
+
+
+// columns for Waldo
+/*
+const headersWaldo = [
+  {
+    databaseField: "",
+    isResizable: false,
+    isEditable: true,
+    isRequired: true,
+    isVisible: true,
+    isSortable: false,
+    width: 45,
+    minWidth: 45,
+    maxWidth: 55,
+    editType: 'selectionIcon',
+    defaultValue: false,
+    dataFieldName: '',
+    horizontalAlign: 'center',
+    hasHeaderMenu: false,
+  },
+  {
+    databaseField: "primaryKey",
+    headerTitle: "ID",
+    isResizable: true,
+    isEditable: false,
+    isRequired: true,
+    isVisible: true,
+    isSortable: true,
+    defaultSorting: 'asc',
+    width: 65,
+    minWidth: 65,
+    maxWidth: 120,
+    editType: 'primaryKey',
+    dataFieldName: 'id',
+    horizontalAlign: 'center',
+    hasHeaderMenu: false,
+  },
+  {
+    databaseField: "firstName",
+    headerTitle: "Firstname",
+    isResizable: true,
+    isEditable: false,
+    isRequired: true,
+    isVisible: true,
+    isSortable: true,
+    defaultSorting: 'asc',
+    width: 180,
+    minWidth: 140,
+    maxWidth: 300,
+    editType: 'textfield',
+    dataFieldName: 'firstName',
+    horizontalAlign: 'left',
+    hasHeaderMenu: true,
+  },
+  {
+    databaseField: "lastName",
+    headerTitle: "Lastname",
+    isResizable: true,
+    isEditable: false,
+    isRequired: true,
+    isVisible: true,
+    isSortable: true,
+    defaultSorting: 'asc',
+    width: 180,
+    minWidth: 140,
+    maxWidth: 300,
+    editType: 'textfield',
+    dataFieldName: 'lastName',
+    horizontalAlign: 'left',
+    hasHeaderMenu: true,
+  },
+  {
+    databaseField: "age",
+    headerTitle: "Age",
+    isResizable: true,
+    isEditable: false,
+    isRequired: true,
+    isVisible: true,
+    isSortable: true,
+    defaultSorting: 'asc',
+    width: 80,
+    minWidth: 80,
+    maxWidth: 120,
+    editType: 'textfield',
+    dataFieldName: 'age',
+    horizontalAlign: 'center',
+    hasHeaderMenu: true,
+  },
+  {
+    databaseField: "birthday",
+    headerTitle: "Birthday",
+    isResizable: true,
+    isEditable: false,
+    isRequired: true,
+    isVisible: true,
+    isSortable: true,
+    defaultSorting: 'asc',
+    width: 120,
+    minWidth: 120,
+    maxWidth: 120,
+    editType: 'textfield',
+    dataFieldName: 'birthday',
+    horizontalAlign: 'center',
+    hasHeaderMenu: true,
+  },
+  {
+    databaseField: "gender",
+    headerTitle: "Gender",
+    isResizable: true,
+    isEditable: false,
+    isRequired: true,
+    isVisible: true,
+    isSortable: true,
+    defaultSorting: 'asc',
+    width: 120,
+    minWidth: 120,
+    maxWidth: 120,
+    editType: 'textfield',
+    dataFieldName: 'gender',
+    horizontalAlign: 'center',
+    hasHeaderMenu: true,
+  },
+  {
+    databaseField: "diagnosis",
+    headerTitle: "Diagnosis",
+    isResizable: true,
+    isEditable: false,
+    isRequired: true,
+    isVisible: true,
+    isSortable: true,
+    defaultSorting: 'asc',
+    width: 120,
+    minWidth: 120,
+    maxWidth: 120,
+    editType: 'textfield',
+    dataFieldName: 'diagnosis',
+    horizontalAlign: 'center',
+    hasHeaderMenu: true,
+  },
+  {
+    databaseField: "bloodPressure",
+    headerTitle: "Blood Pressure",
+    isResizable: true,
+    isEditable: false,
+    isRequired: true,
+    isVisible: true,
+    isSortable: true,
+    defaultSorting: 'asc',
+    width: 120,
+    minWidth: 120,
+    maxWidth: 120,
+    editType: 'textfield',
+    dataFieldName: 'bloodPressure',
+    horizontalAlign: 'center',
+    hasHeaderMenu: true,
+  },
+  {
+    databaseField: "weight",
+    headerTitle: "Weight (kg)",
+    isResizable: true,
+    isEditable: false,
+    isRequired: true,
+    isVisible: true,
+    isSortable: true,
+    defaultSorting: 'asc',
+    width: 120,
+    minWidth: 120,
+    maxWidth: 120,
+    editType: 'textfield',
+    dataFieldName: 'weight',
+    horizontalAlign: 'center',
+    hasHeaderMenu: true,
+  },
+  {
+    databaseField: "address",
+    headerTitle: "Adress",
+    isResizable: true,
+    isEditable: false,
+    isRequired: true,
+    isVisible: true,
+    isSortable: true,
+    defaultSorting: 'asc',
+    width: 180,
+    minWidth: 180,
+    maxWidth: 320,
+    editType: 'textfieldmultiline',
+    dataFieldName: 'address',
+    horizontalAlign: 'left',
+    hasHeaderMenu: true,
+  },
+  {
+    databaseField: "nationality",
+    headerTitle: "Nationality",
+    isResizable: true,
+    isEditable: false,
+    isRequired: true,
+    isVisible: true,
+    isSortable: true,
+    defaultSorting: 'asc',
+    width: 160,
+    minWidth: 160,
+    maxWidth: 320,
+    editType: 'textfield',
+    dataFieldName: 'nationality',
+    horizontalAlign: 'left',
+    hasHeaderMenu: true,
+  },
+  {
+    databaseField: "survey",
+    headerTitle: "Surveys",
+    isResizable: true,
+    isEditable: false,
+    isRequired: true,
+    isVisible: true,
+    isSortable: true,
+    defaultSorting: 'asc',
+    width: 160,
+    minWidth: 160,
+    maxWidth: 320,
+    editType: 'integer',
+    dataFieldName: 'survey',
+    horizontalAlign: 'right',
+    hasHeaderMenu: true,
+  },
+  {
+    databaseField: "chipstate",
+    headerTitle: "State",
+    isResizable: true,
+    isEditable: false,
+    isRequired: true,
+    isVisible: true,
+    isSortable: true,
+    width: 100,
+    minWidth: 160,
+    maxWidth: 320,
+    editType: 'chip',
+    chipList: [
+      { id: 1, label: 'open', color: '#F3F3F3', icon: imgChipStatusLightGrey, },
+      { id: 2, label: 'new', color: '#FFFFBB', icon: imgChipStatusYellow, },
+      { id: 3, label: 'invited', color: '#FFE1BF', icon: imgChipStatusOrange, },
+      { id: 4, label: 'surgery', color: '#FFBBFF', icon: imgChipStatusPurple, },
+      { id: 5, label: 'visited', color: '#BBFFFF', icon: imgChipStatusTurqoise, },
+      { id: 6, label: 'investigated', color: '#BBBBFF', icon: imgChipStatusBlue, },
+      { id: 7, label: 'all ok', color: '#BBFFBB', icon: imgChipStatusGreen, },
+      { id: 8, label: 'danger', color: '#FFBBBB', icon: imgChipStatusRed, },
+    ],
+    chipWidth: 80,
+    chipIconWidth: 32,
+    dataFieldName: 'chipstate',
+    horizontalAlign: 'right',
+    hasHeaderMenu: false,
+  },
+  {
+    databaseField: "lastUpdate",
+    headerTitle: "Last update",
+    isResizable: true,
+    isEditable: false,
+    isRequired: true,
+    isVisible: true,
+    isSortable: true,
+    defaultSorting: 'asc',
+    width: 190,
+    minWidth: 190,
+    maxWidth: 320,
+    editType: 'textfield',
+    dataFieldName: 'lastUpdate',
+    horizontalAlign: 'center',
+    hasHeaderMenu: true,
+  },
+];
+
+// data Waldo
+const patients = [];
+const countries = ["USA", "Canada", "Germany", "France", "UK", "India", "Australia", "Brazil", "Japan", "Mexico"];
+
+for (let i = 0; i < 100; i++) {
+  const randomAge = Math.floor(Math.random() * 60) + 18;  // Age between 18 and 77
+  const randomBirthday = new Date(2000 - randomAge, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1);
+  const randomWeight = Math.floor(Math.random() * 80) + 40;  // Weight between 40 and 120 kg
+  const randomAddress = `${Math.floor(Math.random() * 9999)} ${["Street", "Avenue", "Lane", "Boulevard"][Math.floor(Math.random() * 4)]} ${["Main", "Oak", "Pine", "Maple", "Elm"][Math.floor(Math.random() * 5)]}`;
+  const randomCountry = countries[Math.floor(Math.random() * countries.length)];
+  const randomUpdate = new Date(Date.now() - Math.floor(Math.random() * (1000 * 60 * 60 * 24 * 365)));  // Random last update within the past year
+
+  patients.push({
+    id: i + 1,
+    firstName: `Patient${i + 1}`,
+    lastName: `Lastname${i + 1}`,
+    age: randomAge,
+    birthday: randomBirthday.toISOString().split('T')[0],  // Convert to YYYY-MM-DD format
+    gender: Math.random() > 0.5 ? "Male" : "Female",
+    diagnosis: Math.random() > 0.5 ? "Hypertension" : "Diabetes",
+    bloodPressure: `${Math.floor(Math.random() * 50) + 110}/${Math.floor(Math.random() * 40) + 70}`,
+    weight: randomWeight,
+    address: randomAddress,
+    nationality: randomCountry,
+    survey: Math.floor(Math.random() * 100) + 1,  // Random number between 1-100
+    lastUpdate: randomUpdate.toISOString(),  // Date format: YYYY-MM-DDTHH:MM:SS.SSSZ
+    chipstate: i < 9 ? i : null,
+  });
+}
+*/
 
 const App = ()=> {
   const [value,setExternalValue] = React.useState('hello world')
@@ -41,11 +356,11 @@ const App = ()=> {
 
     // main button options
     buttonSizeOnRows: 32,
-    hasButtonNewRow: false,
-    hasButtonSaveAll: false,
-    hasButtonUndoAll: false,
+    hasButtonNewRow: true,
+    hasButtonSaveAll: true,
+    hasButtonUndoAll: true,
     hasButtonExcelAll: true,
-    hasButtonExcelSelected: false,
+    hasButtonExcelSelected: true,
   };
   
   const headers = [
@@ -309,25 +624,30 @@ const App = ()=> {
     },
     {
       headerTitle: "Status",
-      isResizable: false,
+      isResizable: true,
       isEditable: true,
       isRequired: false,
       isVisible: true,
       defaultSorting: '',
-      width: 160,
-      minWidth: 160,
-      maxWidth: 160,
+      width: 120,
+      minWidth: 120,
+      maxWidth: 180,
       editType: 'chip',
-      defaultValue: '1',
+      defaultValue: 1,
       dataFieldName: 'chipstatus',
       chipList: [
-        { id: '1', label: 'Status 1', color: '#FFFFFF', icon: imgChipStatus1, },
-        { id: '2', label: 'Status 2', color: '#FF9999', icon: imgChipStatus2, },
-        { id: '3', label: 'Status 3', color: '#99FF99', icon: imgChipStatus3, },
-        { id: '4', label: 'Status 4', color: '#9999FF', icon: imgChipStatus4, },
-        { id: '5', label: 'Status 5', color: '#FF99FF', icon: imgChipStatus5, },
-        { id: '6', label: 'Status 6', color: '#99FFFF', icon: imgChipStatus6, },
+        { id: 1, label: 'open', color: '#F3F3F3', icon: imgChipStatusLightGrey, },
+        { id: 2, label: 'new pat.', color: '#FFFFBB', icon: imgChipStatusYellow, },
+        { id: 3, label: 'invited', color: '#FFE1BF', icon: imgChipStatusOrange, },
+        { id: 4, label: 'surgery', color: '#FFBBFF', icon: imgChipStatusPurple, },
+        { id: 5, label: 'visited', color: '#BBFFFF', icon: imgChipStatusTurqoise, },
+        { id: 6, label: 'investigated', color: '#BBBBFF', icon: imgChipStatusBlue, },
+        { id: 7, label: 'all ok', color: '#BBFFBB', icon: imgChipStatusGreen, },
+        { id: 8, label: 'danger', color: '#FFBBBB', icon: imgChipStatusRed, },
       ],
+      chipWidth: 100,
+      chipIconWidth: 32,
+      horizontalAlign: 'center',
       hasHeaderMenu: false,
     },
     {
@@ -469,7 +789,7 @@ const App = ()=> {
           1687545, 1581634, 1550291,
         ],
         wasInHospital: false,
-        chipstatus: '1',
+        chipstatus: 1,
         user: {
           id: 1,
           firstname: 'John',
@@ -496,13 +816,13 @@ const App = ()=> {
           1854053, 1791831,
         ],
         wasInHospital: true,
-        chipstatus: '2',
+        chipstatus: 2,
       },
       {
         id: 6,
         field1: 'Field6',
         fieldtextarea: 'Textarea ... ... ... ',
-        field2: 'Field 2 long text multiline ....',
+        field2: 'Field 2 long text multiline ...\nnewline 1\nnewline 2\nnewline 3\nnewline 4',
         dropdownvalue: 4,
         name: 'FAQs - Customer Support',
         moreInfo: 'more info about "FAQs"',
@@ -517,7 +837,7 @@ const App = ()=> {
           285557, 268555, 259482, 274019, 321648, 359801, 399502, 447249, 497403,
         ],
         wasInHospital: true,
-        chipstatus: '3',
+        chipstatus: 3,
         
       },
       {
@@ -539,7 +859,7 @@ const App = ()=> {
           594289, 671915, 649510, 574911, 713843, 754965, 853020, 916793, 960158, 984265,
         ],
         wasInHospital: false,
-        chipstatus: '4',
+        chipstatus: 4,
 
       },
       {
@@ -563,7 +883,7 @@ const App = ()=> {
           1112940,
         ],
         wasInHospital: false,
-        chipstatus: '5',
+        chipstatus: 5,
 
       },
       {
@@ -586,7 +906,7 @@ const App = ()=> {
           338186, 366582, 396749, 428788, 462880, 499125, 537723, 578884, 622825,
         ],
         wasInHospital: false,
-        chipstatus: '6',
+        chipstatus: 6,
 
       },
       {
@@ -610,7 +930,7 @@ const App = ()=> {
           1356724,
         ],
         wasInHospital: false,
-        chipstatus: null,
+        chipstatus: 7,
       },
       {
         id: 11,
@@ -633,6 +953,7 @@ const App = ()=> {
           1173591,
         ],
         wasInHospital: false,
+        chipstatus: 8,
       },
       {
         id: 12,

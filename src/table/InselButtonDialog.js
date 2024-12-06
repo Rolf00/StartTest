@@ -17,23 +17,20 @@ import InselConstants from './InselConstants';
 class InselButtonDialog extends React.Component {
   constructor(props) {
     super(props);
-  
+
     const {
-      id: id,
-      open: open,
-      title: title,
-      question: question,
-      dialogIconType: dialogIconType,
-      buttonList: buttonList,
-      buttonType : buttonDialogType,
+      id,
+      open,
+      title,
+      question,
+      dialogButtonListType, 
+      buttonList,
+      dialogIconType
     } = this.props;
 
     this.state = {
       id: id,
       open: open,
-      title: title,
-      question: question,
-      buttonList: buttonList,
     }
   }
 
@@ -46,24 +43,13 @@ class InselButtonDialog extends React.Component {
 
   render ()
   {
-    // types for button dialog 
-    const buttonDialogTypeOk = 0;
-    const buttonDialogTypeYesNo = 1;
-    const buttonDialogTypeYesNoCancel = 2;
-    
-    // types of icons for button dialog 
-    const buttonDialogTypeNone = 0;
-    const buttonDialogTypeInfo = 1;
-    const buttonDialogTypeWarning = 2;
-    const buttonDialogTypeError = 3;
-
     const btnList = 
-    buttonDialogTypeOk ?  InselConstants.defaultButtonsOk :
-    buttonDialogTypeYesNo ?  InselConstants.defaultButtonsYesNo :
-    buttonDialogTypeYesNoCancel ?  InselConstants.defaultButtonsYesNoCancel :
-      this.state.buttonList;
+      this.props.dialogButtonListType === InselConstants.buttonDialogTypeOk ?  InselConstants.defaultButtonsOk :
+      this.props.dialogButtonListType === InselConstants.buttonDialogTypeYesNo ?  InselConstants.defaultButtonsYesNo :
+      this.props.dialogButtonListType === InselConstants.buttonDialogTypeYesNoCancel ?  InselConstants.defaultButtonsYesNoCancel :
+      this.props.buttonList;
   
-    console.log("Dialog btnList", btnList);
+    console.log("Dialog this.props.dialogButtonListType", this.props.dialogButtonListType);
 
     const btnWidth = this.props.buttonWidth ? this.props.buttonWidth : 140;
     const dlgWidth = (btnWidth * btnList.length) + (30 * (btnList.length + 1));
@@ -112,7 +98,7 @@ class InselButtonDialog extends React.Component {
               }}
             >
               <img 
-                src={InselConstants.mainIconQuestion}
+                src={InselConstants.imgDialogIconQuestion}
                 style={{ 
                   width: '50px', 
                   height: '50px',
@@ -162,7 +148,7 @@ class InselButtonDialog extends React.Component {
                     padding: '5px 10px',
                   }}>
                   <img 
-                    src={InselConstants.mainIconYes}
+                    src={InselConstants.imgIconYes}
                     style={{ 
                       width: '32px', 
                       height: '32px',
@@ -184,7 +170,7 @@ class InselButtonDialog extends React.Component {
                     padding: '5px 10px',
                   }}>
                   <img 
-                    src={InselConstants.mainIconNo}
+                    src={InselConstants.imgIconNo}
                     style={{ 
                       width: '32px', 
                       height: '32px',

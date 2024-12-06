@@ -56,7 +56,8 @@ class InselTableHeader extends React.Component {
       headerWidthList: this.setHeaderWidthList(),
     }
 
-    return(
+    return (
+
       <TableHead className={classes.table_head}>
         <TableRow className={classes.table_head_row}>
           {headers.map((header, headerIndex) => {

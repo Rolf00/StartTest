@@ -7,11 +7,16 @@ import imgSaveButton from './imgSave48.png';
 import imgUndoButton from './imgUndo48.png'; 
 import imgAddButton from './imgAdd48.png'; 
 import imgExcelButton from './imgExcel48.png'; 
-import mainIconOk from './imgYes48.png'; 
-import mainIconYes from './imgYes48.png'; 
-import mainIconNo from './imgNo48.png'; 
-import mainIconCancel from './imgCancel48.png'; 
-import mainIconQuestion from './imgQuestion96.png'; 
+
+import imgIconOk from './imgYes48.png'; 
+import imgIconYes from './imgYes48.png'; 
+import imgIconNo from './imgNo48.png'; 
+import imgIconCancel from './imgCancel48.png'; 
+
+import imgDialogQuestion from './imgQuestion96.png'; 
+import imgDialogStop from './imgStop96.png'; 
+import imgDialogWarning from './imgWarning96.png'; 
+
 
 
 class InselConstants {
@@ -41,11 +46,13 @@ class InselConstants {
   static imgExcelButton = imgExcelButton; 
 
   // icons button dialog
-  static imgIconOk = mainIconOk; 
-  static imgIconYes = mainIconYes; 
-  static imgIconNo = mainIconNo; 
-  static imgIconCancel = mainIconCancel; 
-  static imgIconQuestion = mainIconQuestion; 
+  static imgIconOk = imgIconOk; 
+  static imgIconYes = imgIconYes; 
+  static imgIconNo = imgIconNo; 
+  static imgIconCancel = imgIconCancel; 
+
+  // big icon dialog
+  static imgDialogIconQuestion = imgDialogQuestion; 
 
   // types for button dialog 
   static buttonDialogTypeOk = 0;
@@ -60,16 +67,16 @@ class InselConstants {
 
   // default buttons for button dialog 
   static defaultButtonsOk = [
-    { caption: "Close", icon: mainIconOk, horizontalAlign: 'left' }
+    { caption: "Close", icon: imgIconOk, horizontalAlign: 'left' }
   ];
   static defaultButtonsYesNo = [
-    { caption: "Yes", icon: mainIconYes, horizontalAlign: 'left' },
-    { caption: "No", icon: mainIconNo, horizontalAlign: 'left' }
+    { caption: "Yes", icon: imgIconYes, horizontalAlign: 'left' },
+    { caption: "No", icon: imgIconNo, horizontalAlign: 'left' }
   ];
   static defaultButtonsYesNoCancel = [
-    { caption: "Yes", icon: mainIconYes, horizontalAlign: 'left' },
-    { caption: "No", icon: mainIconNo, horizontalAlign: 'left' },
-    { caption: "Cancel", icon: mainIconCancel, horizontalAlign: 'left' }
+    { caption: "Yes", icon: imgIconYes, horizontalAlign: 'left' },
+    { caption: "No", icon: imgIconNo, horizontalAlign: 'left' },
+    { caption: "Cancel", icon: imgIconCancel, horizontalAlign: 'left' }
   ];
   
   // row states 

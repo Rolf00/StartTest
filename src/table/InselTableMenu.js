@@ -9,9 +9,8 @@ import Divider from '@mui/material/Divider';
 // TODO
 //import ArrowDropRight from '@mui/material/ArrowDropRight';
 
-export default function InselTableMenu  (
-  props
-) {
+export default function InselTableMenu  (props) 
+{
 
   //console.log("InselTableMenu headers start", props.headers);
   //console.log("InselTableMenu headerIndex start", props.headerIndex);

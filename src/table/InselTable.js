@@ -3,7 +3,7 @@ import PropTypes, { func } from 'prop-types';
 import { useStyles } from './styles';
 import { withStyles } from 'tss-react/mui';
 import styled from 'styled-components';
-
+import Avatar from '@mui/material/Avatar';
 
 // TODO : SubMenu manage columns
 
@@ -51,7 +51,7 @@ import { green } from '@mui/material/colors';
 import 'react-resizable/css/styles.css';
 
 import InselTableHeader from './InselTableHeader';
-//import InselTableRow from './InselTableRow'; 
+import InselTableRow from './InselTableRow'; 
 
 import InselConstants from './InselConstants';
 import InselTableCellHeightResizer from './InselTableCellHeightResizer';
@@ -218,7 +218,7 @@ class InselTable extends React.Component {
       primaryKey: primaryKey,
       data: this.getDataList(),
       page: 0,
-      limit: 5,
+      limit: 10,
 
       // selectio in header
       mainChecked: false,
@@ -473,47 +473,21 @@ class InselTable extends React.Component {
   handleUndoAll(e)
   {
     // ask before undoing all rows
-    // TODO
-    //if (!confirm("Do you really want to undo all changes?")) return;
-
-    // undo all changes in all rows
-    /*
-    let hasError = false;
-    const changedList = this.state.rowInfoList;
-    for (let i = changedList.length - 1; i >= 0; i--)
-    {
-      const state = changedList[i].state;
-      if (state === rowStateEdited)
-      {
-        this.changeRowState(changedList[i].id, rowStateUnchanged);
-      }
-      else if (state === rowStateDeleted)
-      {
-        this.changeRowState(changedList[i].id, rowStateUnchanged);
-      }
-      else if (state === rowStateInserted)
-      {
-        changedList.splice(i, 1);
-      }
-    }
-    // now get old data for all rows
-    const olddatalist = this.props.data;
-    this.setState({data: olddatalist});
-
-    if (hasError) alert("ERROR while undoing all rows.");
-
-    */
-
-
     // open the confirm dialog YES / NO
-    this.setState({buttonDialogId: "UndoAll"});
+    this.setState({
+      buttonDialogId: "UndoAll",
+      buttonDialogTitle: "Undo all rows",
+      buttonDialogQuestion: "Do you really want to undo all changes?",
+      buttonDialogButtons: null,
+      buttonDialogType: buttonDialogTypeYesNo,
+    });
+    /*
     this.setState({buttonDialogTitle: "Undo all rows"});
     this.setState({buttonDialogQuestion: "Do you really want to undo all changes?"});
     this.setState({buttonDialogButtons: null});
     this.setState({buttonDialogType: buttonDialogTypeYesNo});
+    */
     this.setState({openButtonDialog: true});
-
-    //alert("dialog open");
   }
 
   handleCopyForExcel(all)
@@ -590,6 +564,7 @@ class InselTable extends React.Component {
     const disable = newlist.length === 0;
     this.setState({mainButtonsDisabled: disable});
   }
+
 
   // ---------------------------------------------------------------------------------------
   // clicks from button dialog
@@ -670,7 +645,7 @@ class InselTable extends React.Component {
       ischecked ? InselConstants.imgChkboxChecked : InselConstants.imgChkboxUnchecked});
   }
 
-  handleSelectionClickRow(e, rowid)
+  handleSelectionClickRow(rowid)
   {
     // create a new list in order to be up to date
     const rowIndex = this.getRowIndex(rowid);
@@ -780,6 +755,7 @@ class InselTable extends React.Component {
   {
     if (e.key === "c" && e.ctrlKey) 
     {
+      // copy window selection
       e.key = null;
       const txt = window.getSelection().toString();
       navigator.clipboard.writeText(txt);
@@ -798,19 +774,19 @@ class InselTable extends React.Component {
     }
     else if (e.key === "s" && e.ctrlKey) 
     {
-      // copy for excel all rows
+      // save all
       e.key = null;
       this.handleSaveAll();
     }
-    else if (e.key === "z" && e.ctrlKey) 
+    else if (e.key === "u" && e.ctrlKey) 
     {
-      // copy for excel all rows
+      // undo all
       e.key = null;
       this.handleUndoAll();
     }
     else if (e.key === "i" && e.ctrlKey) 
     {
-      // copy for excel all rows
+      // new row
       e.key = null;
       this.handleNewRow();
     }
@@ -885,39 +861,16 @@ class InselTable extends React.Component {
   
   handleTextfieldChange(e, rowid, fieldName)
   {
-    //console.log("handleTextfieldChange start props", this.props.data);      
-
-    // check the data
-    /*
-    const indexHeader = this.props.headers.findIndex(h => h.dataFieldName === fieldName);
-    if (indexHeader === -1)
-    {
-      alert("ERROR handleTextfieldChange: indexHeader === -1.");
-      return;
-    }
-
-    // if the entered value is not correct, we show the helpertext
-    const header = this.props.headers[indexHeader];
-    const hasError = this.getHasError(header, e.target.value);
-    e.target.style.color = hasError ? 'red' : 'black';
-    */
-
-    //console.log("handleTextfieldChange hasError", hasError);      
-    //console.log("handleTextfieldChange textMaxLength", header.textMaxLength);      
-    //console.log("handleTextfieldChange helperText", header.helperText);      
-
     // change the data when a field was selected
     const index = this.getRowIndex(rowid);
     const newList = [...this.state.data];
     this.state.data[index][fieldName] = e.target.value;
     this.setState({data: newList});
 
-    //console.log("handleTextfieldChange end props", this.props.data);      
-    //console.log("handleTextfieldChange end state", this.state.data);      
-
     // now also change the state of the row
     const rowState = this.getRowState(rowid);
-    if (rowState === InselConstants.rowStateUnchanged) this.setRowState(rowid, InselConstants.rowStateEdited);
+    if (rowState === InselConstants.rowStateUnchanged) 
+      this.setRowState(rowid, InselConstants.rowStateEdited);
   }
 
   handleTextfieldNumberChange(e, rowid, fieldName)
@@ -988,9 +941,9 @@ class InselTable extends React.Component {
     if (rowState === InselConstants.rowStateUnchanged) this.setRowState(rowIndex, InselConstants.rowStateEdited);
   }
 
-  handleChipClick(e, rowIndex, fieldName)
+  handleChipChange(chipid, rowid, fieldName)
   {
-    // TODO
+    alert("Not implemented yet (chip id = " + chipid + ")");
   }
 
   // ---------------------------------------------------------------------------------------
@@ -1017,15 +970,16 @@ class InselTable extends React.Component {
     let mouseStart = e.clientY;
     let oldRowHeight = this.getRowHeight(rowid);
 
+    // const newheight = e.clientY - mouseStart + oldRowHeight;
+    // console.log("newheight", newheight);
+    // console.log("this.props.settings.initialRowHeight", this.props.settings.initialRowHeight);
+
     const onMouseMoveRowNS = (e) => {
       const newheight = e.clientY - mouseStart + oldRowHeight;
-      if (newheight > this.props.settings.initialRowHeight)
-      {
-        const newList = this.state.rowInfoList;
-        const index = this.state.rowInfoList.findIndex(dr => dr.id === rowid);
-        newList[index].height = newheight;
-        this.setState({rowInfoList : newList});
-      }
+      const newList = this.state.rowInfoList;
+      const index = this.state.rowInfoList.findIndex(dr => dr.id === rowid);
+      newList[index].height = newheight;
+      this.setState({rowInfoList : newList});
     }
 
     const onMouseUpRowNS = (e) => {
@@ -1049,9 +1003,13 @@ class InselTable extends React.Component {
     const onMouseMoveRowEW = (e) => 
     {
       const newwidth = e.clientX - mouseStart + cellWidth;
-      const newList2 = this.state.headers;
-      newList2[index].width = newwidth;
-      this.setState({headers : newList2});
+      if (newwidth < this.state.headers[colindex].maxWidth &&
+          newwidth > this.state.headers[colindex].minWidth)
+      {
+        const newList2 = this.state.headers;
+        newList2[index].width = newwidth;
+        this.setState({headers : newList2});
+      }
     }
 
     const onMouseUpRowEW = (e) => 
@@ -1085,6 +1043,9 @@ class InselTable extends React.Component {
     const data = this.state.data.slice(page * limit, page * limit + limit);
     const mainChecked = this.state.mainChecked;
     const mainIndeterminated = this.state.mainIndeterminated;
+
+    //console.log("mainIndeterminated)", mainIndeterminated); 
+
     const mainButtonsDisabled = this.state.mainButtonsDisabled;
     const colwidth = this.state.colwidth;
     const headers = this.state.headers;
@@ -1249,14 +1210,53 @@ class InselTable extends React.Component {
             {/* ================================================================================ */}
             {/* Start of the rows ============================================================== */}
             {/* ================================================================================ */}
-            <TableBody className={classes.table_body_row}>
-              {data.map((row, rowIndex) => {
 
+            <TableBody className={classes.table_body_row}>
+
+              {data.map((row, rowIndex) => {
+                // we use the old values for undoing changes
+                const rowid = row[this.props.primaryKey];
+                const oldRowIndex = this.getRowIndex(rowid);
+                const thisOldRow = this.props.data[oldRowIndex];
+                const thisRow = row;
+                const thisIndex = rowIndex;
+
+                //console.log("thisRow", thisRow);
+                //console.log("oldRowIndex", oldRowIndex);
+                return(
+                  <InselTableRow
+                    classes={this.props.classes}
+                    settings={this.props.settings}
+                    headers={this.props.headers}
+                    oldRow={thisOldRow}
+                    row={thisRow}
+                    rowIndex={thisIndex}
+                    primaryKey={this.props.primaryKey}
+                    data={this.state.data}
+                    rowInfoList={this.state.rowInfoList}
+                    //setMainButtons={() => this.setMainButtons()} 
+                    //setMainSelectionState={() => this.setMainSelectionState()} 
+                    //mainChecked={mainChecked}
+                    //mainIndeterminated={mainIndeterminated}
+                    mainButtonsDisabled={this.state.mainButtonsDisabled}
+                    handleMouseDownRowNS={(e, rowid) => this.handleMouseDownRowNS(e, rowid)}
+                    handleSelectionClickRow={() => this.handleSelectionClickRow(rowid)}
+                    handleTextfieldChange={(e, field) => this.handleTextfieldChange(e, rowid, field)}
+                    handleChipChange={(e, field) => this.handleChipChange(e, rowid, field)}
+
+                  >
+                  </InselTableRow>
+                );
+
+              })}
+
+{/* 
+              {data.map((row, rowIndex) => {
                 // unique identifier for the rows
                 const rowid = row[this.props.primaryKey];
 
                 // main row selection 
-                const isRowSelected = this.getRowSelection(row.id);
+                const isRowSelected = this.getRowSelection(rowid);
 
                 //console.log("rowid", rowid);
                 //console.log("isRowSelected", isRowSelected);
@@ -1267,7 +1267,7 @@ class InselTable extends React.Component {
                 const isRowInserted = rowState === InselConstants.rowStateInserted;
                 const isRowChanged = rowState === InselConstants.rowStateEdited || isRowDeleted || isRowInserted;
 
-                const iconSource = this.getIconSource(row.id);
+                const iconSource = this.getIconSource(rowid);
                 const rowHeight = this.getRowHeight(rowid);
                 const reszBgColor = this.props.settings.resizerNWBackgroundColor;
 
@@ -1283,18 +1283,6 @@ class InselTable extends React.Component {
                 //console.log("rowid", rowid);
                 //console.log("rowBackgroundColor", rowBackgroundColor);
                 //console.log("buttonDialog data", data);
-
-                {/*
-                return (
-                   
-                  <InselTableRow
-                    classes={this.props.classes}
-                    headers={this.props.headers}
-                    row={row}
-                    >
-                  </InselTableRow>
-                );
-                */}
 
                 return (
                   <TableRow
@@ -1347,18 +1335,30 @@ class InselTable extends React.Component {
 
                     // chip
                     let chipItem = null;
+                    let chipIndex = 0;
                     if (isChip) 
                     {
-                      let chipIndex = header.chipList.findIndex(c => c.id === value);
-                      if (chipIndex === 1) chipIndex = header.chipList.findIndex(c => c.default);
+                      chipIndex = header.chipList.findIndex(c => c.id === value);
+                      if (chipIndex === -1) chipIndex = header.chipList.findIndex(c => c.default);
                       chipItem = (chipIndex === -1) ? header.chipList[0] : header.chipList[chipIndex];
                     }
                     const chipLabel = (chipItem) ? chipItem.label : "";
                     const chipColor = (chipItem) ? chipItem.color : null;
                     const chipIcon = (chipItem) ? chipItem.icon : null;
                     const chipClickable = header.isEditable;
+                    const chipWidth = (chipItem) ? header.chipWidth : 0;
+                    const chipIconWidth = (chipItem) ? header.chipIconWidth : 0;
+                    
 
-                    console.log("chipColor", chipColor);
+                    if (isChip)
+                    {
+                      console.log("header", header);
+                      //console.log("chipWidth", chipWidth);
+                      //console.log("chipIconWidth", chipIconWidth);
+                      // console.log("chipItem.label", chipItem.label);
+                      // console.log("chipColor", chipColor);
+                      // console.log("chipIcon", chipIcon);
+                    }
 
                     const field = header.dataFieldName;
 
@@ -1408,6 +1408,7 @@ class InselTable extends React.Component {
                               textAlign: header.horizontalAlign, }}
                           ></TextField>
                         }
+                          
 
                         {isTextfield && 
                           <TextField
@@ -1548,13 +1549,27 @@ class InselTable extends React.Component {
                         {isChip &&
                         <Chip 
                           label={chipLabel}
-                          icon={chipIcon}
+                          //icon={chipIcon}
+                          avatar={<Avatar alt="" src={chipIcon} />}
                           clickable={chipClickable}
                           onClick={e => this.handleChipClick(e, rowid, colindex)}
+                          style={{
+                            minWidth: chipWidth,
+                            margin: '0px auto',
+                          }}
                           sx={{
                             backgroundColor: chipColor, 
                             color: 'black', 
+                            width: chipIconWidth, 
+                            height: chipIconWidth,
+                            alignItems: 'center',
+                            justifyContent: 'center',
                           }}
+
+
+                          //chipWidth: 120,
+                          //chipIconWidth: 32,
+                    
                         />
                         }
 
@@ -1627,6 +1642,7 @@ class InselTable extends React.Component {
                   </TableRow>
                 );
               })}
+*/}
               <TableRow className={classes.table_body_row}>
                 <TableCell
                   colSpan={4}
@@ -1982,9 +1998,12 @@ class InselTable extends React.Component {
           open={this.state.openButtonDialog}
           title={this.state.buttonDialogTitle}
           question={this.state.buttonDialogQuestion}
-          dialogType={this.state.dialogType}
+          // TODO rename dialogType
+          // TODO rename dialogType is undefined
+          dialogButtonListType={this.state.dialogType}
           buttonList={this.state.buttonDialogButtons}
-          buttonType={this.state.buttonDialogType}
+          // TODO rename buttonDialogType
+          dialogIconType={this.state.buttonDialogType}
           handleDialogButtons={(index) => this.handleDialogButtons(index, this.state.buttonDialogId)}
         ></InselButtonDialog>
         }
