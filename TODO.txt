@@ -22,7 +22,7 @@ const EditDialog = avaiableDialogs[this.props.dialogName];
       setDataFromDialog(rowid, row)      
       {
         const index = this.getRowIndex(rowid);
-        const newlist = [...this.state.data];
+        const newlist = this.state.data;
         newlist[index] = row;
         this.setState({data, newlist});
         // TODO can we update only one row like: setState({row[index]: row});
@@ -128,6 +128,11 @@ export default App;
 
 //export default function InselTableMenu(headerIndex) 
 
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+// newCode from here
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+
 // TODO table menu
 // => in IconButton => onClick={(e) => handleClick(e)}
 // => in Menu => onClose={() => handleClose()}
@@ -216,50 +221,10 @@ export default App;
 
 // InselButtonDialog
 
-// TODO => add :
-/*
-        {this.state.buttonDialogId &&
-        <InselButtonDialog
-          id={this.state.buttonDialogId}
-          open={this.state.openButtonDialog}
-          title={this.state.buttonDialogTitle}
-          question={this.state.buttonDialogQuestion}
-          dialogIconType={this.state.dialogType}
-          buttonList={this.state.buttonDialogButtons}
-          buttonType={this.state.buttonDialogType}
-          handleDialogButtons={(index) => this.handleDialogButtons(index, this.state.buttonDialogId)}
-        ></InselButtonDialog>
-        }
-
-*/
-
-TODO => dialog
-
-this.state = {
-  id: id,
-  open: open,
-  title: title,
-  question: question,
-  dialogIconType: dialogIconType,
-  buttonList: buttonList,
-  buttonType : buttonDialogType,
-}
-
-const btnList = 
-  buttonDialogTypeOk ?  InselConst.defaultButtonsOk :
-  buttonDialogTypeYesNo ?  InselConst.defaultButtonsYesNo :
-  buttonDialogTypeYesNoCancel ?  InselConst.defaultButtonsYesNoCancel :
-  buttonList;
-
-console.log("Dialog btnList", btnList);
 
 
-handleOnClick(index)
-{
-  //console.log("handleOnClick", this.props.handleDialogButtons);
-  this.setState({open: false});
-  this.props.handleDialogButtons(index, this.state.id);
-}
+
+
 
 // button dialog
 
@@ -368,4 +333,264 @@ handleOnClick(index)
 
 
 ///////////////////////////////////////////////////////////
-mainButtons => is disabled dont execute ctrl-XXX
+
+
+  // InselButtonDialog => delete =>
+  handleOnClick(index)
+  {
+    //console.log("handleOnClick", this.props.handleDialogButtons);
+    this.setState({open: false});
+    this.props.handleDialogButtons(index, this.state.id);
+  }
+  
+
+
+
+
+
+/////////////////////////////////////////////
+// new file ITextfield
+
+import * as React from 'react';
+import TextField from '@mui/material/TextField';
+
+export default function ITextfield (props) 
+{
+
+  const index = this.getRowIndex(props.rowid);
+  const newList = [...props.data];
+  this.state.data[index][props.fieldName] = e.target.value;
+  this.setState({data: newList});
+
+  const hasError = this.getHasError(header, value);
+  const helperText = hasError ? header.helperText : "";
+  const color = hasError ? 'red' : 'black';
+  const background = hasError ? '#FFDDDD' : 'transparent';
+
+  return (
+    <TextField
+      value={value}
+      fullWidth
+      helperText={helperText} 
+      style={{ 
+        textAlign: props.header.horizontalAlign, 
+      }}
+      // TODO inputProps depreceated
+      inputProps={{
+        sx: {
+          color: {color},
+          backgroundColor: {background}
+        },
+      }}
+      onChange={e => props.handleTextfieldChangeHere(e, props.rowid, props.field)}
+    ></TextField>
+  );
+}
+
+
+///////////////////////////////////////////
+// new file integer text field NOT GOOD
+export default function ITextFieldInteger(props) {
+
+  const decimal = props.value;
+
+  const handleFocus = () => {
+    // Format to 6 decimals when focused
+    formatValue(6); 
+  };
+
+  const handleBlur = () => {
+    // Format to 2 decimals when blurred
+    formatValue(2); 
+  };
+
+  const formatValue = (decimals) => {
+    let newValue = value;
+    if (newValue) {
+      const regex = new RegExp(`^([0-9]*\\.?[0-9]{0,${decimals}})`);
+      changeValue(newValue.match(regex)[0]); // Update state with formatted value
+    }
+  };
+
+  const handleChangeValue = (e) => {
+    //alert(e.target.value);
+    changeValue(e.target.value);
+
+    /*   
+    const newValue = e.target.value;
+    //const dLayout = decimal.toFixed(3);
+
+    const regex = /^(\d*\.?\d{0,2})/;
+    if (newValue.match(regex)) {
+      //changeValue(decimal);
+      changeValue(newValue.match(regex)[0]);
+    }
+    */
+  };
+
+  return (
+    <Grid container direction="row" spacing={2}>
+      <Grid
+        item
+        style={{
+          display: "flex",
+          alignItems: "center",
+        }}
+      >
+        Items image
+      </Grid>
+      <Grid item>
+        <Grid container direction="column">
+          <Grid item>
+            <TextField
+              value={value}
+              placeholder="0.000"
+              onFocus={handleFocus}
+              onBlur={handleBlur}
+              onChange={(e) => handleChangeValue(e)}
+            ></TextField>
+          </Grid>
+          <Grid item>
+            <TextField value={"Text"}></TextField>
+          </Grid>
+          <Grid item>Items 2</Grid>
+          <Grid item>Items 2</Grid>
+        </Grid>
+      </Grid>
+    </Grid>
+  );
+}
+
+
+///////////////////////////////////////////////////////////
+// new file for IFieldNumber
+<IFieldNumber
+  value={value}
+  rowid={rowid}
+  fieldname={fieldname}
+  isInteger={isInteger}
+  handleTextfieldNumberChange={(e) => handleTextfieldNumberChange(e, rowid, fieldname)} 
+></IFieldNumber>
+
+// TODO => in handleTextfieldNumberChange remove:
+// TODO parseInt
+const number = parseFloat(e.target.value);
+
+////////////////////////////////////////
+// implement IIconBurron
+
+{isIconButton &&
+<IFieldIconButton
+  rowid={rowid}
+  header={header}
+  button={button}
+  handleRowButtonClick={() => props.handleRowButtonClick(rowid, fieldname)} 
+></IFieldIconButton>
+}
+
+// TODO implemantation
+const isIconButton = header.editType === IConst.editType_IconButton;
+
+// TODO implemantation in ITable.js
+getRowErrorList(row);
+{
+  // check the whole row for errors
+  let errorText = "";
+  for (let h = 0; h < this.state.header.length; h++)
+  {
+    const header = this.state.header[h];
+    if (header.isEditable)
+    {
+      const value = row[header.dataFieldName];
+
+      // required?
+      if (header.isRequired && (value === null || value === ""))
+        errorText = errorText + "ERROR field {header.headerTitle}: a value is required.\n";
+
+      // check numbers
+      const isNumber = 
+        header.editType === IConst.editType_Integer ||
+        header.editType === IConst.editType_Decimal;
+      if (isNumber && 
+        (value > header.numberMaxValue || value < header.numberMinValue))
+        errorText = errorText + "ERROR field {header.headerTitle}: {header.helperText}.\n";
+
+      // check text length
+      const isText = 
+        header.editType === IConst.editType_Textfield ||
+        header.editType === IConst.editType_TextfieldMultiline;
+
+      if (isText && value.length > header.textMaxLength)
+        errorText = errorText + "ERROR field {header.headerTitle}: {header.helperText}.\n";
+
+    }
+  }
+}
+
+handleRowButtonClick(rowid, fieldname)
+{
+  // first check the selected row
+  const rowIndex = this.getRowIndex(rowid);
+  const rowState = this.getRowState(rowid);
+  if (rowState !== IConst.rowStateUnchanged)
+  {
+    const errorText = this.getRowErrorText(this.data[rowIndex]);
+    if (hasErrors)
+    {
+      alert("Errors in row (rowid):\n" + errorText);
+      return;
+    }
+  }
+
+  // now also chedk all other edited / deleted / inserted rows
+  const rowList = this.state.data.filter(r => r.state !== IConst.rowStateUnchanged);
+  for (let r = 0; r < rowList.length; r++) 
+  {
+    const errorText = this.getRowErrorText(rowList[r]);
+    if (hasErrors)
+    {
+      const rowid = rowList[this.props.primaryKey];
+      alert("Errors in row {rowid}:\n" + errorText);
+      return;
+    }
+  }
+
+  if (rowList.length !== 0)
+  {
+    // TODO
+    // not all rows are saved, thus, ask what to do
+    alert("Not all rows are saved. \nTODO: Do you want to save => (yes, no, cancel).")
+  }
+
+  this.props.handleRowButtonClick(rowid, fieldname);
+}
+
+
+  //// check for all components:
+  /*
+
+  class InselTable extends React.Component {
+  constructor(props) {
+    super(props);
+
+    const {
+      settings, 
+      headers, 
+      primaryKey,
+      data,
+      dialogName } = this.props;
+
+    const EditDialog = avaiableDialogs[this.props.dialogName];
+  
+    this.state = {
+      headers: headers,
+      primaryKey: primaryKey,
+      data: this.getDataList(),
+      page: 0,
+      limit: 10,
+  */
+
+
+//// TODO for 10.12.2024
+//// TODO : integer anf float fields: make float not accept letters
+

@@ -89,15 +89,15 @@ const rowColorSelInserted = "#FFFFCC";
 */
 
 // types for button dialog 
-const buttonDialogTypeOk = 0;
-const buttonDialogTypeYesNo = 1;
-const buttonDialogTypeYesNoCancel = 2;
+//const buttonDialogTypeOk = 0;
+//const buttonDialogTypeYesNo = 1;
+//const buttonDialogTypeYesNoCancel = 2;
 
 // types of icons for button dialog 
-const buttonDialogTypenNone = 0;
-const buttonDialogTypeInfo = 1;
-const buttonDialogTypeWarning = 2;
-const buttonDialogTypeError = 3;
+//const buttonDialogTypenNone = 0;
+//const buttonDialogTypeInfo = 1;
+//const buttonDialogTypeWarning = 2;
+//const buttonDialogTypeError = 3;
 
 
 const RightText = styled.div`
@@ -479,7 +479,7 @@ class InselTable extends React.Component {
       buttonDialogTitle: "Undo all rows",
       buttonDialogQuestion: "Do you really want to undo all changes?",
       buttonDialogButtons: null,
-      buttonDialogType: buttonDialogTypeYesNo,
+      buttonDialogType: InselConstants.buttonDialogTypeYesNo,
     });
     /*
     this.setState({buttonDialogTitle: "Undo all rows"});

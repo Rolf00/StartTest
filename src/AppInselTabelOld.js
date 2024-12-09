@@ -1,5 +1,9 @@
-import * as React from 'react';
 import { Grid } from '@mui/material';
+import * as React from 'react';
+//import React, { useRef } from 'react';
+
+import { A, D, MyClassTableCell, MyTableCell } from './components';
+
 
 // => icons für chip erstellen
 // #FFFF55 gelb
@@ -19,12 +23,10 @@ import imgChipStatusPurple from './CirclePurple.png';
 import imgChipStatusBlue from './CircleBlue.png'; 
 import imgChipStatusTurqoise from './CircleTurqoise.png'; 
 import imgChipStatusGreen from './CircleGreen.png'; 
-import imgPerson48 from './imgPerson48.png';
+
 
 import InselTable from './table/InselTable';
-import ITable from './itable/ITable';
 
-//const imgPerson = imgPerson48;
 
 // columns for Waldo
 /*
@@ -649,25 +651,6 @@ const App = ()=> {
       hasHeaderMenu: false,
     },
     {
-      headerTitle: "button",
-      isResizable: true,
-      isEditable: true,
-      isVisible: true,
-      width: 120,
-      minWidth: 120,
-      maxWidth: 180,
-      editType: 'button',
-      dataFieldName: 'personView',
-      button: { 
-        caption: "View patient",  
-        icon: {imgPerson48}, 
-        iconWidth: 36,
-        buttonBackgroundColor: "#DDDDFF", 
-      },
-      horizontalAlign: 'center',
-      hasHeaderMenu: false,
-    },
-    {
       databaseField: "",
       headerTitle: "Edit",
       isResizable: false,
@@ -799,7 +782,6 @@ const App = ()=> {
         users: 96240,
         viewsPerUser: 4.58756,
         averageTime: '2m 40s',
-        birthday: "01/12/2024",
         conversions: [
           264651, 311845, 436558, 439385, 520413, 533380, 562363, 533793, 558029, 791126,
           649082, 566792, 723451, 737827, 890859, 935554, 1044397, 1022973, 1129827,
@@ -1217,52 +1199,23 @@ const App = ()=> {
         wasInHospital: false,
       },
     ];
-
-  function handleRowButtonClick(rowid, fieldname)
-  {
-    alert("Button was clicked (rowid, fieldname) = (" + rowid + ", " + fieldname + ")");
-    // TODO 
-  }
   
   return(
     <Grid container >
 
-{/*       
       <Grid item >
         <div style={{ paddingTop: 30, fontSize: 24, fontWeight: 'bold'}}>Table with own components</div>
         <InselTable 
           settings={settings}
           headers={headers} 
           primaryKey="id"
-          emptyData={emptyData}
           data={data}  
           dialogName="InselDialog_MainData"
-          handleRowButtonClick={(rowid, fieldname) => this.handleRowButtonClick(rowid, fieldname)}
         />
         <div style={{ textAlign: 'center'}}>
         <a target="_blank" href="https://icons8.com">Icons are from Icons8.com</a>
         </div>
       </Grid>
-*/}       
-
-
-      <Grid item >
-        <div style={{ paddingTop: 30, fontSize: 24, fontWeight: 'bold'}}>Table with own components</div>
-        <ITable 
-          settings={settings}
-          headers={headers} 
-          primaryKey="id"
-          emptyData={emptyData}
-          data={data}  
-          dialogName="IDialog_MainData"
-          handleRowButtonClick={(rowid, fieldname) => this.handleRowButtonClick(rowid, fieldname)}
-        />
-        <div style={{ textAlign: 'center'}}>
-        <a target="_blank" href="https://icons8.com">Icons are from Icons8.com</a>
-        </div>
-      </Grid>
-
-
 
     </Grid>
   )
