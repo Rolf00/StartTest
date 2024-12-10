@@ -27,7 +27,6 @@ import ITable from './itable/ITable';
 //const imgPerson = imgPerson48;
 
 // columns for Waldo
-/*
 const headersWaldo = [
   {
     databaseField: "",
@@ -89,7 +88,7 @@ const headersWaldo = [
     isSortable: true,
     defaultSorting: 'asc',
     width: 180,
-    minWidth: 140,
+    minWidth: 80,
     maxWidth: 300,
     editType: 'textfield',
     dataFieldName: 'lastName',
@@ -139,8 +138,8 @@ const headersWaldo = [
     isVisible: true,
     isSortable: true,
     defaultSorting: 'asc',
-    width: 120,
-    minWidth: 120,
+    width: 80,
+    minWidth: 40,
     maxWidth: 120,
     editType: 'textfield',
     dataFieldName: 'gender',
@@ -157,11 +156,11 @@ const headersWaldo = [
     isSortable: true,
     defaultSorting: 'asc',
     width: 120,
-    minWidth: 120,
-    maxWidth: 120,
+    minWidth: 90,
+    maxWidth: 220,
     editType: 'textfield',
     dataFieldName: 'diagnosis',
-    horizontalAlign: 'center',
+    horizontalAlign: 'left',
     hasHeaderMenu: true,
   },
   {
@@ -174,7 +173,7 @@ const headersWaldo = [
     isSortable: true,
     defaultSorting: 'asc',
     width: 120,
-    minWidth: 120,
+    minWidth: 100,
     maxWidth: 120,
     editType: 'textfield',
     dataFieldName: 'bloodPressure',
@@ -183,19 +182,19 @@ const headersWaldo = [
   },
   {
     databaseField: "weight",
-    headerTitle: "Weight (kg)",
+    headerTitle: "W. (kg)",
     isResizable: true,
     isEditable: false,
     isRequired: true,
     isVisible: true,
     isSortable: true,
     defaultSorting: 'asc',
-    width: 120,
-    minWidth: 120,
+    width: 80,
+    minWidth: 60,
     maxWidth: 120,
     editType: 'textfield',
     dataFieldName: 'weight',
-    horizontalAlign: 'center',
+    horizontalAlign: 'right',
     hasHeaderMenu: true,
   },
   {
@@ -208,7 +207,7 @@ const headersWaldo = [
     isSortable: true,
     defaultSorting: 'asc',
     width: 180,
-    minWidth: 180,
+    minWidth: 100,
     maxWidth: 320,
     editType: 'textfieldmultiline',
     dataFieldName: 'address',
@@ -225,7 +224,7 @@ const headersWaldo = [
     isSortable: true,
     defaultSorting: 'asc',
     width: 160,
-    minWidth: 160,
+    minWidth: 80,
     maxWidth: 320,
     editType: 'textfield',
     dataFieldName: 'nationality',
@@ -241,9 +240,9 @@ const headersWaldo = [
     isVisible: true,
     isSortable: true,
     defaultSorting: 'asc',
-    width: 160,
-    minWidth: 160,
-    maxWidth: 320,
+    width: 120,
+    minWidth: 80,
+    maxWidth: 220,
     editType: 'integer',
     dataFieldName: 'survey',
     horizontalAlign: 'right',
@@ -294,6 +293,31 @@ const headersWaldo = [
     horizontalAlign: 'center',
     hasHeaderMenu: true,
   },
+  {
+    databaseField: "lastUpdate",
+    headerTitle: "view",
+    isResizable: true,
+    isEditable: false,
+    isRequired: true,
+    isVisible: true,
+    isSortable: true,
+    defaultSorting: 'asc',
+    width: 140,
+    minWidth: 140,
+    maxWidth: 320,
+    editType: 'button',
+    button: { 
+      caption: "View patient",  
+      icon: imgPerson48, 
+      iconWidth: 32,
+      buttonHeight: 44,
+      buttonBackgroundColor: "#DDDDFF", 
+      buttonBackgroundHover: "#AAAAFF", 
+    },
+    dataFieldName: '',
+    horizontalAlign: 'center',
+    hasHeaderMenu: false,
+  },
 ];
 
 // data Waldo
@@ -325,7 +349,10 @@ for (let i = 0; i < 100; i++) {
     chipstate: i < 9 ? i : null,
   });
 }
-*/
+
+patients[1].address = patients[1].address + "\n\rNew Line address 2";
+patients[2].address = patients[2].address + "New Line address 2";
+
 
 const App = ()=> {
   const [value,setExternalValue] = React.useState('hello world')
@@ -347,13 +374,14 @@ const App = ()=> {
     dialogName: 'InselDialog_MainData',
 
     // resizer options
-    resizerEWBackgroundColor: 'transparent',
-    resizerNSBackgroundColor: 'transparent',
-    resizerSize: 5,
-    resizerBorderBottomRightWidth: 1,
+    // resizerEWBackgroundColor: 'transparent',
+    // resizerNSBackgroundColor: 'transparent',
+    // resizerSize: 5,
+    // resizerBorderBottomRightWidth: 1,
 
-    // main button options
+    // button options
     buttonSizeOnRows: 32,
+    buttonSizeMain: 40,
     hasButtonNewRow: true,
     hasButtonSaveAll: true,
     hasButtonUndoAll: true,
@@ -588,13 +616,13 @@ const App = ()=> {
       databaseField: "",
       headerTitle: "was in hosp.",
       isResizable: true,
-      isEditable: false,
+      isEditable: true,
       isRequired: false,
       isVisible: true,
       isSortable: false,
       defaultSorting: '',
       width: 90,
-      minWidth: 90,
+      minWidth: 60,
       maxWidth: 120,
       editType: 'checkbox',
       defaultValue: 'none',
@@ -649,20 +677,22 @@ const App = ()=> {
       hasHeaderMenu: false,
     },
     {
-      headerTitle: "button",
+      headerTitle: "Open patient",
       isResizable: true,
       isEditable: true,
       isVisible: true,
       width: 120,
       minWidth: 120,
-      maxWidth: 180,
+      maxWidth: 380,
       editType: 'button',
       dataFieldName: 'personView',
       button: { 
         caption: "View patient",  
-        icon: {imgPerson48}, 
-        iconWidth: 36,
+        icon: imgPerson48, 
+        iconWidth: 32,
+        buttonHeight: 44,
         buttonBackgroundColor: "#DDDDFF", 
+        buttonBackgroundHover: "#AAAAFF", 
       },
       horizontalAlign: 'center',
       hasHeaderMenu: false,
@@ -671,7 +701,30 @@ const App = ()=> {
       databaseField: "",
       headerTitle: "Edit",
       isResizable: false,
-      isEditable: false,
+      isEditable: true,
+      isRequired: false,
+      isVisible: true,
+      isSortable: false,
+      defaultSorting: '',
+      width: 32,
+      minWidth: 32,
+      maxWidth: 42,
+      textMaxLength: 0,
+      numberMinValue: 0,
+      numberMaxValue: 0,
+      decimalCount: 0,
+      editType: 'btnEditRow',
+      defaultValue: 'none',
+      dataFieldName: '',
+      horizontalAlign: 'center',
+      dropdownSelection: [],
+      hasHeaderMenu: false,
+    },
+    {
+      databaseField: "",
+      headerTitle: "Dialog",
+      isResizable: false,
+      isEditable: true,
       isRequired: false,
       isVisible: true,
       isSortable: false,
@@ -1218,7 +1271,7 @@ const App = ()=> {
       },
     ];
 
-  function handleRowButtonClick(rowid, fieldname)
+  function handleSpecialButtonClick(rowid, fieldname)
   {
     alert("Button was clicked (rowid, fieldname) = (" + rowid + ", " + fieldname + ")");
     // TODO 
@@ -1227,8 +1280,9 @@ const App = ()=> {
   return(
     <Grid container >
 
-{/*       
-      <Grid item >
+       {/*
+
+<Grid item >
         <div style={{ paddingTop: 30, fontSize: 24, fontWeight: 'bold'}}>Table with own components</div>
         <InselTable 
           settings={settings}
@@ -1243,9 +1297,9 @@ const App = ()=> {
         <a target="_blank" href="https://icons8.com">Icons are from Icons8.com</a>
         </div>
       </Grid>
-*/}       
+      */} 
 
-
+{/* 
       <Grid item >
         <div style={{ paddingTop: 30, fontSize: 24, fontWeight: 'bold'}}>Table with own components</div>
         <ITable 
@@ -1255,13 +1309,29 @@ const App = ()=> {
           emptyData={emptyData}
           data={data}  
           dialogName="IDialog_MainData"
-          handleRowButtonClick={(rowid, fieldname) => this.handleRowButtonClick(rowid, fieldname)}
+          handleSpecialButtonClick={(rowid, fieldname) => handleSpecialButtonClick(rowid, fieldname)}
         />
         <div style={{ textAlign: 'center'}}>
         <a target="_blank" href="https://icons8.com">Icons are from Icons8.com</a>
         </div>
       </Grid>
+*/}      
+      
+      <Grid item >
+        <div style={{ paddingTop: 30, fontSize: 24, fontWeight: 'bold'}}>Table with own components</div>
+        <ITable 
+          settings={settings}
+          headers={headersWaldo} 
+          primaryKey="id"
+          data={patients}  
+          handleSpecialButtonClick={(rowid, fieldname) => handleSpecialButtonClick(rowid, fieldname)}
+        />
 
+        <div style={{ textAlign: 'center'}}>
+        <a target="_blank" href="https://icons8.com">Icons are from Icons8.com</a>
+        </div>
+      </Grid>
+      
 
 
     </Grid>

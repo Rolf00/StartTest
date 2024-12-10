@@ -8,7 +8,7 @@ export default function IFieldSelection (props) {
   const value = props.value;
   const rowid = props.rowid;
   const imgWidth = props.settings.buttonSizeOnRows;
-  const newheaderWidth = props.header.width + 18;
+  const btnHoverWidth = imgWidth + 18;
 
   const iconCheckbox = value ? 
     IConst.imgChkboxChecked: 
@@ -18,16 +18,12 @@ export default function IFieldSelection (props) {
   return (
     <IconButton
       onClick={e => this.handleSelectionClickRow(e, rowid)}
-      style={{ width: newheaderWidth, height: newheaderWidth, }}>
+      style={{ width: btnHoverWidth, height: btnHoverWidth }} >
       <img 
         src = {iconCheckbox}
         alt="img"
         title="Select / Unselect this row"
-        style = {{ 
-          width: imgWidth, 
-          height: imgWidth,
-          padding: '0px',
-        }} 
+        style={{ width: imgWidth, height: imgWidth, padding: '0px', }} 
       />
     </IconButton>
   );

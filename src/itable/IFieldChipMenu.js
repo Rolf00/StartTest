@@ -44,61 +44,92 @@ export default function IChipMenu (props)
   const chipWidth = (chipItem) ? props.header.chipWidth : 0;
   const chipIconWidth = (chipItem) ? props.header.chipIconWidth : 0;
   
-  return (
-    <div>
-      <Chip 
-        label={chipLabel}
-        avatar={<Avatar alt="" src={chipIcon} />}
-        clickable={chipClickable}
-        onClick={(e) => handleClick(e, chipClickable)}
-        style={{
-          minWidth: chipWidth,
-          margin: '0px auto',
-        }}
-        sx={{
-          backgroundColor: chipColor, 
-          color: 'black', 
-          width: chipIconWidth, 
-          height: chipIconWidth,
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
+  const editing = false;
 
-      </Chip>
-      <Menu
-        id="long-menu"
-        MenuListProps={{ 'aria-labelledby': 'long-button', }}
-        anchorEl={anchorEl}
-        open={open}
-        onClose={() => handleClose()}
-        slotProps={{
-          paper: {
-            style: {
-              //width: '20ch',
+  if (editing)
+  {
+    return (
+      <div style={{ paddingTop: '8px', }}>
+        <Chip 
+          label={chipLabel}
+          avatar={<Avatar alt="" src={chipIcon} />}
+          clickable={chipClickable}
+          onClick={(e) => handleClick(e, chipClickable)}
+          style={{
+            minWidth: chipWidth,
+            margin: '0px auto',
+          }}
+          sx={{
+            backgroundColor: chipColor, 
+            color: 'black', 
+            width: chipIconWidth, 
+            height: chipIconWidth,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+  
+        </Chip>
+        <Menu
+          id="long-menu"
+          MenuListProps={{ 'aria-labelledby': 'long-button', }}
+          anchorEl={anchorEl}
+          open={open}
+          onClose={() => handleClose()}
+          slotProps={{
+            paper: {
+              style: {
+                //width: '20ch',
+              },
             },
-          },
-        }}
-      >
-        {props.header.chipList.map((chip) => {
-          const chipId = chip.id;
-          const title = chip.label;
-          const color = chip.color;
-          return (
-            <MenuItem 
-              key={chipId}
-              onClick={() => handleChipClickHere(chip)} 
-              style={{
-                backgroundColor: color,
-                margin: '3px 5px',
-                borderRadius: '10px',
-              }}
-            >
-            {title}
-            </MenuItem>
-          );
-        })}
-      </Menu>
-    </div>
-  );
+          }}
+        >
+          {props.header.chipList.map((chip) => {
+            const chipId = chip.id;
+            const title = chip.label;
+            const color = chip.color;
+            return (
+              <MenuItem 
+                key={chipId}
+                onClick={() => handleChipClickHere(chip)} 
+                style={{
+                  backgroundColor: color,
+                  margin: '3px 5px',
+                  borderRadius: '10px',
+                }}
+              >
+              {title}
+              </MenuItem>
+            );
+          })}
+        </Menu>
+      </div>
+    );
+  }
+  else
+  {
+    return (
+      <div style= {{ paddingTop : '0px'}}>
+        <Chip 
+          label={chipLabel}
+          avatar={<Avatar alt="" src={chipIcon} />}
+          clickable={false}
+          style={{
+            minWidth: chipWidth,
+            margin: '0px auto',
+          }}
+          sx={{
+            backgroundColor: chipColor, 
+            color: 'black', 
+            width: chipIconWidth, 
+            height: chipIconWidth,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+  
+        </Chip>
+      </div>
+    );
+  }
 }

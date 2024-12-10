@@ -144,10 +144,13 @@ class ITable extends React.Component {
     return index;
   }
 
-  handleDeleteRow(e, rowid)
+  handleDeleteRow(rowid)
   {
     // button DELETE for one row was clicked
-    const oldState = this.getRowState(rowid);
+    const rowIndex = this.getRowIndex(rowid);
+    if (rowIndex === -1) return;
+
+    const oldState = this.state.rowInfoList[rowIndex].state;
     if (oldState === IConst.rowStateInserted)
     {
       // new rows cannot be deleted
@@ -155,25 +158,26 @@ class ITable extends React.Component {
       return;
     }
 
-    const isDeleted = this.getRowState(rowid) === IConst.rowStateDeleted;
-    if (!isDeleted)
+    if (oldState !== IConst.rowStateDeleted)
     {
-      // delete it now
-      this.changeRowState(rowid, IConst.rowStateDeleted);
+      this.state.rowInfoList[rowIndex].state = IConst.rowStateDeleted;
+      // update the buttons SAVE ALL, UNDO ALL
+      const mainEnabled = this.getMainButtonsEnabled();    
+      this.setState({ 
+        mainButtonsDisabled: mainEnabled
+      });
     }
   }
 
-  handleUndoRow(e, rowid)
+  handleUndoRow(rowid)
   {
     // button UNDO for one row was clicked
-    const oldState = this.getRowState(rowid);
     const index = this.getRowIndex(rowid);
 
-    if (index === -1)
-    {
-      alert("ERROR handleUndoRow: index = -1.")
-      return;
-    }
+    console.log("rowid", rowid);
+
+    if (index === -1) return;
+    const oldState = this.state.rowInfoList[index].state;
 
     if (oldState === IConst.rowStateEdited)
     {
@@ -191,17 +195,31 @@ class ITable extends React.Component {
         const field = keys[f];
         newlist[index][field] = this.props.data[index][field];
       }
-      this.setState({data: newlist});
+
+      // update the buttons SAVE ALL, UNDO ALL
+      const mainEnabled = this.getMainButtonsEnabled();
+
+      this.setState({
+        data: newlist,
+        mainButtonsDisabled: mainEnabled
+      });
     }
     else if (oldState === IConst.rowStateInserted)
     {
       // row was inserted, thus we remove it from the data list
       const newlist = this.state.data.select(r => r[this.props.primaryKey] !== rowid);
-      this.setState({data: newlist});
 
       // also delete the info list
       const newStatelist = this.state.rowInfoList.select(r => r[this.props.primaryKey] !== rowid);
-      this.setState({rowInfoList: newStatelist});
+      this.state.rowInfoList = newStatelist;
+
+      // update the buttons SAVE ALL, UNDO ALL
+      const mainEnabled = this.getMainButtonsEnabled();
+
+      this.setState({
+        data: newlist,
+        mainButtonsDisabled: mainEnabled
+      });
     }
     else if (oldState === IConst.rowStateDeleted)
     {
@@ -211,10 +229,15 @@ class ITable extends React.Component {
       // restore the old data
       const newlist = this.state.data;
       newlist[index] = this.props.data[index];
-      this.setState({data: newlist});
-    }
 
-    this.setMainButtons();
+      // update the buttons SAVE ALL, UNDO ALL
+      const mainEnabled = this.getMainButtonsEnabled();
+
+      this.setState({
+        data: newlist,
+        mainButtonsDisabled: mainEnabled
+      });
+    }
   }
 
   handleNewRow()
@@ -265,29 +288,30 @@ class ITable extends React.Component {
     this.setState({data: [...this.state.data, newRow]});
   }
 
-  changeRowState(rowid, newRowState)
-  {
-    // change the state of a row
-    const index = this.state.rowInfoList.findIndex(r => r.id === rowid);
-    if (index === -1) 
-    {
-      alert("ERROR changeRowState: index = -1.");
-      return;
-    }
-    this.state.rowInfoList[index].state = newRowState;
-    this.setMainButtons();
-  }
-
   handleSaveAll()
   {
     // save all changes
     alert("TODO: save all is not implemented yet");
   }
 
+  UndoAllRows()
+  {
+    // new undo all rows
+    const undoList = this.state.rowInfoList.filter(r => r.state !== IConst.rowStateUnchanged);
+    for (let r = 0; r < undoList.length; r++)
+    {
+      this.handleUndoRow(undoList[r].id);
+    }
+  }
+ 
   handleUndoAll()
   {
     // ask before undoing all rows
     // open the confirm dialog YES / NO
+    //alert("UndoAll : not implemented yet.");
+    this.UndoAllRows();
+    return;
+
     this.setState({
       buttonDialogId: "UndoAll",
       buttonDialogTitle: "Undo all rows",
@@ -365,60 +389,67 @@ class ITable extends React.Component {
   // ---------------------------------------------------------------------------------------
   // clicks from button dialog
   
-  setMainButtons()
+  getMainButtonsEnabled()
   {
     const newlist = this.state.rowInfoList.filter(r => r.state !== IConst.rowStateUnchanged);
     const disable = newlist.length === 0;
-    this.setState({mainButtonsDisabled: disable});
+    return disable;
   }
 
-  setRowState(rowid, state)
+  setRowStateIndex(rowIndex, newstate)
   {
     // now set the correct state of the row
-    const rowIndex = this.getRowIndex(rowid);
-    const rowState = this.getRowState(rowid);
-    if (rowState === IConst.rowStateUnchanged)
-    {
-      const newinfolist = this.state.rowInfoList;
-      newinfolist[rowIndex]['state'] = state;
-      this.setState({rowInfoList: newinfolist});
-    } 
+    const oldState = this.state.rowInfoList[rowIndex].state;
+    const changeState = oldState === IConst.rowStateUnchanged ?
+      IConst.rowStateEdited : newstate;
+    this.state.rowInfoList[rowIndex].state = changeState;
   }
 
   handleDataChange(newvalue, rowid, field)
   {
+
     // update new values to the data
     const rowIndex = this.getRowIndex(rowid);
     if (rowIndex === -1) return;
 
+    // prepare data
     const newlist = this.state.data;
     newlist[rowIndex][field] = newvalue;
-    this.setState({data: newlist});
-    this.setRowState(rowid, IConst.rowStateEdited)
+
+    // prepare state
+    const oldState = this.state.rowInfoList[rowIndex].state;
+    const newState = oldState === IConst.rowStateUnchanged ?
+      IConst.rowStateEdited : oldState;
+    this.state.rowInfoList[rowIndex].state = newState;
 
     // update the buttons SAVE ALL, UNDO ALL
-    this.setMainButtons();
+    const mainEnabled = this.getMainButtonsEnabled();
+
+    this.setState({
+      data: newlist,
+      mainButtonsDisabled: mainEnabled
+    });
   }
 
   handleRowEditButtons(rowid, action)
   {
-    if (action === IConst.rowEditAction_Edit)
+    if (action === IConst.editType_ButtonEdit)
     {
       // button EDIT for one row was clicked
       // here we open a modal dialog
       this.handleEditModalDialog(rowid);
     }
-    else if (action === IConst.rowEditAction_Save)
+    else if (action === IConst.editType_ButtonSave)
     {
       // button SAVE for one row was clicked
       alert("SAVE one row is not implemented yet.")
     }
-    else if (action === IConst.rowEditAction_Undo)
+    else if (action === IConst.editType_ButtonUndo)
     {
       // button UNDO for one row was clicked
       this.handleUndoRow(rowid);
     }
-    else if (action === IConst.rowEditAction_Delete)
+    else if (action === IConst.editType_ButtonDelete)
     {
       // button DELETE for one row was clicked
       this.handleDeleteRow(rowid);
@@ -436,6 +467,8 @@ class ITable extends React.Component {
       {
         // button yes was pressed
         alert("undo all rows: index = " + buttonIndex + ", dialogID = " + dialogID);
+        // TODO
+        // this.UndoAllRows();
       }
       else if (buttonIndex === 1)
       {
@@ -452,12 +485,14 @@ class ITable extends React.Component {
   // ---------------------------------------------------------------------------------------
   // row procedures / functions
 
-  getRowState(rowid)
+  /*
+  getRowxxStateIndex(rowIndex)
   {
     const index = this.getRowIndex(rowid);
     if (index === -1) return IConst.rowStateUnchanged;
     return this.state.rowInfoList[index].state;
   }
+    */
 
   getRowHeight(rowid)
   {
@@ -566,8 +601,6 @@ class ITable extends React.Component {
 
   handleSubmitModalDialog = (rowid, newRow) => 
   {
-    this.setState({openDialog: false});
-
     // copy the edited row into the data
     const rowIndex = this.getRowIndex(rowid);
     const newlist = this.state.data;
@@ -577,9 +610,16 @@ class ITable extends React.Component {
       const field = keys[f];
       newlist[rowIndex][field] = newRow[field];
     }
-    this.setState({ data: newlist, });
 
-    this.setMainButtons();
+    // update the buttons SAVE ALL, UNDO ALL
+    const mainEnabled = this.getMainButtonsEnabled();    
+
+    this.setState({ 
+      openDialog: false,
+      data: newlist, 
+      mainButtonsDisabled: mainEnabled
+    });
+
   };
 
   // ---------------------------------------------------------------------------------------
@@ -637,11 +677,12 @@ class ITable extends React.Component {
   // ---------------------------------------------------------------------------------------
   // cell editing procedures and functions
 
+  /*
   setRowState(rowid, state)
   {
     // set a new row state
     // if the old state is INSERTED, then we dont change it to edited
-    const oldState = this.getRowState(rowid);
+    const oldState = this.getRowxxxxState(rowid);
     if (oldState === IConst.rowStateInserted) return;
 
     // set a new row state
@@ -651,8 +692,9 @@ class ITable extends React.Component {
     this.setState({rowInfoList: newlist});
 
     // update main buttons
-    this.setMainButtons();
-  }  
+    this.setMainxxxxxButtons();
+  } 
+    */ 
 
   getHasError(header, value)
   {
@@ -696,12 +738,19 @@ class ITable extends React.Component {
     const index = this.getRowIndex(rowid);
     const newList = [...this.state.data];
     this.state.data[index][fieldName] = e.target.value;
-    this.setState({data: newList});
-
+    
     // now also change the state of the row
-    const rowState = this.getRowState(rowid);
-    if (rowState === IConst.rowStateUnchanged) 
-      this.setRowState(rowid, IConst.rowStateEdited);
+    const oldState = this.state.rowInfoList[index].state;
+    if (oldState === IConst.rowStateUnchanged) 
+      this.state.rowInfoList[index].state = IConst.rowStateEdited;
+    
+    // update the buttons SAVE ALL, UNDO ALL
+    const mainEnabled = this.getMainButtonsEnabled();    
+
+    this.setState({
+      data: newList, 
+      mainButtonsDisabled: mainEnabled
+    });
   }
 
   handleTextfieldNumberChange(e, rowid, fieldName)
@@ -726,54 +775,37 @@ class ITable extends React.Component {
     const index = this.getRowIndex(rowid);
     const newList = this.state.data;
 
+    // now also change the state of the row
+    const oldState = this.state.rowInfoList[index].state;
+    if (oldState === IConst.rowStateUnchanged) 
+      this.state.rowInfoList[index].state = IConst.rowStateEdited;
+
     // TODO parseInt
     const number = parseFloat(e.target.value);
     newList[index][fieldName] = number;
-    this.setState({data: newList});
 
-    // now also change the state of the row
-    const rowState = this.getRowState(rowid);
-    if (rowState === IConst.rowStateUnchanged) this.setRowState(rowid, IConst.rowStateEdited);
+    // update the buttons SAVE ALL, UNDO ALL
+    const mainEnabled = this.getMainButtonsEnabled();    
+
+    this.setState({
+      data: newList, 
+      mainButtonsDisabled: mainEnabled
+    });
   }
-
-  handleDropdownChange(e, rowIndex, fieldName)
-  {
-    // TODO delete
-    // change the data when a field was selected
-    const newList = this.state.data;
-    newList[rowIndex][fieldName] = e.target.value;
-    this.setState({data: newList});
-
-    // now also change the state of the row
-    const rowState = this.getRowState(rowIndex);
-    if (rowState === IConst.rowStateUnchanged) this.setRowState(rowIndex, IConst.rowStateEdited);
-  }
-
-  handleCheckboxChange(e, rowIndex, fieldName)
-  {
-    // TODO delete
-    // change the data when a field was selected
-    const newList = this.state.data;
-    newList[rowIndex][fieldName] = e.target.value;
-    this.setState({data: newList});
-
-    // now also change the state of the row
-    const rowState = this.getRowState(rowIndex);
-    if (rowState === IConst.rowStateUnchanged) this.setRowState(rowIndex, IConst.rowStateEdited);
-  }
-
+  
   handleDatePickerChange(e, rowIndex, fieldName)
   {
     // TODO delete
-    const newList = this.state.data;
-    newList[rowIndex][fieldName] = e.target.date;
-    this.setState({data: newList});
+    const newlist = this.state.data;
+    newlist[rowIndex][fieldName] = e.target.date;
 
-    alert("handleDatePickerChange" +  e.target.date);
+    // update the buttons SAVE ALL, UNDO ALL
+    const mainEnabled = this.getMainButtonsEnabled();    
 
-    // now also change the state of the row
-    const rowState = this.getRowState(rowIndex);
-    if (rowState === IConst.rowStateUnchanged) this.setRowState(rowIndex, IConst.rowStateEdited);
+    this.setState({ 
+      data: newlist, 
+      mainButtonsDisabled: mainEnabled
+    });
   }
 
   handleChipChange(chipid, rowid, fieldName)
@@ -876,9 +908,9 @@ class ITable extends React.Component {
     const mainIndeterminated = this.state.mainIndeterminated;
 
     const mainButtonsDisabled = this.state.mainButtonsDisabled;
-    const colwidth = this.state.colwidth;
     const headers = this.state.headers;
-    const rowInfoList = this.state.rowInfoList;
+
+    const sizeMainButton = this.props.settings.buttonSizeMain;
 
 
     return (
@@ -936,18 +968,21 @@ class ITable extends React.Component {
                 const thisOldRow = this.props.data[oldRowIndex];
                 const thisRow = row;
                 const thisIndex = rowIndex;
+                const thisInfo = this.state.rowInfoList[rowIndex];
 
                 return(
                   <ITableRow
                     settings={this.props.settings}
                     headers={this.props.headers}
                     oldRow={thisOldRow}
+                    rowIndex={thisIndex}
+                    rowId={rowid}
                     row={thisRow}
-                    primaryKey={this.props.primaryKey}
-                    rowInfoList={this.state.rowInfoList}
+                    rowInfo={thisInfo}
                     handleMouseDownRowNS={(e, rowid) => this.handleMouseDownRowNS(e, rowid)}
                     handleSelectionClickRow={(rowid) => this.handleSelectionClickRow(rowid)}
-                    handleRowEditButtons={(rowid, action) => this.handleRowEditButtons(rowid, action)}
+                    handleRowEditButtonClick={(rowid, action) => this.handleRowEditButtons(rowid, action)}
+                    handleSpecialButtonClick={(rowid, field) => this.props.handleSpecialButtonClick(rowid, field)}
                     handleDataChange={(newvalue, rowid, field) => this.handleDataChange(newvalue, rowid, field)}
                   />
                 );
@@ -984,18 +1019,14 @@ class ITable extends React.Component {
               {/* new row button --------------------------------------------------------------- */}
               {this.props.settings.hasButtonNewRow &&
               <IconButton
+                className={classes.mainButtons}
                 onClick={e => this.handleNewRow()}
-                style={{
-                  fontSize: 16,
-                  fontWeight: 'bold',
-                  borderRadius: '16px'
-                }}
               >
               <img 
                 src={IConst.imgAddButton}
                 style={{ 
-                  width: '48px', 
-                  height: '48px',
+                  width: sizeMainButton, 
+                  height: sizeMainButton,
                  }} 
               />&nbsp;New row (ctrl-i)</IconButton>
               }
@@ -1005,19 +1036,15 @@ class ITable extends React.Component {
               <IconButton
                 //disabled={!this.state.rowsWereEdited}
                 disabled={mainButtonsDisabled}
+                className={classes.mainButtons}
                 onClick={e => this.handleSaveAll(e)}
-                style={{
-                  fontSize: 16,
-                  fontWeight: 'bold',
-                  borderRadius: '16px'
-                }}
               >
               <img 
                 src={IConst.imgSaveButton}
                 title='Ctrl-S'
                 style={{ 
-                  width: '48px', 
-                  height: '48px',
+                  width: sizeMainButton, 
+                  height: sizeMainButton,
                   opacity: (!mainButtonsDisabled ? 1 : 0.2) 
                  }} 
               />Save all</IconButton>
@@ -1027,19 +1054,15 @@ class ITable extends React.Component {
               {this.props.settings.hasButtonUndoAll &&
               <IconButton
                 disabled={mainButtonsDisabled}
+                className={classes.mainButtons}
                 onClick={e => this.handleUndoAll(e)}
-                style={{
-                  fontSize: 16,
-                  fontWeight: 'bold',
-                  borderRadius: '16px'
-                }}
               >
               <img 
                 src={IConst.imgUndoButton}
                 title='Ctrl-U'
                 style={{ 
-                  width: '48px', 
-                  height: '48px',
+                  width: sizeMainButton, 
+                  height: sizeMainButton,
                   opacity: (!mainButtonsDisabled ? 1 : 0.2) 
                  }} 
               />&nbsp;Undo all</IconButton>
@@ -1048,20 +1071,15 @@ class ITable extends React.Component {
               {/* export for excel all rows ----------------------------------------------------- */}    
               {this.props.settings.hasButtonExcelAll && 
               <IconButton
+                className={classes.mainButtons}
                 onClick={e => this.handleCopyForExcel(true)}
-                style={{
-                  fontSize: 16,
-                  fontWeight: 'bold',
-                  borderRadius: '16px'
-                }}
               >
               <img 
                 src={IConst.imgExcelButton}
                 title='Ctrl-Shift-C'
                 style={{ 
-                  width: '48px', 
-                  height: '48px',
-                  //opacity: (!mainButtonsDisabled ? 1 : 0.2) 
+                  width: sizeMainButton, 
+                  height: sizeMainButton,
                  }} 
               />&nbsp;Copy all rows</IconButton>
               }
@@ -1069,25 +1087,19 @@ class ITable extends React.Component {
               {/* export for excel only selected rows --------------------------------------------- */}
               {this.props.settings.hasButtonExcelSelected &&
               <IconButton
+                className={classes.mainButtons}
                 onClick={e => this.handleCopyForExcel(false)}
-                style={{
-                  fontSize: 16,
-                  fontWeight: 'bold',
-                  borderRadius: '16px'
-                }}
               >
               <img 
                 src={IConst.imgExcelButton}
                 title='Ctrl-Shift-E'
                 style={{ 
-                  width: '48px', 
-                  height: '48px',
-                  //opacity: (!mainButtonsDisabled ? 1 : 0.2) 
+                  width: sizeMainButton, 
+                  height: sizeMainButton,
                  }} 
               />&nbsp;Copy selected rows</IconButton>
               }
-
-
+              
               <TablePagination
                 component="div"
                 count={this.state.data.length}
@@ -1172,135 +1184,6 @@ class ITable extends React.Component {
           </TableFooter>
         </Table>
 
-
-{/* ================================================================================ */}
-{/* modal dialog =================================================================== */}
-{/* ================================================================================ */}
-
-        {/* Dialog component for the modal */}
-        <Dialog 
-          width={720}
-          maxWidth={720}
-          minWidth={720}
-          open={this.state.openDialog} 
-          BackdropProps={{
-            style: {
-              backgroundColor: 'rgba(0, 0, 0, 0.4)', // Custom backdrop color (darker)
-            }
-          }}          
-          sx={{
-            '& .MuiDialog-paper': {
-              border: '5px solid #1976d2', // Set border color
-              borderRadius: '20px',         // Optional: set border radius for rounded corners
-            }
-          }}          >
-          <DialogTitle
-            textAlign={'center'}
-          >Sample Modal</DialogTitle>
-          <DialogContent>
-            <Typography 
-              variant="h6"
-              textAlign={'center'}
-            >Edit the row:</Typography>
-            <Table>
-              <TableRow>
-                <TableCell >Product</TableCell>
-                <TableCell colSpan={3}>
-                  <TextField
-                    label="Productname"
-                    type="text"
-                    value={this.state.dlgName}
-                    sx={{ width: '720px' }}
-                    helperText="Enter the product here. Don't enter any comments."
-                    onChange={(e) => this.handleDialogChange(e, 'dlgName')}
-                  />
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>Users</TableCell>
-                <TableCell>
-                  <TextField
-                    label="Users"
-                    type="text"
-                    value={this.state.dlgUser}
-                    helperText="Percentages: enter only values between 0 and 100"
-                    onChange={(e) => this.handleDialogChange(e, 'dlgUser')}
-                  />
-                </TableCell>
-                <TableCell>Events</TableCell>
-                <TableCell>
-                  <TextField
-                    label="Events"
-                    type="text"
-                    value={this.state.dlgEvents}
-                    helperText="Count of events must be bigger than 0"
-                  />
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>Views</TableCell>
-                <TableCell>
-                  <TextField
-                    label="Views"
-                    type="text"
-                    value={this.state.dlgViews}
-                    helperText="Average of views is a decimal number (format XX.YYYY)"
-                  />
-                </TableCell>
-                <TableCell>Time</TableCell>
-                <TableCell>
-                  <TextField
-                    label="Time"
-                    type="text"
-                    value={this.state.dlgTime}
-                    helperText="Time format: XXm YYs"
-                  />
-                </TableCell>
-              </TableRow>
-
-              <TableRow>
-                <TableCell>Checks</TableCell>
-                <TableCell colSpan={3}>
-                  <FormControlLabel
-                    control={<Checkbox/>}
-                    label="Checkbox1"/>
-                  <FormControlLabel
-                    control={<Checkbox/>}
-                    label="Checkbox2"/>
-                  <FormControlLabel
-                    control={<Checkbox/>}
-                    label="Checkbox3"/>
-                  <FormControlLabel
-                    control={<Checkbox/>}
-                    label="Checkbox4"/>
-                </TableCell>
-              </TableRow>
-
-              <TableRow>
-                <TableCell>Comments</TableCell>
-                <TableCell colSpan={3}>
-                  <TextField
-                    multiline
-                    rows={5}
-                    label="enter comments here text multiline"
-                    sx={{ width: '720px' }}
-                    helperText="Enter free comments about your observations"
-                  />
-                </TableCell>
-              </TableRow>
-            </Table>
-
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={this.handleClose} color="primary">
-              Cancel
-            </Button>
-            <Button onClick={this.handleSubmit} color="primary">
-              Submit
-            </Button>
-          </DialogActions>
-        </Dialog>
-
         {/* button dialog */}
         {this.state.buttonDialogId && this.state.openButtonDialog &&
         <IButtonDialog
@@ -1325,7 +1208,6 @@ class ITable extends React.Component {
           >
           </IDialog_MainData>
         }
-
 
       </Paper>
     );

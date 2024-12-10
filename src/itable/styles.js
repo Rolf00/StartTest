@@ -139,9 +139,13 @@ export const useStyles = () => ({
     padding: '0px',
   },
   resizerNS_Caption: {
+    fontFamily:
+      '"__Plus_Jakarta_Sans_a182b8", "__Plus_Jakarta_Sans_Fallback_a182b8", Helvetica, Arial, sans-serif',
+    fontSize: '1rem',
+    letterSpacing: '0rem',
+    color: 'black',
     display: 'flex', 
     justifyContent: 'top',
-    padding: '10px 10px 2px 10px',
     height: '100%', 
     padding: '5px',
   },
@@ -201,7 +205,31 @@ export const useStyles = () => ({
     "&:hover": {
       backgroundColor: '#8888FF',
     },
-  }
+  },
+
+  // main buttons
+  mainButtons: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    borderRadius: '10px',
+    margin: '6px',
+    backgroundColor: 'white',
+    border: '1px solid white',
+    "&:hover": {
+      backgroundColor: 'lightblue',
+      border: '1px solid black',
+    },
+  },
+
+  // main buttons
+  textReadOnly: {
+    fontSize: 16,
+    "&:hover": {
+      backgroundColor: 'lightblue',
+      border: '1px solid black',
+    },
+  },
+
 });
 
 export const status_color = {

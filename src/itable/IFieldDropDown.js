@@ -1,5 +1,6 @@
 import * as React from 'react';
 import FormControl from '@mui/material/FormControl';
+import TextField from '@mui/material/TextField';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 
@@ -18,26 +19,39 @@ export default function IFieldDropDown (props) {
     // change the data now
     props.handleDataChange(newValue, rowid, fieldname);
   }
+
+  const editing = false;
   
-  return (
-    <FormControl style={{ width: {dropdownWidth}, }} >
-      <Select
-        width={dropdownWidth}
-        disabled={disabled}
-        value={value}
-        onChange={e => handleChange(e)}
-      >
-      {dropdownList.map((item, itemIndex) =>
-      {
-        const ddId = item.id;
-        const ddValue = item.value;
-        return (
-          <MenuItem 
-            key={itemIndex} value={ddId}
-          >{ddValue}</MenuItem>
-        );
-      })}
-      </Select> 
-    </FormControl>
-  );
+  if (editing)
+  {
+    return (
+      <FormControl style={{ width: {dropdownWidth}, }} >
+        <Select
+          width={dropdownWidth}
+          disabled={disabled}
+          value={value}
+          onChange={e => handleChange(e)}
+        >
+        {dropdownList.map((item, itemIndex) =>
+        {
+          const ddId = item.id;
+          const ddValue = item.value;
+          return (
+            <MenuItem 
+              key={itemIndex} value={ddId}
+            >{ddValue}</MenuItem>
+          );
+        })}
+        </Select> 
+      </FormControl>
+    );
+  }
+  else
+  {
+    const showtext = dropdownList[value].value;
+    return (
+      <div>{showtext}</div>
+    );
+  }
+
 }

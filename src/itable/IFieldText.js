@@ -1,4 +1,5 @@
 import * as React from 'react';
+
 import TextField from '@mui/material/TextField';
 import IConst from './IConst';
 
@@ -27,24 +28,35 @@ export default function IFieldText (props) {
     props.handleDataChange(newValue, rowid, fieldname);
   }
  
-  return (
-    <TextField
-      //id="outlined"
-      disabled={disabled}
-      value={value}
-      helperText={helperText} 
-      multiline={multiline}
-      style={{ 
-        textAlign: horizontalAlign, 
-        width: width, 
-      }}
-      inputProps={{
-        sx: {
-          color: color,
-          backgroundColor: background
-        },
-      }}
-      onChange={(event) => handleChange(event)}
-    />
-  );
+  const editing = false;
+
+  if (editing)
+  {
+    return (
+      <TextField
+        //id="outlined"
+        disabled={disabled}
+        value={value}
+        helperText={helperText} 
+        multiline={multiline}
+        style={{ 
+          textAlign: horizontalAlign, 
+          width: width, 
+        }}
+        inputProps={{
+          sx: {
+            color: color,
+            backgroundColor: background
+          },
+        }}
+        onChange={(event) => handleChange(event)}
+      />
+    );
+  }
+  else
+  {
+    return (
+      <div>{value}</div>
+    );
+  }
 }

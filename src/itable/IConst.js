@@ -104,7 +104,9 @@ class InselConstants {
   static editType_Checkbox = 'checkbox';
   static editType_Date = 'date';
   static editType_Chip = 'chip';
+  static editType_SpecialButton = 'button';
   // only buttons
+  static editType_ButtonEditRow = 'btnEditRow';
   static editType_ButtonEdit = 'btnEdit';
   static editType_ButtonSave = 'btnSave';
   static editType_ButtonUndo = 'btnUndo';

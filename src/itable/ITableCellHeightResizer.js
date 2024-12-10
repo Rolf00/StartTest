@@ -11,15 +11,12 @@ class ITableCellHeightResizer extends React.Component {
   }
 
   componentDidMount() {
-
   }
   
-  componentDidUpdate(prevProps, prevState) {
-
+  componentDidUpdate() {
   }
 
   componentWillUnmount() {
-   
   }
 
   render() 

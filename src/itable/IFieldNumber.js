@@ -38,27 +38,40 @@ export default function IFieldNumber (props) {
     props.handleDataChange(newValue, rowid, fieldname);
   }
   
-  return (
-    <TextField
-      id="outlined"
-      disabled={disabled}
-      value={value}
-      helperText={helperText} 
-      style={{ 
-        width: width, 
-      }}
-      inputProps={{
-        type: type,
-        sx: {
-          backgroundColor: background,
-          color: {color},
-          textAlign: props.header.horizontalAlign,
-          "&::placeholder": {
+  const editing = false;
+
+  if (editing)
+  {
+    return (
+      <TextField
+        id="outlined"
+        disabled={disabled}
+        type="number"
+        value={value}
+        helperText={helperText} 
+        style={{ 
+          width: width, 
+        }}
+        inputProps={{
+          type: type,
+          sx: {
+            backgroundColor: background,
+            color: {color},
             textAlign: props.header.horizontalAlign,
+            "&::placeholder": {
+              textAlign: props.header.horizontalAlign,
+            },
           },
-        },
-      }}
-      onChange={(event) => handleChange(event)}
-    />
-  );
+        }}
+        onChange={(event) => handleChange(event)}
+      />
+    );
+  }
+  else
+  {
+    const showtext = isInteger ? parseInt(value) : parseFloat(value).toFixed(3);
+    return (
+      <div style={{ display: 'flex', padding: 'auto 0px', }}>{showtext}</div>
+    );
+  }
 }

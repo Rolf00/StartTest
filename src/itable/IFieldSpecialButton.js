@@ -11,29 +11,45 @@ export default function IFieldSpecialButton (props) {
   const dataFieldName = props.header.dataFieldName;
   const disabled = !props.header.isEditable;
 
-  const caption = props.button[0];
-  const icon = props.button[1];
-  const iconWidth = props.button[2];
-  const buttonBackgroundColor = props.button[3];
-  const title = props.header.headerTitle;
-  
+  /*
+  caption: "View patient",  
+  icon: imgPerson48, 
+  iconWidth: 36,
+  buttonHeight: 36,
+  buttonBackgroundColor: "#DDDDFF", 
+  buttonBackgroundHover: "#AAAAFF", 
+  */
+
+  const caption = props.header.button.caption;
+  const icon = props.header.button.icon;
+  const iconWidth = props.header.button.iconWidth;
+  const buttonHeight = props.header.button.buttonHeight;
+  const buttonBackgroundColor = props.header.button.buttonBackgroundColor;
+  const buttonBackgroundHover = props.header.button.buttonBackgroundHover;
+  //const title = props.header.headerTitle;
+
   return (
     <IconButton
-      onClick={() => props.handleSpecailButtonClick(rowid, dataFieldName)}
+      onClick={() => props.handleSpecialButtonClick(rowid, dataFieldName)}
       style={{
-        width: '100%', 
-        height: '52px',
-        borderRadius: '16px',
-        padding: '0px',
-        disabled: {disabled},
-        backgroundColor: {buttonBackgroundColor}
+        fontSize: 12,
+        //width: '100%', 
+        height: buttonHeight,
+        borderRadius: '10px',
+        margin: '2px',
+        disabled: disabled,
+        backgroundColor: buttonBackgroundColor,
+        // TODO hover doesnt work
+        "&:hover": {
+          backgroundColor: buttonBackgroundHover,
+        }
       }}>
       <img 
         src={icon}
-        title={title}
+        title={caption}
         style={{ 
-          width: {iconWidth}, 
-          height: {iconWidth},
+          width: iconWidth, 
+          height: iconWidth,
           padding: '0px',
         }} 
       />{caption}</IconButton>
