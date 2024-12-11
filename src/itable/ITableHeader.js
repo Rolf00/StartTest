@@ -74,8 +74,10 @@ class ITableHeader extends React.Component {
               header.editType === IConst.editType_ButtonDelete;
 
             const hasHeaderMenu = header.hasHeaderMenu;
-            const headerTitle = 
-              isSelectionHeader || isButtonHeader ? "" : header.headerTitle;
+            //const headerTitle = 
+            //  isSelectionHeader || isButtonHeader ? "" : header.headerTitle;
+            const headerTitle = header.headerTitle;
+
             const isResizable = header.isResizable;
             const headerMinWidth = header.minWidth;
             const headerHorizontalAlign = header.horizontalAlign;
@@ -88,38 +90,44 @@ class ITableHeader extends React.Component {
               this.state.mainIndeterminated ? IConst.imgChkboxIndeterminate :
               this.state.mainChecked ? IConst.imgChkboxChecked : IConst.imgChkboxUnchecked;
 
-            return (
-              <ITableCellWidthResizer
-                headers={this.props.headers}
-                headerIndex={headerIndex}
-                notResizable={!isResizable}
-                width={newheaderWidth}
-                minWidth={headerMinWidth}
-                horizontalAlign={headerHorizontalAlign}
-                verticalAlign={'bottom'}
-                height= {headerRowHeight}
-                setWidth={(colwidth) => this.setState({colwidth: colwidth})}
-                handleMouseDownRowEW={(e, headerIndex)=>this.props.handleMouseDownRowEW(e, headerIndex)}
-                hasHeaderMenu={hasHeaderMenu}
-                resizerBackgroundColor={this.props.settings.resizerEWBackgroundColor}
-              >
-                {isSelectionHeader &&
-                <IconButton
-                  style={{ width: newheaderWidth, height: newheaderWidth }} 
-                  onClick={(e) => this.props.handleCheckboxClickHeader(e)}>
-                  <img 
-                    src={mainCheckIcon}
-                    style={{ 
-                      width: imgWidth, 
-                      height: imgWidth,
-                      padding: '0px',
-                    }} 
-                    />
-                </IconButton>
-                }
-                {headerTitle}
-              </ITableCellWidthResizer>
-            );
+            // only show this column when it's defined as visible
+            const visible = header.isVisible;
+
+            if (visible) {
+              return (
+                <ITableCellWidthResizer
+                  headers={this.props.headers}
+                  headerIndex={headerIndex}
+                  notResizable={!isResizable}
+                  width={newheaderWidth}
+                  minWidth={headerMinWidth}
+                  horizontalAlign={headerHorizontalAlign}
+                  verticalAlign={'bottom'}
+                  height= {headerRowHeight}
+                  setWidth={(colwidth) => this.setState({colwidth: colwidth})}
+                  handleMouseDownRowEW={(e, headerIndex)=>this.props.handleMouseDownRowEW(e, headerIndex)}
+                  hasHeaderMenu={hasHeaderMenu}
+                  resizerBackgroundColor={this.props.settings.resizerEWBackgroundColor}
+                  HideColumn={() => this.props.HideColumn(headerIndex)}
+                >
+                  {isSelectionHeader &&
+                  <IconButton
+                    style={{ width: newheaderWidth, height: newheaderWidth }} 
+                    onClick={(e) => this.props.handleCheckboxClickHeader(e)}>
+                    <img 
+                      src={mainCheckIcon}
+                      style={{ 
+                        width: imgWidth, 
+                        height: imgWidth,
+                        padding: '0px',
+                      }} 
+                      />
+                  </IconButton>
+                  }
+                  {headerTitle}
+                </ITableCellWidthResizer>
+              );
+            }
           })}
         </TableRow>
       </TableHead>                

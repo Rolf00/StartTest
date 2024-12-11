@@ -63,6 +63,7 @@ class ITableCellWidthResizer extends React.Component {
             <ITableMenu
               headers={headers}
               headerIndex={headerIndex}
+              HideColumn={() => this.props.HideColumn(headerIndex)}
             ></ITableMenu> 
           </div>}
 
@@ -87,8 +88,9 @@ class ITableCellWidthResizer extends React.Component {
             >
               <ITableMenu
                 headers={this.props.headers}
-                headerIndex={-1}
-              ></ITableMenu>
+                headerIndex={headerIndex}
+                HideColumn={() => this.props.HideColumn(headerIndex)}
+                ></ITableMenu>
             </div>
           </div>
           }

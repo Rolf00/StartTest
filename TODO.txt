@@ -181,6 +181,8 @@ export default App;
     // TODO hot to render headers?
   }
 
+//////////////////////////////////////// 
+// hedaer menu manage columns 
   <div
     id="submenu"
     style={{
@@ -342,91 +344,11 @@ export default App;
     this.setState({open: false});
     this.props.handleDialogButtons(index, this.state.id);
   }
-  
-
-
-
-
 
 /////////////////////////////////////////////
-// new file ITextfield
-
-import * as React from 'react';
-import TextField from '@mui/material/TextField';
-
-export default function ITextfield (props) 
-{
-
-  const index = this.getRowIndex(props.rowid);
-  const newList = [...props.data];
-  this.state.data[index][props.fieldName] = e.target.value;
-  this.setState({data: newList});
-
-  const hasError = this.getHasError(header, value);
-  const helperText = hasError ? header.helperText : "";
-  const color = hasError ? 'red' : 'black';
-  const background = hasError ? '#FFDDDD' : 'transparent';
-
-  return (
-    <TextField
-      value={value}
-      fullWidth
-      helperText={helperText} 
-      style={{ 
-        textAlign: props.header.horizontalAlign, 
-      }}
-      // TODO inputProps depreceated
-      inputProps={{
-        sx: {
-          color: {color},
-          backgroundColor: {background}
-        },
-      }}
-      onChange={e => props.handleTextfieldChangeHere(e, props.rowid, props.field)}
-    ></TextField>
-  );
-}
-
 
 ///////////////////////////////////////////
-// new file integer text field NOT GOOD
-export default function ITextFieldInteger(props) {
-
-  const decimal = props.value;
-
-  const handleFocus = () => {
-    // Format to 6 decimals when focused
-    formatValue(6); 
-  };
-
-  const handleBlur = () => {
-    // Format to 2 decimals when blurred
-    formatValue(2); 
-  };
-
-  const formatValue = (decimals) => {
-    let newValue = value;
-    if (newValue) {
-      const regex = new RegExp(`^([0-9]*\\.?[0-9]{0,${decimals}})`);
-      changeValue(newValue.match(regex)[0]); // Update state with formatted value
-    }
-  };
-
-  const handleChangeValue = (e) => {
-    //alert(e.target.value);
-    changeValue(e.target.value);
-
-    /*   
-    const newValue = e.target.value;
-    //const dLayout = decimal.toFixed(3);
-
-    const regex = /^(\d*\.?\d{0,2})/;
-    if (newValue.match(regex)) {
-      //changeValue(decimal);
-      changeValue(newValue.match(regex)[0]);
-    }
-    */
-  };
+// Button dialog
 
   return (
     <Grid container direction="row" spacing={2}>
@@ -463,33 +385,7 @@ export default function ITextFieldInteger(props) {
 
 
 ///////////////////////////////////////////////////////////
-// new file for IFieldNumber
-<IFieldNumber
-  value={value}
-  rowid={rowid}
-  fieldname={fieldname}
-  isInteger={isInteger}
-  handleTextfieldNumberChange={(e) => handleTextfieldNumberChange(e, rowid, fieldname)} 
-></IFieldNumber>
 
-// TODO => in handleTextfieldNumberChange remove:
-// TODO parseInt
-const number = parseFloat(e.target.value);
-
-////////////////////////////////////////
-// implement IIconBurron
-
-{isIconButton &&
-<IFieldIconButton
-  rowid={rowid}
-  header={header}
-  button={button}
-  handleRowButtonClick={() => props.handleRowButtonClick(rowid, fieldname)} 
-></IFieldIconButton>
-}
-
-// TODO implemantation
-const isIconButton = header.editType === IConst.editType_IconButton;
 
 // TODO implemantation in ITable.js
 getRowErrorList(row);
@@ -565,32 +461,115 @@ handleRowButtonClick(rowid, fieldname)
   this.props.handleRowButtonClick(rowid, fieldname);
 }
 
-
-  //// check for all components:
-  /*
-
-  class InselTable extends React.Component {
-  constructor(props) {
-    super(props);
-
-    const {
-      settings, 
-      headers, 
-      primaryKey,
-      data,
-      dialogName } = this.props;
-
-    const EditDialog = avaiableDialogs[this.props.dialogName];
-  
-    this.state = {
-      headers: headers,
-      primaryKey: primaryKey,
-      data: this.getDataList(),
-      page: 0,
-      limit: 10,
-  */
-
-
 //// TODO for 10.12.2024
 //// TODO : integer anf float fields: make float not accept letters
+// <TextField inputProps={{ type: 'number'}} />
+
+import * as React from "react";
+import { TextField } from "@mui/material";
+
+export default function App() {
+  const [phone, setPhone] = React.useState("123");
+  const [info, setinfo] = React.useState();
+
+  let focusedName = "";
+
+  const handleEnter = (e) => {
+    //focusedName = e.target.name;
+    //setinfo(e.target.name);
+  };
+
+  const handleLeave = (e) => {
+    //focusedName = "";
+    //setinfo(" no fcusedName2");
+
+    const val = e.target.value;
+    const haspos = val.includes(".");
+    if (haspos) {
+      const form = (Math.round(val * 100) / 100).toFixed(2);
+      setinfo(form);
+    }
+
+  };
+
+  const handleChange = (event) => {
+    //if (val.match(/[^0-9]./)) {
+    //  return event.preventDefault();
+    //}
+
+    /*-
+    if (info === event.target.id) {
+    } else {
+      const haspos = val.contains(".");
+      if (haspos) {
+        const pos = val.IndexOf(".");
+        const p1 = val.substring(0, pos);
+        const p2 = val.substring(pos + 1, val.length - pos);
+      }
+      // val.toFixed(3);
+    }
+    */
+    const val = event.target.value;
+    /*
+    const haspos = val.includes(".");
+    if (haspos) {
+      const pos = val.indexOf(".");
+      const p1 = val.substring(0, pos);
+      const p2 = val.substring(pos + 1);
+      //const p3 = p2.substring(0, 2);
+      const p3 = Math.round(val * 20) / 20;
+      //setinfo(p3);
+      //const newval = p1 + "." + p2;
+      //setPhone(newval);
+      //return;
+    }
+    */
+
+    setPhone(val);
+  };
+
+  return (
+    <div>
+      <TextField
+        id="phone_number"
+        name="name1"
+        label="Phone Number"
+        variant="outlined"
+        type="number"
+        inputProps={{ inputMode: "numeric" }}
+        value={phone}
+        onChange={(e) => handleChange(e)}
+        onEnter={(e) => handleEnter(e)}
+        onBlur={(e) => handleLeave(e)}
+      />
+      <TextField
+        id="phone_number2"
+        name="name2"
+        label="Phone Number"
+        variant="outlined"
+        type="number"
+        inputProps={{ inputMode: "numeric" }}
+        //value={phone}
+        //onChange={(e) => handleChange(e)}
+        onEnter={(e) => handleEnter(e)}
+        onBlur={(e) => handleLeave(e)}
+      />
+      <TextField value={info}></TextField>
+    </div>
+  );
+}
+
+//////////////////////////////////////////////////
+// 11.12.2024
+
+
+
+
+
+
+
+
+
+
+
 

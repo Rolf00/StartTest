@@ -5,7 +5,7 @@ import IConst from './IConst';
 
 export default function IFieldText (props) {
 
-  const rowid = props.rowid;
+  const editing = props.editing;
   const value = props.value;
   const fieldname = props.header.dataFieldName
   const disabled = !props.header.isEditable;
@@ -25,10 +25,8 @@ export default function IFieldText (props) {
   {
     const newValue = e.target.value;
     // change the data now
-    props.handleDataChange(newValue, rowid, fieldname);
+    props.handleDataChange(newValue, fieldname);
   }
- 
-  const editing = false;
 
   if (editing)
   {
@@ -55,8 +53,36 @@ export default function IFieldText (props) {
   }
   else
   {
-    return (
-      <div>{value}</div>
-    );
+    let lines = [];
+    if (multiline) 
+    {
+      lines = value.split("\n");
+    }
+    if (lines.length === 0)
+    {
+      return (
+        <div style={{ 
+          padding: '5px 0px', 
+          width: '100%',
+          textAlign: props.header.horizontalAlign,
+        }}>{value}</div>
+      );
+    }
+    else
+    {
+      return(
+        <div style={{ padding: '5px 0px', width: '100%' }}>
+        {lines.map((line) => {
+          return(
+            <div style={{ 
+              padding: '0px 0px', 
+              width: '100%',
+              textAlign: props.header.horizontalAlign,
+            }}>{line}</div>
+          );
+        })}
+        </div>
+      );
+    }
   }
 }

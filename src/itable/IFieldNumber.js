@@ -4,6 +4,7 @@ import IConst from './IConst';
 
 export default function IFieldNumber (props) {
 
+  const editing = props.editing;
   const rowid = props.rowid;
   const value = props.value;
   const fieldname = props.header.dataFieldName
@@ -15,7 +16,7 @@ export default function IFieldNumber (props) {
 
   const helperText = hasError ? props.header.helperText : "";
   const isInteger = props.header.editType === IConst.editType_Integer;
-  const type = isInteger ? 'number' : 'float';
+  const type = isInteger ? 'number' : 'text';
   const disabled = !props.header.isEditable;
   const width = props.header.width;
 
@@ -35,11 +36,8 @@ export default function IFieldNumber (props) {
     }
 
     // change the data now
-    props.handleDataChange(newValue, rowid, fieldname);
-  }
+    props.handleDataChange(newValue, fieldname);  }
   
-  const editing = false;
-
   if (editing)
   {
     return (
@@ -69,9 +67,14 @@ export default function IFieldNumber (props) {
   }
   else
   {
-    const showtext = isInteger ? parseInt(value) : parseFloat(value).toFixed(3);
+    const showtext = isInteger ? value : value.toFixed(props.header.decimalCount);
     return (
-      <div style={{ display: 'flex', padding: 'auto 0px', }}>{showtext}</div>
+      <div 
+        style={{ 
+          padding: '5px 0px', width: '100%', 
+          textAlign: props.header.horizontalAlign,
+        }}
+      >{showtext}</div>
     );
   }
 }

@@ -5,27 +5,28 @@ import IConst from './IConst';
 export default function IFieldRowEditButton (props) {
 
   // Component for buttons placed on each row.
-  // Their onClick event will be handled inside the ITable component. 
+  // Their onClick event will be handled inside the ITableRow component. 
 
   const rowid = props.rowId;
-  const dataFieldName = props.header.dataFieldName;
+  const dataFieldName = props.header.editType;
   const rowState = props.rowState;
   const editType = props.header.editType;
   const isChanged = 
     rowState === IConst.rowStateEdited ||
+    rowState === IConst.rowStateDeleted ||
     rowState === IConst.rowStateInserted;
   const isDeleted = props.rowstate === IConst.rowStateDeleted;
   
-  const editing = false;
+  const editing = props.editing;
 
   let disabled = true;
   if (editType === IConst.editType_ButtonEditRow)
   {
-    disabled = editing;
+    disabled = false;
   }
   else if (editType === IConst.editType_ButtonEdit)
   {
-    disabled = !props.header.isEditable;
+    disabled = !editing;
   }
   else if (editType === IConst.editType_ButtonSave)
   {
@@ -33,11 +34,11 @@ export default function IFieldRowEditButton (props) {
   }    
   else if (editType === IConst.editType_ButtonUndo)
   {
-    disabled = (!isChanged) && (!isDeleted);
+    disabled = !isChanged
   }    
   else if (editType === IConst.editType_ButtonDelete)
   {
-    disabled = isDeleted;
+    disabled = isDeleted && rowState !== IConst.rowStateInserted;
   }    
 
   const imgWidth = props.settings.buttonSizeOnRows;
@@ -59,32 +60,21 @@ export default function IFieldRowEditButton (props) {
     props.header.editType === IConst.editType_ButtonUndo ? "Undo this row" :
     props.header.editType === IConst.editType_ButtonDelete ? "Delete this row" : "";
   
-  
-  if (editing || props.header.editType === IConst.editType_ButtonEditRow)
-  {
-    return (
-      <IconButton
-        onClick={() => props.handleRowEditButtonClick(rowid, dataFieldName)}
-        disabled={disabled}
-        style={{ width: btnHoverWidth, height: btnHoverWidth }}
-      >
-        <img 
-          src = {icon}
-          title = {title}
-          style={{ 
-            width: imgWidth, height: imgWidth, 
-            padding: '0px', 
-            opacity: disabled ? 0.2 : 1
-          }} 
-        />
-      </IconButton>
-    );
-  }
-  else 
-  {
-    const disabled = true;
-    return (
-      <div style={{ width: btnHoverWidth}}>&nbsp;</div>
-    );
-  }
+  return (
+    <IconButton
+      onClick={() => props.handleRowEditButtonClick(dataFieldName)}
+      disabled={disabled}
+      style={{ width: btnHoverWidth, height: btnHoverWidth }}
+    >
+      <img 
+        src = {icon}
+        title = {title}
+        style={{ 
+          width: imgWidth, height: imgWidth, 
+          padding: '0px', 
+          opacity: disabled ? 0.2 : 1
+        }} 
+      />
+    </IconButton>
+  );
 }

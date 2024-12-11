@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import IconButton from '@mui/material/IconButton';
 
 
@@ -11,7 +11,7 @@ export default function IFieldSpecialButton (props) {
   const dataFieldName = props.header.dataFieldName;
   const disabled = !props.header.isEditable;
 
-  /*
+  /* EXAMPLE:
   caption: "View patient",  
   icon: imgPerson48, 
   iconWidth: 36,
@@ -26,23 +26,22 @@ export default function IFieldSpecialButton (props) {
   const buttonHeight = props.header.button.buttonHeight;
   const buttonBackgroundColor = props.header.button.buttonBackgroundColor;
   const buttonBackgroundHover = props.header.button.buttonBackgroundHover;
-  //const title = props.header.headerTitle;
+
+  const [isHovered, setIsHovered] = useState(false);
 
   return (
     <IconButton
       onClick={() => props.handleSpecialButtonClick(rowid, dataFieldName)}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}      
       style={{
         fontSize: 12,
-        //width: '100%', 
+        width: '100%', 
         height: buttonHeight,
         borderRadius: '10px',
         margin: '2px',
         disabled: disabled,
-        backgroundColor: buttonBackgroundColor,
-        // TODO hover doesnt work
-        "&:hover": {
-          backgroundColor: buttonBackgroundHover,
-        }
+        backgroundColor: isHovered ? buttonBackgroundHover : buttonBackgroundColor,
       }}>
       <img 
         src={icon}

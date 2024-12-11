@@ -23,7 +23,6 @@ class ITableCellHeightResizer extends React.Component {
   {
     const {
       classes,
-      id, 
       height, 
       children,
     } = this.props;
@@ -41,7 +40,7 @@ class ITableCellHeightResizer extends React.Component {
         </div>
         <div
           className={classes.resizerNS}
-          onMouseDown={(e) => this.props.handleMouseDownRowNS(e, id)} 
+          onMouseDown={(e) => this.props.handleMouseDownRowNS(e)} 
           >
         </div>
       </div>

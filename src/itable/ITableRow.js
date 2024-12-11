@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import { TableRow, } from '@mui/material';
 import { withStyles } from 'tss-react/mui';
 import PropTypes, { func } from 'prop-types';
@@ -21,38 +21,22 @@ class ITableRow  extends React.Component {
   constructor(props) {
     super(props);
 
-
-    /* props:
-    settings={this.props.settings}
-    headers={this.props.headers}
-    oldRow={thisOldRow}
-    rowIndex={rowIndex}
-    row={thisRow}
-    thisInfo={thisInfo}
-    handleMouseDownRowNS={(e, rowid) => this.handleMouseDownRowNS(e, rowid)}
-    handleSelectionClickRow={(rowid) => this.handleSelectionClickRow(rowid)}
-    handleRowEditButtons={(rowid, action) => this.handleRowEditButtons(rowid, action)}
-    handleDataChange={(newvalue, rowid, field) => this.handleDataChange(newvalue, rowid, field)}
-    */
-
     // props
     const {
       settings,
       headers,
-      oldRow,
+      rowInfoList,
       rowIndex,
-      rowId,
-      row,
-      rowInfo,
+      oldRow,
+      row
     } = this.props;
-    
-    // state
-    this.state = {
-      headers: headers,
-      rowIndex: rowIndex,
-      row: row,
-    }
 
+    // state
+    this.state = { 
+      rowEditing: false,
+      rowHeight: rowInfoList[rowIndex].height,
+      row: row 
+    };
   }
 
   componentDidMount() {
@@ -63,19 +47,154 @@ class ITableRow  extends React.Component {
   
   componentWillUnmount() {
   }
-  
+
+  handleDataChange(value, field)
+  {
+    // change the row values and update row color and main buttons
+    const newRow = this.state.row;
+    newRow[field] = value;
+    this.setNewRowState_Edit()
+    this.setState({row: newRow});
+    // update main buttons SAVE and UNDO in ITable
+    this.props.setMainButtonState();
+  }
+
+  setNewRowState_Edit()
+  {
+    // set the row state
+    const oldState = this.props.rowInfoList[this.props.rowIndex].state;
+    if (oldState === IConst.rowStateUnchanged)
+      this.props.rowInfoList[this.props.rowIndex].state = IConst.rowStateEdited;
+  }
+
+  handleMouseDownRowNS(e)
+  {
+    // resizing row height
+    let mouseStart = e.clientY;
+    let oldRowHeight = this.props.rowInfoList[this.props.rowIndex].height;
+    const element = e.target;
+    element.style.backgroundColor = IConst.colorResizerBackground;
+
+    const onMouseMoveRowNS = (e) => {
+      const newheight = e.clientY - mouseStart + oldRowHeight;
+      this.props.rowInfoList[this.props.rowIndex].height = newheight;
+      this.setState({rowHeight: newheight});
+    }
+
+    const onMouseUpRowNS = (e) => {
+      document.removeEventListener('mousemove', onMouseMoveRowNS);
+      document.removeEventListener('mouseup', onMouseUpRowNS);
+      document.body.style.userSelect = "auto";  
+      element.style.backgroundColor = 'transparent';
+    };    
+
+    document.addEventListener('mousemove', onMouseMoveRowNS);
+    document.addEventListener('mouseup', onMouseUpRowNS);  
+    document.body.style.userSelect = "none";  
+  }
+
+  handleEditModalDialog()
+  {
+    // TODO modal dialog
+    alert("Edit in a dialog is not implemented yet.")
+  }
+
+  handleRowEditButtonClick(action)
+  {
+    if (action === IConst.editType_ButtonEditRow)
+    {
+      // button EDIT for one row was clicked
+      const newEditing = !this.state.rowEditing;
+      this.setState({rowEditing: newEditing})
+    }
+    if (action === IConst.editType_ButtonEdit)
+    {
+      // here we open a modal dialog
+      this.handleEditModalDialog(this.state.row);
+    }
+    else if (action === IConst.editType_ButtonSave)
+    {
+      // button SAVE for one row was clicked
+      alert("SAVE one row to the DB is not implemented yet.")
+    }
+    else if (action === IConst.editType_ButtonUndo)
+    {
+      // button UNDO for one row was clicked
+      this.handleUndoRow();
+    }
+    else if (action === IConst.editType_ButtonDelete)
+    {
+      // button DELETE for one row was clicked
+      this.handleDeleteRow();
+    }
+  }
+
+  restoreOldData()
+  {
+    // restore the old data
+    const oldRow = this.props.oldRow;
+    let newRow = this.state.row;
+    const keys = Object.keys(oldRow);
+    for (let f = 0; f < keys.length; f++)
+    {
+      const field = keys[f];
+      newRow[field] = oldRow[field];
+    }
+
+
+    this.setState({row: newRow});
+
+    // update main buttons SAVE and UNDO in ITable
+    this.props.setMainButtonState();
+  }
+
+  handleUndoRow()
+  {
+    // button UNDO for one row was clicked
+    const oldState = this.props.rowInfoList[this.props.rowIndex].state;
+
+    if (oldState === IConst.rowStateEdited)
+    {
+      // row was edited, thus we restore the old values
+      this.props.rowInfoList[this.props.rowIndex].state = IConst.rowStateUnchanged;
+      // restore the old data
+      this.restoreOldData();
+    }
+    else if (oldState === IConst.rowStateInserted)
+    {
+      // row was inserted, thus we remove it from the data list
+      this.props.handleUndoInsertedRows(this.props.rowIndex);
+    }
+    else if (oldState === IConst.rowStateDeleted)
+    {
+      // row was deleted, thus we restore the old values
+      this.props.rowInfoList[this.props.rowIndex].state = IConst.rowStateUnchanged;
+      // restore the old data
+      this.restoreOldData();
+    }
+  }
+
+  handleDeleteRow()
+  { 
+    // mark a row as deleted
+    this.props.rowInfoList[this.props.rowIndex].state = IConst.rowStateDeleted;
+    // update main buttons SAVE and UNDO in ITable
+    this.props.setMainButtonState();
+  }
+
   render()
   {
+  
     const rowid = this.props.rowId;
 
     // main row selection 
-    const isRowSelected = this.props.rowInfo.selected;
+    const isRowSelected = this.props.rowInfoList[this.props.rowIndex].selected;
     
     // get row height
-    const rowHeight = this.props.rowInfo.height;
+    const rowHeight = this.props.rowInfoList[this.props.rowIndex].height;
 
     // to get the background color for the row depending on its state
-    const rowState = this.props.rowInfo.state;
+    const rowState = this.props.rowInfoList[this.props.rowIndex].state;
     const isRowDeleted = rowState === IConst.rowStateDeleted;
     const isRowInserted = rowState === IConst.rowStateInserted;
     const isRowChanged = rowState === IConst.rowStateEdited || isRowDeleted || isRowInserted;
@@ -97,7 +216,7 @@ class ITableRow  extends React.Component {
         }}
         key={`table-row-${this.props.rowIndex}-${rowid}`} 
       >
-      {this.state.headers.map((header) => {
+      {this.props.headers.map((header, headerIndex) => {
 
         // edit types
         const isSelectionIcon = header.editType === IConst.editType_SelectionIcon;
@@ -136,90 +255,106 @@ class ITableRow  extends React.Component {
         //if (isDecimal) tmp = tmp.toFixed(header.decimalCount);
         const value = tmp;
 
+        // enable / disbable the editing of one row
+        // if "this.props.settings.alwaysActivateEditing" is TRUE, editing is always enabled
+        const editing = this.props.settings.alwaysActivateEditing || this.state.rowEditing;
+        
+        // only show this column when it's defined as visible
+        const visible = header.isVisible;
+        
+        if (visible) {
+          return (
+            <ITableCellHeightResizer
+              height={rowHeight}
+              setHeight={(height) => this.setState({rowHeight: height})}
+              handleMouseDownRowNS={(e)=>this.handleMouseDownRowNS(e)}
+            >
 
-        return (
-          <ITableCellHeightResizer
-            height={rowHeight}
-            setHeight={(height) => this.setState({rowHeight: height})}
-            handleMouseDownRowNS={(e)=>this.props.handleMouseDownRowNS(e, rowid)}
-          >
+              {isSelectionIcon &&
+              <IFieldSelection
+                settings={this.props.settings}
+                header={header}
+                value = {value}
+                handleSelectionClickRow={e => this.handleSelectionClickRow(e, rowid)}
+              />}
 
-            {isSelectionIcon &&
-            <IFieldSelection
-              settings={this.props.settings}
-              header={header}
-              value = {value}
-              handleSelectionClickRow={e => this.handleSelectionClickRow(e, rowid)}
-            />}
+              {isTextfield && 
+              <IFieldText
+                editing={editing}
+                value={value}
+                header={header}
+                rowid={rowid}
+                handleDataChange= {e => this.handleDataChange(e, field)}
+              />}
 
-            {isTextfield && 
-            <IFieldText
-              value={value}
-              header={header}
-              rowid={rowid}
-              handleDataChange= {e => this.props.handleDataChange(e, rowid, field)}
-            />}
+              {isNumber &&
+              <IFieldNumber
+                editing={editing}
+                value={value}
+                header={header}
+                rowid={rowid}
+                handleDataChange= {e => this.handleDataChange(e, field)}
+              />}
 
-            {isNumber &&
-            <IFieldNumber
-              value={value}
-              header={header}
-              rowid={rowid}
-              handleDataChange= {e => this.props.handleDataChange(e, rowid, field)}
-            />}
+              {isDropdown &&
+              <IFieldDropDown
+                editing={editing}
+                value={value}
+                header={header}
+                rowid={rowid}
+                handleDataChange= {e => this.handleDataChange(e, field)}
+              />}
 
-            {isDropdown &&
-            <IFieldDropDown
-              value={value}
-              header={header}
-              rowid={rowid}
-              handleDataChange= {e => this.props.handleDataChange(e, rowid, field)}
-            />}
+              {isCheckbox &&
+              <IFieldCheckbox
+                editing={editing}
+                value={value}
+                settings={this.props.settings}
+                header={header}
+                rowid={rowid}
+                handleDataChange= {e => this.handleDataChange(e, field)}
+              />}
 
-            {isCheckbox &&
-            <IFieldCheckbox
-              value={value}
-              settings={this.props.settings}
-              header={header}
-              rowid={rowid}
-              handleDataChange= {e => this.props.handleDataChange(e, rowid, field)}
-            />}
+              {isDate &&
+              <IFieldDate
+                editing={editing}
+                value={value}
+                header={header}
+                rowid={rowid}
+                handleDataChange= {e => this.handleDataChange(e, field)}
+              />}
 
-            {isDate &&
-            <IFieldDate
-              value={value}
-              header={header}
-              rowid={rowid}
-              handleDataChange= {e => this.props.handleDataChange(e, rowid, field)}
-            />}
+              {isChip &&
+              <IFieldChipMenu
+                editing={editing}
+                value={value}
+                header={header}
+                rowid={rowid}
+                handleDataChange= {e => this.handleDataChange(e, field)}
+              />}
 
-            {isChip &&
-            <IFieldChipMenu
-              value={value}
-              header={header}
-              rowid={rowid}
-              handleDataChange= {e => this.props.handleDataChange(e, rowid, field)}
-            />}
+              {isSpecialButton &&
+              <IFieldSpecialButton
+                header = {header}
+                handleSpecialButtonClick = {() => this.props.handleSpecialButtonClick(rowid, header.dataFieldName)}
+              />}
 
-            {isSpecialButton &&
-            <IFieldSpecialButton
-              header = {header}
-              onClick = {e => this.props.rowSpecialButtonClick(e, header.editType)}
-            />}
+              {isRowEditButton &&
+              <IFieldRowEditButton
+                editing={editing}
+                settings = {this.props.settings}
+                rowId={rowid}
+                rowState = {rowState}
+                header = {header}
+                handleRowEditButtonClick = {(action) => this.handleRowEditButtonClick(action)}
+              />}
 
-            {isRowEditButton &&
-            <IFieldRowEditButton
-              settings = {this.props.settings}
-              rowId={rowid}
-              rowState = {rowState}
-              header = {header}
-              handleRowEditButtonClick = {() => this.props.handleRowEditButtonClick(rowid, header.editType)}
-            />}
+              {!typeFound && <span>TYPE ERROR</span>}  
 
-            {!typeFound && <span>TYPE ERROR</span>}  
+            </ITableCellHeightResizer>
+          );
+        }
 
-          </ITableCellHeightResizer>
-        );
       })}
       </TableRow>    
     );

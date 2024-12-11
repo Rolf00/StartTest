@@ -52,6 +52,10 @@ export default function InselTableMenu  (props)
     // hide the menu
     handleClose(); 
 
+    // TODO
+    alert("TableMenu: ordering data is not implemented yet.")
+    return;
+
     // sort the data for one field
     // TODO
     const newData = this.state.data.sort((a, b) => {
@@ -85,12 +89,10 @@ export default function InselTableMenu  (props)
   {
     // hide the menu 
     handleClose(); 
-
-    handleClose(); 
     props.headers[props.headerIndex].isVisible = true;
-    // TODO how to render headers?
+    props.HideColumn(props.headerIndex);
   }
-
+    
   const handleUnhideColumn = () =>
     {
       // close the sub menu
@@ -160,9 +162,9 @@ export default function InselTableMenu  (props)
           id="nestedMenusManageColumns"
           anchorEl={anchorManageColumns}
           disabled={getAllColumnsAreVisible()}
-  
-          onmouseenter={(e) => handleOpenCloseManageColumns(e, true)}
-          onmouseleave={(e) => handleOpenCloseManageColumns(e, false)}
+          onMouseEnter={(e) => handleOpenCloseManageColumns(e, true)}
+          onMouseLeave={(e) => handleOpenCloseManageColumns(e, false)}      
+    
           //onClick={(e) => handleOpenCloseManageColumns(e, true)}
           //primaryText="Manage columns"
           // TODO 

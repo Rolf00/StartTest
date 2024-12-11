@@ -21,6 +21,7 @@ import imgChipStatusTurqoise from './CircleTurqoise.png';
 import imgChipStatusGreen from './CircleGreen.png'; 
 import imgPerson48 from './imgPerson48.png';
 
+import IConst from './itable/IConst';
 import InselTable from './table/InselTable';
 import ITable from './itable/ITable';
 
@@ -65,7 +66,7 @@ const headersWaldo = [
     databaseField: "firstName",
     headerTitle: "Firstname",
     isResizable: true,
-    isEditable: false,
+    isEditable: true,
     isRequired: true,
     isVisible: true,
     isSortable: true,
@@ -82,7 +83,7 @@ const headersWaldo = [
     databaseField: "lastName",
     headerTitle: "Lastname",
     isResizable: true,
-    isEditable: false,
+    isEditable: true,
     isRequired: true,
     isVisible: true,
     isSortable: true,
@@ -99,7 +100,7 @@ const headersWaldo = [
     databaseField: "age",
     headerTitle: "Age",
     isResizable: true,
-    isEditable: false,
+    isEditable: true,
     isRequired: true,
     isVisible: true,
     isSortable: true,
@@ -107,7 +108,7 @@ const headersWaldo = [
     width: 80,
     minWidth: 80,
     maxWidth: 120,
-    editType: 'textfield',
+    editType: 'integer',
     dataFieldName: 'age',
     horizontalAlign: 'center',
     hasHeaderMenu: true,
@@ -116,7 +117,7 @@ const headersWaldo = [
     databaseField: "birthday",
     headerTitle: "Birthday",
     isResizable: true,
-    isEditable: false,
+    isEditable: true,
     isRequired: true,
     isVisible: true,
     isSortable: true,
@@ -124,8 +125,9 @@ const headersWaldo = [
     width: 120,
     minWidth: 120,
     maxWidth: 120,
-    editType: 'textfield',
+    editType: 'date',
     dataFieldName: 'birthday',
+    dateFormat: IConst.datetimeFormat_Short,
     horizontalAlign: 'center',
     hasHeaderMenu: true,
   },
@@ -133,7 +135,7 @@ const headersWaldo = [
     databaseField: "gender",
     headerTitle: "Gender",
     isResizable: true,
-    isEditable: false,
+    isEditable: true,
     isRequired: true,
     isVisible: true,
     isSortable: true,
@@ -150,7 +152,7 @@ const headersWaldo = [
     databaseField: "diagnosis",
     headerTitle: "Diagnosis",
     isResizable: true,
-    isEditable: false,
+    isEditable: true,
     isRequired: true,
     isVisible: true,
     isSortable: true,
@@ -167,7 +169,7 @@ const headersWaldo = [
     databaseField: "bloodPressure",
     headerTitle: "Blood Pressure",
     isResizable: true,
-    isEditable: false,
+    isEditable: true,
     isRequired: true,
     isVisible: true,
     isSortable: true,
@@ -184,7 +186,7 @@ const headersWaldo = [
     databaseField: "weight",
     headerTitle: "W. (kg)",
     isResizable: true,
-    isEditable: false,
+    isEditable: true,
     isRequired: true,
     isVisible: true,
     isSortable: true,
@@ -194,14 +196,14 @@ const headersWaldo = [
     maxWidth: 120,
     editType: 'textfield',
     dataFieldName: 'weight',
-    horizontalAlign: 'right',
+    horizontalAlign: 'center',
     hasHeaderMenu: true,
   },
   {
     databaseField: "address",
     headerTitle: "Adress",
     isResizable: true,
-    isEditable: false,
+    isEditable: true,
     isRequired: true,
     isVisible: true,
     isSortable: true,
@@ -218,7 +220,7 @@ const headersWaldo = [
     databaseField: "nationality",
     headerTitle: "Nationality",
     isResizable: true,
-    isEditable: false,
+    isEditable: true,
     isRequired: true,
     isVisible: true,
     isSortable: true,
@@ -235,7 +237,7 @@ const headersWaldo = [
     databaseField: "survey",
     headerTitle: "Surveys",
     isResizable: true,
-    isEditable: false,
+    isEditable: true,
     isRequired: true,
     isVisible: true,
     isSortable: true,
@@ -252,7 +254,7 @@ const headersWaldo = [
     databaseField: "chipstate",
     headerTitle: "State",
     isResizable: true,
-    isEditable: false,
+    isEditable: true,
     isRequired: true,
     isVisible: true,
     isSortable: true,
@@ -280,7 +282,7 @@ const headersWaldo = [
     databaseField: "lastUpdate",
     headerTitle: "Last update",
     isResizable: true,
-    isEditable: false,
+    isEditable: true,
     isRequired: true,
     isVisible: true,
     isSortable: true,
@@ -288,14 +290,34 @@ const headersWaldo = [
     width: 190,
     minWidth: 190,
     maxWidth: 320,
-    editType: 'textfield',
+    editType: 'date',
+    dateFormat: IConst.datetimeFormat_Short,
     dataFieldName: 'lastUpdate',
     horizontalAlign: 'center',
     hasHeaderMenu: true,
   },
   {
     databaseField: "lastUpdate",
-    headerTitle: "view",
+    headerTitle: "Last update",
+    isResizable: true,
+    isEditable: true,
+    isRequired: true,
+    isVisible: true,
+    isSortable: true,
+    defaultSorting: 'asc',
+    width: 190,
+    minWidth: 190,
+    maxWidth: 320,
+    editType: 'date',
+    dateLocalization: IConst.datetimeLocalization,
+    dateFormat: IConst.datetimeFormat_Long,
+    dataFieldName: 'lastUpdate2',
+    horizontalAlign: 'center',
+    hasHeaderMenu: true,
+  },
+  {
+    databaseField: "",
+    headerTitle: "Patient",
     isResizable: true,
     isEditable: false,
     isRequired: true,
@@ -314,11 +336,163 @@ const headersWaldo = [
       buttonBackgroundColor: "#DDDDFF", 
       buttonBackgroundHover: "#AAAAFF", 
     },
-    dataFieldName: '',
+    dataFieldName: 'viewPatient',
     horizontalAlign: 'center',
     hasHeaderMenu: false,
   },
+  {
+    databaseField: "dropdown",
+    headerTitle: "Dropdown",
+    isResizable: true,
+    isEditable: true,
+    isRequired: true,
+    isVisible: true,
+    isSortable: true,
+    defaultSorting: 'asc',
+    width: 180,
+    minWidth: 180,
+    maxWidth: 300,
+    textMaxLength: 100,
+    numberMinValue: 0,
+    numberMaxValue: 10000,
+    decimalCount: 0,
+    editType: 'dropdown',
+    defaultValue: -1,
+    dataFieldName: 'dropdownvalue',
+    horizontalAlign: 'left',
+    dropdownSelection: [
+      { id: 1, value: 'Dropdown 1', },
+      { id: 2, value: 'Dropdown 2', },
+      { id: 3, value: 'Dropdown 3', },
+      { id: 4, value: 'Dropdown 4', },
+      { id: 5, value: 'Dropdown 5', },
+      { id: 6, value: 'Dropdown 6', },
+    ],
+    hasHeaderMenu: true,
+  }, 
+  {
+    databaseField: "",
+    headerTitle: "Edit",
+    isResizable: false,
+    isEditable: false,
+    isRequired: false,
+    isVisible: true,
+    isSortable: false,
+    defaultSorting: '',
+    width: 32,
+    minWidth: 32,
+    maxWidth: 42,
+    textMaxLength: 0,
+    numberMinValue: 0,
+    numberMaxValue: 0,
+    decimalCount: 0,
+    editType: 'btnEditRow',
+    defaultValue: 'none',
+    dataFieldName: '',
+    horizontalAlign: 'center',
+    dropdownSelection: [],
+    hasHeaderMenu: false,
+  },
+  {
+    databaseField: "",
+    headerTitle: "Dlg.",
+    isResizable: false,
+    isEditable: false,
+    isRequired: false,
+    isVisible: true,
+    isSortable: false,
+    defaultSorting: '',
+    width: 32,
+    minWidth: 32,
+    maxWidth: 42,
+    textMaxLength: 0,
+    numberMinValue: 0,
+    numberMaxValue: 0,
+    decimalCount: 0,
+    editType: 'btnEdit',
+    defaultValue: 'none',
+    dataFieldName: '',
+    horizontalAlign: 'center',
+    dropdownSelection: [],
+    hasHeaderMenu: false,
+  },
+  {
+    databaseField: "",
+    headerTitle: "Save",
+    isResizable: false,
+    isEditable: false,
+    isRequired: false,
+    isVisible: true,
+    isSortable: false,
+    defaultSorting: '',
+    width: 32,
+    minWidth: 32,
+    maxWidth: 42,
+    textMaxLength: 0,
+    numberMinValue: 0,
+    numberMaxValue: 0,
+    decimalCount: 0,
+    editType: 'btnSave',
+    defaultValue: 'none',
+    dataFieldName: '',
+    horizontalAlign: 'center',
+    dropdownSelection: [],
+    hasHeaderMenu: false,
+  },
+  {
+    databaseField: "",
+    headerTitle: "Undo",
+    isResizable: false,
+    isEditable: false,
+    isRequired: false,
+    isVisible: true,
+    isSortable: false,
+    defaultSorting: '',
+    width: 32,
+    minWidth: 32,
+    maxWidth: 42,
+    textMaxLength: 0,
+    numberMinValue: 0,
+    numberMaxValue: 0,
+    decimalCount: 0,
+    editType: 'btnUndo',
+    defaultValue: 'none',
+    dataFieldName: '',
+    horizontalAlign: 'center',
+    dropdownSelection: [],
+    hasHeaderMenu: false,
+  },
+  {
+    databaseField: "",
+    headerTitle: "Del.",
+    isResizable: false,
+    isEditable: false,
+    isRequired: false,
+    isVisible: true,
+    isSortable: false,
+    defaultSorting: '',
+    width: 32,
+    minWidth: 32,
+    maxWidth: 42,
+    textMaxLength: 0,
+    numberMinValue: 0,
+    numberMaxValue: 0,
+    decimalCount: 0,
+    editType: 'btnDelete',
+    defaultValue: 'none',
+    dataFieldName: '',
+    horizontalAlign: 'center',
+    dropdownSelection: [],
+    hasHeaderMenu: false,
+  },
 ];
+
+headersWaldo[3].isVisible = false;
+headersWaldo[4].isVisible = false;
+headersWaldo[6].isVisible = false;
+headersWaldo[7].isVisible = false;
+headersWaldo[8].isVisible = false;
+headersWaldo[9].isVisible = false;
 
 // data Waldo
 const patients = [];
@@ -337,7 +511,7 @@ for (let i = 0; i < 100; i++) {
     firstName: `Patient${i + 1}`,
     lastName: `Lastname${i + 1}`,
     age: randomAge,
-    birthday: randomBirthday.toISOString().split('T')[0],  // Convert to YYYY-MM-DD format
+    birthday: randomBirthday, //.toISOString().split('T')[0],  // Convert to YYYY-MM-DD format
     gender: Math.random() > 0.5 ? "Male" : "Female",
     diagnosis: Math.random() > 0.5 ? "Hypertension" : "Diabetes",
     bloodPressure: `${Math.floor(Math.random() * 50) + 110}/${Math.floor(Math.random() * 40) + 70}`,
@@ -345,13 +519,15 @@ for (let i = 0; i < 100; i++) {
     address: randomAddress,
     nationality: randomCountry,
     survey: Math.floor(Math.random() * 100) + 1,  // Random number between 1-100
-    lastUpdate: randomUpdate.toISOString(),  // Date format: YYYY-MM-DDTHH:MM:SS.SSSZ
+    lastUpdate: randomUpdate, //.toISOString(),  // Date format: YYYY-MM-DDTHH:MM:SS.SSSZ
+    lastUpdate2: randomUpdate,
     chipstate: i < 9 ? i : null,
+    dropdownvalue: i <= 6 ? i : null,
   });
 }
 
-patients[1].address = patients[1].address + "\n\rNew Line address 2";
-patients[2].address = patients[2].address + "New Line address 2";
+patients[1].address = patients[1].address + "\nNew Line address 2\nNew Line address 3";
+patients[2].address = patients[2].address + "\nNew Line address 2";
 
 
 const App = ()=> {
@@ -362,22 +538,20 @@ const App = ()=> {
 
   const settings = 
   {
-    // header settings
+    // when TRUE, each row can be edited without clicking EDIT 
+    alwaysActivateEditing: false,
+
+    // header content 
     headerVerticalAlign: 'top',
     initialHeaderHeight: 55,
-    initialRowHeight: 25,
+    initialRowHeight: 31,
+    initialRowHeightReadonly: 21,
 
     // rows settings
     rowsVerticalAlign: 'top',
 
     // dialog
     dialogName: 'InselDialog_MainData',
-
-    // resizer options
-    // resizerEWBackgroundColor: 'transparent',
-    // resizerNSBackgroundColor: 'transparent',
-    // resizerSize: 5,
-    // resizerBorderBottomRightWidth: 1,
 
     // button options
     buttonSizeOnRows: 32,
@@ -387,6 +561,10 @@ const App = ()=> {
     hasButtonUndoAll: true,
     hasButtonExcelAll: true,
     hasButtonExcelSelected: true,
+
+    // localization
+    localization: IConst.datetimeLocalization_deCH,
+
   };
   
   const headers = [

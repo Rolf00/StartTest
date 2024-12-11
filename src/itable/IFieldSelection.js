@@ -13,7 +13,6 @@ export default function IFieldSelection (props) {
   const iconCheckbox = value ? 
     IConst.imgChkboxChecked: 
     IConst.imgChkboxUnchecked;
-
   
   return (
     <IconButton

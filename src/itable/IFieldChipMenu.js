@@ -32,6 +32,7 @@ export default function IChipMenu (props)
     props.handleDataChange(id);
   }
   
+  const editing = props.editing;
   let chipItem = null;
   let chipIndex = props.header.chipList.findIndex(c => c.id === props.value);
   if (chipIndex === -1) chipIndex = props.header.chipList.findIndex(c => c.default);
@@ -43,8 +44,6 @@ export default function IChipMenu (props)
   const chipClickable = props.header.isEditable;
   const chipWidth = (chipItem) ? props.header.chipWidth : 0;
   const chipIconWidth = (chipItem) ? props.header.chipIconWidth : 0;
-  
-  const editing = false;
 
   if (editing)
   {

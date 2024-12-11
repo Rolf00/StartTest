@@ -169,6 +169,19 @@ class ITable extends React.Component {
     }
   }
 
+  handleUndoInsertedRows(rowIndex)
+  {
+    // delete an inserted row
+    const newlist = this.state.data;
+    newlist.splice(rowIndex, 1);
+    // update the buttons SAVE ALL, UNDO ALL
+    const mainEnabled = this.getMainButtonsEnabled();    
+    this.setState({ 
+      data: newlist,
+      mainButtonsDisabled: mainEnabled
+    });
+  }
+
   handleUndoRow(rowid)
   {
     // button UNDO for one row was clicked
@@ -405,6 +418,16 @@ class ITable extends React.Component {
     this.state.rowInfoList[rowIndex].state = changeState;
   }
 
+  setMainButtonState()
+  {
+    // update the buttons SAVE ALL, UNDO ALL
+    const mainEnabled = this.getMainButtonsEnabled();
+
+    console.log("setMainButtonState mainEnabled", );
+
+    this.setState({mainButtonsDisabled: mainEnabled });
+  }
+
   handleDataChange(newvalue, rowid, field)
   {
 
@@ -431,6 +454,7 @@ class ITable extends React.Component {
     });
   }
 
+  /*
   handleRowEditButtons(rowid, action)
   {
     if (action === IConst.editType_ButtonEdit)
@@ -455,6 +479,7 @@ class ITable extends React.Component {
       this.handleDeleteRow(rowid);
     }
   }
+    */
 
   handleDialogButtons(buttonIndex, dialogID)
   {
@@ -831,34 +856,6 @@ class ITable extends React.Component {
 
   // ---------------------------------------------------------------------------------------
   // resizing row heights and column widths events
- 
-  handleMouseDownRowNS(e, rowid)
-  {
-    // resizing row height
-    let mouseStart = e.clientY;
-    let oldRowHeight = this.getRowHeight(rowid);
-    const element = e.target;
-    element.style.backgroundColor = IConst.colorResizerBackground;
-
-    const onMouseMoveRowNS = (e) => {
-      const newheight = e.clientY - mouseStart + oldRowHeight;
-      const newList = this.state.rowInfoList;
-      const index = this.state.rowInfoList.findIndex(dr => dr.id === rowid);
-      newList[index].height = newheight;
-      this.setState({rowInfoList : newList});
-    }
-
-    const onMouseUpRowNS = (e) => {
-      document.removeEventListener('mousemove', onMouseMoveRowNS);
-      document.removeEventListener('mouseup', onMouseUpRowNS);
-      document.body.style.userSelect = "auto";  
-      element.style.backgroundColor = 'transparent';
-    };    
-
-    document.addEventListener('mousemove', onMouseMoveRowNS);
-    document.addEventListener('mouseup', onMouseUpRowNS);  
-    document.body.style.userSelect = "none";  
-  }
 
   handleMouseDownRowEW(e, index)
   {
@@ -898,6 +895,18 @@ class ITable extends React.Component {
   // ---------------------------------------------------------------------------------------
   // header menu events
 
+  HideColumn(headerIndex)
+  {
+    // hide one column
+
+    // TODO : if all columns are invisible, you cannot unhide them anymore :
+    // SOLUTION: it would need a modal dialog
+
+    const newHeaders = this.state.headers;
+    newHeaders[headerIndex].isVisible = false;
+    this.setState({headers: newHeaders});
+  }
+
 
   render() 
   {
@@ -920,11 +929,12 @@ class ITable extends React.Component {
         <TableContainer
           tabIndex={0}
           onKeyUp={this.handleTableMainKeyUp}
+          
           className={classes.table_container}
           style={{
             height: 650, // Set the max height to allow scrolling after 5 items
             overflowY: 'auto', // Enables vertical scrolling
-            overflow: 'auto',
+            overflowX: 'auto',
             '&::-webkit-scrollbar': {
               width: '8px',
               height: '8px',
@@ -949,6 +959,10 @@ class ITable extends React.Component {
               height: '800px',
               //width: '800px'
             }}
+            sx = {{
+              overflowX: 'auto',
+            }}
+
           >
             <ITableHeader
               //className={classes.table_head_row}
@@ -958,6 +972,7 @@ class ITable extends React.Component {
               mainIndeterminated={mainIndeterminated}
               handleMouseDownRowEW={(e, colHeadIndex)=>this.handleMouseDownRowEW(e, colHeadIndex)}
               handleCheckboxClickHeader={(e)=>this.handleCheckboxClickHeader(e)}
+              HideColumn={(headerIndex) => this.HideColumn(headerIndex)}
             >
             </ITableHeader>
             <TableBody className={classes.table_body_row}>
@@ -966,7 +981,7 @@ class ITable extends React.Component {
                 const rowid = row[this.props.primaryKey];
                 const oldRowIndex = this.getRowIndex(rowid);
                 const thisOldRow = this.props.data[oldRowIndex];
-                const thisRow = row;
+                const thisRow = this.state.data[rowIndex];
                 const thisIndex = rowIndex;
                 const thisInfo = this.state.rowInfoList[rowIndex];
 
@@ -974,12 +989,16 @@ class ITable extends React.Component {
                   <ITableRow
                     settings={this.props.settings}
                     headers={this.props.headers}
+                    rowInfoList={this.state.rowInfoList}
                     oldRow={thisOldRow}
                     rowIndex={thisIndex}
                     rowId={rowid}
                     row={thisRow}
-                    rowInfo={thisInfo}
-                    handleMouseDownRowNS={(e, rowid) => this.handleMouseDownRowNS(e, rowid)}
+                    //rowInfo={thisInfo}
+                    setMainButtonState={() => this.setMainButtonState()}
+                    handleUndoInsertedRows={(rowIndex) => this.handleRowEditButtons(rowIndex)}
+
+                    //handleMouseDownRowNS={(e, rowid) => this.handleMouseDownRowNS(e, rowid)}
                     handleSelectionClickRow={(rowid) => this.handleSelectionClickRow(rowid)}
                     handleRowEditButtonClick={(rowid, action) => this.handleRowEditButtons(rowid, action)}
                     handleSpecialButtonClick={(rowid, field) => this.props.handleSpecialButtonClick(rowid, field)}
@@ -1011,7 +1030,7 @@ class ITable extends React.Component {
             position: 'sticky',
             bottom: 0,
             backgroundColor: 'background.paper',
-            boxShadow: '0px -2px 4px rgba(0,0,0,0.1)', // Optional: adds shadow to separate pagination
+            boxShadow: '0px -2px 4px rgba(0,0,0,0.1)',  // Optional: adds shadow to separate pagination
           }}>
           <TableFooter>
             <TableRow>

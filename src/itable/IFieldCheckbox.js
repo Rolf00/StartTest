@@ -4,6 +4,7 @@ import IConst from './IConst';
 
 export default function IFieldCheckbox (props) {
 
+  const editing = props.editing;
   const rowid = props.rowid;
   const value = props.value;
   const fieldname = props.header.dataFieldName
@@ -11,8 +12,6 @@ export default function IFieldCheckbox (props) {
   const imgWidth = props.settings.buttonSizeOnRows;
   const btnHoverWidth = imgWidth + 18;
   const iconCheckbox = value ? IConst.imgChkboxChecked : IConst.imgChkboxUnchecked;
-
-  const editing = false;
 
   const handleChange = (e) =>
   {

@@ -112,6 +112,22 @@ class InselConstants {
   static editType_ButtonUndo = 'btnUndo';
   static editType_ButtonDelete = 'btnDelete';
 
+  // localizarions
+  static datetimeLocalization_deCH = 'de-CH'; 
+  static datetimeLocalization_frCH = 'fr-CH'; 
+  static datetimeLocalization_enUS = 'en-US'; 
+  static datetimeLocalization_enEN = 'en-EN'; 
+
+  // date / time formats
+  static datetimeFormat_Short = 1; // dd.MM.yyyy
+  static datetimeFormat_Long = 2; // ddd, dd.MM.yyyy
+  static datetimeFormat_24 = 3; // HH:mm.ss
+  static datetimeFormat_12 = 4; // hh:mm.ss am/pm
+  static datetimeFormat_Short_24 = 5; // dd.MM.yyyy HH:mm.ss
+  static datetimeFormat_Short_12 = 6; // dd.MM.yyyy hh:mm.ss am/pm
+  static datetimeFormat_Long_24 = 7; // ddd, dd.MM.yyyy HH:mm.ss 
+  static datetimeFormat_Long_12 = 8; // ddd, dd.MM.yyyy hh:mm.ss am/pm
+
 }
 
 export default InselConstants;

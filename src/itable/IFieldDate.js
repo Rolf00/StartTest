@@ -1,30 +1,40 @@
 import * as React from 'react';
 import TextField from '@mui/material/TextField';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+//import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+
+// not exported?
 //import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
-import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon';
-import { DateTime } from 'luxon';
+// doesnt work
+//import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon';
+//import { DateTime } from 'luxon';
+
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs from 'dayjs';
+
+
 
 //import DatePicker from 'react-datepicker';
 import { de } from 'date-fns/locale'; // German (Switzerland)
 
+import IConst from './IConst';
+
 export default function IFieldDate (props) {
 
+  const editing = props.editing;
   const rowid = props.rowid;
   const value = props.value;
   const fieldname = props.header.dataFieldName
   const disabled = !props.header.isEditable;
-  
-  const editing = false;
-
+    
   const handleChange = (e) =>
   {
     let newValue = e.target.value;
 
     // change the data now
-    props.handleDataChange(newValue, rowid, fieldname);
+    props.handleDataChange(newValue, fieldname);
   }
 
 {/* 
@@ -42,10 +52,10 @@ export default function IFieldDate (props) {
   if (editing)
   {
     return (
-      <LocalizationProvider dateAdapter={AdapterLuxon} locale={de}>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DatePicker 
         disabled={disabled}
-        //value={value}
+        selected={value}
         dateFormat="dd/MM/yyyy"
         //renderInput={(params) => <TextField {...params} />}
         onChange={(event) => handleChange(event)}
@@ -55,9 +65,35 @@ export default function IFieldDate (props) {
   }
   else
   {
-    const dateText = "TODO: 01.01.1900";
+    const localization = IConst.localization;
+
+    // see https://chatgpt.com/
+    /*
+    static datetimeFormat_Short = 1; // dd.MM.yyyy
+    static datetimeFormat_Long = 2; // ddd, dd.MM.yyyy
+    static datetimeFormat_24 = 3; // HH:mm.ss
+    static datetimeFormat_12 = 4; // hh:mm.ss am/pm
+    static datetimeFormat_Short_24 = 5; // dd.MM.yyyy HH:mm.ss
+    static datetimeFormat_Short_12 = 6; // dd.MM.yyyy hh:mm.ss am/pm
+    static datetimeFormat_Long_24 = 7; // ddd, dd.MM.yyyy HH:mm.ss 
+    static datetimeFormat_Long_12 = 8; // ddd, dd.MM.yyyy hh:mm.ss am/pm
+    */
+
+    let dateText = value.toLocaleDateString(localization); 
+    if (props.header.dateFormat === IConst.datetimeFormat_Long)
+    {
+      const options = { weekday: 'short', month: 'short', day: '2-digit' };
+      dateText = value.toLocaleDateString(localization, options);    
+    }
+    // TODO
+
     return (
-      <div>{dateText}</div>
+      <div 
+        style={{ 
+          padding: '5px 0px', width: '100%', 
+          textAlign: props.header.horizontalAlign,
+        }}
+      >{dateText}</div>
     );
   }
 }
