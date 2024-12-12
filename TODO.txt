@@ -559,8 +559,21 @@ export default function App() {
   );
 }
 
+
+
+
+
+
+
+
 //////////////////////////////////////////////////
-// 11.12.2024
+// 13.12.2024
+// TODO: export excel with line break inside the cell?
+// TODO: fill headers with default values: also in DOC: checkHeaders
+// TODO: header menu: https://mui.com/x/react-data-grid/
+// TODO: Datepicker
+// TODO DOC : textWrap
+// TODO DOC: chip mousehover change color
 
 
 

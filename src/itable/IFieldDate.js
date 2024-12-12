@@ -28,6 +28,7 @@ export default function IFieldDate (props) {
   const value = props.value;
   const fieldname = props.header.dataFieldName
   const disabled = !props.header.isEditable;
+  const width = props.header.width;
     
   const handleChange = (e) =>
   {
@@ -57,6 +58,9 @@ export default function IFieldDate (props) {
         disabled={disabled}
         selected={value}
         dateFormat="dd/MM/yyyy"
+        style={{ 
+          width: width, 
+        }}
         //renderInput={(params) => <TextField {...params} />}
         onChange={(event) => handleChange(event)}
       />
@@ -65,32 +69,12 @@ export default function IFieldDate (props) {
   }
   else
   {
-    const localization = IConst.localization;
-
-    // see https://chatgpt.com/
-    /*
-    static datetimeFormat_Short = 1; // dd.MM.yyyy
-    static datetimeFormat_Long = 2; // ddd, dd.MM.yyyy
-    static datetimeFormat_24 = 3; // HH:mm.ss
-    static datetimeFormat_12 = 4; // hh:mm.ss am/pm
-    static datetimeFormat_Short_24 = 5; // dd.MM.yyyy HH:mm.ss
-    static datetimeFormat_Short_12 = 6; // dd.MM.yyyy hh:mm.ss am/pm
-    static datetimeFormat_Long_24 = 7; // ddd, dd.MM.yyyy HH:mm.ss 
-    static datetimeFormat_Long_12 = 8; // ddd, dd.MM.yyyy hh:mm.ss am/pm
-    */
-
-    let dateText = value.toLocaleDateString(localization); 
-    if (props.header.dateFormat === IConst.datetimeFormat_Long)
-    {
-      const options = { weekday: 'short', month: 'short', day: '2-digit' };
-      dateText = value.toLocaleDateString(localization, options);    
-    }
-    // TODO
-
+    const dateText = IConst.formatDateTime(value, props.header.datetimeFormat, props.localization);
     return (
       <div 
         style={{ 
-          padding: '5px 0px', width: '100%', 
+          padding: '5px 0px', 
+          width: width, 
           textAlign: props.header.horizontalAlign,
         }}
       >{dateText}</div>

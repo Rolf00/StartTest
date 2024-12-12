@@ -8,7 +8,7 @@ export default function IFieldSelection (props) {
   const value = props.value;
   const rowid = props.rowid;
   const imgWidth = props.settings.buttonSizeOnRows;
-  const btnHoverWidth = imgWidth + 18;
+  const btnHoverWidth = props.settings.buttonSizeOnRowsHover;
 
   const iconCheckbox = value ? 
     IConst.imgChkboxChecked: 

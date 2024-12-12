@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Avatar from '@mui/material/Avatar';
@@ -40,10 +40,13 @@ export default function IChipMenu (props)
   //const chipId = (chipItem) ? chipItem.id : 1;
   const chipLabel = (chipItem) ? chipItem.label : "";
   const chipColor = (chipItem) ? chipItem.color : null;
+  const chipColorHover = (chipItem) ? chipItem.colorHover : null;
   const chipIcon = (chipItem) ? chipItem.icon : null;
   const chipClickable = props.header.isEditable;
   const chipWidth = (chipItem) ? props.header.chipWidth : 0;
   const chipIconWidth = (chipItem) ? props.header.chipIconWidth : 0;
+
+  const [isHovered, setIsHovered] = useState(false);
 
   if (editing)
   {
@@ -53,18 +56,24 @@ export default function IChipMenu (props)
           label={chipLabel}
           avatar={<Avatar alt="" src={chipIcon} />}
           clickable={chipClickable}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}      
           onClick={(e) => handleClick(e, chipClickable)}
           style={{
             minWidth: chipWidth,
             margin: '0px auto',
+            backgroundColor: isHovered ? chipColorHover : chipColor,
+            borderWidth: '1px',
+            borderStyle: 'solid',
+            borderColor: isHovered ? 'black' : chipColor,
           }}
           sx={{
-            backgroundColor: chipColor, 
             color: 'black', 
             width: chipIconWidth, 
             height: chipIconWidth,
             alignItems: 'center',
             justifyContent: 'center',
+   
           }}
         >
   
@@ -126,7 +135,6 @@ export default function IChipMenu (props)
             justifyContent: 'center',
           }}
         >
-  
         </Chip>
       </div>
     );

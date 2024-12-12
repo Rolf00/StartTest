@@ -82,7 +82,7 @@ class ITableHeader extends React.Component {
             const headerMinWidth = header.minWidth;
             const headerHorizontalAlign = header.horizontalAlign;
             const newheaderWidth = 
-              isSelectionHeader || isButtonHeader  ? header.width + 18 : header.width;
+              isSelectionHeader || isButtonHeader  ? header.width + 8 : header.width;
             const headerRowHeight = settings.initialHeaderHeight;
             const imgWidth = settings.buttonSizeOnRows;
 
@@ -112,7 +112,9 @@ class ITableHeader extends React.Component {
                 >
                   {isSelectionHeader &&
                   <IconButton
-                    style={{ width: newheaderWidth, height: newheaderWidth }} 
+                    style={{ 
+                      width: newheaderWidth, 
+                      height: newheaderWidth }} 
                     onClick={(e) => this.props.handleCheckboxClickHeader(e)}>
                     <img 
                       src={mainCheckIcon}

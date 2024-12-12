@@ -40,6 +40,12 @@ export default function IFieldText (props) {
         style={{ 
           textAlign: horizontalAlign, 
           width: width, 
+
+          display: "table-cell",
+          verticalAlign: "middle",
+          height: '100%',
+          margin: "50% 0px",          
+
         }}
         inputProps={{
           sx: {
@@ -58,25 +64,36 @@ export default function IFieldText (props) {
     {
       lines = value.split("\n");
     }
-    if (lines.length === 0)
+
+    if (lines.length === 0 || props.header.textWrap === false)
     {
       return (
         <div style={{ 
           padding: '5px 0px', 
-          width: '100%',
+          width: width, 
+          //height: '100%',
+          //lineHeight: '100%',
+          //margin: 'auto 0px',
           textAlign: props.header.horizontalAlign,
-        }}>{value}</div>
+        }}
+        >{value}</div>
       );
     }
     else
     {
       return(
-        <div style={{ padding: '5px 0px', width: '100%' }}>
+        <div style={{ 
+          padding: '5px 0px', 
+          width: width, 
+          textAlign: props.header.horizontalAlign,
+          display: "table-cell",
+          verticalAlign: props.rowsVerticalAlign,
+        }}>
         {lines.map((line) => {
           return(
             <div style={{ 
-              padding: '0px 0px', 
-              width: '100%',
+              padding: '0px', 
+              width: width, 
               textAlign: props.header.horizontalAlign,
             }}>{line}</div>
           );

@@ -42,6 +42,9 @@ export default function IFieldSpecialButton (props) {
         margin: '2px',
         disabled: disabled,
         backgroundColor: isHovered ? buttonBackgroundHover : buttonBackgroundColor,
+        borderWidth: '1px',
+        borderStyle: 'solid',
+        borderColor: isHovered ? 'black' : buttonBackgroundColor,
       }}>
       <img 
         src={icon}

@@ -25,6 +25,7 @@ class ITableCellHeightResizer extends React.Component {
       classes,
       height, 
       children,
+      resizerBackgroundColor,
     } = this.props;
       
     return (
@@ -35,12 +36,19 @@ class ITableCellHeightResizer extends React.Component {
         }}
       >
       <div className={classes.resizerNS_Top} >
-        <div className={classes.resizerNS_Caption}>
+        <div className={classes.resizerNS_Caption}
+          >
           {children}
         </div>
         <div
           className={classes.resizerNS}
           onMouseDown={(e) => this.props.handleMouseDownRowNS(e)} 
+          onMouseEnter={(e) => this.props.handleMouseEnterNS(e)} 
+          onMouseLeave={(e) => this.props.handleMouseLeaveNS(e)} 
+          style={{
+            backgroundColor: this.props.isHeightResizing ? 
+              this.props.resizerBackgroundColor : 'transparent'
+          }}
           >
         </div>
       </div>

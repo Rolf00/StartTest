@@ -2,6 +2,7 @@ import imgChkboxChecked from './imgCheckboxChecked48.png';
 import imgChkboxUnchecked from './imgCheckboxUnchecked48.png'; 
 import imgChkboxIndeterminate from './imgCheckboxIndeterminate48.png'; 
 import imgEditButton from './imgEdit48.png'; 
+import imgEditStop from './imgStop48.png'; 
 import imgDeleteButton from './imgDelete48.png'; 
 import imgSaveButton from './imgSave48.png'; 
 import imgUndoButton from './imgUndo48.png'; 
@@ -46,6 +47,7 @@ class InselConstants {
 
   // icons selection / checkbox / data functions on row
   static imgEditButton = imgEditButton; 
+  static imgEditStop = imgEditStop; 
   static imgDeleteButton = imgDeleteButton; 
   static imgSaveButton = imgSaveButton; 
   static imgUndoButton = imgUndoButton; 
@@ -113,20 +115,105 @@ class InselConstants {
   static editType_ButtonDelete = 'btnDelete';
 
   // localizarions
-  static datetimeLocalization_deCH = 'de-CH'; 
-  static datetimeLocalization_frCH = 'fr-CH'; 
-  static datetimeLocalization_enUS = 'en-US'; 
-  static datetimeLocalization_enEN = 'en-EN'; 
+  static datetimeLocalization_deCH = "de-CH"; 
+  static datetimeLocalization_frCH = "fr-CH"; 
+  static datetimeLocalization_enUS = "en-US"; 
+  static datetimeLocalization_enEN = "en-EN"; 
 
   // date / time formats
-  static datetimeFormat_Short = 1; // dd.MM.yyyy
-  static datetimeFormat_Long = 2; // ddd, dd.MM.yyyy
-  static datetimeFormat_24 = 3; // HH:mm.ss
-  static datetimeFormat_12 = 4; // hh:mm.ss am/pm
-  static datetimeFormat_Short_24 = 5; // dd.MM.yyyy HH:mm.ss
-  static datetimeFormat_Short_12 = 6; // dd.MM.yyyy hh:mm.ss am/pm
-  static datetimeFormat_Long_24 = 7; // ddd, dd.MM.yyyy HH:mm.ss 
-  static datetimeFormat_Long_12 = 8; // ddd, dd.MM.yyyy hh:mm.ss am/pm
+  // https://www.codecademy.com/resources/docs/javascript/dates/toLocaleTimeString
+
+  // dd.MM.yyyy
+  static format_DateShort = 1;
+  // Mi., dd. Dez. yyyy
+  static format_DateMiddle = 2;
+  // Mittwoch, dd. Dezember yyyy
+  static format_DateLong = 3;
+
+  // 23:MM:ss
+  static format_Time24h = 4;
+  // 11:MM:ss  AM/PM
+  static format_Time12h = 5;
+
+  // dd.MM.yyyy 23:MM:ss
+  static format_DateShort_Time24h = 6;
+  // dd.MM.yyyy 11:MM:ss  AM/PM
+  static format_DateShort_Time12h = 7;
+
+  // Mi., dd. Dez. yyyy 23:MM:ss
+  static format_DateMiddle_Time24h = 8;
+  // Mi., dd. Dez. yyyy 11:MM:ss  AM/PM
+  static format_DateMiddle_Time12h = 9;
+
+  // Mittwoch, dd. Dezember yyyy
+  static format_DateLong_Time24h = 10;
+  // Mittwoch, dd. Dezember yyyy 11:MM:ss  AM/PM
+  static format_DateLong_Time12h = 11;
+
+  static formatDateTime(date, format, localization)
+  {
+    // Format the date
+    let dateText = "";
+    let optionsDate = [];
+    if (format === this.format_DateShort ||
+      format === this.format_DateShort_Time24h ||
+      format === this.format_DateShort_Time12h)
+    {
+      // dd.MM.yyyy
+      optionsDate = { month: "2-digit", day: "2-digit", year: "numeric", };
+      dateText = date.toLocaleDateString(localization, optionsDate);
+    }
+    else 
+    if (format === this.format_DateMiddle ||
+      format === this.format_DateMiddle_Time24h ||
+      format === this.format_DateMiddle_Time12h)
+    {
+      // Mi., dd. Dez. yyyy
+      optionsDate = { weekday: "short", month: "short", day: "2-digit", year: "numeric", };
+      dateText = date.toLocaleDateString(localization, optionsDate);
+    }
+    else 
+    if (format === this.format_DateLong ||
+      format === this.format_DateLong_Time24h ||
+      format === this.format_DateLong_Time12h)
+    {
+      // Mittwoch, dd. Dezember yyyy
+      optionsDate = { weekday: "long", month: "long", day: "2-digit", year: "numeric", };
+      dateText = date.toLocaleDateString(localization, optionsDate);
+    }
+
+    // Format the time
+    let timeText = "";
+    let optionsTime = [];
+    if (format === this.format_Time24h ||
+      format === this.format_DateShort_Time24h ||
+      format === this.format_DateMiddle_Time24h ||
+      format === this.format_DateLong_Time24h)
+    {
+      // 23:MM:ss
+      optionsTime = { hour12: false, hour: "2-digit", minute: "2-digit", second: "2-digit", };
+      timeText += date.toLocaleTimeString(localization, optionsTime);
+    }
+    else 
+    if (format === this.format_Time12h ||
+      format === this.format_DateShort_Time12h ||
+      format === this.format_DateMiddle_Time12h ||
+      format === this.format_DateLong_Time12h)
+    {
+      // 11:MM:ss AM/PM
+      optionsTime = { hour12: false, hour: "2-digit", minute: "2-digit", second: "2-digit", };
+      timeText += date.toLocaleTimeString(localization, optionsTime);
+    }
+
+    // now combine date and time
+    const finalText = 
+      dateText === "" && timeText === "" ? "" :
+      dateText === "" ? timeText :
+      timeText === "" ? dateText :
+      dateText + " " + timeText;
+
+    return finalText;
+  }
 
 }
 

@@ -127,7 +127,7 @@ const headersWaldo = [
     maxWidth: 120,
     editType: 'date',
     dataFieldName: 'birthday',
-    dateFormat: IConst.datetimeFormat_Short,
+    datetimeFormat: IConst.format_DateShort,
     horizontalAlign: 'center',
     hasHeaderMenu: true,
   },
@@ -208,10 +208,11 @@ const headersWaldo = [
     isVisible: true,
     isSortable: true,
     defaultSorting: 'asc',
-    width: 180,
-    minWidth: 100,
+    width: 260,
+    minWidth: 150,
     maxWidth: 320,
     editType: 'textfieldmultiline',
+    textWrap: false,
     dataFieldName: 'address',
     horizontalAlign: 'left',
     hasHeaderMenu: true,
@@ -263,19 +264,19 @@ const headersWaldo = [
     maxWidth: 320,
     editType: 'chip',
     chipList: [
-      { id: 1, label: 'open', color: '#F3F3F3', icon: imgChipStatusLightGrey, },
-      { id: 2, label: 'new', color: '#FFFFBB', icon: imgChipStatusYellow, },
-      { id: 3, label: 'invited', color: '#FFE1BF', icon: imgChipStatusOrange, },
-      { id: 4, label: 'surgery', color: '#FFBBFF', icon: imgChipStatusPurple, },
-      { id: 5, label: 'visited', color: '#BBFFFF', icon: imgChipStatusTurqoise, },
-      { id: 6, label: 'investigated', color: '#BBBBFF', icon: imgChipStatusBlue, },
-      { id: 7, label: 'all ok', color: '#BBFFBB', icon: imgChipStatusGreen, },
-      { id: 8, label: 'danger', color: '#FFBBBB', icon: imgChipStatusRed, },
+      { id: 1, label: 'open',    color: '#F3F3F3', colorHover: '#F5F5F5', icon: imgChipStatusLightGrey, },
+      { id: 2, label: 'new',     color: '#FFFFBB', colorHover: '#FFFF99', icon: imgChipStatusYellow, },
+      { id: 3, label: 'invited', color: '#FFE1BF', colorHover: '#FFDFC1', icon: imgChipStatusOrange, },
+      { id: 4, label: 'surgery', color: '#FFBBFF', colorHover: '#99BB99', icon: imgChipStatusPurple, },
+      { id: 5, label: 'visited', color: '#BBFFFF', colorHover: '#99FFFF', icon: imgChipStatusTurqoise, },
+      { id: 6, label: 'invest.', color: '#BBBBFF', colorHover: '#9999FF', icon: imgChipStatusBlue, },
+      { id: 7, label: 'all ok',  color: '#BBFFBB', colorHover: '#99FF99', icon: imgChipStatusGreen, },
+      { id: 8, label: 'danger',  color: '#FFBBBB', colorHover: '#FF9999', icon: imgChipStatusRed, },
     ],
     chipWidth: 80,
     chipIconWidth: 32,
     dataFieldName: 'chipstate',
-    horizontalAlign: 'right',
+    horizontalAlign: 'center',
     hasHeaderMenu: false,
   },
   {
@@ -287,13 +288,13 @@ const headersWaldo = [
     isVisible: true,
     isSortable: true,
     defaultSorting: 'asc',
-    width: 190,
+    width: 290,
     minWidth: 190,
-    maxWidth: 320,
+    maxWidth: 420,
     editType: 'date',
-    dateFormat: IConst.datetimeFormat_Short,
+    datetimeFormat: IConst.format_DateMiddle_Time12h,
     dataFieldName: 'lastUpdate',
-    horizontalAlign: 'center',
+    horizontalAlign: 'left',
     hasHeaderMenu: true,
   },
   {
@@ -305,14 +306,13 @@ const headersWaldo = [
     isVisible: true,
     isSortable: true,
     defaultSorting: 'asc',
-    width: 190,
+    width: 290,
     minWidth: 190,
-    maxWidth: 320,
+    maxWidth: 420,
     editType: 'date',
-    dateLocalization: IConst.datetimeLocalization,
-    dateFormat: IConst.datetimeFormat_Long,
+    datetimeFormat: IConst.format_DateLong_Time24h,
     dataFieldName: 'lastUpdate2',
-    horizontalAlign: 'center',
+    horizontalAlign: 'left',
     hasHeaderMenu: true,
   },
   {
@@ -487,12 +487,14 @@ const headersWaldo = [
   },
 ];
 
+/*
 headersWaldo[3].isVisible = false;
 headersWaldo[4].isVisible = false;
 headersWaldo[6].isVisible = false;
 headersWaldo[7].isVisible = false;
 headersWaldo[8].isVisible = false;
 headersWaldo[9].isVisible = false;
+*/
 
 // data Waldo
 const patients = [];
@@ -542,19 +544,22 @@ const App = ()=> {
     alwaysActivateEditing: false,
 
     // header content 
-    headerVerticalAlign: 'top',
+    headerVerticalAlign: 'center',
     initialHeaderHeight: 55,
-    initialRowHeight: 31,
+    initialRowHeight: 21,
     initialRowHeightReadonly: 21,
 
-    // rows settings
-    rowsVerticalAlign: 'top',
+    // rows settings (top, middle, bottom)
+    rowsVerticalAlign: 'middle',
+    resizerBackgroundColor: '#8888FF',
+    iconImageSize: 30,
 
     // dialog
     dialogName: 'InselDialog_MainData',
 
     // button options
     buttonSizeOnRows: 32,
+    buttonSizeOnRowsHover: 38,
     buttonSizeMain: 40,
     hasButtonNewRow: true,
     hasButtonSaveAll: true,
@@ -1456,7 +1461,12 @@ const App = ()=> {
   }
   
   return(
-    <Grid container >
+    <Grid 
+      container 
+      style={{
+        width: '100%' 
+      }}
+      >
 
        {/*
 
@@ -1495,7 +1505,12 @@ const App = ()=> {
       </Grid>
 */}      
       
-      <Grid item >
+      <Grid 
+        item
+        style={{
+          width: '100%' 
+        }}
+      >
         <div style={{ paddingTop: 30, fontSize: 24, fontWeight: 'bold'}}>Table with own components</div>
         <ITable 
           settings={settings}

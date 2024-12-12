@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes, { func } from 'prop-types';
 import { withStyles } from 'tss-react/mui';
 
-
 import {
   IconButton,
   Paper,
@@ -13,32 +12,22 @@ import {
   TableFooter,
   TablePagination,
   TableRow,
-  Typography,
-  Checkbox,
-  Dialog, 
-  DialogActions, 
-  DialogContent, 
-  DialogTitle, 
-  Button, 
-  TextField, 
-  FormControlLabel 
 } from '@mui/material';
 
-import 'dayjs/locale/de';
+//import 'dayjs/locale/de';
 import 'react-resizable/css/styles.css';
 
+import { useStyles } from './styles';
 import ITableHeader from './ITableHeader';
 import ITableRow from './ITableRow'; 
 import IConst from './IConst';
 import IButtonDialog from './IButtonDialog';
 import IDialog_MainData from './IDialog_MainData';
-import { useStyles } from './styles';
 
 const avaiableDialogs = {
   dialog_MainData: IDialog_MainData,
   //dialog1: ComponentB,
 };
-
 
 class ITable extends React.Component {
   constructor(props) {
@@ -89,6 +78,9 @@ class ITable extends React.Component {
       headerWidthList: this.setHeaderWidthList(),
       rowInfoList: this.setRowInfoList(),
     };
+
+    // TODO
+    //this.checkHeaders();
   }
 
   // ---------------------------------------------------------------------------------------
@@ -131,6 +123,36 @@ class ITable extends React.Component {
       newlist.push(obj);
     }
     return newlist;
+  }
+
+  checkHeaders()
+  {
+    for(let h = 0; h < this.state.headers.lenght; h++) 
+    {
+      // databaseField:
+      /*
+      if (!this.state.headers[h].headerTitle) this.state.headers[h].headerTitle = "";
+      if (!this.state.headers[h].isResizable) this.state.headers[h].isResizable = true;
+      if (!this.state.headers[h].isEditable) this.state.headers[h].isEditable = false;
+      if (!this.state.headers[h].isRequired) this.state.headers[h].isRequired = false;
+      if (!this.state.headers[h].isVisible) this.state.headers[h].isVisible = true;
+      if (!this.state.headers[h].isSortable) this.state.headers[h].isSortable = true;
+      if (!this.state.headers[h].defaultSorting) this.state.headers[h].defaultSorting = "asc";
+      if (!this.state.headers[h].width) this.state.headers[h].width = 160;
+      if (!this.state.headers[h].minWidth) this.state.headers[h].minWidth = 80;
+      if (!this.state.headers[h].maxWidth) this.state.headers[h].maxWidth = 320;
+      if (!this.state.headers[h].textMaxLength) this.state.headers[h].textMaxLength = 255;
+      if (!this.state.headers[h].numberMinValue) this.state.headers[h].numberMinValue = 0;
+      if (!this.state.headers[h].numberMaxValue) this.state.headers[h].numberMaxValue = 100;
+      if (!this.state.headers[h].decimalCount) this.state.headers[h].decimalCount = 3;
+      if (!this.state.headers[h].editType) this.state.headers[h].editType = "error";
+      if (!this.state.headers[h].defaultValue) this.state.headers[h].defaultValue = "";
+      if (!this.state.headers[h].dataFieldName) this.state.headers[h].dataFieldName = "";
+      if (!this.state.headers[h].horizontalAlign) this.state.headers[h].horizontalAlign = "left";
+      if (!this.state.headers[h].dropdownSelection) this.state.headers[h].dropdownSelection = [];
+      if (!this.state.headers[h].hasHeaderMenu) this.state.headers[h].hasHeaderMenu = false;
+      */
+    }
   }
 
   // ---------------------------------------------------------------------------------------
@@ -385,9 +407,13 @@ class ITable extends React.Component {
         { 
           const isDecimal = eType === IConst.editType_Decimal;
           const isPrimaryKey = eType === IConst.editType_PrimaryKey;
+          const isDate = eType === IConst.editType_Date;
+          const datetimeformat = this.props.headers[h].datetimeFormat;
           let value = this.state.data[rowIndex][this.props.headers[h].dataFieldName];
           if (isDecimal) value = value.toFixed(this.props.headers[h].decimalCount);
           if (isPrimaryKey) value = this.state.data[rowIndex][this.props.primaryKey];
+          if (isDate) value = IConst.formatDateTime(value, datetimeformat, IConst.datetimeLocalization);
+          value = value.replace("\n", "|");
           txt = txt + value + "\t";
         }
       }
@@ -866,16 +892,41 @@ class ITable extends React.Component {
     const element = e.target;
     element.style.backgroundColor = IConst.colorResizerBackground;
 
+    console.log("handleMouseDownRowEW start colindex, cellWidth", colindex, cellWidth);
 
     const onMouseMoveRowEW = (e) => 
     {
       const newwidth = e.clientX - mouseStart + cellWidth;
+      if (newwidth > this.state.headers[colindex].maxWidth &&
+          newwidth !== this.state.headers[colindex].maxWidth)
+      {
+        const newList2 = this.state.headers;
+        newList2[colindex].width = this.state.headers[colindex].maxWidth;
+        this.setState({headers : newList2});
+        console.log("onMouseUpRowEW MAXWIDTH colindex width", colindex, this.state.headers[colindex].maxWidth);
+      }
+      else
+      if (newwidth < this.state.headers[colindex].minWidth &&
+        newwidth !== this.state.headers[colindex].minWidth)
+      {
+        const newList2 = this.state.headers;
+        newList2[colindex].width = this.state.headers[colindex].minWidth;
+        this.setState({headers : newList2});
+        console.log("onMouseUpRowEW MINWIDTH colindex width", colindex, this.state.headers[colindex].minWidth);
+      }
+      else
       if (newwidth < this.state.headers[colindex].maxWidth &&
           newwidth > this.state.headers[colindex].minWidth)
       {
         const newList2 = this.state.headers;
-        newList2[index].width = newwidth;
+        newList2[colindex].width = newwidth;
         this.setState({headers : newList2});
+
+        console.log("onMouseUpRowEW resized colindex newwidth", colindex, newwidth);
+      }
+      else 
+      {
+        console.log("onMouseUpRowEW no resizing possible");
       }
     }
 
@@ -885,6 +936,9 @@ class ITable extends React.Component {
       document.removeEventListener('mouseup', onMouseUpRowEW);
       document.body.style.userSelect = "auto"; 
       element.style.backgroundColor = 'transparent';
+
+      console.log("onMouseUpRowEW end colindex width", colindex, this.state.headers[colindex].width);
+
     };    
 
     document.addEventListener('mousemove', onMouseMoveRowEW);
@@ -949,20 +1003,17 @@ class ITable extends React.Component {
                 backgroundColor: '#555',
               },
             },
-          }}>
+          }}
+        >
 
           <Table 
             className={classes.table} 
             stickyHeader
-            width={600}
-            style={{
-              height: '800px',
-              //width: '800px'
+            sx={{ 
+              //tableLayout: 'fixed', 
+              width: '1800px',
+              //overflowX: 'auto',
             }}
-            sx = {{
-              overflowX: 'auto',
-            }}
-
           >
             <ITableHeader
               //className={classes.table_head_row}
@@ -975,7 +1026,9 @@ class ITable extends React.Component {
               HideColumn={(headerIndex) => this.HideColumn(headerIndex)}
             >
             </ITableHeader>
-            <TableBody className={classes.table_body_row}>
+            <TableBody 
+              className={classes.table_body_row}
+              >
               {data.map((row, rowIndex) => {
                 // we use the old values for undoing changes
                 const rowid = row[this.props.primaryKey];

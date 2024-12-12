@@ -62,7 +62,8 @@ export default function IFieldDropDown (props) {
     return (
       <div 
         style={{ 
-          padding: '5px 0px', width: '100%', 
+          padding: '5px 0px', 
+          width: dropdownWidth, 
           textAlign: props.header.horizontalAlign,
         }}
       >{showtext}</div>

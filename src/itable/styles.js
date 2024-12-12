@@ -144,10 +144,11 @@ export const useStyles = () => ({
     fontSize: '1rem',
     letterSpacing: '0rem',
     color: 'black',
-    display: 'flex', 
-    justifyContent: 'top',
+    //display: 'flex', 
+    //justifyContent: 'top',
     height: '100%', 
-    padding: '5px',
+    //padding: '5px 5px 0px 5px',
+    margin: '5px 5px 0px 5px',
   },
   resizerNS: {
     marginBottom: 'auto',
@@ -156,16 +157,16 @@ export const useStyles = () => ({
     width: '100%',
     height: '5px',
     paddingBottom: '3px',
-    backgroundColor: 'transparent',
+    //backgroundColor: 'transparent',
     borderBottomColor: 'black',
     borderBottomStyle: 'solid',
     borderBottomWidth: 1,
     cursor: 'row-resize',
     margin: '0px', 
     padding: '0px',
-    "&:hover": {
-      backgroundColor: '#8888FF',
-    }
+    //"&:hover": {
+    //  backgroundColor: '#8888FF',
+    //}
   },
 
   // cell resizer EW

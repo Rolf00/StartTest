@@ -42,10 +42,12 @@ export default function IFieldRowEditButton (props) {
   }    
 
   const imgWidth = props.settings.buttonSizeOnRows;
-  const btnHoverWidth = imgWidth + 18;
+  const btnHoverWidth = props.settings.buttonSizeOnRowsHover;
+  ;
 
   const icon = 
-    props.header.editType === IConst.editType_ButtonEditRow ? IConst.imgEditButton :
+    props.header.editType === IConst.editType_ButtonEditRow ? 
+      editing ? IConst.imgEditStop : IConst.imgEditButton :
     props.header.editType === IConst.editType_ButtonEdit ? IConst.imgEditButton :
     props.header.editType === IConst.editType_ButtonSave ? IConst.imgSaveButton :
     props.header.editType === IConst.editType_ButtonUndo ? IConst.imgUndoButton :

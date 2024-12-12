@@ -35,6 +35,8 @@ class ITableRow  extends React.Component {
     this.state = { 
       rowEditing: false,
       rowHeight: rowInfoList[rowIndex].height,
+      isHeightResizing: false,
+      resiszigInAction: false,
       row: row 
     };
   }
@@ -74,6 +76,8 @@ class ITableRow  extends React.Component {
     let oldRowHeight = this.props.rowInfoList[this.props.rowIndex].height;
     const element = e.target;
     element.style.backgroundColor = IConst.colorResizerBackground;
+    this.setState({isHeightResizing: true});
+    this.state.resiszigInAction = true;
 
     const onMouseMoveRowNS = (e) => {
       const newheight = e.clientY - mouseStart + oldRowHeight;
@@ -86,11 +90,24 @@ class ITableRow  extends React.Component {
       document.removeEventListener('mouseup', onMouseUpRowNS);
       document.body.style.userSelect = "auto";  
       element.style.backgroundColor = 'transparent';
+      this.state.resiszigInAction = false;
+      this.setState({isHeightResizing: false});
     };    
 
     document.addEventListener('mousemove', onMouseMoveRowNS);
     document.addEventListener('mouseup', onMouseUpRowNS);  
     document.body.style.userSelect = "none";  
+  }
+
+  handleMouseEnterNS()
+  {
+    this.setState({isHeightResizing: true});
+  }
+
+  handleMouseLeaveNS()
+  {
+    if (!this.state.resiszigInAction)
+      this.setState({isHeightResizing: false});
   }
 
   handleEditModalDialog()
@@ -267,7 +284,11 @@ class ITableRow  extends React.Component {
             <ITableCellHeightResizer
               height={rowHeight}
               setHeight={(height) => this.setState({rowHeight: height})}
+              isHeightResizing={this.state.isHeightResizing}
+              resizerBackgroundColor={this.props.settings.resizerBackgroundColor}
               handleMouseDownRowNS={(e)=>this.handleMouseDownRowNS(e)}
+              handleMouseEnterNS={(e)=>this.handleMouseEnterNS(e)}
+              handleMouseLeaveNS={(e)=>this.handleMouseLeaveNS(e)}
             >
 
               {isSelectionIcon &&
@@ -281,6 +302,7 @@ class ITableRow  extends React.Component {
               {isTextfield && 
               <IFieldText
                 editing={editing}
+                rowsVerticalAlign={this.props.settings.rowsVerticalAlign}
                 value={value}
                 header={header}
                 rowid={rowid}
@@ -290,6 +312,7 @@ class ITableRow  extends React.Component {
               {isNumber &&
               <IFieldNumber
                 editing={editing}
+                rowsVerticalAlign={this.props.settings.rowsVerticalAlign}
                 value={value}
                 header={header}
                 rowid={rowid}
@@ -299,6 +322,7 @@ class ITableRow  extends React.Component {
               {isDropdown &&
               <IFieldDropDown
                 editing={editing}
+                rowsVerticalAlign={this.props.settings.rowsVerticalAlign}
                 value={value}
                 header={header}
                 rowid={rowid}
@@ -308,6 +332,7 @@ class ITableRow  extends React.Component {
               {isCheckbox &&
               <IFieldCheckbox
                 editing={editing}
+                rowsVerticalAlign={this.props.settings.rowsVerticalAlign}
                 value={value}
                 settings={this.props.settings}
                 header={header}
@@ -318,15 +343,18 @@ class ITableRow  extends React.Component {
               {isDate &&
               <IFieldDate
                 editing={editing}
+                rowsVerticalAlign={this.props.settings.rowsVerticalAlign}
                 value={value}
                 header={header}
                 rowid={rowid}
+                localization={this.props.settings.localization}
                 handleDataChange= {e => this.handleDataChange(e, field)}
               />}
 
               {isChip &&
               <IFieldChipMenu
                 editing={editing}
+                rowsVerticalAlign={this.props.settings.rowsVerticalAlign}
                 value={value}
                 header={header}
                 rowid={rowid}
@@ -335,6 +363,7 @@ class ITableRow  extends React.Component {
 
               {isSpecialButton &&
               <IFieldSpecialButton
+                rowsVerticalAlign={this.props.settings.rowsVerticalAlign}
                 header = {header}
                 handleSpecialButtonClick = {() => this.props.handleSpecialButtonClick(rowid, header.dataFieldName)}
               />}
