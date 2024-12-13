@@ -30,6 +30,17 @@ export default function IFieldSpecialButton (props) {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
+    <div
+      style={{ 
+        padding: '5px 0px', 
+        width: props.width, 
+        height: '100%',
+        display: 'flex',
+        flexGrow: 1,
+        justifyContent: props.horizontalAlign, 
+        alignItems: props.verticalAlign,
+      }}
+    >
     <IconButton
       onClick={() => props.handleSpecialButtonClick(rowid, dataFieldName)}
       onMouseEnter={() => setIsHovered(true)}
@@ -55,5 +66,6 @@ export default function IFieldSpecialButton (props) {
           padding: '0px',
         }} 
       />{caption}</IconButton>
-);
+    </div>
+  );
 }

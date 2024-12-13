@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Grid } from '@mui/material';
 
 // => icons für chip erstellen
-// #FFFF55 gelb
 // #FF7F00 orange
 // #FF0000 red
 // #FF00FF purple
@@ -259,8 +258,8 @@ const headersWaldo = [
     isRequired: true,
     isVisible: true,
     isSortable: true,
-    width: 100,
-    minWidth: 160,
+    width: 120,
+    minWidth: 100,
     maxWidth: 320,
     editType: 'chip',
     chipList: [
@@ -273,7 +272,7 @@ const headersWaldo = [
       { id: 7, label: 'all ok',  color: '#BBFFBB', colorHover: '#99FF99', icon: imgChipStatusGreen, },
       { id: 8, label: 'danger',  color: '#FFBBBB', colorHover: '#FF9999', icon: imgChipStatusRed, },
     ],
-    chipWidth: 80,
+    chipWidth: 100,
     chipIconWidth: 32,
     dataFieldName: 'chipstate',
     horizontalAlign: 'center',
@@ -324,15 +323,15 @@ const headersWaldo = [
     isVisible: true,
     isSortable: true,
     defaultSorting: 'asc',
-    width: 140,
-    minWidth: 140,
+    width: 150,
+    minWidth: 120,
     maxWidth: 320,
     editType: 'button',
     button: { 
-      caption: "View patient",  
+      caption: "View",  
       icon: imgPerson48, 
-      iconWidth: 32,
-      buttonHeight: 44,
+      iconWidth: 25,
+      buttonHeight: 30,
       buttonBackgroundColor: "#DDDDFF", 
       buttonBackgroundHover: "#AAAAFF", 
     },
@@ -533,9 +532,11 @@ patients[2].address = patients[2].address + "\nNew Line address 2";
 
 
 const App = ()=> {
+  /*
   const [value,setExternalValue] = React.useState('hello world')
   const parentMessage = "Hello from Parent!";
   const user = { name: "John", age: 30 };
+  */
 
 
   const settings = 
@@ -544,13 +545,13 @@ const App = ()=> {
     alwaysActivateEditing: false,
 
     // header content 
-    headerVerticalAlign: 'center',
+    headerVerticalAlign: IConst.verticalAlign_Middle,
     initialHeaderHeight: 55,
-    initialRowHeight: 21,
-    initialRowHeightReadonly: 21,
+    initialRowHeight: 27,
+    initialRowHeightReadonly: 27,
 
     // rows settings (top, middle, bottom)
-    rowsVerticalAlign: 'middle',
+    rowsVerticalAlign: IConst.verticalAlign_Middle,
     resizerBackgroundColor: '#8888FF',
     iconImageSize: 30,
 

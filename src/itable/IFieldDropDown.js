@@ -4,10 +4,11 @@ import TextField from '@mui/material/TextField';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 
+import IFieldReadOnly from './IFieldReadOnly';
+
 export default function IFieldDropDown (props) {
 
   const editing = props.editing;
-  const rowid = props.rowid;
   const value = props.value;
   const fieldname = props.header.dataFieldName
   const dropdownList = props.header.dropdownSelection;
@@ -23,15 +24,24 @@ export default function IFieldDropDown (props) {
   if (editing)
   {
     return (
+
+      <div 
+      style={{ 
+        padding: '5px 0px', 
+        width: dropdownWidth, 
+        height: '100%',
+        display: 'flex',
+        flexGrow: 1,
+        justifyContent: props.horizontalAlign, 
+        alignItems: props.verticalAlign,
+      }}
+      >    
       <FormControl 
         style={{ 
-          //width: {dropdownWidth}, 
-          //width: '100%', 
+          width: {dropdownWidth}, 
+          //width: '300px', 
         }} >
         <Select
-          //width={dropdownWidth}
-          width={'100%'}
-
           disabled={disabled}
           value={value}
           onChange={e => handleChange(e)}
@@ -48,6 +58,7 @@ export default function IFieldDropDown (props) {
         })}
         </Select> 
       </FormControl>
+      </div>
     );
   }
   else
@@ -60,13 +71,12 @@ export default function IFieldDropDown (props) {
     catch {}
     
     return (
-      <div 
-        style={{ 
-          padding: '5px 0px', 
-          width: dropdownWidth, 
-          textAlign: props.header.horizontalAlign,
-        }}
-      >{showtext}</div>
+      <IFieldReadOnly
+        width={dropdownWidth}
+        verticalAlign={props.verticalAlign} 
+        horizontalAlign={props.horizontalAlign}
+        value={showtext}
+      />
     );
   }
 

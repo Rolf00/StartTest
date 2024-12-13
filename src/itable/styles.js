@@ -144,11 +144,8 @@ export const useStyles = () => ({
     fontSize: '1rem',
     letterSpacing: '0rem',
     color: 'black',
-    //display: 'flex', 
-    //justifyContent: 'top',
     height: '100%', 
-    //padding: '5px 5px 0px 5px',
-    margin: '5px 5px 0px 5px',
+    margin: '0px 5px',
   },
   resizerNS: {
     marginBottom: 'auto',
@@ -196,6 +193,7 @@ export const useStyles = () => ({
     padding: '5px',
   },
   resizerEW: {
+    display: 'flex',
     width: '5px',
     padding: '0px',
     backgroundColor: 'transparent',

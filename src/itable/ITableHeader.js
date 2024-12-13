@@ -5,7 +5,7 @@ import { withStyles } from 'tss-react/mui';
 import {
   TableHead,
   TableRow,
-  IconButton
+  IconButton,
 } from '@mui/material';
 
 import IConst from './IConst';
@@ -29,6 +29,7 @@ class ITableHeader extends React.Component {
   }
 
   // functions
+  /*
   setHeaderWidthList()
   {
     let newlist = [];
@@ -38,6 +39,7 @@ class ITableHeader extends React.Component {
     }
     return newlist;
   }
+    */
 
   render()
   {
@@ -55,7 +57,7 @@ class ITableHeader extends React.Component {
     this.state = {
       mainChecked: mainChecked,
       mainIndeterminated: mainIndeterminated,
-      headerWidthList: this.setHeaderWidthList(),
+      //headerWidthList: this.setHeaderWidthList(),
     }
 
     return (
@@ -80,7 +82,8 @@ class ITableHeader extends React.Component {
 
             const isResizable = header.isResizable;
             const headerMinWidth = header.minWidth;
-            const headerHorizontalAlign = header.horizontalAlign;
+            //const headerHorizontalAlign = header.horizontalAlign;
+            //const headerVerticalAlign = settings.rowsVerticalAlign;
             const newheaderWidth = 
               isSelectionHeader || isButtonHeader  ? header.width + 8 : header.width;
             const headerRowHeight = settings.initialHeaderHeight;
@@ -93,6 +96,9 @@ class ITableHeader extends React.Component {
             // only show this column when it's defined as visible
             const visible = header.isVisible;
 
+            const horizontalAlign = IConst.getHorizontalAlign(header.horizontalAlign);
+            const verticalAlign = IConst.getVerticalAlign(settings.rowsVerticalAlign);
+
             if (visible) {
               return (
                 <ITableCellWidthResizer
@@ -101,13 +107,12 @@ class ITableHeader extends React.Component {
                   notResizable={!isResizable}
                   width={newheaderWidth}
                   minWidth={headerMinWidth}
-                  horizontalAlign={headerHorizontalAlign}
-                  verticalAlign={'bottom'}
+                  horizontalAlign={horizontalAlign}
+                  verticalAlign={verticalAlign}
                   height= {headerRowHeight}
                   setWidth={(colwidth) => this.setState({colwidth: colwidth})}
                   handleMouseDownRowEW={(e, headerIndex)=>this.props.handleMouseDownRowEW(e, headerIndex)}
                   hasHeaderMenu={hasHeaderMenu}
-                  resizerBackgroundColor={this.props.settings.resizerEWBackgroundColor}
                   HideColumn={() => this.props.HideColumn(headerIndex)}
                 >
                   {isSelectionHeader &&
@@ -126,7 +131,20 @@ class ITableHeader extends React.Component {
                       />
                   </IconButton>
                   }
-                  {headerTitle}
+                  {!isSelectionHeader &&
+                    <div
+                      style={{ 
+                        padding: '0px 0px', 
+                        width: '100%', 
+                        height: '100%',
+                        display: 'flex',
+                        flexGrow: 1,
+                        justifyContent: horizontalAlign, 
+                        alignItems: verticalAlign,
+                      }}
+                    >{headerTitle}
+                    </div>
+                  }
                 </ITableCellWidthResizer>
               );
             }

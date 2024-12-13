@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import TextField from '@mui/material/TextField';
 import IConst from './IConst';
+import IFieldReadOnly from './IFieldReadOnly';
 
 export default function IFieldText (props) {
 
@@ -30,7 +31,21 @@ export default function IFieldText (props) {
 
   if (editing)
   {
+
+
     return (
+
+      <div 
+      style={{ 
+        padding: '5px 0px', 
+        width: props.width, 
+        height: '100%',
+        display: 'flex',
+        flexGrow: 1,
+        justifyContent: props.horizontalAlign, 
+        alignItems: props.verticalAlign,
+      }}
+      >    
       <TextField
         //id="outlined"
         disabled={disabled}
@@ -40,12 +55,6 @@ export default function IFieldText (props) {
         style={{ 
           textAlign: horizontalAlign, 
           width: width, 
-
-          display: "table-cell",
-          verticalAlign: "middle",
-          height: '100%',
-          margin: "50% 0px",          
-
         }}
         inputProps={{
           sx: {
@@ -55,28 +64,23 @@ export default function IFieldText (props) {
         }}
         onChange={(event) => handleChange(event)}
       />
+      </div>
     );
   }
   else
   {
     let lines = [];
-    if (multiline) 
-    {
-      lines = value.split("\n");
-    }
+    if (multiline) { lines = value.split("\n"); }
 
     if (lines.length === 0 || props.header.textWrap === false)
     {
       return (
-        <div style={{ 
-          padding: '5px 0px', 
-          width: width, 
-          //height: '100%',
-          //lineHeight: '100%',
-          //margin: 'auto 0px',
-          textAlign: props.header.horizontalAlign,
-        }}
-        >{value}</div>
+        <IFieldReadOnly
+          width={width}
+          verticalAlign={props.verticalAlign} 
+          horizontalAlign={props.horizontalAlign}
+          value={value}
+        />
       );
     }
     else
@@ -85,16 +89,17 @@ export default function IFieldText (props) {
         <div style={{ 
           padding: '5px 0px', 
           width: width, 
-          textAlign: props.header.horizontalAlign,
-          display: "table-cell",
-          verticalAlign: props.rowsVerticalAlign,
+          display: 'flex',
+          flexGrow: 1,
+          justifyContent: props.horizontalAlign, 
+          alignItems: props.verticalAlign,
         }}>
         {lines.map((line) => {
           return(
             <div style={{ 
               padding: '0px', 
               width: width, 
-              textAlign: props.header.horizontalAlign,
+              textAlign: props.singleHorizontalAlign,
             }}>{line}</div>
           );
         })}

@@ -34,6 +34,7 @@ class ITable extends React.Component {
     super(props);
 
     const {
+      classes,
       settings, 
       headers, 
       primaryKey,
@@ -66,6 +67,8 @@ class ITable extends React.Component {
       // props for edit dialog
       openEditDialog: false,
       selectedRow: null,
+      isHoveredOrResizing: false,
+
 
       // enabling / disabling buttons SAVE ALL and UNDO ALL
       mainButtonsDisabled: true,
@@ -75,7 +78,7 @@ class ITable extends React.Component {
       headerHeight: 35,
       minRowHeight: 29,
 
-      headerWidthList: this.setHeaderWidthList(),
+      //headerWidthList: this.setHeaderWidthList(),
       rowInfoList: this.setRowInfoList(),
     };
 
@@ -122,6 +125,9 @@ class ITable extends React.Component {
       obj['selected'] = false; 
       newlist.push(obj);
     }
+
+
+
     return newlist;
   }
 
@@ -208,16 +214,11 @@ class ITable extends React.Component {
   {
     // button UNDO for one row was clicked
     const index = this.getRowIndex(rowid);
-
-    console.log("rowid", rowid);
-
     if (index === -1) return;
     const oldState = this.state.rowInfoList[index].state;
 
     if (oldState === IConst.rowStateEdited)
     {
-      //console.log("handleUndoRow start props", this.props.data); 
-
       // row was edited, thus we restore the old values
       this.state.rowInfoList[index].state = IConst.rowStateUnchanged;
 
@@ -448,9 +449,6 @@ class ITable extends React.Component {
   {
     // update the buttons SAVE ALL, UNDO ALL
     const mainEnabled = this.getMainButtonsEnabled();
-
-    console.log("setMainButtonState mainEnabled", );
-
     this.setState({mainButtonsDisabled: mainEnabled });
   }
 
@@ -883,16 +881,16 @@ class ITable extends React.Component {
   // ---------------------------------------------------------------------------------------
   // resizing row heights and column widths events
 
+
   handleMouseDownRowEW(e, index)
   {
     // resizing column width
     const mouseStart = e.clientX;
     const colindex = index;
     const cellWidth = this.state.headers[colindex].width;
+    
     const element = e.target;
     element.style.backgroundColor = IConst.colorResizerBackground;
-
-    console.log("handleMouseDownRowEW start colindex, cellWidth", colindex, cellWidth);
 
     const onMouseMoveRowEW = (e) => 
     {
@@ -903,7 +901,6 @@ class ITable extends React.Component {
         const newList2 = this.state.headers;
         newList2[colindex].width = this.state.headers[colindex].maxWidth;
         this.setState({headers : newList2});
-        console.log("onMouseUpRowEW MAXWIDTH colindex width", colindex, this.state.headers[colindex].maxWidth);
       }
       else
       if (newwidth < this.state.headers[colindex].minWidth &&
@@ -912,7 +909,6 @@ class ITable extends React.Component {
         const newList2 = this.state.headers;
         newList2[colindex].width = this.state.headers[colindex].minWidth;
         this.setState({headers : newList2});
-        console.log("onMouseUpRowEW MINWIDTH colindex width", colindex, this.state.headers[colindex].minWidth);
       }
       else
       if (newwidth < this.state.headers[colindex].maxWidth &&
@@ -921,12 +917,10 @@ class ITable extends React.Component {
         const newList2 = this.state.headers;
         newList2[colindex].width = newwidth;
         this.setState({headers : newList2});
-
-        console.log("onMouseUpRowEW resized colindex newwidth", colindex, newwidth);
       }
       else 
       {
-        console.log("onMouseUpRowEW no resizing possible");
+        //console.log("onMouseUpRowEW no resizing possible");
       }
     }
 
@@ -936,9 +930,6 @@ class ITable extends React.Component {
       document.removeEventListener('mouseup', onMouseUpRowEW);
       document.body.style.userSelect = "auto"; 
       element.style.backgroundColor = 'transparent';
-
-      console.log("onMouseUpRowEW end colindex width", colindex, this.state.headers[colindex].width);
-
     };    
 
     document.addEventListener('mousemove', onMouseMoveRowEW);
@@ -1050,8 +1041,6 @@ class ITable extends React.Component {
                     //rowInfo={thisInfo}
                     setMainButtonState={() => this.setMainButtonState()}
                     handleUndoInsertedRows={(rowIndex) => this.handleRowEditButtons(rowIndex)}
-
-                    //handleMouseDownRowNS={(e, rowid) => this.handleMouseDownRowNS(e, rowid)}
                     handleSelectionClickRow={(rowid) => this.handleSelectionClickRow(rowid)}
                     handleRowEditButtonClick={(rowid, action) => this.handleRowEditButtons(rowid, action)}
                     handleSpecialButtonClick={(rowid, field) => this.props.handleSpecialButtonClick(rowid, field)}

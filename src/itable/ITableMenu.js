@@ -5,46 +5,8 @@ import MenuItem from '@mui/material/MenuItem';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Divider from '@mui/material/Divider';
 
-// TODO
-//import ArrowDropRight from '@mui/material/ArrowDropRight';
-
 export default function InselTableMenu  (props) 
 {
-
-
-  // State to control the visibility of the main submenu and the subsubmenu
-  const [mainMenuAnchor, setMainMenuAnchor] = useState(null);
-  const [subMenuAnchor, setSubMenuAnchor] = useState(null);
-  const [subSubMenuAnchor, setSubSubMenuAnchor] = useState(null);
-
-  // Handle opening the main menu
-  const handleMainMenuOpen = (event) => {
-    setMainMenuAnchor(event.currentTarget);
-  };
-
-  const handleMainMenuClose = () => {
-    setMainMenuAnchor(null);
-  };
-
-  // Handle opening the sub-menu (on hover over last item of the main menu)
-  const handleSubMenuOpen = (event) => {
-    setSubMenuAnchor(event.currentTarget);
-  };
-
-  const handleSubMenuClose = () => {
-    setSubMenuAnchor(null);
-  };
-
-  // Handle opening the subsubmenu (on hover over the last item of the submenu)
-  const handleSubSubMenuOpen = (event) => {
-    setSubSubMenuAnchor(event.currentTarget);
-  };
-
-  const handleSubSubMenuClose = () => {
-    setSubSubMenuAnchor(null);
-  };
-  
-  /*
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -78,8 +40,6 @@ export default function InselTableMenu  (props)
     const element = open ? event.currentTarget : null;
     setAnchorManageColumns(element);
   }
-    */
-
 
   const getAllColumnsAreVisible = () =>
   {
@@ -93,8 +53,8 @@ export default function InselTableMenu  (props)
   const handleSortColumn = (sortAscending) => 
   {
     // hide the menu
-    //handleClose(); 
-    setMainMenuAnchor(null);
+    handleClose(); 
+    //setMainMenuAnchor(null);
 
     // TODO
     alert("TableMenu: ordering data is not implemented yet.")
@@ -123,8 +83,8 @@ export default function InselTableMenu  (props)
   const handleFilter = () =>
   {
     // hide the menu 
-    //handleClose(); 
-    setMainMenuAnchor(null);
+    handleClose(); 
+    //setMainMenuAnchor(null);
 
     // TODO 
     alert("Searching and filtering are not implemented yet.");
@@ -133,8 +93,7 @@ export default function InselTableMenu  (props)
   const handleHideColumn = () =>
   {
     // hide the menu 
-    setMainMenuAnchor(null);
-    //handleClose(); 
+    handleClose(); 
     props.headers[props.headerIndex].isVisible = true;
     props.HideColumn(props.headerIndex);
   }
@@ -146,60 +105,35 @@ export default function InselTableMenu  (props)
       props.headers[props.headerIndex].isVisible = true;
       // TODO hot to render headers?
     }
-  
-  // TODO
-  /*
-  const headerIndex = this.props.headerIndex;
-  const open = this.state.open;
-  const anchorEl = this.state.anchorEl;
-  const allColumnsAreVisible = false;
-  const anchorManageColumns = this.state.anchorManageColumns;
-  console.log('render',this.state.open);
-  */
 
   return (
     <div>
       <IconButton
         aria-label="more"
         id="long-button"
-        //aria-controls={open ? 'long-menu' : undefined}
-        //aria-expanded={open ? 'true' : undefined}
+        aria-controls={open ? 'long-menu' : undefined}
+        aria-expanded={open ? 'true' : undefined}
         aria-haspopup="true"
-         // onClick={(e) => handleClick(e)}
-        //onMouseEnter={(e) => handleClick(e)}
-        //onMouseLeave={(e) => handleClose(e)}
-
-        onMouseEnter={handleMainMenuOpen} 
-        onMouseLeave={handleMainMenuClose}
-
+        onClick={(e) => handleClick(e)}
       >
         <MoreVertIcon />
       </IconButton>
       <Menu
-        /*
         id="long-menu"
         MenuListProps={{
           'aria-labelledby': 'long-button',
         }}
         anchorEl={anchorEl}
         open={open}
-        onMouseLeave={(e) => handleClose(e)}
-        //onMouseEnter={() => handleHoldMenu()}
-        //onClose={() => handleClose()}
+        //onMouseLeave={(e) => handleClose(e)}
+        onClose={handleClose}
         slotProps={{
           paper: {
             style: {
               //width: '20ch',
             },
           },
-        }}*/
-          anchorEl={mainMenuAnchor}
-          open={Boolean(mainMenuAnchor)}
-          onClose={handleMainMenuClose}
-          MenuListProps={{
-            onMouseLeave: handleMainMenuClose, // Close menu when mouse leaves the submenu
-          }}
-  
+        }}
       >
 
         <MenuItem key='1' 
@@ -227,10 +161,10 @@ export default function InselTableMenu  (props)
         {/* TODO */} 
         <MenuItem 
           id="nestedMenusManageColumns"
-          //anchorEl={anchorManageColumns}
+          anchorEl={anchorManageColumns}
           disabled={getAllColumnsAreVisible()}
-          onMouseEnter={handleSubMenuOpen}
-          onMouseLeave={handleSubMenuClose}
+          //onMouseEnter={handleSubMenuOpen}
+          //onMouseLeave={handleSubMenuClose}
 
           //onMouseEnter={(e) => handleOpenCloseManageColumns(e, true)}
           //onMouseLeave={(e) => handleOpenCloseManageColumns(e, false)}      
@@ -257,9 +191,9 @@ export default function InselTableMenu  (props)
       </Menu>
 
       <Menu
-anchorEl={subMenuAnchor}
-open={Boolean(subMenuAnchor)}
-onClose={handleSubMenuClose}
+        anchorEl={anchorManageColumns}
+        open={openManageColumns}
+        onClose={handleClose}
         anchorOrigin={{
           vertical: 'top',
           horizontal: 'right',
@@ -269,7 +203,7 @@ onClose={handleSubMenuClose}
           horizontal: 'left',
         }}
         MenuListProps={{
-          onMouseLeave: handleSubSubMenuClose, // Close subsubmenu when mouse leaves
+          onMouseLeave: handleClose, // Close subsubmenu when mouse leaves
         }}
       >
         <MenuItem>Subsubmenu Item 1</MenuItem>

@@ -1,11 +1,11 @@
 import * as React from 'react';
 import TextField from '@mui/material/TextField';
 import IConst from './IConst';
+import IFieldReadOnly from './IFieldReadOnly';
 
 export default function IFieldNumber (props) {
 
   const editing = props.editing;
-  const rowid = props.rowid;
   const value = props.value;
   const fieldname = props.header.dataFieldName
   const hasError = 
@@ -36,11 +36,24 @@ export default function IFieldNumber (props) {
     }
 
     // change the data now
-    props.handleDataChange(newValue, fieldname);  }
+    props.handleDataChange(newValue, fieldname);  
+  }
   
   if (editing)
   {
     return (
+      <div 
+      style={{ 
+        padding: '5px 0px', 
+        width: props.width, 
+        height: '100%',
+        display: 'flex',
+        flexGrow: 1,
+        justifyContent: props.horizontalAlign, 
+        alignItems: props.verticalAlign,
+      }}
+      >    
+
       <TextField
         id="outlined"
         disabled={disabled}
@@ -63,19 +76,19 @@ export default function IFieldNumber (props) {
         }}
         onChange={(event) => handleChange(event)}
       />
+      </div>
     );
   }
   else
   {
     const showtext = isInteger ? value : value.toFixed(props.header.decimalCount);
     return (
-      <div 
-        style={{ 
-          padding: '5px 0px', 
-          width: width, 
-          textAlign: props.header.horizontalAlign,
-        }}
-      >{showtext}</div>
+      <IFieldReadOnly
+        width={props.header.width}
+        verticalAlign={props.verticalAlign} 
+        horizontalAlign={props.horizontalAlign}
+        value={showtext}
+      />
     );
   }
 }

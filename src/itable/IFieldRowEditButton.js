@@ -63,20 +63,35 @@ export default function IFieldRowEditButton (props) {
     props.header.editType === IConst.editType_ButtonDelete ? "Delete this row" : "";
   
   return (
-    <IconButton
-      onClick={() => props.handleRowEditButtonClick(dataFieldName)}
-      disabled={disabled}
-      style={{ width: btnHoverWidth, height: btnHoverWidth }}
+    <div
+      style={{
+        padding: '5px 0px', 
+        width: props.width, 
+        height: '100%',
+        display: 'flex',
+        flexGrow: 1,
+        justifyContent: props.verticalAlign, 
+        alignItems: props.horizontalAlign,
+      }}
     >
-      <img 
-        src = {icon}
-        title = {title}
+      <IconButton
+        onClick={() => props.handleRowEditButtonClick(dataFieldName)}
+        disabled={disabled}
         style={{ 
-          width: imgWidth, height: imgWidth, 
-          padding: '0px', 
-          opacity: disabled ? 0.2 : 1
-        }} 
-      />
-    </IconButton>
+          width: btnHoverWidth, 
+          height: btnHoverWidth,
+        }}
+      >
+        <img 
+          src = {icon}
+          title = {title}
+          style={{ 
+            width: imgWidth, height: imgWidth, 
+            padding: '0px', 
+            opacity: disabled ? 0.2 : 1
+          }} 
+        />
+      </IconButton>
+    </div>
   );
 }

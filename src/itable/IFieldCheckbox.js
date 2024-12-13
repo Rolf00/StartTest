@@ -38,11 +38,24 @@ export default function IFieldCheckbox (props) {
   else
   {
     return (
-      <img 
-        src={iconCheckbox}
-        alt="img"
-        style={{ width: imgWidth, height: imgWidth, padding: '0px', }} 
-      />
+
+      <div 
+        style={{ 
+          padding: '5px 0px', 
+          width: btnHoverWidth, 
+          height: '100%',
+          display: 'flex',
+          flexGrow: 1,
+          justifyContent: props.verticalAlign, 
+          alignItems: props.horizontalAlign,
+        }}
+      >
+        <img 
+          src={iconCheckbox}
+          alt="img"
+          style={{ width: imgWidth, height: imgWidth, padding: '0px', }} 
+        />
+      </div>
     );
   }
 }

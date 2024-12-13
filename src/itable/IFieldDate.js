@@ -20,6 +20,7 @@ import dayjs from 'dayjs';
 import { de } from 'date-fns/locale'; // German (Switzerland)
 
 import IConst from './IConst';
+import IFieldReadOnly from './IFieldReadOnly';
 
 export default function IFieldDate (props) {
 
@@ -53,6 +54,18 @@ export default function IFieldDate (props) {
   if (editing)
   {
     return (
+      <div 
+      style={{ 
+        padding: '5px 0px', 
+        width: props.width, 
+        height: '100%',
+        display: 'flex',
+        flexGrow: 1,
+        justifyContent: props.horizontalAlign, 
+        alignItems: props.verticalAlign,
+      }}
+      >    
+
       <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DatePicker 
         disabled={disabled}
@@ -64,20 +77,21 @@ export default function IFieldDate (props) {
         //renderInput={(params) => <TextField {...params} />}
         onChange={(event) => handleChange(event)}
       />
-      </LocalizationProvider>                        
+      </LocalizationProvider>   
+
+      </div>                     
     );
   }
   else
   {
     const dateText = IConst.formatDateTime(value, props.header.datetimeFormat, props.localization);
     return (
-      <div 
-        style={{ 
-          padding: '5px 0px', 
-          width: width, 
-          textAlign: props.header.horizontalAlign,
-        }}
-      >{dateText}</div>
+      <IFieldReadOnly
+        width={props.header.width}
+        verticalAlign={props.verticalAlign} 
+        horizontalAlign={props.horizontalAlign}
+        value={dateText}
+      />
     );
   }
 }

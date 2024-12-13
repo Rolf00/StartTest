@@ -33,7 +33,7 @@ class InselConstants {
   static rowColorSelChanged = "#CCFFCC";
   static rowColorSelInserted = "#FFFFCC";
 
-  // background colo resizer
+  // background color resizer
   static colorResizerBackground = "#8888FF";
 
   // error colors
@@ -53,6 +53,28 @@ class InselConstants {
   static imgUndoButton = imgUndoButton; 
   static imgAddButton = imgAddButton; 
   static imgExcelButton = imgExcelButton; 
+
+  // alignments
+  static horizontalAlign_Left = "left";
+  static horizontalAlign_Center = "center";
+  static horizontalAlign_Right = "right";
+  static verticalAlign_Top = "top";
+  static verticalAlign_Middle = "middle";
+  static verticalAlign_Bottom = "bottom";
+
+  static getHorizontalAlign(horizontalAlign)
+  {
+    return (
+      horizontalAlign === this.horizontalAlign_Left ? 'flex-start' :
+      horizontalAlign === this.horizontalAlign_Center ? 'center' : 'flex-end');
+  }
+
+  static getVerticalAlign(verticalAlign)
+  {
+    return (
+      verticalAlign === this.verticalAlign_Top ? 'flex-start' :
+      verticalAlign === this.verticalAlign_Middle ? 'center' : 'flex-end');
+  }
 
   // icons button dialog
   static imgIconOk = imgIconOk; 

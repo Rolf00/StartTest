@@ -37,7 +37,6 @@ export default function IChipMenu (props)
   let chipIndex = props.header.chipList.findIndex(c => c.id === props.value);
   if (chipIndex === -1) chipIndex = props.header.chipList.findIndex(c => c.default);
   chipItem = (chipIndex === -1) ? props.header.chipList[0] : props.header.chipList[chipIndex];
-  //const chipId = (chipItem) ? chipItem.id : 1;
   const chipLabel = (chipItem) ? chipItem.label : "";
   const chipColor = (chipItem) ? chipItem.color : null;
   const chipColorHover = (chipItem) ? chipItem.colorHover : null;
@@ -51,7 +50,17 @@ export default function IChipMenu (props)
   if (editing)
   {
     return (
-      <div style={{ paddingTop: '8px', }}>
+      <div 
+        style={{
+          padding: '5px 0px', 
+          width: props.width, 
+          height: '100%',
+          display: 'flex',
+          flexGrow: 1,
+          justifyContent: props.horizontalAlign, 
+          alignItems: props.verticalAlign,
+        }}
+      >
         <Chip 
           label={chipLabel}
           avatar={<Avatar alt="" src={chipIcon} />}
@@ -71,9 +80,7 @@ export default function IChipMenu (props)
             color: 'black', 
             width: chipIconWidth, 
             height: chipIconWidth,
-            alignItems: 'center',
-            justifyContent: 'center',
-   
+            justifyContent: 'left',
           }}
         >
   
@@ -117,25 +124,31 @@ export default function IChipMenu (props)
   else
   {
     return (
-      <div style= {{ paddingTop : '0px'}}>
+      <div 
+        style={{ 
+          padding: '5px 0px', 
+          width: props.width, 
+          height: '100%',
+          display: 'flex',
+          flexGrow: 1,
+          justifyContent: props.horizontalAlign, 
+          alignItems: props.verticalAlign,
+        }}
+      >
         <Chip 
           label={chipLabel}
           avatar={<Avatar alt="" src={chipIcon} />}
-          clickable={false}
           style={{
             minWidth: chipWidth,
-            margin: '0px auto',
           }}
           sx={{
             backgroundColor: chipColor, 
             color: 'black', 
             width: chipIconWidth, 
             height: chipIconWidth,
-            alignItems: 'center',
-            justifyContent: 'center',
+            justifyContent: 'left',
           }}
-        >
-        </Chip>
+        />
       </div>
     );
   }

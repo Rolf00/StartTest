@@ -278,6 +278,9 @@ class ITableRow  extends React.Component {
         
         // only show this column when it's defined as visible
         const visible = header.isVisible;
+
+        const verticalAlign = IConst.getVerticalAlign(this.props.settings.rowsVerticalAlign);
+        const horizontalAlign = IConst.getHorizontalAlign(header.horizontalAlign);
         
         if (visible) {
           return (
@@ -286,6 +289,8 @@ class ITableRow  extends React.Component {
               setHeight={(height) => this.setState({rowHeight: height})}
               isHeightResizing={this.state.isHeightResizing}
               resizerBackgroundColor={this.props.settings.resizerBackgroundColor}
+              horizontalAlign={horizontalAlign}
+              verticalAlign={verticalAlign}
               handleMouseDownRowNS={(e)=>this.handleMouseDownRowNS(e)}
               handleMouseEnterNS={(e)=>this.handleMouseEnterNS(e)}
               handleMouseLeaveNS={(e)=>this.handleMouseLeaveNS(e)}
@@ -293,6 +298,8 @@ class ITableRow  extends React.Component {
 
               {isSelectionIcon &&
               <IFieldSelection
+                horizontalAlign={horizontalAlign}
+                verticalAlign={verticalAlign}
                 settings={this.props.settings}
                 header={header}
                 value = {value}
@@ -302,51 +309,56 @@ class ITableRow  extends React.Component {
               {isTextfield && 
               <IFieldText
                 editing={editing}
-                rowsVerticalAlign={this.props.settings.rowsVerticalAlign}
-                value={value}
+                horizontalAlign={horizontalAlign}
+                verticalAlign={verticalAlign}
+                singleHorizontalAlign={header.horizontalAlign}
                 header={header}
-                rowid={rowid}
+                value={value}
                 handleDataChange= {e => this.handleDataChange(e, field)}
               />}
 
               {isNumber &&
               <IFieldNumber
                 editing={editing}
+                horizontalAlign={horizontalAlign}
+                verticalAlign={verticalAlign}
                 rowsVerticalAlign={this.props.settings.rowsVerticalAlign}
-                value={value}
                 header={header}
-                rowid={rowid}
+                value={value}
                 handleDataChange= {e => this.handleDataChange(e, field)}
               />}
 
               {isDropdown &&
               <IFieldDropDown
                 editing={editing}
+                horizontalAlign={horizontalAlign}
+                verticalAlign={verticalAlign}
                 rowsVerticalAlign={this.props.settings.rowsVerticalAlign}
-                value={value}
                 header={header}
-                rowid={rowid}
+                value={value}
                 handleDataChange= {e => this.handleDataChange(e, field)}
               />}
 
               {isCheckbox &&
               <IFieldCheckbox
                 editing={editing}
+                horizontalAlign={horizontalAlign}
+                verticalAlign={verticalAlign}
                 rowsVerticalAlign={this.props.settings.rowsVerticalAlign}
-                value={value}
                 settings={this.props.settings}
                 header={header}
-                rowid={rowid}
+                value={value}
                 handleDataChange= {e => this.handleDataChange(e, field)}
               />}
 
               {isDate &&
               <IFieldDate
                 editing={editing}
+                horizontalAlign={horizontalAlign}
+                verticalAlign={verticalAlign}
                 rowsVerticalAlign={this.props.settings.rowsVerticalAlign}
-                value={value}
                 header={header}
-                rowid={rowid}
+                value={value}
                 localization={this.props.settings.localization}
                 handleDataChange= {e => this.handleDataChange(e, field)}
               />}
@@ -354,23 +366,27 @@ class ITableRow  extends React.Component {
               {isChip &&
               <IFieldChipMenu
                 editing={editing}
-                rowsVerticalAlign={this.props.settings.rowsVerticalAlign}
-                value={value}
+                horizontalAlign={horizontalAlign}
+                verticalAlign={verticalAlign}
                 header={header}
-                rowid={rowid}
+                value={value}
                 handleDataChange= {e => this.handleDataChange(e, field)}
               />}
 
               {isSpecialButton &&
               <IFieldSpecialButton
-                rowsVerticalAlign={this.props.settings.rowsVerticalAlign}
+                horizontalAlign={horizontalAlign}
+                verticalAlign={verticalAlign}
                 header = {header}
+                rowid={rowid}
                 handleSpecialButtonClick = {() => this.props.handleSpecialButtonClick(rowid, header.dataFieldName)}
               />}
 
               {isRowEditButton &&
               <IFieldRowEditButton
                 editing={editing}
+                horizontalAlign={horizontalAlign}
+                verticalAlign={verticalAlign}
                 settings = {this.props.settings}
                 rowId={rowid}
                 rowState = {rowState}
