@@ -12,10 +12,10 @@ export default function IFieldText (props) {
   const disabled = !props.header.isEditable;
   const multiline = props.header.editType === IConst.editType_TextfieldMultiline;
   const horizontalAlign = props.header.horizontalAlign
-  const hasError = 
+  const hasError = ( 
     value.length > props.header.textMaxLength ||
     (value === null && props.header.required) ||
-    (value === '' && props.header.required);
+    (value === '' && props.header.required));
     const helperText = hasError ? props.header.helperText : "";
     const width = props.header.width;
 
@@ -31,10 +31,7 @@ export default function IFieldText (props) {
 
   if (editing)
   {
-
-
     return (
-
       <div 
       style={{ 
         padding: '5px 0px', 

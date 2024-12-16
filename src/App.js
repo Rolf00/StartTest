@@ -552,6 +552,7 @@ const App = ()=> {
 
     // rows settings (top, middle, bottom)
     rowsVerticalAlign: IConst.verticalAlign_Middle,
+    editComponentHeight: 29,
     resizerBackgroundColor: '#8888FF',
     iconImageSize: 30,
 

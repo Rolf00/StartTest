@@ -22,6 +22,8 @@ import ITableHeader from './ITableHeader';
 import ITableRow from './ITableRow'; 
 import IConst from './IConst';
 import IButtonDialog from './IButtonDialog';
+//import IHeaderManage from './IHeaderManage';
+
 import IDialog_MainData from './IDialog_MainData';
 
 const avaiableDialogs = {
@@ -60,15 +62,17 @@ class ITable extends React.Component {
       buttonDialogId: "",
       buttonDialogTitle: "",
       buttonDialogQuestion: "",
-      buttonDialogType: 0,
-      buttonDialogIconType: 0,
       buttonDialogButtons: [],
-
+      buttonDialogListType: 0,
+      dialogIconType: 0,
+      buttonWidth: 120,
+  
       // props for edit dialog
       openEditDialog: false,
       selectedRow: null,
       isHoveredOrResizing: false,
 
+      openManageColumns: false,
 
       // enabling / disabling buttons SAVE ALL and UNDO ALL
       mainButtonsDisabled: true,
@@ -84,6 +88,10 @@ class ITable extends React.Component {
 
     // TODO
     //this.checkHeaders();
+  }
+
+  componentDidMount() 
+  {
   }
 
   // ---------------------------------------------------------------------------------------
@@ -125,9 +133,6 @@ class ITable extends React.Component {
       obj['selected'] = false; 
       newlist.push(obj);
     }
-
-
-
     return newlist;
   }
 
@@ -136,7 +141,6 @@ class ITable extends React.Component {
     for(let h = 0; h < this.state.headers.lenght; h++) 
     {
       // databaseField:
-      /*
       if (!this.state.headers[h].headerTitle) this.state.headers[h].headerTitle = "";
       if (!this.state.headers[h].isResizable) this.state.headers[h].isResizable = true;
       if (!this.state.headers[h].isEditable) this.state.headers[h].isEditable = false;
@@ -157,7 +161,6 @@ class ITable extends React.Component {
       if (!this.state.headers[h].horizontalAlign) this.state.headers[h].horizontalAlign = "left";
       if (!this.state.headers[h].dropdownSelection) this.state.headers[h].dropdownSelection = [];
       if (!this.state.headers[h].hasHeaderMenu) this.state.headers[h].hasHeaderMenu = false;
-      */
     }
   }
 
@@ -345,16 +348,18 @@ class ITable extends React.Component {
     // ask before undoing all rows
     // open the confirm dialog YES / NO
     //alert("UndoAll : not implemented yet.");
-    this.UndoAllRows();
-    return;
 
+
+    //this.UndoAllRows();
+    //return;
     this.setState({
       buttonDialogId: "UndoAll",
       buttonDialogTitle: "Undo all rows",
       buttonDialogQuestion: "Do you really want to undo all changes?",
-      buttonDialogButtons: null,
-      buttonDialogType: IConst.buttonDialogTypeYesNo,
+      buttonDialogButtons: [],
+      buttonDialogListType: IConst.buttonDialogTypeYesNo,
       dialogIconType: IConst.buttonDialogIconType_Question,
+      buttonWidth: 120,
       openButtonDialog: true,
     });
   }
@@ -424,6 +429,23 @@ class ITable extends React.Component {
     // now copy to clipboard
     navigator.clipboard.writeText(txt);
     alert("Data was copied to clipboard.");
+  }
+
+  handleManageColumns()
+  {
+    this.setState({
+      openManageColumns: true,
+      headers: this.state.headers,
+    });
+  }
+
+  arrangeColumns(doIt, newlist)
+  {
+    // TODO
+    alert("TODO: manage columns not implemented yet,");
+    this.setState({
+      openManageColumns: false,
+    });
   }
 
   // ---------------------------------------------------------------------------------------
@@ -966,7 +988,6 @@ class ITable extends React.Component {
 
     const sizeMainButton = this.props.settings.buttonSizeMain;
 
-
     return (
       <Paper 
         className={classes.paper}
@@ -1023,21 +1044,27 @@ class ITable extends React.Component {
               {data.map((row, rowIndex) => {
                 // we use the old values for undoing changes
                 const rowid = row[this.props.primaryKey];
-                const oldRowIndex = this.getRowIndex(rowid);
-                const thisOldRow = this.props.data[oldRowIndex];
-                const thisRow = this.state.data[rowIndex];
-                const thisIndex = rowIndex;
-                const thisInfo = this.state.rowInfoList[rowIndex];
+                const rowInfoIndex = this.state.rowInfoList.findIndex(r => r.id === rowid);
+
+
+                //const oldRowIndex = this.getRowIndex(rowid);
+                //const thisOldRow = data[oldRowIndex];
+                //const thisRow = this.state.data[rowIndex];
+                //const thisRow = data[rowIndex];
+                //const thisIndex = rowIndex;
+                //const thisInfo = this.state.rowInfoList[rowIndex];
+
+
 
                 return(
                   <ITableRow
                     settings={this.props.settings}
                     headers={this.props.headers}
                     rowInfoList={this.state.rowInfoList}
-                    oldRow={thisOldRow}
-                    rowIndex={thisIndex}
+                    rowInfoIndex={rowInfoIndex}
+                    oldRow={row}
                     rowId={rowid}
-                    row={thisRow}
+                    row={row}
                     //rowInfo={thisInfo}
                     setMainButtonState={() => this.setMainButtonState()}
                     handleUndoInsertedRows={(rowIndex) => this.handleRowEditButtons(rowIndex)}
@@ -1160,7 +1187,22 @@ class ITable extends React.Component {
                  }} 
               />&nbsp;Copy selected rows</IconButton>
               }
-              
+
+              {/* manage columns ----------------------------------------------------------- */}
+              <IconButton
+                className={classes.mainButtons}
+                onClick={e => this.handleManageColumns()}
+              >
+              <img 
+                //src={IConst.imgExcelButton}
+                title='Ctrl-M'
+                style={{ 
+                  width: sizeMainButton, 
+                  height: sizeMainButton,
+                 }} 
+              />&nbsp;Manage columns</IconButton>
+
+
               <TablePagination
                 component="div"
                 count={this.state.data.length}
@@ -1248,15 +1290,25 @@ class ITable extends React.Component {
         {/* button dialog */}
         {this.state.buttonDialogId && this.state.openButtonDialog &&
         <IButtonDialog
-          id={this.state.buttonDialogId}
+          id={this.buttonDialogId}
           open={this.state.openButtonDialog}
-          title={this.state.buttonDialogTitle}
-          question={this.state.buttonDialogQuestion}
-          dialogButtonListType={this.state.dialogButtonListType}
-          buttonList={this.state.buttonDialogButtons}
-          dialogIconType={this.state.dialogIconType}
-          handleDialogButtons={(index) => this.handleDialogButtons(index, this.state.buttonDialogId)}
+          title={this.buttonDialogTitle}
+          question={this.buttonDialogQuestion}
+          buttonList={this.buttonDialogButtons}
+          buttonDialogListType={this.dialogButtonListType}
+          dialogIconType={this.dialogIconType}
+          handleDialogButtons={(index) => this.handleDialogButtons(index, this.buttonDialogId)}
         />}
+
+        {/* button dialog 
+        {this.state.openManageColumns && 
+        <IHeaderManage
+          open={this.state.openManageColumns}
+          headers={this.state.headers}
+          arrangeColumns={(doIt, newlist) => this.arrangeColumns(doIt, newlist)}
+        />
+        }
+        */}
 
         {/* main edit dialog */}     
         {this.props.dialogName === 'InselDialog_MainData' &&  this.state.openEditDialog &&

@@ -1,13 +1,18 @@
 import React from 'react';
 
-import { 
-  Dialog, 
-  DialogContent, 
-  Grid,
-  Button
-} from '@mui/material';
+import Paper from "@mui/material/Paper";
+import Table from "@mui/material/Table";
+import TableRow from "@mui/material/TableRow";
+import TableCell from "@mui/material/TableCell";
+import IconButton from "@mui/material/IconButton";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+
 
 import IConst from './IConst';
+import { Typography } from '@mui/material';
 
 class IButtonDialog extends React.Component {
   constructor(props) {
@@ -19,47 +24,63 @@ class IButtonDialog extends React.Component {
       title,
       question,
       buttonList,
-      dialogButtonListType, 
-      dialogIconType
+      buttonDialogListType, 
+      dialogIconType,
+      buttonWidth
     } = this.props;
-
-    this.state = {
-      id: id,
-      open: open,
-      title: title,
-      question: question,
-      buttonList: buttonList,
-      dialogButtonListType: dialogButtonListType,
-      dialogIconType : dialogIconType
-    }
   }
 
-  handleOnClick(index)
+  handleClick(index)
   {
-    //console.log("handleOnClick", this.props.handleDialogButtons);
-    this.setState({open: false});
-    this.props.handleDialogButtons(index, this.state.id);
+    // close the dialog  => return the index of the pressed button, and the dialog id
+    this.props.handleDialogButtons(index, this.props.id);
   }
 
   render ()
   {
-    const btnList = 
-      this.state.buttonType === IConst.buttonDialogTypeOk ?  IConst.defaultButtonsOk :
-      this.state.buttonType === IConst.buttonDialogTypeYesNo ?  IConst.defaultButtonsYesNo :
-      this.state.buttonType === IConst.buttonDialogTypeYesNoCancel ?  IConst.defaultButtonsYesNoCancel :
-      this.state.buttonList;
-  
-    console.log("Dialog btnList", btnList);
+    /*
+    const buttons = 
+      this.props.buttonDialogListType === IConst.buttonDialogTypeOk ?  
+        IConst.defaultButtonsOk :
+      this.props.buttonDialogListType === IConst.buttonDialogTypeYesNo ?  
+        IConst.defaultButtonsYesNo :
+      this.props.buttonDialogListType === IConst.buttonDialogTypeYesNoCancel ?  
+        IConst.defaultButtonsYesNoCancel :
+        this.props.buttonList;
+        */
 
-    const btnWidth = this.props.buttonWidth ? this.props.buttonWidth : 140;
-    const dlgWidth = (btnWidth * btnList.length) + (30 * (btnList.length + 1));
+        // TODO
+
+    const buttons = IConst.defaultButtonsYesNo;
+    const colCount = Math.max(...buttons.map((item) => item.X));
+    const rowCount = Math.max(...buttons.map((item) => item.Y));
+  
+
+    const col = [];
+    for (let c = 0; c < colCount; c++) col.push(c);
+  
+    const row = [];
+    for (let r = 0; r < rowCount; r++) row.push(r);
+  
+    // TODO
+    //const buttonWidth = this.props.buttonWidth;
+    const imageWidth = 60;
+    const iconSize = 36;
+    const buttonWidth = 120;
+    const spaceWidth = 10;
+    const entireWidth = (colCount * buttonWidth) + ((colCount + 1) * spaceWidth) + imageWidth;
     const open = this.props.open;
+
+    // TODO 
+    const title = "Undoing all rows";
+    const question = "Do you really want to undo all changes?";
+  
 
     return(
       <Dialog 
-        width={dlgWidth}
-        maxWidth={dlgWidth}
-        minWidth={dlgWidth}
+        width={entireWidth}
+        maxWidth={entireWidth}
+        minWidth={entireWidth}
         open={open} 
         // TODO  BackdropProps deprecated
         BackdropProps={{
@@ -72,144 +93,90 @@ class IButtonDialog extends React.Component {
             border: '5px solid #1976d2', // Set border color
             borderRadius: '20px',        // Optional: set border radius for rounded corners
           }
-        }}          
-      >
+        }}>
+
         <DialogContent>
-
-
-
         <Grid container direction="row" spacing={2}>
         <Grid item
           style={{
             display: 'flex',
             alignItems: 'center'          
-          }}
-        > 
+          }}> 
           <img 
             src={IConst.imgDialogIconQuestion}
-            style={{ width: '48px', height: '48px', }}/>
+            style={{ width: imageWidth, height: imageWidth, }}/>
+        </Grid>
+
+        <Grid item direction="column" spacing={2} align="center">
+
+        <Grid item>
+          <Typography variant="h5">{title}</Typography>
         </Grid>
 
         <Grid item>
-          <Grid container direction="column" spacing={2}>
-            <Grid alignItems
-              style={{
-                fontSize: 24,
-                fontWeight: 'bold', 
-                padding: '5px 10px',
-                textAlign: 'center',
-              }}
-            >{this.props.title}</Grid>
+          <Typography variant="h6" >{question}</Typography>
+        </Grid>
 
-            <Grid item
-              style={{
-                fontSize: 20,
-                fontWeight: 'bold', 
-                padding: '5px 10px',
-                textAlign: 'center',
-              }}
-            >{this.props.question}</Grid>
-
-            <Grid item>
-              {/*
-              {btnList.map((btn, btnIndex) => {
-                const icon = btn.icon;
-                const iconWidth = 32;
-                const iconAlign = btn.horizontalAlign;
-                const btnWidth = this.props.buttonWidth ? this.props.buttonWidth : 120;
-                const caption = btn.caption;
-                const flexAlign = iconAlign === 'left' ? "flex-start" : "flex-end";
-                return (
-                  
-                  <Button
-                    variant="outlined"
-                    onClick={() => this.handleOnClick({btnIndex})}
-                    startIcon={iconAlign === 'left' &&
-                      <img src={icon} sx={{ width: {iconWidth}, height: {iconWidth} }}/>
-                    }
-                    endIcon={iconAlign === 'right' &&
-                      <img src={icon} sx={{ width: {iconWidth}, height: {iconWidth} }}/>
-                    }
-                    sx={{ ml: 2, textTransform: 'none' }}
-                    style={{
-                      fontSize: 16,
-                      fontWeight: 'bold', 
-                      width: {btnWidth}, 
-                      height: '52px',
-                      borderRadius: '10px',
-                      padding: '1px 10px',
-                      justifyContent: {flexAlign},
-                    }}>{btn.caption}</Button>
+        <Grid item>
+        <Table style={{ width: entireWidth}}>
+          {row.map((rowIndex) => (
+            <TableRow key={rowIndex}>
+              {col.map((colIndex) => {
+                const btnIndex = buttons.findIndex(
+                  (b) => b.X === colIndex + 1 && b.Y === rowIndex + 1
                 );
-              })}
-
-
-
-
-
-
-
-                */}
-
-              <Button
-                variant="outlined"
-                onClick={() => this.handleOnClick(0)}
-                startIcon={
-                  <img src={IConst.imgIconYes} 
-                    sx={{ width: 32, height: 32 }}/>
+                if (btnIndex === -1) {
+                  return (
+                    <TableCell
+                      key={rowIndex + 10 * colIndex}
+                      style={{ border: "0px", padding: "0px", margin: "0px" }}
+                    ></TableCell>
+                  );
+                } else {
+                  const button = buttons[btnIndex];
+                  const caption = button.caption;
+                  const align = button.horizontalAlign;
+                  const icon = button.icon;
+                  return (
+                    <TableCell
+                      key={rowIndex + 10 * colIndex}
+                      style={{ border: "0px", padding: "5px 5px", margin: "0px" }}
+                    >
+                      <IconButton
+                        size="small"
+                        onClick={() => this.handleClick(btnIndex)}
+                        style={{
+                          width: buttonWidth,
+                          height: "48px",
+                          borderRadius: "4px",
+                          display: "flex",
+                          justifyContent:
+                            align === "right" ? "flex-end" : "flex-start",
+                        }}
+                        sx={{
+                          border: "1px solid #aaaaaa",
+                          backgroundColor: "#eeeeee",
+                          "&:Hover": {
+                            border: "1px solid #555555",
+                            backgroundColor: "#ddddff",
+                          },
+                        }}
+                      >
+                        <img src={icon}
+                          style={{ width: iconSize, height: iconSize}}/ >
+                        {caption}
+                      </IconButton>
+                    </TableCell>
+                  );
                 }
-                sx={{ ml: 2, textTransform: 'none' }}
-                style={{
-                  fontSize: 16,
-                  fontWeight: 'bold', 
-                  width: btnWidth, 
-                  height: '52px',
-                  borderRadius: '16px',
-                  padding: '1px 10px',
-                  justifyContent: "flex-start"
-                }}>
-                <img 
-                  src={IConst.imgIconYes}
-                  style={{ 
-                    width: '32px', 
-                    height: '32px',
-                    padding: '1px 10px',
-                  }} 
-                />
-                Yes
-              </Button>
-              <Button
-                variant="outlined"
-                onClick={() => this.handleOnClick(1)}
-                startIcon={IConst.imgIconNo}
-                sx={{ ml: 2, textTransform: 'none' }}
-                style={{
-                  fontSize: 16,
-                  fontWeight: 'bold', 
-                  width: btnWidth, 
-                  height: '52px',
-                  borderRadius: '16px',
-                  padding: '1px 10px',
-                  justifyContent: "flex-start"
-                }}>
-                <img 
-                  src={IConst.imgIconNo}
-                  style={{ 
-                    width: '32px', 
-                    height: '32px',
-                    padding: '1px 10px',
-                  }} 
-                />
-                No
-              </Button>
-            </Grid>
-          </Grid>
+              })}
+            </TableRow>
+          ))}
+        </Table>
+        </Grid>
         </Grid>
       </Grid>
-
-
-
-        </DialogContent>
+      </DialogContent>
       </Dialog>
     )  
   }

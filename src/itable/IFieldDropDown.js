@@ -1,6 +1,5 @@
 import * as React from 'react';
 import FormControl from '@mui/material/FormControl';
-import TextField from '@mui/material/TextField';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 
@@ -37,10 +36,7 @@ export default function IFieldDropDown (props) {
       }}
       >    
       <FormControl 
-        style={{ 
-          width: {dropdownWidth}, 
-          //width: '300px', 
-        }} >
+        style={{ width: {dropdownWidth}, }} >
         <Select
           disabled={disabled}
           value={value}

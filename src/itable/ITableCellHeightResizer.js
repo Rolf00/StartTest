@@ -28,11 +28,9 @@ class ITableCellHeightResizer extends React.Component {
       classes,
       height, 
       children,
+      isHeightResizing,
       resizerBackgroundColor,
     } = this.props;
-      
-    //const horizontalAlign = IConst.getHorizontalAlign(this.props.horizontalAlign);
-    //const verticalAlign = IConst.getVerticalAlign(this.props.rowsVerticalAlign);
 
     return (
       <TableCell

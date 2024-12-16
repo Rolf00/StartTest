@@ -1,4 +1,6 @@
-import * as React from 'react';
+//import * as React from 'react';
+import React, { useState } from "react";
+
 import TextField from '@mui/material/TextField';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 //import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -25,34 +27,68 @@ import IFieldReadOnly from './IFieldReadOnly';
 export default function IFieldDate (props) {
 
   const editing = props.editing;
-  const rowid = props.rowid;
   const value = props.value;
   const fieldname = props.header.dataFieldName
   const disabled = !props.header.isEditable;
   const width = props.header.width;
-    
-  const handleChange = (e) =>
+
+  // prepare the date from JS to DatePicker
+  const oldJSDate = props.value;
+  const jsdt = new Date(
+    oldJSDate.getFullYear(), 
+    oldJSDate.getMonth(), 
+    oldJSDate.getDate());
+  const pickerDate = dayjs(jsdt);
+
+  // prepare display format
+  const displayFormat = IConst.getDatePickerDisplayFormat(props.localization);
+
+  
+  const handleChange = (value) =>
   {
-    let newValue = e.target.value;
+    /*
+    format of e :
+    {
+      $L: "en",
+      $u: undefined,
+      $d: undefined,
+      $y: 2024,
+      $M: 6,
+      $D: 23,
+      $W: null,
+      $H: 0,
+      $m: 0,
+      $s: 0,
+      $ms: 0,
+      $x: null,
+      $isDayjsObject: true,
+    };
+    */
+    
+    const year = parseInt(value.$y);
+    const month = parseInt(value.$M);
+    const day = parseInt(value.$D);
+    const newDateJS = new Date(year, month, day);
 
     // change the data now
-    props.handleDataChange(newValue, fieldname);
+    props.handleDataChange(newDateJS, fieldname);
   }
 
-{/* 
-    <LocalizationProvider dateAdapter={AdapterDateFns} locale={de}>
-    <DatePicker 
-      disabled={disabled}
-      value={value}
-      inputFormat="dd.MM.yyyy"
-      //renderInput={(params) => <TextField {...params} />}
-      onChange={(event) => handleChange(event)}
-    />
-    </LocalizationProvider> 
-*/}    
+  const handleTextChange = (e) =>
+  {
+    props.handleDataChange(e, fieldname);
+  }
+
+  const selectedDate = props.value;
+  const formattedDate = IConst.formatDateTime(
+    selectedDate, 
+    IConst.format_DateLong, 
+    props.localization);
 
   if (editing)
   {
+
+
     return (
       <div 
       style={{ 
@@ -66,16 +102,16 @@ export default function IFieldDate (props) {
       }}
       >    
 
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <LocalizationProvider dateAdapter={AdapterDayjs} locale='de'>
       <DatePicker 
         disabled={disabled}
-        selected={value}
-        dateFormat="dd/MM/yyyy"
+        value={pickerDate}
+        format="DD.MM.YYYY"
         style={{ 
-          width: width, 
+          //width: width, 
         }}
-        //renderInput={(params) => <TextField {...params} />}
-        onChange={(event) => handleChange(event)}
+        onChange={(value) => handleChange(value)}
+        renderInput={(params) => <TextField {...params} />}
       />
       </LocalizationProvider>   
 

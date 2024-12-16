@@ -20,7 +20,7 @@ import imgDialogWarning from './imgWarning96.png';
 
 
 
-class InselConstants {
+class IConst {
 
   // colors for row backgrounds unselected
   static rowColorDeleted = "#FFEEEE";
@@ -98,16 +98,16 @@ class InselConstants {
 
   // default buttons for button dialog 
   static defaultButtonsOk = [
-    { caption: "Close", icon: imgIconOk, horizontalAlign: 'left' }
+    { caption: "Close", icon: imgIconOk, horizontalAlign: 'left', X: 1, Y: 1, }
   ];
   static defaultButtonsYesNo = [
-    { caption: "Yes", icon: imgIconYes, horizontalAlign: 'left' },
-    { caption: "No", icon: imgIconNo, horizontalAlign: 'left' }
+    { caption: "Yes", icon: imgIconYes, horizontalAlign: 'left', X: 1, Y: 1, },
+    { caption: "No", icon: imgIconNo, horizontalAlign: 'left', X: 2, Y: 1, }
   ];
   static defaultButtonsYesNoCancel = [
-    { caption: "Yes", icon: imgIconYes, horizontalAlign: 'left' },
-    { caption: "No", icon: imgIconNo, horizontalAlign: 'left' },
-    { caption: "Cancel", icon: imgIconCancel, horizontalAlign: 'left' }
+    { caption: "Yes", icon: imgIconYes, horizontalAlign: 'left', X: 1, Y: 1, },
+    { caption: "No", icon: imgIconNo, horizontalAlign: 'left', X: 2, Y: 1, },
+    { caption: "Cancel", icon: imgIconCancel, horizontalAlign: 'left', X: 3, Y: 1, }
   ];
   
   // row states 
@@ -237,7 +237,46 @@ class InselConstants {
     return finalText;
   }
 
+  static getDatePickerDisplayFormat(localization)
+  {
+    let displayFormat = "DD.MM.YYYY";
+    if (localization === this.datetimeLocalization_deCH) displayFormat = "DD.MM.YYYY"; else
+    if (localization === this.datetimeLocalization_frCH) displayFormat = "DD.MM.YYYY"; else
+    if (localization === this.datetimeLocalization_enUS) displayFormat = "MM/DD/YYYY"; else
+    if (localization === this.datetimeLocalization_enEN) displayFormat = "MM/DD/YYYY"; 
+    return displayFormat;
+  }
+
+  static hasError(value, header)
+  {
+    let hasError = false;
+    if (header.editType === this.eidtType_Text ||
+        header.editType === this.eidtType_TextMultiline)
+    {
+      hasError = 
+        value.length > header.textMaxLength ||
+        (value === null && header.required) ||
+        (value === undefined && header.required) ||
+        (value === '' && header.required);
+    }
+  
+    if (header.editType === this.eidtType_Text ||
+      header.editType === this.eidtType_TextMultiline)
+    {
+      hasError = 
+        value > header.numberMaxValue ||
+        value < header.numberMinValue
+        (value === null && header.required) ||
+        (value === undefined && header.required) ||
+        (value === '' && header.required);
+    }
+    return hasError;
+  }
+
+  
+  
+
 }
 
-export default InselConstants;
+export default IConst;
 

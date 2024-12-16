@@ -27,8 +27,6 @@ export default function IFieldSpecialButton (props) {
   const buttonBackgroundColor = props.header.button.buttonBackgroundColor;
   const buttonBackgroundHover = props.header.button.buttonBackgroundHover;
 
-  const [isHovered, setIsHovered] = useState(false);
-
   return (
     <div
       style={{ 
@@ -43,8 +41,6 @@ export default function IFieldSpecialButton (props) {
     >
     <IconButton
       onClick={() => props.handleSpecialButtonClick(rowid, dataFieldName)}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}      
       style={{
         fontSize: 12,
         width: '100%', 
@@ -52,11 +48,18 @@ export default function IFieldSpecialButton (props) {
         borderRadius: '10px',
         margin: '2px',
         disabled: disabled,
-        backgroundColor: isHovered ? buttonBackgroundHover : buttonBackgroundColor,
         borderWidth: '1px',
         borderStyle: 'solid',
-        borderColor: isHovered ? 'black' : buttonBackgroundColor,
-      }}>
+      }}
+      sx={{
+        borderColor: buttonBackgroundHover,
+        backgroundColor: buttonBackgroundColor,
+        '&:Hover': {
+          borderColor: 'black',
+          backgroundColor: buttonBackgroundHover,
+        }
+      }}
+      >
       <img 
         src={icon}
         title={caption}
