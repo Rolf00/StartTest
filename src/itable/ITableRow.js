@@ -14,6 +14,7 @@ import IFieldCheckbox from './IFieldCheckbox';
 import IFieldDate from './IFieldDate';
 import IFieldSpecialButton from './IFieldSpecialButton';
 import IFieldRowEditButton from './IFieldRowEditButton';
+import IDataDialog_First from './IDataDialog_First';
 import { useStyles } from './styles';
 
   
@@ -116,7 +117,8 @@ class ITableRow  extends React.Component {
   handleEditModalDialog()
   {
     // TODO modal dialog
-    alert("Edit in a dialog is not implemented yet.")
+    //alert("Edit in a dialog is not implemented yet.")
+    this.props.openModalDataDialog(this.state.row);
   }
 
   handleRowEditButtonClick(action)
@@ -291,6 +293,9 @@ class ITableRow  extends React.Component {
 
         const verticalAlign = IConst.getVerticalAlign(this.props.settings.rowsVerticalAlign);
         const horizontalAlign = IConst.getHorizontalAlign(header.horizontalAlign);
+
+        const editHeight = this.props.settings.editComponentHeight;
+
         
         if (visible) {
           return (
@@ -321,6 +326,7 @@ class ITableRow  extends React.Component {
                 editing={editing}
                 horizontalAlign={horizontalAlign}
                 verticalAlign={verticalAlign}
+                editHeight={editHeight}
                 singleHorizontalAlign={header.horizontalAlign}
                 header={header}
                 value={value}
@@ -333,6 +339,7 @@ class ITableRow  extends React.Component {
                 horizontalAlign={horizontalAlign}
                 verticalAlign={verticalAlign}
                 rowsVerticalAlign={this.props.settings.rowsVerticalAlign}
+                editHeight={editHeight}
                 header={header}
                 value={value}
                 handleDataChange= {e => this.handleDataChange(e, field)}
@@ -344,6 +351,7 @@ class ITableRow  extends React.Component {
                 horizontalAlign={horizontalAlign}
                 verticalAlign={verticalAlign}
                 rowsVerticalAlign={this.props.settings.rowsVerticalAlign}
+                editHeight={editHeight}
                 header={header}
                 value={value}
                 handleDataChange= {e => this.handleDataChange(e, field)}
@@ -367,6 +375,7 @@ class ITableRow  extends React.Component {
                 horizontalAlign={horizontalAlign}
                 verticalAlign={verticalAlign}
                 rowsVerticalAlign={this.props.settings.rowsVerticalAlign}
+                editHeight={editHeight}
                 header={header}
                 value={value}
                 localization={this.props.settings.localization}
@@ -411,7 +420,7 @@ class ITableRow  extends React.Component {
         }
 
       })}
-      </TableRow>    
+      </TableRow>  
     );
   }
 }

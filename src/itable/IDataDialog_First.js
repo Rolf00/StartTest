@@ -1,4 +1,7 @@
 import React from 'react';
+import PropTypes, { func } from 'prop-types';
+import { withStyles } from 'tss-react/mui';
+import 'react-resizable/css/styles.css';
 
 import {
   Dialog, 
@@ -10,12 +13,7 @@ import {
   TableCell,
   TableRow,
   Typography,
-  Checkbox,
   TextField, 
-  MenuItem, 
-  FormControl, 
-  FormControlLabel,  
-  Select, 
 } from '@mui/material';
 
 
@@ -23,6 +21,7 @@ import imgSaveButton from './imgSave48.png';
 import imgUndoButton from './imgUndo48.png'; 
 
 import IConst from './IConst'; 
+import { useStyles } from './styles';
 
 
 class IDataDialog_First extends React.Component {
@@ -31,15 +30,17 @@ class IDataDialog_First extends React.Component {
     super(props);
   
     const {
+      classes,
       open,
       settings,
       headers, 
       row,
     } = this.props;
 
-    this.state = {
-      row: row,
-    }
+  }
+
+  componentDidMount()
+  {
   }
 
 
@@ -57,247 +58,332 @@ class IDataDialog_First extends React.Component {
     this.setState({row: rowChanged, mainDisabled: true});
   }
 
-  // prepare the data for each field
-  hasError = false;
-
-  firstname_Index = headers.findIndex(r => r.dataFieldName === "firstname");
-  lastname_Index = headers.findIndex(r => r.dataFieldName === "lastname");
-  age_Index = headers.findIndex(r => r.dataFieldName === "age");
-  birthday_Index = headers.findIndex(r => r.dataFieldName === "birthday");
-  gender_Index = headers.findIndex(r => r.dataFieldName === "gender");
-  diagnosis_Index = headers.findIndex(r => r.dataFieldName === "diagnosis");
-  bloodPressure_Index = headers.findIndex(r => r.dataFieldName === "bloodPressure");
-  weight_Index = headers.findIndex(r => r.dataFieldName === "weight");
-  address_Index = headers.findIndex(r => r.dataFieldName === "address");
-  nationality_Index = headers.findIndex(r => r.dataFieldName === "nationality");
-  dropdownvalue_Index = headers.findIndex(r => r.dataFieldName === "dropdownvalue");
-  lastUpdate_Index = headers.findIndex(r => r.dataFieldName === "lastUpdate");
-  dateText = IConst.formatDateTime(
-    row.lastUpdate, IConst.format_DateLong_Time24h, props.localization);
+  closeDialog(saveIt)
+  {
+    if (saveIt)
+    {
+      this.props.handleSubmitModalDialog(this.state.row, saveIt);
+    }
+    else
+    {
+      this.props.handleSubmitModalDialog(null, saveIt);
+    }
+  }
 
   render()
   {
+    const { classes } = this.props;
+    
+    const open = true;
+
+    this.state = {
+      row: this.props.row,
+      mainDisabled: true,
+    }
+
+    // prepare the data for each field
+    const firstname_Index = this.props.headers.findIndex(r => r.dataFieldName === "firstName");
+
+    const lastname_Index = this.props.headers.findIndex(r => r.dataFieldName === "lastName");
+    const age_Index = this.props.headers.findIndex(r => r.dataFieldName === "age");
+    const birthday_Index = this.props.headers.findIndex(r => r.dataFieldName === "birthday");
+    const gender_Index = this.props.headers.findIndex(r => r.dataFieldName === "gender");
+    const diagnosis_Index = this.props.headers.findIndex(r => r.dataFieldName === "diagnosis");
+    const bloodPressure_Index = this.props.headers.findIndex(r => r.dataFieldName === "bloodPressure");
+    const weight_Index = this.props.headers.findIndex(r => r.dataFieldName === "weight");
+    const address_Index = this.props.headers.findIndex(r => r.dataFieldName === "address");
+    const nationality_Index = this.props.headers.findIndex(r => r.dataFieldName === "nationality");
+    const dropdownvalue_Index = this.props.headers.findIndex(r => r.dataFieldName === "dropdownvalue");
+    const lastUpdate_Index = this.props.headers.findIndex(r => r.dataFieldName === "lastUpdate");
+    const dateText = IConst.formatDateTime(
+      this.props.row.lastUpdate, IConst.format_DateLong_Time24h, this.props.localization);
+
     let field = ""
     let hasError = false;
 
-    field = "firstname";
-    hasError = IConst.hasError(row[field], headers[firstname_Index].editType);
-    firstname_HelperText = hasError ? headers[firstname_Index].helperText : "";
+    // firstname
+    field = this.props.headers[2].dataFieldName;
+    hasError = IConst.hasError(this.state.row[field], this.props.headers[firstname_Index]);
+    const firstname_HelperText = hasError ? this.props.headers[firstname_Index].helperText : "";
 
-    field = "lastname";
-    hasError = IConst.hasError(row[field], headers[lastname_Index].editType);
-    lastname_HelperText = hasError ? headers[lastname_Index].helperText : "";
+    // lastname
+    field = this.props.headers[3].dataFieldName;
+    hasError = IConst.hasError(this.state.row[field], this.props.headers[lastname_Index]);
+    const lastname_HelperText = hasError ? this.state.headers[lastname_Index].helperText : "";
   
-    field = "age";
-    hasError = IConst.hasError(row[field], headers[age_Index].editType);
-    age_HelperText = hasError ? headers[age_Index].helperText : "";
+    // age
+    field = this.props.headers[4].dataFieldName;
+    hasError = IConst.hasError(this.state.row[field], this.props.headers[age_Index]);
+    const age_HelperText = hasError ? this.props.headers[age_Index].helperText : "";
 
-    field = "birthday";
-    hasError = IConst.hasError(row[field], headers[birthday_Index].editType);
-    birthday_HelperText = hasError ? headers[birthday_Index].helperText : "";
+    // birthday
+    field = this.props.headers[5].dataFieldName;
+    hasError = IConst.hasError(this.state.row[field], this.props.headers[birthday_Index]);
+    const birthday_HelperText = hasError ? this.props.headers[birthday_Index].helperText : "";
     
-    field = "gender";
-    hasError = IConst.hasError(row[field], headers[gender_Index].editType);
-    gender_HelperText = hasError ? headers[gender_Index].helperText : "";
+    // gender
+    field = this.props.headers[6].dataFieldName;
+    hasError = IConst.hasError(this.state.row[field], this.props.headers[gender_Index]);
+    const gender_HelperText = hasError ? this.props.headers[gender_Index].helperText : "";
     
-    field = "diagnosis";
-    hasError = IConst.hasError(row[field], headers[diagnosis_Index].editType);
-    diagnosis_HelperText = hasError ? headers[diagnosis_Index].helperText : "";
+    // diagnosis
+    field = this.props.headers[7].dataFieldName;
+    hasError = IConst.hasError(this.state.row[field], this.props.headers[diagnosis_Index]);
+    const diagnosis_HelperText = hasError ? this.props.headers[diagnosis_Index].helperText : "";
 
-    field = "bloodPressure";
-    hasError = IConst.hasError(row[field], headers[bloodPressure_Index].editType);
-    bloodPressure_HelperText = hasError ? headers[bloodPressure_Index].helperText : "";
+    // bloodPressure
+    field = this.props.headers[8].dataFieldName;
+    hasError = IConst.hasError(this.state.row[field], this.props.headers[bloodPressure_Index]);
+    const bloodPressure_HelperText = hasError ? this.props.headers[bloodPressure_Index].helperText : "";
     
-    field = "weight";
-    hasError = IConst.hasError(row[field], headers[weight_Index].editType);
-    weight_HelperText = hasError ? headers[weight_Index].helperText : "";
+    // weight
+    field = this.props.headers[9].dataFieldName;
+    hasError = IConst.hasError(this.state.row[field], this.props.headers[weight_Index]);
+    const weight_HelperText = hasError ? this.props.headers[weight_Index].helperText : "";
 
-    field = "address";
-    hasError = IConst.hasError(row[field], headers[address_Index].editType);
-    address_HelperText = hasError ? headers[address_Index].helperText : "";
+    // address
+    field = this.props.headers[10].dataFieldName;
+    hasError = IConst.hasError(this.state.row[field], this.props.headers[address_Index]);
+    const address_HelperText = hasError ? this.props.headers[address_Index].helperText : "";
 
-    field = "nationality";
-    hasError = IConst.hasError(row[field], headers[nationality_Index].editType);
-    nationality_HelperText = hasError ? headers[nationality_Index].helperText : "";
+    // nationality
+    field = this.props.headers[11].dataFieldName;
+    hasError = IConst.hasError(this.state.row[field], this.props.headers[nationality_Index]);
+    const nationality_HelperText = hasError ? this.props.headers[nationality_Index].helperText : "";
     
-    field = "dropdownvalue";
-    hasError = IConst.hasError(row[field], headers[dropdownvalue_Index].editType);
-    dropdownvalue_HelperText = hasError ? headers[dropdownvalue_Index].helperText : "";
+    // dropdownvalue
+    field = this.props.headers[18].dataFieldName;
+    hasError = IConst.hasError(this.state.row[field], this.props.headers[dropdownvalue_Index]);
+    const dropdownvalue_HelperText = hasError ? this.props.headers[dropdownvalue_Index].helperText : "";
 
-    field = "lastUpdate";
-    hasError = IConst.hasError(row[field], headers[lastUpdate_Index].editType);
-    lastUpdate_HelperText = hasError ? headers[lastUpdate_Index].helperText : "";
+    // lastUpdate
+    //field = this.props.headers[15].dataFieldName;
+    //const lastUpdate_HelperText = hasError ? this.props.headers[lastUpdate_Index].helperText : "";
 
     // height of the edit fields, except multilines
-    const editHeight = 33;
-    const imgSize = this.props.settings.Iconsize;
+    const editHeight = 37;
+    // TODO common button imagesite
+    //const imgSize = this.props.settings.Iconsize;
+    //const imgSize = 32;
+    const imgSize = this.props.settings.buttonSizeOnRows;
+
 
     return(
 
       <Dialog 
-        open={this.props.open} 
-        width={720}
-        maxWidth={720}
-        minWidth={720}
+        open={open} 
+        width={120}
+        maxWidth={120}
+        minWidth={120}
         BackdropProps={{
           style: {
-            backgroundColor: 'rgba(0, 0, 0, 0.4)', // Custom backdrop color (darker)
+            backgroundColor: 'rgba(0, 0, 0, 0.2)', // Custom backdrop color 
           }
         }}          
         sx={{
+          '& .MuiDialog-container': {
+            display: 'flex',
+            justifyContent: 'center', // Horizontally center the dialog
+            alignItems: 'center',      // Vertically center the dialog
+          },
           '& .MuiDialog-paper': {
-            border: '5px solid #1976d2', // Set border color
-            borderRadius: '20px',         // Optional: set border radius for rounded corners
-            }
+            width: '920px', // Set your custom width here
+            maxWidth: '100%', // Ensure it doesn't overflow beyond the screen
+            border: '3px solid #555555', // Set border color
+            borderRadius: '20px',    
+          },
         }}>
         <DialogTitle
           textAlign={'center'}
           >Sample Modal</DialogTitle>
+
           <DialogContent>
           <Typography 
               variant="h6"
               textAlign={'center'}
           >Edit the row:</Typography>
 
-          <Table>
+          <Table style={{ width: "100%" }}>
             <TableRow>
 
-              <TableCell align="left">
+              <TableCell 
+                style={{ textAlign: "left", width: "35%", }}
+                sx={{ verticalAlign: 'top', border: 'none', padding: "6px 6px", }}>
                 <TextField
-                  value={row.firstname}
-                  disable={header[firstname_Index].isEditable}
-                  label={header[firstname_Index].Title}
+                  value={this.state.row.firstName}
+                  disabled={this.props.headers[firstname_Index].isEditable}
+                  label={this.props.headers[firstname_Index].headerTitle}
                   helperText={firstname_HelperText}
-                  onChange={(e) => dataChanged(e, "firstname")}
+                  onChange={(e) => this.dataChanged(e, "firstname")}
+                  style={{ width: "100%" }}
                   sx={{ '& .MuiInputBase-root': { height: editHeight,  }, }}  />
               </TableCell>
-              <TableCell align="left">
+              <TableCell
+                style={{ textAlign: "left", width: "35%", }}
+                sx={{ verticalAlign: 'top', border: 'none', padding: "6px 6px", }}>
                 <TextField
-                  value={row.lastname}
-                  disable={header[lastname_Index].isEditable}
-                  label={header[lastname_Index].Title}
+                  value={this.state.row.lastName}
+                  disabled={this.props.headers[lastname_Index].isEditable}
+                  label={this.props.headers[lastname_Index].headerTitle}
                   helperText={lastname_HelperText}
-                  onChange={(e) => dataChanged(e, "lastname")}
+                  onChange={(e) => this.dataChanged(e, "lastname")}
+                  style={{ width: "100%" }}
                   sx={{ '& .MuiInputBase-root': { height: editHeight,  }, }}  />
               </TableCell>
-              <TableCell align="left">
+              <TableCell
+                style={{ textAlign: "left", width: "15%", }}
+                sx={{ verticalAlign: 'top', border: 'none', padding: "6px 6px", }}>
                 <TextField
-                  value={row.age}
+                  value={this.state.row.age}
                   type={"number"}
-                  disable={header[age_Index].isEditable}
-                  label={header[age_Index].Title}
+                  disabled={!this.props.headers[age_Index].isEditable}
+                  label={this.props.headers[age_Index].headerTitle}
                   helperText={age_HelperText}
-                  onChange={(e) => dataChanged(e, "age")}
+                  onChange={(e) => this.dataChanged(e, "age")}
+                  style={{ width: "100%" }}
                   sx={{ '& .MuiInputBase-root': { height: editHeight,  }, }}  />
               </TableCell>
-              <TableCell align="left">
+              <TableCell
+                style={{ textAlign: "left", width: "15%", }}
+                sx={{ verticalAlign: 'top', border: 'none', padding: "6px 6px", }}>
                 <TextField
-                  value={row.birthday}
-                  disable={header[birthday_Index].isEditable}
-                  label={header[birthday_Index].Title}
+                  value={this.state.row.birthday}
+                  disabled={!this.props.headers[birthday_Index].isEditable}
+                  label={this.props.headers[birthday_Index].headerTitle}
                   helperText={birthday_HelperText}
-                  onChange={(e) => dataChanged(e, "birthday")}
+                  onChange={(e) => this.dataChanged(e, "birthday")}
+                  style={{ width: "100%" }}
                   sx={{ '& .MuiInputBase-root': { height: editHeight,  }, }}  />
               </TableCell>
             </TableRow>
 
             <TableRow>
-              <TableCell align="left" colSpan={2}>
+              <TableCell colSpan={2}
+                style={{ textAlign: "left" }}
+                sx={{ verticalAlign: 'top', border: 'none', padding: "6px 6px", }}>
                 <TextField
-                  value={row.address}
-                  disable={header[address_Index].isEditable}
-                  label={header[address_Index].Title}
+                  value={this.state.row.address}
+                  disabled={!this.props.headers[address_Index].isEditable}
+                  label={this.props.headers[address_Index].headerTitle}
                   helperText={address_HelperText}
-                  onChange={(e) => dataChanged(e, "address")}
+                  onChange={(e) => this.dataChanged(e, "address")}
+                  style={{ width: "100%" }}
                   sx={{ '& .MuiInputBase-root': { height: editHeight,  }, }}  />
               </TableCell>
-              <TableCell align="left">
+              <TableCell
+                style={{ textAlign: "left" }}
+                sx={{ verticalAlign: 'top', border: 'none', padding: "6px 6px", }}>
                 <TextField
-                  value={row.gender}
-                  disable={header[gender_Index].isEditable}
-                  label={header[gender_Index].Title}
+                  value={this.state.row.gender}
+                  disabled={!this.props.headers[gender_Index].isEditable}
+                  label={this.props.headers[gender_Index].headerTitle}
                   helperText={gender_HelperText}
-                  onChange={(e) => dataChanged(e, "gender")}
+                  onChange={(e) => this.dataChanged(e, "gender")}
+                  style={{ width: "100%" }}
                   sx={{ '& .MuiInputBase-root': { height: editHeight,  }, }}  />
               </TableCell>
-              <TableCell align="left">
+              <TableCell
+                style={{ textAlign: "left" }}
+                sx={{ verticalAlign: 'top', border: 'none', padding: "6px 6px", }}>
                 <TextField
-                  value={row.weight}
-                  disable={header[weight_Index].isEditable}
-                  label={header[weight_Index].Title}
+                  value={this.state.row.weight}
+                  disabled={!this.props.headers[weight_Index].isEditable}
+                  label={this.props.headers[weight_Index].headerTitle}
                   helperText={weight_HelperText}
-                  onChange={(e) => dataChanged(e, "weight")}
+                  onChange={(e) => this.dataChanged(e, "weight")}
+                  style={{ width: "100%" }}
                   sx={{ '& .MuiInputBase-root': { height: editHeight,  }, }}  />
               </TableCell>
             </TableRow>
 
             <TableRow>
-              <TableCell align="left" colSpan={2}>
+              <TableCell colSpan={2}
+                style={{ textAlign: "left" }}
+                sx={{ verticalAlign: 'top', border: 'none', padding: "6px 6px", }}>
                 <TextField
-                  value={row.nationality}
-                  disable={header[nationality_Index].isEditable}
-                  label={header[nationality_Index].Title}
+                  value={this.state.row.nationality}
+                  disabled={!this.props.headers[nationality_Index].isEditable}
+                  label={this.props.headers[nationality_Index].headerTitle}
                   helperText={nationality_HelperText}
-                  onChange={(e) => dataChanged(e, "nationality")}
+                  onChange={(e) => this.dataChanged(e, "nationality")}
+                  style={{ width: "100%" }}
                   sx={{ '& .MuiInputBase-root': { height: editHeight,  }, }}  />
               </TableCell>
-              <TableCell align="left" colSpan={2}>
-
+              <TableCell colSpan={2}
+                style={{ textAlign: "left" }}
+                sx={{ verticalAlign: 'top', border: 'none', padding: "6px 6px", }}>
                 dropdown
               </TableCell>
-              <TableCell align="left" colSpan={2}>
-                <TextField
-                  value={row.diagnosis}
-                  disable={header[diagnosis_Index].isEditable}
-                  label={header[diagnosis_Index].Title}
-                  helperText={diagnosis_HelperText}
-                  onChange={(e) => dataChanged(e, "diagnosis")}
-                  sx={{ '& .MuiInputBase-root': { height: editHeight,  }, }}  />
-              </TableCell>
-              <TableCell align="left">
-                <TextField
-                  value={row.bloodPressure}
-                  disable={header[bloodPressure_Index].isEditable}
-                  label={header[bloodPressure_Index].Title}
-                  helperText={bloodPressure_HelperText}
-                  onChange={(e) => dataChanged(e, "bloodPressure")}
-                  sx={{ '& .MuiInputBase-root': { height: editHeight,  }, }}  />
-              </TableCell>
-              </TableRow>
+            </TableRow>
 
-              <TableRow colSpan={4}>
-                <IFieldReadOnly
-                  width={width}
-                  value={datevalue}
+            <TableRow>
+              <TableCell colSpan={2}
+                style={{ textAlign: "left" }}
+                sx={{ verticalAlign: 'top', border: 'none', padding: "6px 6px", }}>
+                <TextField
+                  value={this.state.row.diagnosis}
+                  disabled={!this.props.headers[diagnosis_Index].isEditable}
+                  label={this.props.headers[diagnosis_Index].headerTitle}
+                  helperText={diagnosis_HelperText}
+                  onChange={(e) => this.dataChanged(e, "diagnosis")}
+                  style={{ width: "100%" }}
+                  sx={{ '& .MuiInputBase-root': { height: editHeight,  }, }}  />
+              </TableCell>
+              <TableCell colSpan={2} 
+                style={{ textAlign: "left" }}
+                sx={{ verticalAlign: 'top', border: 'none', padding: "6px 6px", }}>
+                <TextField
+                  value={this.state.row.bloodPressure}
+                  disabled={!this.props.headers[bloodPressure_Index].isEditable}
+                  label={this.props.headers[bloodPressure_Index].headerTitle}
+                  helperText={bloodPressure_HelperText}
+                  onChange={(e) => this.dataChanged(e, "bloodPressure")}
+                  style={{ width: "100%" }}
+                  sx={{ '& .MuiInputBase-root': { height: editHeight,  }, }}  />
+              </TableCell>
+            </TableRow>
+
+            <TableRow >
+              <TableCell colSpan={4}
+                style={{ textAlign: "left" }}
+                sx={{ verticalAlign: 'top', border: 'none', padding: "6px 6px", }}>
+                <TextField
+                  value={dateText}
+                  label={this.props.headers[lastUpdate_Index].headerTitle}
+                  disabled={true}
+                  style={{ width: "100%" }}
+                  sx={{ "& .MuiInputBase-root": { height: editHeight } }}
                 />
+              </TableCell>
             </TableRow>
           </Table>
 
         </DialogContent>
         <DialogActions>
+          <div style={{display: 'flex', paddingRight: '20px', }}>
           <IconButton
             className={classes.mainButtons}
             disabled={this.state.mainDisabled}
-            onClick={this.props.setDataFromDialog(this.state.row, true)} >
+            style={{ justifyContent: "flex-start", flex: 1 }}
+            onClick={() => this.closeDialog(true)} >
+              
           <img 
             src={imgSaveButton}
-            style={{ 
-              width: {imgSize}, 
-              height: {imgSize},
+            style={{ width: {imgSize}, height: {imgSize},
               opacity: (!this.state.mainDisabled ? 1 : 0.2) 
             }} 
           />Save changes</IconButton>
 
           <IconButton
             className={classes.mainButtons}
-            onClick={this.props.setDataFromDialog(null, false)} >
+            style={{ justifyContent: "flex-end",  }}
+            onClick={() => this.closeDialog(false)} >
           <img 
             src={imgUndoButton}
-            style={{ 
-              width: {imgSize}, 
-              height: {imgSize},
+            style={{ width: {imgSize}, height: {imgSize},
             }} 
           />Cancel</IconButton>
+          </div>
         </DialogActions>
       </Dialog>
     )

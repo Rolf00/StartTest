@@ -27,7 +27,7 @@ export default function IFieldDropDown (props) {
       <div 
       style={{ 
         padding: '5px 0px', 
-        width: dropdownWidth, 
+        width: '100%', 
         height: '100%',
         display: 'flex',
         flexGrow: 1,
@@ -36,12 +36,16 @@ export default function IFieldDropDown (props) {
       }}
       >    
       <FormControl 
-        style={{ width: {dropdownWidth}, }} >
+        style={{ 
+          width: '100%', // {dropdownWidth}, 
+        }} 
+        sx={{ '& .MuiInputBase-root': { height: props.editHeight,  }, }}
+        >
         <Select
           disabled={disabled}
           value={value}
           onChange={e => handleChange(e)}
-        >
+          >
         {dropdownList.map((item, itemIndex) =>
         {
           const ddId = item.id;

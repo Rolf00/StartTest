@@ -15,9 +15,21 @@ export default function IFieldSelection (props) {
     IConst.imgChkboxUnchecked;
   
   return (
+    <div 
+    style={{ 
+      padding: '5px 0px', 
+      width: props.width, 
+      height: '100%',
+      display: 'flex',
+      flexGrow: 1,
+      justifyContent: props.horizontalAlign, 
+      alignItems: props.verticalAlign,
+    }}
+    >       
     <IconButton
       onClick={e => this.handleSelectionClickRow(e, rowid)}
-      style={{ width: btnHoverWidth, height: btnHoverWidth }} >
+      style={{ width: btnHoverWidth, height: btnHoverWidth, }} 
+      >
       <img 
         src = {iconCheckbox}
         alt="img"
@@ -25,5 +37,6 @@ export default function IFieldSelection (props) {
         style={{ width: imgWidth, height: imgWidth, padding: '0px', }} 
       />
     </IconButton>
+    </div>
   );
 }

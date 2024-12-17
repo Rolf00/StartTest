@@ -44,7 +44,7 @@ export default function InselTableMenu  (props)
   const getAllColumnsAreVisible = () =>
   {
     // here we check if any columns is not visible
-    const notVisibleCols = props.headers.filter(h => h.isVisible === false);
+    //const notVisibleCols = props.headers.filter(h => h.isVisible === false);
     // TODO
     //return notVisibleCols.length === 0;
     return false;
@@ -52,49 +52,24 @@ export default function InselTableMenu  (props)
 
   const handleSortColumn = (sortAscending) => 
   {
-    // hide the menu
+    // sort a column
     handleClose(); 
-    //setMainMenuAnchor(null);
-
-    // TODO
-    alert("TableMenu: ordering data is not implemented yet.")
-    return;
-
-    // sort the data for one field
-    // TODO
-    const newData = this.state.data.sort((a, b) => {
-      if (sortAscending)
-      {
-        return a[props.fieldname].localeCompare(b[props.fieldname]);
-      }
-      else
-      {
-        return b[props.fieldname].localeCompare(a[props.fieldname]);
-      }
-    });
-
-    console.log("ordered newData", newData);
-
-    // now re-render data
-    // TODO how to render?
-    //this.setState({data: newData});
+    props.SortColumn(props.headerIndex, sortAscending);
   }
 
   const handleFilter = () =>
   {
     // hide the menu 
     handleClose(); 
-    //setMainMenuAnchor(null);
-
     // TODO 
     alert("Searching and filtering are not implemented yet.");
+    //props.handleFilter
   }
 
   const handleHideColumn = () =>
   {
     // hide the menu 
     handleClose(); 
-    props.headers[props.headerIndex].isVisible = true;
     props.HideColumn(props.headerIndex);
   }
     
@@ -144,20 +119,18 @@ export default function InselTableMenu  (props)
           onClick={() => handleSortColumn(false)}
           //onMouseOver={(e) => handleOpenCloseManageColumns(e, false)}
         >Sort descending</MenuItem>
+
         <Divider sx={{ my: 0.5 }} />
         <MenuItem key='3' 
           onClick={() => handleFilter()}
           //onMouseOver={(e) => handleOpenCloseManageColumns(e, false)}
         >Search value</MenuItem>
-        <MenuItem key='4' 
-          onClick={() => handleFilter()}
-          //onMouseOver={(e) => handleOpenCloseManageColumns(e, false)}
-        >Filter value</MenuItem>
+
         <Divider sx={{ my: 0.5 }} />
         <MenuItem key='5' 
-          //onMouseOver={(e) => handleOpenCloseManageColumns(e, false)}
-          //onClick={() => handleHideColumn()}
+          onClick={() => handleHideColumn()}
         >Hide column</MenuItem>
+
         {/* TODO */} 
         <MenuItem 
           id="nestedMenusManageColumns"

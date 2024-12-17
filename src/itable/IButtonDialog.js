@@ -1,24 +1,27 @@
 import React from 'react';
+import PropTypes, { func } from 'prop-types';
+import { withStyles } from 'tss-react/mui';
+import 'react-resizable/css/styles.css';
 
-import Paper from "@mui/material/Paper";
+import { Typography } from '@mui/material';
 import Table from "@mui/material/Table";
 import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import IconButton from "@mui/material/IconButton";
-import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 
-
 import IConst from './IConst';
-import { Typography } from '@mui/material';
+import { useStyles } from './styles';
+
 
 class IButtonDialog extends React.Component {
   constructor(props) {
     super(props);
 
     const {
+      classes,
       id,
       open,
       title,
@@ -38,7 +41,8 @@ class IButtonDialog extends React.Component {
 
   render ()
   {
-    /*
+    const { classes } = this.props;
+
     const buttons = 
       this.props.buttonDialogListType === IConst.buttonDialogTypeOk ?  
         IConst.defaultButtonsOk :
@@ -47,34 +51,29 @@ class IButtonDialog extends React.Component {
       this.props.buttonDialogListType === IConst.buttonDialogTypeYesNoCancel ?  
         IConst.defaultButtonsYesNoCancel :
         this.props.buttonList;
-        */
 
-        // TODO
+    const title = this.props.title;
+    const question = this.props.question;
+    const mainIcon = 
+      this.props.dialogIconType === IConst.buttonDialogIconType_Info ? IConst.imgDialogBigIconInfo :
+      this.props.dialogIconType === IConst.buttonDialogIconType_Question ? IConst.imgDialogBigIconQuestion :
+      this.props.dialogIconType === IConst.buttonDialogIconType_Stop ?  IConst.imgDialogBigIconStop : null;
 
-    const buttons = IConst.defaultButtonsYesNo;
+    const buttonWidth = this.props.buttonWidth;
+
     const colCount = Math.max(...buttons.map((item) => item.X));
     const rowCount = Math.max(...buttons.map((item) => item.Y));
-  
-
     const col = [];
     for (let c = 0; c < colCount; c++) col.push(c);
-  
     const row = [];
     for (let r = 0; r < rowCount; r++) row.push(r);
   
-    // TODO
-    //const buttonWidth = this.props.buttonWidth;
-    const imageWidth = 60;
+    // TODO button dialog settings
+    const imageWidth = 72;
     const iconSize = 36;
-    const buttonWidth = 120;
     const spaceWidth = 10;
     const entireWidth = (colCount * buttonWidth) + ((colCount + 1) * spaceWidth) + imageWidth;
-    const open = this.props.open;
-
-    // TODO 
-    const title = "Undoing all rows";
-    const question = "Do you really want to undo all changes?";
-  
+    const open = true;
 
     return(
       <Dialog 
@@ -85,7 +84,7 @@ class IButtonDialog extends React.Component {
         // TODO  BackdropProps deprecated
         BackdropProps={{
           style: {
-            backgroundColor: 'rgba(0, 0, 0, 0.4)', // Custom backdrop color (darker)
+            backgroundColor: 'rgba(0, 0, 0, 0.2)', // Custom backdrop color 
           }
         }}          
         sx={{
@@ -103,7 +102,7 @@ class IButtonDialog extends React.Component {
             alignItems: 'center'          
           }}> 
           <img 
-            src={IConst.imgDialogIconQuestion}
+            src={mainIcon}
             style={{ width: imageWidth, height: imageWidth, }}/>
         </Grid>
 
@@ -139,29 +138,19 @@ class IButtonDialog extends React.Component {
                   const icon = button.icon;
                   return (
                     <TableCell
-                      key={rowIndex + 10 * colIndex}
-                      style={{ border: "0px", padding: "5px 5px", margin: "0px" }}
-                    >
+                      key={`button-item-${rowIndex}-${colIndex}`} 
+                      style={{ border: "0px", padding: "5px 5px", margin: "0px" }}>
                       <IconButton
                         size="small"
+                        className={classes.mainButtons}
                         onClick={() => this.handleClick(btnIndex)}
                         style={{
                           width: buttonWidth,
-                          height: "48px",
-                          borderRadius: "4px",
                           display: "flex",
-                          justifyContent:
-                            align === "right" ? "flex-end" : "flex-start",
-                        }}
-                        sx={{
-                          border: "1px solid #aaaaaa",
-                          backgroundColor: "#eeeeee",
-                          "&:Hover": {
-                            border: "1px solid #555555",
-                            backgroundColor: "#ddddff",
-                          },
-                        }}
-                      >
+                          // TODO ButtoDialog lign buttons
+                          //justifyContent: align === "right" ? "flex-end" : "flex-start",
+                          justifyContent: "flex-start",
+                        }}>
                         <img src={icon}
                           style={{ width: iconSize, height: iconSize}}/ >
                         {caption}
@@ -182,5 +171,7 @@ class IButtonDialog extends React.Component {
   }
 }
 
-//export default withStyles(InselButtonDialog, useStyles);
-export default IButtonDialog;
+
+IButtonDialog.propTypes = { classes: PropTypes.object, };
+  
+export default withStyles(IButtonDialog, useStyles);

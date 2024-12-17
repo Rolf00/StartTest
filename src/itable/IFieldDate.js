@@ -91,25 +91,23 @@ export default function IFieldDate (props) {
 
     return (
       <div 
-      style={{ 
-        padding: '5px 0px', 
-        width: props.width, 
-        height: '100%',
-        display: 'flex',
-        flexGrow: 1,
-        justifyContent: props.horizontalAlign, 
-        alignItems: props.verticalAlign,
-      }}
-      >    
+        style={{ 
+          padding: '5px 0px', 
+          width:  '100%', //props.width, 
+          height: '100%',
+          display: 'flex',
+          flexGrow: 1,
+          justifyContent: props.horizontalAlign, 
+          alignItems: props.verticalAlign,
+        }}>    
 
       <LocalizationProvider dateAdapter={AdapterDayjs} locale='de'>
       <DatePicker 
         disabled={disabled}
         value={pickerDate}
         format="DD.MM.YYYY"
-        style={{ 
-          //width: width, 
-        }}
+        style={{ width: '100%', }}
+        sx={{ '& .MuiInputBase-root': { height: props.editHeight,  }, }}
         onChange={(value) => handleChange(value)}
         renderInput={(params) => <TextField {...params} />}
       />

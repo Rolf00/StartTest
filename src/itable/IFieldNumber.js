@@ -63,6 +63,7 @@ export default function IFieldNumber (props) {
         style={{ 
           width: width, 
         }}
+        sx={{ '& .MuiInputBase-root': { height: props.editHeight,  }, }}
         inputProps={{
           type: type,
           sx: {

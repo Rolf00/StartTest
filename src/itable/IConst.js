@@ -14,6 +14,7 @@ import imgIconYes from './imgYes48.png';
 import imgIconNo from './imgNo48.png'; 
 import imgIconCancel from './imgCancel48.png'; 
 
+import imgDialogInfo from './imgInfo96.png'; 
 import imgDialogQuestion from './imgQuestion96.png'; 
 import imgDialogStop from './imgStop96.png'; 
 import imgDialogWarning from './imgWarning96.png'; 
@@ -83,7 +84,10 @@ class IConst {
   static imgIconCancel = imgIconCancel; 
 
   // big icon dialog
-  static imgDialogIconQuestion = imgDialogQuestion; 
+  static imgDialogBigIconInfo = imgDialogInfo; 
+  static imgDialogBigIconQuestion = imgDialogQuestion; 
+  static imgDialogBigIconStop = imgDialogStop; 
+  static imgDialogBigIconWarning = imgDialogWarning; 
 
   // types for button dialog 
   static buttonDialogTypeOk = 0;
@@ -102,7 +106,7 @@ class IConst {
   ];
   static defaultButtonsYesNo = [
     { caption: "Yes", icon: imgIconYes, horizontalAlign: 'left', X: 1, Y: 1, },
-    { caption: "No", icon: imgIconNo, horizontalAlign: 'left', X: 2, Y: 1, }
+    { caption: "No", icon: imgIconNo, horizontalAlign: 'right', X: 2, Y: 1, }
   ];
   static defaultButtonsYesNoCancel = [
     { caption: "Yes", icon: imgIconYes, horizontalAlign: 'left', X: 1, Y: 1, },
@@ -249,32 +253,62 @@ class IConst {
 
   static hasError(value, header)
   {
-    let hasError = false;
-    if (header.editType === this.eidtType_Text ||
-        header.editType === this.eidtType_TextMultiline)
-    {
-      hasError = 
-        value.length > header.textMaxLength ||
-        (value === null && header.required) ||
-        (value === undefined && header.required) ||
-        (value === '' && header.required);
-    }
-  
-    if (header.editType === this.eidtType_Text ||
-      header.editType === this.eidtType_TextMultiline)
-    {
-      hasError = 
-        value > header.numberMaxValue ||
-        value < header.numberMinValue
-        (value === null && header.required) ||
-        (value === undefined && header.required) ||
-        (value === '' && header.required);
-    }
-    return hasError;
-  }
 
+    // text fields
+    if (header.editType === this.editType_Textfield ||
+      header.editType === this.editType_TextfieldMultiline)
+    {
+      if (!value && !header.required)
+      {
+        return false;
+      }
+      else if (!value && header.required)
+      {
+        return true;
+      }
+      else if (value === "" && !header.required)
+      {
+          return false;
+      }
+      else if (value === "" && header.required)
+      {
+          return true;
+      }
+      else if (!header.textMaxLength)
+      {
+          return false;
+      }
+      else if (value.length > header.textMaxLength)
+      {
+          return true;
+      }
+      return false;
+    }
   
-  
+    // number fields
+    if (header.editType === this.editType_Integer ||
+      header.editType === this.editType_Decimal)
+    {
+      if (!value && !header.required)
+      {
+        return false;
+      }
+      else if (!value && header.required)
+      {
+        return true;
+      }
+      else if (header.numberMaxValue)
+      {
+        if (value > header.numberMaxValue) return true;
+      }
+      else if (header.numberMinValue)
+      {
+        if (value < header.numberMinValue) return true;
+      }
+      return false;
+    }
+    return false;
+  }
 
 }
 

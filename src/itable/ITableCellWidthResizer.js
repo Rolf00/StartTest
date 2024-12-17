@@ -66,6 +66,7 @@ class ITableCellWidthResizer extends React.Component {
               headers={this.props.headers}
               headerIndex={headerIndex}
               HideColumn={() => this.props.HideColumn(headerIndex)}
+              SortColumn={(sortAscending) => this.props.SortColumn(headerIndex, sortAscending)}
             ></ITableMenu>
           </div>}
 
@@ -91,14 +92,17 @@ class ITableCellWidthResizer extends React.Component {
               headers={this.props.headers}
               headerIndex={headerIndex}
               HideColumn={() => this.props.HideColumn(headerIndex)}
+              SortColumn={(sortAscending) => this.props.SortColumn(headerIndex, sortAscending)}
               ></ITableMenu>
-          </div>}
+          </div>
+          }
 
           {(!notResizable) &&
           <div 
             className={classes.resizerEW}
             onMouseDown={(e) => this.props.handleMouseDownRowEW(e, headerIndex)} 
-          >&nbsp;</div>}
+          >&nbsp;</div>
+          }
 
         </div>
       </TableCell>

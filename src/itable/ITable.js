@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes, { func } from 'prop-types';
 import { withStyles } from 'tss-react/mui';
+import 'react-resizable/css/styles.css';
 
 import {
   IconButton,
@@ -14,20 +15,19 @@ import {
   TableRow,
 } from '@mui/material';
 
-//import 'dayjs/locale/de';
-import 'react-resizable/css/styles.css';
-
 import { useStyles } from './styles';
+import IConst from './IConst';
 import ITableHeader from './ITableHeader';
 import ITableRow from './ITableRow'; 
-import IConst from './IConst';
 import IButtonDialog from './IButtonDialog';
+import IDataDialog_First from './IDataDialog_First';
 //import IHeaderManage from './IHeaderManage';
 
-import IDialog_MainData from './IDialog_MainData';
+
 
 const avaiableDialogs = {
-  dialog_MainData: IDialog_MainData,
+  // TODO
+  //dialog_MainData: IDataDialog_First,
   //dialog1: ComponentB,
 };
 
@@ -43,6 +43,7 @@ class ITable extends React.Component {
       data,
       dialogName } = this.props;
 
+    // TODO
     const EditDialog = avaiableDialogs[this.props.dialogName];
   
     this.state = {
@@ -68,7 +69,7 @@ class ITable extends React.Component {
       buttonWidth: 120,
   
       // props for edit dialog
-      openEditDialog: false,
+      openDataModalDialog: false,
       selectedRow: null,
       isHoveredOrResizing: false,
 
@@ -85,13 +86,13 @@ class ITable extends React.Component {
       //headerWidthList: this.setHeaderWidthList(),
       rowInfoList: this.setRowInfoList(),
     };
-
-    // TODO
-    //this.checkHeaders();
   }
 
   componentDidMount() 
   {
+    // TODO where to place "checkHeaders"
+    // we check the headers and fill empty fields with default values
+    this.checkHeaders();
   }
 
   // ---------------------------------------------------------------------------------------
@@ -138,7 +139,7 @@ class ITable extends React.Component {
 
   checkHeaders()
   {
-    for(let h = 0; h < this.state.headers.lenght; h++) 
+    for(let h = 0; h < this.state.headers.length; h++) 
     {
       // databaseField:
       if (!this.state.headers[h].headerTitle) this.state.headers[h].headerTitle = "";
@@ -448,6 +449,32 @@ class ITable extends React.Component {
     });
   }
 
+  handleTest()
+  {
+    //this.UndoAllRows();
+    //return;
+    const buttons = [
+      { caption: "Yes", icon: IConst.imgIconYes, horizontalAlign: 'left', X: 1, Y: 1, },
+      { caption: "No", icon: IConst.imgIconNo, horizontalAlign: 'left', X: 2, Y: 1, },
+      { caption: "Cancel", icon: IConst.imgIconCancel, horizontalAlign: 'left', X: 3, Y: 1, },
+      { caption: "Maybe", icon: IConst.imgIconYes, horizontalAlign: 'left', X: 1, Y: 2, },
+      { caption: "NoAtAll", icon: IConst.imgIconNo, horizontalAlign: 'left', X: 2, Y: 2, },
+      { caption: "Unsure", icon: IConst.imgIconCancel, horizontalAlign: 'left', X: 3, Y: 2, },
+      { caption: "ok", icon: IConst.imgIconCancel, horizontalAlign: 'left', X: 1, Y: 3, },
+      { caption: "no way", icon: IConst.imgIconCancel, horizontalAlign: 'left', X: 3, Y: 3, },
+    ];
+    this.setState({
+      buttonDialogId: "UndoAll",
+      buttonDialogTitle: "Undo all rows",
+      buttonDialogQuestion: "Do you really want to undo all changes?",
+      buttonDialogButtons: buttons,
+      buttonDialogListType: -1,
+      dialogIconType: IConst.buttonDialogIconType_Question,
+      buttonWidth: 120,
+      openButtonDialog: true,
+    });
+  }
+
   // ---------------------------------------------------------------------------------------
   // clicks from button dialog
   
@@ -500,32 +527,18 @@ class ITable extends React.Component {
     });
   }
 
-  /*
-  handleRowEditButtons(rowid, action)
+  openModalDataDialog(row)
   {
-    if (action === IConst.editType_ButtonEdit)
-    {
-      // button EDIT for one row was clicked
-      // here we open a modal dialog
-      this.handleEditModalDialog(rowid);
-    }
-    else if (action === IConst.editType_ButtonSave)
-    {
-      // button SAVE for one row was clicked
-      alert("SAVE one row is not implemented yet.")
-    }
-    else if (action === IConst.editType_ButtonUndo)
-    {
-      // button UNDO for one row was clicked
-      this.handleUndoRow(rowid);
-    }
-    else if (action === IConst.editType_ButtonDelete)
-    {
-      // button DELETE for one row was clicked
-      this.handleDeleteRow(rowid);
-    }
+    //alert("Modal Dialog: not implemented. ");
+    //return;
+
+    // open the new edit dialog
+    const rowIndex = this.getRowIndex(row[this.props.primaryKey]);
+    this.setState({
+      selectedRow: this.state.data[rowIndex],
+      openDataModalDialog: true
+    });
   }
-    */
 
   handleDialogButtons(buttonIndex, dialogID)
   {
@@ -545,7 +558,7 @@ class ITable extends React.Component {
       {
         // button no was pressed
         // nothing to do here
-        alert("undo all rows: index = " + buttonIndex + ", dialogID = " + dialogID);
+        alert("undo all rows CANCELLED");
       }
       return;
     }
@@ -657,40 +670,37 @@ class ITable extends React.Component {
   // ---------------------------------------------------------------------------------------
   // modal dialog
 
-  handleEditModalDialogClick(e, rowid, row)
+  handleSubmitModalDialog = (newRow, saveIt) => 
   {
-    alert("Modal Dialog: not implemented. ");
-    return;
-
-    // open the new edit dialog
-    const rowIndex = this.getRowIndex(rowid);
-    this.setState({
-      selectedRow: this.state.data[rowIndex],
-      openEditDialog: true
-    });
-  }
-
-  handleSubmitModalDialog = (rowid, newRow) => 
-  {
-    // copy the edited row into the data
-    const rowIndex = this.getRowIndex(rowid);
-    const newlist = this.state.data;
-    const keys = Object.keys(newRow);
-    for (let f = 0; f < keys.length; f++)
+    if (saveIt)
     {
-      const field = keys[f];
-      newlist[rowIndex][field] = newRow[field];
+      // copy the edited row into the data
+      const rowIndex = this.getRowIndex(newRow[this.props.primaryKey]);
+      const newlist = this.state.data;
+      const keys = Object.keys(newRow);
+      for (let f = 0; f < keys.length; f++)
+      {
+        const field = keys[f];
+        newlist[rowIndex][field] = newRow[field];
+      }
+      if (this.state.rowInfoList[rowIndex].state === IConst.rowStateUnchanged)
+        this.state.rowInfoList[rowIndex].state = IConst.rowStateEdited;
+
+      // update the buttons SAVE ALL, UNDO ALL
+      const mainEnabled = this.getMainButtonsEnabled();    
+
+      this.setState({ 
+        openDataModalDialog: false,
+        data: newlist, 
+        mainButtonsDisabled: mainEnabled
+      });
     }
+    else
+    {
+      // close the dialog
+      this.setState({  openDataModalDialog: false, });
 
-    // update the buttons SAVE ALL, UNDO ALL
-    const mainEnabled = this.getMainButtonsEnabled();    
-
-    this.setState({ 
-      openDialog: false,
-      data: newlist, 
-      mainButtonsDisabled: mainEnabled
-    });
-
+    }
   };
 
   // ---------------------------------------------------------------------------------------
@@ -965,13 +975,56 @@ class ITable extends React.Component {
   HideColumn(headerIndex)
   {
     // hide one column
-
-    // TODO : if all columns are invisible, you cannot unhide them anymore :
-    // SOLUTION: it would need a modal dialog
-
     const newHeaders = this.state.headers;
     newHeaders[headerIndex].isVisible = false;
     this.setState({headers: newHeaders});
+  }
+
+  SortColumn(headerIndex, sortAscending)
+  {
+    // sort the data for one field
+    const field = this.state.headers[headerIndex].dataFieldName;
+    if (this.state.headers[headerIndex].editType === IConst.editType_Textfield ||
+      this.state.headers[headerIndex].editType === IConst.editType_TextfieldMultiline)
+    {
+      // strings
+      const newData = [...this.state.data].sort((a, b) => {
+        if (sortAscending)
+        {
+          return a[field].localeCompare(b[field]);
+        }
+        else
+        {
+          return b[field].localeCompare(a[field]);
+        }
+      });
+      this.setState({data: newData});
+      return;
+    }
+    else
+    if (this.state.headers[headerIndex].editType === IConst.editType_Integer ||
+      this.state.headers[headerIndex].editType === IConst.editType_Decimal ||
+      this.state.headers[headerIndex].editType === IConst.editType_Dropdown ||
+      this.state.headers[headerIndex].editType === IConst.editType_Date)
+    {
+      // numbers, dates, dropdowns
+      const newData = [...this.state.data].sort((a, b) => {
+        if (sortAscending)
+        {
+          return a[field] - b[field];
+        }
+        else
+        {
+          return b[field] - a[field];
+        }
+      });
+      this.setState({data: newData});
+      return;
+    }
+    else 
+    {
+      alert("Unknown type for soertings: " + this.state.headers[headerIndex].editType);
+    }
   }
 
 
@@ -1021,14 +1074,10 @@ class ITable extends React.Component {
           <Table 
             className={classes.table} 
             stickyHeader
-            sx={{ 
-              //tableLayout: 'fixed', 
-              width: '1800px',
-              //overflowX: 'auto',
-            }}
+            sx={{ width: '1800px', }}
           >
             <ITableHeader
-              //className={classes.table_head_row}
+              className={classes.table_head_row}
               settings={this.props.settings}
               headers={headers}
               mainChecked={mainChecked}
@@ -1036,8 +1085,8 @@ class ITable extends React.Component {
               handleMouseDownRowEW={(e, colHeadIndex)=>this.handleMouseDownRowEW(e, colHeadIndex)}
               handleCheckboxClickHeader={(e)=>this.handleCheckboxClickHeader(e)}
               HideColumn={(headerIndex) => this.HideColumn(headerIndex)}
-            >
-            </ITableHeader>
+              SortColumn={(headerIndex, sortAscending) => this.SortColumn(headerIndex, sortAscending)}
+            />
             <TableBody 
               className={classes.table_body_row}
               >
@@ -1045,16 +1094,6 @@ class ITable extends React.Component {
                 // we use the old values for undoing changes
                 const rowid = row[this.props.primaryKey];
                 const rowInfoIndex = this.state.rowInfoList.findIndex(r => r.id === rowid);
-
-
-                //const oldRowIndex = this.getRowIndex(rowid);
-                //const thisOldRow = data[oldRowIndex];
-                //const thisRow = this.state.data[rowIndex];
-                //const thisRow = data[rowIndex];
-                //const thisIndex = rowIndex;
-                //const thisInfo = this.state.rowInfoList[rowIndex];
-
-
 
                 return(
                   <ITableRow
@@ -1065,13 +1104,12 @@ class ITable extends React.Component {
                     oldRow={row}
                     rowId={rowid}
                     row={row}
-                    //rowInfo={thisInfo}
                     setMainButtonState={() => this.setMainButtonState()}
                     handleUndoInsertedRows={(rowIndex) => this.handleRowEditButtons(rowIndex)}
                     handleSelectionClickRow={(rowid) => this.handleSelectionClickRow(rowid)}
-                    handleRowEditButtonClick={(rowid, action) => this.handleRowEditButtons(rowid, action)}
                     handleSpecialButtonClick={(rowid, field) => this.props.handleSpecialButtonClick(rowid, field)}
                     handleDataChange={(newvalue, rowid, field) => this.handleDataChange(newvalue, rowid, field)}
+                    openModalDataDialog={(row) => this.openModalDataDialog(row)}  
                   />
                 );
               })}
@@ -1203,6 +1241,20 @@ class ITable extends React.Component {
               />&nbsp;Manage columns</IconButton>
 
 
+              {/* tests ----------------------------------------------------------- */}
+              <IconButton
+                className={classes.mainButtons}
+                onClick={e => this.handleTest()}
+              >
+              <img 
+                //src={IConst.imgExcelButton}
+                title='Ctrl-M'
+                style={{ 
+                  width: sizeMainButton, 
+                  height: sizeMainButton,
+                 }} 
+              />&nbsp;Test</IconButton>
+
               <TablePagination
                 component="div"
                 count={this.state.data.length}
@@ -1292,12 +1344,13 @@ class ITable extends React.Component {
         <IButtonDialog
           id={this.buttonDialogId}
           open={this.state.openButtonDialog}
-          title={this.buttonDialogTitle}
-          question={this.buttonDialogQuestion}
-          buttonList={this.buttonDialogButtons}
-          buttonDialogListType={this.dialogButtonListType}
-          dialogIconType={this.dialogIconType}
-          handleDialogButtons={(index) => this.handleDialogButtons(index, this.buttonDialogId)}
+          title={this.state.buttonDialogTitle}
+          question={this.state.buttonDialogQuestion}
+          buttonList={this.state.buttonDialogButtons}
+          buttonDialogListType={this.state.buttonDialogListType}
+          dialogIconType={this.state.dialogIconType}
+          buttonWidth={120}
+          handleDialogButtons={(index) => this.handleDialogButtons(index, this.state.buttonDialogId)}
         />}
 
         {/* button dialog 
@@ -1310,16 +1363,17 @@ class ITable extends React.Component {
         }
         */}
 
-        {/* main edit dialog */}     
-        {this.props.dialogName === 'InselDialog_MainData' &&  this.state.openEditDialog &&
-          <IDialog_MainData
-            open={this.state.openEditDialog}
+        {/* main edit dialog */}
+        {this.props.dialogName === 'IDataDialog_First' &&  this.state.openDataModalDialog &&
+          <IDataDialog_First
+            open={this.state.openDataModalDialog}
+            settings={this.props.settings}
             headers={this.props.headers}
             row={this.state.selectedRow}
             primaryKey={this.props.primaryKey}
-            handleSubmitModalDialog={(row) => this.handleSubmitModalDialog(row)}
+            handleSubmitModalDialog={(row, saveIt) => this.handleSubmitModalDialog(row, saveIt)}
           >
-          </IDialog_MainData>
+          </IDataDialog_First>
         }
 
       </Paper>

@@ -29,6 +29,7 @@ import ITable from './itable/ITable';
 // columns for Waldo
 const headersWaldo = [
   {
+    id: 0,
     databaseField: "",
     isResizable: false,
     isEditable: true,
@@ -45,6 +46,7 @@ const headersWaldo = [
     hasHeaderMenu: false,
   },
   {
+    id: 1,
     databaseField: "primaryKey",
     headerTitle: "ID",
     isResizable: true,
@@ -62,6 +64,7 @@ const headersWaldo = [
     hasHeaderMenu: false,
   },
   {
+    id: 2,
     databaseField: "firstName",
     headerTitle: "Firstname",
     isResizable: true,
@@ -79,8 +82,9 @@ const headersWaldo = [
     hasHeaderMenu: true,
   },
   {
+    id: 3,
     databaseField: "lastName",
-    headerTitle: "Lastname",
+    headerTitle: "lastName",
     isResizable: true,
     isEditable: true,
     isRequired: true,
@@ -96,6 +100,7 @@ const headersWaldo = [
     hasHeaderMenu: true,
   },
   {
+    id: 4,
     databaseField: "age",
     headerTitle: "Age",
     isResizable: true,
@@ -113,6 +118,7 @@ const headersWaldo = [
     hasHeaderMenu: true,
   },
   {
+    id: 5,
     databaseField: "birthday",
     headerTitle: "Birthday",
     isResizable: true,
@@ -131,6 +137,7 @@ const headersWaldo = [
     hasHeaderMenu: true,
   },
   {
+    id: 6,
     databaseField: "gender",
     headerTitle: "Gender",
     isResizable: true,
@@ -148,6 +155,7 @@ const headersWaldo = [
     hasHeaderMenu: true,
   },
   {
+    id: 7,
     databaseField: "diagnosis",
     headerTitle: "Diagnosis",
     isResizable: true,
@@ -165,6 +173,7 @@ const headersWaldo = [
     hasHeaderMenu: true,
   },
   {
+    id: 8,
     databaseField: "bloodPressure",
     headerTitle: "Blood Pressure",
     isResizable: true,
@@ -182,6 +191,7 @@ const headersWaldo = [
     hasHeaderMenu: true,
   },
   {
+    id: 9,
     databaseField: "weight",
     headerTitle: "W. (kg)",
     isResizable: true,
@@ -199,6 +209,7 @@ const headersWaldo = [
     hasHeaderMenu: true,
   },
   {
+    id: 10,
     databaseField: "address",
     headerTitle: "Adress",
     isResizable: true,
@@ -217,6 +228,7 @@ const headersWaldo = [
     hasHeaderMenu: true,
   },
   {
+    id: 11,
     databaseField: "nationality",
     headerTitle: "Nationality",
     isResizable: true,
@@ -234,6 +246,7 @@ const headersWaldo = [
     hasHeaderMenu: true,
   },
   {
+    id: 12,
     databaseField: "survey",
     headerTitle: "Surveys",
     isResizable: true,
@@ -251,6 +264,7 @@ const headersWaldo = [
     hasHeaderMenu: true,
   },
   {
+    id: 13,
     databaseField: "chipstate",
     headerTitle: "State",
     isResizable: true,
@@ -279,6 +293,7 @@ const headersWaldo = [
     hasHeaderMenu: false,
   },
   {
+    id: 14,
     databaseField: "lastUpdate",
     headerTitle: "Last update",
     isResizable: true,
@@ -297,6 +312,7 @@ const headersWaldo = [
     hasHeaderMenu: true,
   },
   {
+    id: 15,
     databaseField: "lastUpdate",
     headerTitle: "Last update",
     isResizable: true,
@@ -315,6 +331,7 @@ const headersWaldo = [
     hasHeaderMenu: true,
   },
   {
+    id: 16,
     databaseField: "",
     headerTitle: "Patient",
     isResizable: true,
@@ -332,14 +349,15 @@ const headersWaldo = [
       icon: imgPerson48, 
       iconWidth: 25,
       buttonHeight: 30,
-      buttonBackgroundColor: "#DDDDFF", 
-      buttonBackgroundHover: "#AAAAFF", 
+      buttonBackgroundColor: "#EEEEFF", 
+      buttonBackgroundHover: "#CCCCFF", 
     },
     dataFieldName: 'viewPatient',
     horizontalAlign: 'center',
     hasHeaderMenu: false,
   },
   {
+    id: 18,
     databaseField: "dropdown",
     headerTitle: "Dropdown",
     isResizable: true,
@@ -370,6 +388,7 @@ const headersWaldo = [
     hasHeaderMenu: true,
   }, 
   {
+    id: 19,
     databaseField: "",
     headerTitle: "Edit",
     isResizable: false,
@@ -393,6 +412,7 @@ const headersWaldo = [
     hasHeaderMenu: false,
   },
   {
+    id: 20,
     databaseField: "",
     headerTitle: "Dlg.",
     isResizable: false,
@@ -416,6 +436,7 @@ const headersWaldo = [
     hasHeaderMenu: false,
   },
   {
+    id: 21,
     databaseField: "",
     headerTitle: "Save",
     isResizable: false,
@@ -439,6 +460,7 @@ const headersWaldo = [
     hasHeaderMenu: false,
   },
   {
+    id: 22,
     databaseField: "",
     headerTitle: "Undo",
     isResizable: false,
@@ -462,6 +484,7 @@ const headersWaldo = [
     hasHeaderMenu: false,
   },
   {
+    id: 23,
     databaseField: "",
     headerTitle: "Del.",
     isResizable: false,
@@ -552,7 +575,7 @@ const App = ()=> {
 
     // rows settings (top, middle, bottom)
     rowsVerticalAlign: IConst.verticalAlign_Middle,
-    editComponentHeight: 29,
+    editComponentHeight: 45,
     resizerBackgroundColor: '#8888FF',
     iconImageSize: 30,
 
@@ -1520,6 +1543,7 @@ const App = ()=> {
           primaryKey="id"
           data={patients}  
           handleSpecialButtonClick={(rowid, fieldname) => handleSpecialButtonClick(rowid, fieldname)}
+          dialogName="IDataDialog_First"
         />
 
         <div style={{ textAlign: 'center'}}>

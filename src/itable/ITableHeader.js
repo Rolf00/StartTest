@@ -114,7 +114,8 @@ class ITableHeader extends React.Component {
                   handleMouseDownRowEW={(e, headerIndex)=>this.props.handleMouseDownRowEW(e, headerIndex)}
                   hasHeaderMenu={hasHeaderMenu}
                   HideColumn={() => this.props.HideColumn(headerIndex)}
-                >
+                  SortColumn={(sortAscending) => this.props.SortColumn(headerIndex, sortAscending)}
+                  >
                   {isSelectionHeader &&
                   <IconButton
                     style={{ 
