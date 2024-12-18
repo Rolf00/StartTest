@@ -26,7 +26,7 @@ export default function IFieldRowEditButton (props) {
   }
   else if (editType === IConst.editType_ButtonEdit)
   {
-    disabled = !editing;
+    disabled = false;
   }
   else if (editType === IConst.editType_ButtonSave)
   {
@@ -52,8 +52,6 @@ export default function IFieldRowEditButton (props) {
     props.header.editType === IConst.editType_ButtonSave ? IConst.imgSaveButton :
     props.header.editType === IConst.editType_ButtonUndo ? IConst.imgUndoButton :
     props.header.editType === IConst.editType_ButtonDelete ? IConst.imgDeleteButton : null;
-
-  //console.log("props.header.editType", props.header.editType );
 
   const title = 
     props.header.editType === IConst.editType_ButtonEditRow ? "Edit this row" :

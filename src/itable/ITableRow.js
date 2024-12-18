@@ -4,6 +4,7 @@ import { withStyles } from 'tss-react/mui';
 import PropTypes, { func } from 'prop-types';
   
 import IConst from './IConst';
+import IUtils from './IUtils';
 import ITableCellHeightResizer from './ITableCellHeightResizer';
 import IFieldSelection from './IFieldSelection';
 import IFieldText from './IFieldText';
@@ -14,7 +15,6 @@ import IFieldCheckbox from './IFieldCheckbox';
 import IFieldDate from './IFieldDate';
 import IFieldSpecialButton from './IFieldSpecialButton';
 import IFieldRowEditButton from './IFieldRowEditButton';
-import IDataDialog_First from './IDataDialog_First';
 import { useStyles } from './styles';
 
   
@@ -28,30 +28,33 @@ class ITableRow  extends React.Component {
       headers,
       rowInfoList,
       rowInfoIndex,
+      primaryKey,
       oldRow,
-      rowId,
       row
     } = this.props;
 
     this.state = { 
       rowEditing: false,
-      rowHeight: this.props.rowInfoList.height,
+      rowHeight: rowInfoList[rowInfoIndex].height,
       isHeightResizing: false,
       resiszigInAction: false,
-      row //: this.props.row,
+      row
     }
 
   }
 
-  componentDidMount() 
-  {
-  }
+  componentDidMount() { }
 
   componentDidUpdate() {
+    
+    const {row} = this.props;
+    if (row[this.props.primaryKey] !== this.state.row[this.props.primaryKey])
+    {
+      this.setState({row})
+    }
   }
   
-  componentWillUnmount() {
-  }
+  componentWillUnmount() { }
 
   handleDataChange(value, field)
   {
@@ -59,7 +62,7 @@ class ITableRow  extends React.Component {
     const newRow = this.state.row;
     newRow[field] = value;
     this.setNewRowState_Edit()
-    this.setState({row: newRow});
+//    this.setState({row: newRow});
     // update main buttons SAVE and UNDO in ITable
     this.props.setMainButtonState();
   }
@@ -137,7 +140,32 @@ class ITableRow  extends React.Component {
     else if (action === IConst.editType_ButtonSave)
     {
       // button SAVE for one row was clicked
-      alert("SAVE one row to the DB is not implemented yet.")
+      // TODO: check data
+
+      let errorText = "";
+      let hasError = false;
+      for (let h = 0; h < this.props.headers.lenght; h++)
+      {
+        const value = this.state.row[this.props.headers[h].dataFieldName];
+        if (IConst.hasError(value, this.props.headers[h])) 
+        {
+          errorText += 
+            this.props.headers[h].headerTitle + ": " + 
+            this.props.headers[h].helperText + "\n";
+          hasError = true;
+        }
+      }
+
+      if (hasError)
+      {
+        // we found errors in the data, thus, we dont allow to save
+        this.props.showDataErrorMessage(errorText);
+        return;
+      }
+
+      // now we can save one row
+      const state = this.props.rowInfoList[this.props.rowInfoIndex].state;
+      this.props.handleSaveOneRow(this.state.row, state);
     }
     else if (action === IConst.editType_ButtonUndo)
     {
@@ -204,13 +232,12 @@ class ITableRow  extends React.Component {
     this.props.setMainButtonState();
   }
 
-
   render()
   {
+    const {row} = this.state;
 
-    this.state.row = this.props.row;
+    const rowid = row[this.props.primaryKey];
 
-    const rowid = this.props.rowId;
     // main row selection 
     const isRowSelected = this.props.rowInfoList[this.props.rowInfoIndex].selected;
     
@@ -230,11 +257,6 @@ class ITableRow  extends React.Component {
       isRowDeleted ? IConst.rowColorDeleted :
       isRowChanged ? IConst.rowColorChanged :
       isRowInserted ? IConst.rowColorInserted : "#FFFFFF";
-
-    //console.log("this.props.row", this.props.row);
-
-    //console.log("this.state.row", this.state.row);
-
 
     return (
       <TableRow
@@ -279,10 +301,12 @@ class ITableRow  extends React.Component {
 
         // get fieldname and the value of the field
         const field = header.dataFieldName;
-        let tmp = this.state.row[header.dataFieldName];
+        let tmp = row[header.dataFieldName];
         // TODO decimals 
         //if (isDecimal) tmp = tmp.toFixed(header.decimalCount);
         const value = tmp;
+
+        //const selected = this.props.rowInfoList[rowInfoIndex].selected;
 
         // enable / disbable the editing of one row
         // if "this.props.settings.alwaysActivateEditing" is TRUE, editing is always enabled
@@ -291,8 +315,8 @@ class ITableRow  extends React.Component {
         // only show this column when it's defined as visible
         const visible = header.isVisible;
 
-        const verticalAlign = IConst.getVerticalAlign(this.props.settings.rowsVerticalAlign);
-        const horizontalAlign = IConst.getHorizontalAlign(header.horizontalAlign);
+        const verticalAlign = IUtils.getVerticalAlign(this.props.settings.rowsVerticalAlign);
+        const horizontalAlign = IUtils.getHorizontalAlign(header.horizontalAlign);
 
         const editHeight = this.props.settings.editComponentHeight;
 
@@ -307,8 +331,9 @@ class ITableRow  extends React.Component {
               horizontalAlign={horizontalAlign}
               verticalAlign={verticalAlign}
               handleMouseDownRowNS={(e)=>this.handleMouseDownRowNS(e)}
-              handleMouseEnterNS={(e)=>this.handleMouseEnterNS(e)}
-              handleMouseLeaveNS={(e)=>this.handleMouseLeaveNS(e)}
+              // we dont want flickering all over each row
+              //handleMouseEnterNS={(e)=>this.handleMouseEnterNS(e)}
+              //handleMouseLeaveNS={(e)=>this.handleMouseLeaveNS(e)}
             >
 
               {isSelectionIcon &&
@@ -317,8 +342,8 @@ class ITableRow  extends React.Component {
                 verticalAlign={verticalAlign}
                 settings={this.props.settings}
                 header={header}
-                value = {value}
-                handleSelectionClickRow={e => this.handleSelectionClickRow(e, rowid)}
+                value = {isRowSelected}
+                handleSelectionClickRow={() => this.props.handleSelectionClickRow(rowid)}
               />}
 
               {isTextfield && 

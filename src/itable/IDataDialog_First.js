@@ -21,6 +21,7 @@ import imgSaveButton from './imgSave48.png';
 import imgUndoButton from './imgUndo48.png'; 
 
 import IConst from './IConst'; 
+import IUtils from './IUtils'; 
 import { useStyles } from './styles';
 
 
@@ -36,6 +37,11 @@ class IDataDialog_First extends React.Component {
       headers, 
       row,
     } = this.props;
+
+    this.state = {
+      row: this.props.row,
+      mainDisabled: true,
+    }
 
   }
 
@@ -55,13 +61,17 @@ class IDataDialog_First extends React.Component {
     {
       rowChanged[fieldname] = e.target.value;
     }
-    this.setState({row: rowChanged, mainDisabled: true});
+    this.setState({row: rowChanged, mainDisabled: false});
   }
 
   closeDialog(saveIt)
   {
+
     if (saveIt)
     {
+      // TODO
+      //if (this.hasErrors)
+      
       this.props.handleSubmitModalDialog(this.state.row, saveIt);
     }
     else
@@ -73,13 +83,7 @@ class IDataDialog_First extends React.Component {
   render()
   {
     const { classes } = this.props;
-    
     const open = true;
-
-    this.state = {
-      row: this.props.row,
-      mainDisabled: true,
-    }
 
     // prepare the data for each field
     const firstname_Index = this.props.headers.findIndex(r => r.dataFieldName === "firstName");
@@ -95,66 +99,65 @@ class IDataDialog_First extends React.Component {
     const nationality_Index = this.props.headers.findIndex(r => r.dataFieldName === "nationality");
     const dropdownvalue_Index = this.props.headers.findIndex(r => r.dataFieldName === "dropdownvalue");
     const lastUpdate_Index = this.props.headers.findIndex(r => r.dataFieldName === "lastUpdate");
-    const dateText = IConst.formatDateTime(
+    const dateText = IUtils.formatDateTime(
       this.props.row.lastUpdate, IConst.format_DateLong_Time24h, this.props.localization);
 
     let field = ""
-    let hasError = false;
 
     // firstname
     field = this.props.headers[2].dataFieldName;
-    hasError = IConst.hasError(this.state.row[field], this.props.headers[firstname_Index]);
-    const firstname_HelperText = hasError ? this.props.headers[firstname_Index].helperText : "";
+    //const firstname_hasError = IUtils.hasError(this.state.row[field], this.props.headers[firstname_Index]);
+    //const firstname_HelperText = firstname_hasError ? this.props.headers[firstname_Index].helperText : "";
 
     // lastname
     field = this.props.headers[3].dataFieldName;
-    hasError = IConst.hasError(this.state.row[field], this.props.headers[lastname_Index]);
-    const lastname_HelperText = hasError ? this.state.headers[lastname_Index].helperText : "";
+    //const lastname_hasError = IUtils.hasError(this.state.row[field], this.props.headers[lastname_Index]);
+    //const lastname_HelperText = hasError ? this.state.headers[lastname_Index].helperText : "";
   
     // age
     field = this.props.headers[4].dataFieldName;
-    hasError = IConst.hasError(this.state.row[field], this.props.headers[age_Index]);
-    const age_HelperText = hasError ? this.props.headers[age_Index].helperText : "";
+    const age_hasError = IUtils.hasError(this.state.row[field], this.props.headers[age_Index]);
+    const age_HelperText = age_hasError ? this.props.headers[age_Index].helperText : "";
 
     // birthday
     field = this.props.headers[5].dataFieldName;
-    hasError = IConst.hasError(this.state.row[field], this.props.headers[birthday_Index]);
-    const birthday_HelperText = hasError ? this.props.headers[birthday_Index].helperText : "";
+    const birthday_hasError = IUtils.hasError(this.state.row[field], this.props.headers[birthday_Index]);
+    const birthday_HelperText = birthday_hasError ? this.props.headers[birthday_Index].helperText : "";
     
     // gender
     field = this.props.headers[6].dataFieldName;
-    hasError = IConst.hasError(this.state.row[field], this.props.headers[gender_Index]);
-    const gender_HelperText = hasError ? this.props.headers[gender_Index].helperText : "";
+    const gender_hasError = IUtils.hasError(this.state.row[field], this.props.headers[gender_Index]);
+    const gender_HelperText = gender_hasError ? this.props.headers[gender_Index].helperText : "";
     
     // diagnosis
     field = this.props.headers[7].dataFieldName;
-    hasError = IConst.hasError(this.state.row[field], this.props.headers[diagnosis_Index]);
-    const diagnosis_HelperText = hasError ? this.props.headers[diagnosis_Index].helperText : "";
+    const diagnosis_hasError = IUtils.hasError(this.state.row[field], this.props.headers[diagnosis_Index]);
+    const diagnosis_HelperText = diagnosis_hasError ? this.props.headers[diagnosis_Index].helperText : "";
 
     // bloodPressure
     field = this.props.headers[8].dataFieldName;
-    hasError = IConst.hasError(this.state.row[field], this.props.headers[bloodPressure_Index]);
-    const bloodPressure_HelperText = hasError ? this.props.headers[bloodPressure_Index].helperText : "";
+    const bloodPressure_hasError = IUtils.hasError(this.state.row[field], this.props.headers[bloodPressure_Index]);
+    const bloodPressure_HelperText = bloodPressure_hasError ? this.props.headers[bloodPressure_Index].helperText : "";
     
     // weight
     field = this.props.headers[9].dataFieldName;
-    hasError = IConst.hasError(this.state.row[field], this.props.headers[weight_Index]);
-    const weight_HelperText = hasError ? this.props.headers[weight_Index].helperText : "";
+    const weight_hasError = IUtils.hasError(this.state.row[field], this.props.headers[weight_Index]);
+    const weight_HelperText = weight_hasError ? this.props.headers[weight_Index].helperText : "";
 
     // address
     field = this.props.headers[10].dataFieldName;
-    hasError = IConst.hasError(this.state.row[field], this.props.headers[address_Index]);
-    const address_HelperText = hasError ? this.props.headers[address_Index].helperText : "";
+    const address_hasError = IUtils.hasError(this.state.row[field], this.props.headers[address_Index]);
+    const address_HelperText = address_hasError ? this.props.headers[address_Index].helperText : "";
 
     // nationality
     field = this.props.headers[11].dataFieldName;
-    hasError = IConst.hasError(this.state.row[field], this.props.headers[nationality_Index]);
-    const nationality_HelperText = hasError ? this.props.headers[nationality_Index].helperText : "";
+    const nationality_hasError = IUtils.hasError(this.state.row[field], this.props.headers[nationality_Index]);
+    const nationality_HelperText = nationality_hasError ? this.props.headers[nationality_Index].helperText : "";
     
     // dropdownvalue
     field = this.props.headers[18].dataFieldName;
-    hasError = IConst.hasError(this.state.row[field], this.props.headers[dropdownvalue_Index]);
-    const dropdownvalue_HelperText = hasError ? this.props.headers[dropdownvalue_Index].helperText : "";
+    const dropdownvaluehasError = IUtils.hasError(this.state.row[field], this.props.headers[dropdownvalue_Index]);
+    const dropdownvalue_HelperText = dropdownvaluehasError ? this.props.headers[dropdownvalue_Index].helperText : "";
 
     // lastUpdate
     //field = this.props.headers[15].dataFieldName;
@@ -213,10 +216,14 @@ class IDataDialog_First extends React.Component {
                   value={this.state.row.firstName}
                   disabled={this.props.headers[firstname_Index].isEditable}
                   label={this.props.headers[firstname_Index].headerTitle}
-                  helperText={firstname_HelperText}
+                  //helperText={firstname_HelperText}
                   onChange={(e) => this.dataChanged(e, "firstname")}
                   style={{ width: "100%" }}
-                  sx={{ '& .MuiInputBase-root': { height: editHeight,  }, }}  />
+                  sx={{ '& .MuiInputBase-root': { 
+                    height: editHeight,  
+                    backgroundColor: 'transparent',
+                    color: 'black',
+                  }, }}/>
               </TableCell>
               <TableCell
                 style={{ textAlign: "left", width: "35%", }}
@@ -225,10 +232,14 @@ class IDataDialog_First extends React.Component {
                   value={this.state.row.lastName}
                   disabled={this.props.headers[lastname_Index].isEditable}
                   label={this.props.headers[lastname_Index].headerTitle}
-                  helperText={lastname_HelperText}
+                  //helperText={lastname_HelperText}
                   onChange={(e) => this.dataChanged(e, "lastname")}
                   style={{ width: "100%" }}
-                  sx={{ '& .MuiInputBase-root': { height: editHeight,  }, }}  />
+                  sx={{ '& .MuiInputBase-root': { 
+                    height: editHeight,  
+                    backgroundColor: 'transparent',
+                    color: 'black',
+                  }, }}/>
               </TableCell>
               <TableCell
                 style={{ textAlign: "left", width: "15%", }}
@@ -241,7 +252,12 @@ class IDataDialog_First extends React.Component {
                   helperText={age_HelperText}
                   onChange={(e) => this.dataChanged(e, "age")}
                   style={{ width: "100%" }}
-                  sx={{ '& .MuiInputBase-root': { height: editHeight,  }, }}  />
+                  sx={{ '& .MuiInputBase-root': { 
+                    height: editHeight,  
+                    backgroundColor: age_hasError ? IConst.errorColorBackground : 'transparent',
+                    color: age_hasError ? IConst.errorColor : 'black',
+                  }, }}
+                  />
               </TableCell>
               <TableCell
                 style={{ textAlign: "left", width: "15%", }}
@@ -253,7 +269,12 @@ class IDataDialog_First extends React.Component {
                   helperText={birthday_HelperText}
                   onChange={(e) => this.dataChanged(e, "birthday")}
                   style={{ width: "100%" }}
-                  sx={{ '& .MuiInputBase-root': { height: editHeight,  }, }}  />
+                  sx={{ '& .MuiInputBase-root': { 
+                    height: editHeight,  
+                    backgroundColor: birthday_hasError ? IConst.errorColorBackground : 'transparent',
+                    color: birthday_hasError ? IConst.errorColor : 'black',
+                  }, }}
+                  />
               </TableCell>
             </TableRow>
 
@@ -268,7 +289,12 @@ class IDataDialog_First extends React.Component {
                   helperText={address_HelperText}
                   onChange={(e) => this.dataChanged(e, "address")}
                   style={{ width: "100%" }}
-                  sx={{ '& .MuiInputBase-root': { height: editHeight,  }, }}  />
+                  sx={{ '& .MuiInputBase-root': { 
+                    height: editHeight,  
+                    backgroundColor: address_hasError ? IConst.errorColorBackground : 'transparent',
+                    color: address_hasError ? IConst.errorColor : 'black',
+                  }, }}
+                  />
               </TableCell>
               <TableCell
                 style={{ textAlign: "left" }}
@@ -280,7 +306,12 @@ class IDataDialog_First extends React.Component {
                   helperText={gender_HelperText}
                   onChange={(e) => this.dataChanged(e, "gender")}
                   style={{ width: "100%" }}
-                  sx={{ '& .MuiInputBase-root': { height: editHeight,  }, }}  />
+                  sx={{ '& .MuiInputBase-root': { 
+                    height: editHeight,  
+                    backgroundColor: gender_hasError ? IConst.errorColorBackground : 'transparent',
+                    color: gender_hasError ? IConst.errorColor : 'black',
+                  }, }}
+                />
               </TableCell>
               <TableCell
                 style={{ textAlign: "left" }}
@@ -292,7 +323,12 @@ class IDataDialog_First extends React.Component {
                   helperText={weight_HelperText}
                   onChange={(e) => this.dataChanged(e, "weight")}
                   style={{ width: "100%" }}
-                  sx={{ '& .MuiInputBase-root': { height: editHeight,  }, }}  />
+                  sx={{ '& .MuiInputBase-root': { 
+                    height: editHeight,  
+                    backgroundColor: weight_hasError ? IConst.errorColorBackground : 'transparent',
+                    color: weight_hasError ? IConst.errorColor : 'black',
+                  }, }}
+                />
               </TableCell>
             </TableRow>
 
@@ -307,7 +343,12 @@ class IDataDialog_First extends React.Component {
                   helperText={nationality_HelperText}
                   onChange={(e) => this.dataChanged(e, "nationality")}
                   style={{ width: "100%" }}
-                  sx={{ '& .MuiInputBase-root': { height: editHeight,  }, }}  />
+                  sx={{ '& .MuiInputBase-root': { 
+                    height: editHeight,  
+                    backgroundColor: nationality_hasError ? IConst.errorColorBackground : 'transparent',
+                    color: nationality_hasError ? IConst.errorColor : 'black',
+                  }, }}
+                />
               </TableCell>
               <TableCell colSpan={2}
                 style={{ textAlign: "left" }}
@@ -327,7 +368,11 @@ class IDataDialog_First extends React.Component {
                   helperText={diagnosis_HelperText}
                   onChange={(e) => this.dataChanged(e, "diagnosis")}
                   style={{ width: "100%" }}
-                  sx={{ '& .MuiInputBase-root': { height: editHeight,  }, }}  />
+                  sx={{ '& .MuiInputBase-root': { 
+                    height: editHeight,  
+                    backgroundColor: diagnosis_hasError ? IConst.errorColorBackground : 'transparent',
+                    color: diagnosis_hasError ? IConst.errorColor : 'black',
+                  }, }} />
               </TableCell>
               <TableCell colSpan={2} 
                 style={{ textAlign: "left" }}
@@ -339,7 +384,11 @@ class IDataDialog_First extends React.Component {
                   helperText={bloodPressure_HelperText}
                   onChange={(e) => this.dataChanged(e, "bloodPressure")}
                   style={{ width: "100%" }}
-                  sx={{ '& .MuiInputBase-root': { height: editHeight,  }, }}  />
+                  sx={{ '& .MuiInputBase-root': { 
+                    height: editHeight,  
+                    backgroundColor: bloodPressure_hasError ? IConst.errorColorBackground : 'transparent',
+                    color: bloodPressure_hasError ? IConst.errorColor : 'black',
+                  }, }} />
               </TableCell>
             </TableRow>
 
@@ -352,7 +401,7 @@ class IDataDialog_First extends React.Component {
                   label={this.props.headers[lastUpdate_Index].headerTitle}
                   disabled={true}
                   style={{ width: "100%" }}
-                  sx={{ "& .MuiInputBase-root": { height: editHeight } }}
+                   
                 />
               </TableCell>
             </TableRow>
@@ -369,7 +418,7 @@ class IDataDialog_First extends React.Component {
               
           <img 
             src={imgSaveButton}
-            style={{ width: {imgSize}, height: {imgSize},
+            style={{ width: imgSize, height: imgSize,
               opacity: (!this.state.mainDisabled ? 1 : 0.2) 
             }} 
           />Save changes</IconButton>
@@ -380,8 +429,7 @@ class IDataDialog_First extends React.Component {
             onClick={() => this.closeDialog(false)} >
           <img 
             src={imgUndoButton}
-            style={{ width: {imgSize}, height: {imgSize},
-            }} 
+            style={{ width: imgSize, height: imgSize, }} 
           />Cancel</IconButton>
           </div>
         </DialogActions>

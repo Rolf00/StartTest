@@ -8,6 +8,8 @@ import imgSaveButton from './imgSave48.png';
 import imgUndoButton from './imgUndo48.png'; 
 import imgAddButton from './imgAdd48.png'; 
 import imgExcelButton from './imgExcel48.png'; 
+import imgColumsButton from './imgColums48.png'; 
+
 
 import imgIconOk from './imgYes48.png'; 
 import imgIconYes from './imgYes48.png'; 
@@ -54,6 +56,7 @@ class IConst {
   static imgUndoButton = imgUndoButton; 
   static imgAddButton = imgAddButton; 
   static imgExcelButton = imgExcelButton; 
+  static imgColumsButton = imgColumsButton;
 
   // alignments
   static horizontalAlign_Left = "left";
@@ -62,20 +65,6 @@ class IConst {
   static verticalAlign_Top = "top";
   static verticalAlign_Middle = "middle";
   static verticalAlign_Bottom = "bottom";
-
-  static getHorizontalAlign(horizontalAlign)
-  {
-    return (
-      horizontalAlign === this.horizontalAlign_Left ? 'flex-start' :
-      horizontalAlign === this.horizontalAlign_Center ? 'center' : 'flex-end');
-  }
-
-  static getVerticalAlign(verticalAlign)
-  {
-    return (
-      verticalAlign === this.verticalAlign_Top ? 'flex-start' :
-      verticalAlign === this.verticalAlign_Middle ? 'center' : 'flex-end');
-  }
 
   // icons button dialog
   static imgIconOk = imgIconOk; 
@@ -175,140 +164,6 @@ class IConst {
   static format_DateLong_Time24h = 10;
   // Mittwoch, dd. Dezember yyyy 11:MM:ss  AM/PM
   static format_DateLong_Time12h = 11;
-
-  static formatDateTime(date, format, localization)
-  {
-    // Format the date
-    let dateText = "";
-    let optionsDate = [];
-    if (format === this.format_DateShort ||
-      format === this.format_DateShort_Time24h ||
-      format === this.format_DateShort_Time12h)
-    {
-      // dd.MM.yyyy
-      optionsDate = { month: "2-digit", day: "2-digit", year: "numeric", };
-      dateText = date.toLocaleDateString(localization, optionsDate);
-    }
-    else 
-    if (format === this.format_DateMiddle ||
-      format === this.format_DateMiddle_Time24h ||
-      format === this.format_DateMiddle_Time12h)
-    {
-      // Mi., dd. Dez. yyyy
-      optionsDate = { weekday: "short", month: "short", day: "2-digit", year: "numeric", };
-      dateText = date.toLocaleDateString(localization, optionsDate);
-    }
-    else 
-    if (format === this.format_DateLong ||
-      format === this.format_DateLong_Time24h ||
-      format === this.format_DateLong_Time12h)
-    {
-      // Mittwoch, dd. Dezember yyyy
-      optionsDate = { weekday: "long", month: "long", day: "2-digit", year: "numeric", };
-      dateText = date.toLocaleDateString(localization, optionsDate);
-    }
-
-    // Format the time
-    let timeText = "";
-    let optionsTime = [];
-    if (format === this.format_Time24h ||
-      format === this.format_DateShort_Time24h ||
-      format === this.format_DateMiddle_Time24h ||
-      format === this.format_DateLong_Time24h)
-    {
-      // 23:MM:ss
-      optionsTime = { hour12: false, hour: "2-digit", minute: "2-digit", second: "2-digit", };
-      timeText += date.toLocaleTimeString(localization, optionsTime);
-    }
-    else 
-    if (format === this.format_Time12h ||
-      format === this.format_DateShort_Time12h ||
-      format === this.format_DateMiddle_Time12h ||
-      format === this.format_DateLong_Time12h)
-    {
-      // 11:MM:ss AM/PM
-      optionsTime = { hour12: false, hour: "2-digit", minute: "2-digit", second: "2-digit", };
-      timeText += date.toLocaleTimeString(localization, optionsTime);
-    }
-
-    // now combine date and time
-    const finalText = 
-      dateText === "" && timeText === "" ? "" :
-      dateText === "" ? timeText :
-      timeText === "" ? dateText :
-      dateText + " " + timeText;
-
-    return finalText;
-  }
-
-  static getDatePickerDisplayFormat(localization)
-  {
-    let displayFormat = "DD.MM.YYYY";
-    if (localization === this.datetimeLocalization_deCH) displayFormat = "DD.MM.YYYY"; else
-    if (localization === this.datetimeLocalization_frCH) displayFormat = "DD.MM.YYYY"; else
-    if (localization === this.datetimeLocalization_enUS) displayFormat = "MM/DD/YYYY"; else
-    if (localization === this.datetimeLocalization_enEN) displayFormat = "MM/DD/YYYY"; 
-    return displayFormat;
-  }
-
-  static hasError(value, header)
-  {
-
-    // text fields
-    if (header.editType === this.editType_Textfield ||
-      header.editType === this.editType_TextfieldMultiline)
-    {
-      if (!value && !header.required)
-      {
-        return false;
-      }
-      else if (!value && header.required)
-      {
-        return true;
-      }
-      else if (value === "" && !header.required)
-      {
-          return false;
-      }
-      else if (value === "" && header.required)
-      {
-          return true;
-      }
-      else if (!header.textMaxLength)
-      {
-          return false;
-      }
-      else if (value.length > header.textMaxLength)
-      {
-          return true;
-      }
-      return false;
-    }
-  
-    // number fields
-    if (header.editType === this.editType_Integer ||
-      header.editType === this.editType_Decimal)
-    {
-      if (!value && !header.required)
-      {
-        return false;
-      }
-      else if (!value && header.required)
-      {
-        return true;
-      }
-      else if (header.numberMaxValue)
-      {
-        if (value > header.numberMaxValue) return true;
-      }
-      else if (header.numberMinValue)
-      {
-        if (value < header.numberMinValue) return true;
-      }
-      return false;
-    }
-    return false;
-  }
 
 }
 

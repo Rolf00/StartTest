@@ -7,10 +7,10 @@ import {
   IconButton,
   Box,
   ListItemSecondaryAction,
-//} from "@material-ui/core";
 } from "@mui/material";
-//import RootRef from "@material-ui/core/RootRef";
-import { RootRef } from '@material-ui/core';
+
+
+// npm install react-beautiful-dnd
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 
@@ -19,6 +19,7 @@ open={this.state.openManageColumns}
 headers={this.state.headers}
 arrangeColumns={(doIt, newlist) => this.arrangeColumns(doIt, newlist)}
 */
+
 
 // fake data generator
 const getItems1 = (count) =>
@@ -127,8 +128,7 @@ class IHeaderManage extends React.Component {
         <DragDropContext onDragEnd={this.onDragEnd}>
           <Droppable droppableId="droppable">
             {(provided, snapshot) => (
-              <RootRef rootRef={provided.innerRef}>
-                <List style={getListStyle(snapshot.isDraggingOver)}>
+                <List ref={provided.innerRef} style={getListStyle(snapshot.isDraggingOver)}>
                   {this.state.items.map((item, index) => (
                     <Draggable
                       key={item.id}
@@ -167,7 +167,6 @@ class IHeaderManage extends React.Component {
                   ))}
                   {provided.placeholder}
                 </List>
-              </RootRef>
             )}
           </Droppable>
         </DragDropContext>

@@ -63,12 +63,14 @@ export default function IFieldNumber (props) {
         style={{ 
           width: width, 
         }}
-        sx={{ '& .MuiInputBase-root': { height: props.editHeight,  }, }}
+        sx={{ '& .MuiInputBase-root': { 
+          height: props.editHeight,  
+          backgroundColor: background,
+          color: {color},
+        }, }}
         inputProps={{
           type: type,
           sx: {
-            backgroundColor: background,
-            color: {color},
             textAlign: props.header.horizontalAlign,
             "&::placeholder": {
               textAlign: props.header.horizontalAlign,

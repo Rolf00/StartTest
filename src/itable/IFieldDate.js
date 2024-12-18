@@ -22,6 +22,7 @@ import dayjs from 'dayjs';
 import { de } from 'date-fns/locale'; // German (Switzerland)
 
 import IConst from './IConst';
+import IUtils from './IUtils';
 import IFieldReadOnly from './IFieldReadOnly';
 
 export default function IFieldDate (props) {
@@ -40,8 +41,9 @@ export default function IFieldDate (props) {
     oldJSDate.getDate());
   const pickerDate = dayjs(jsdt);
 
+  // TODO
   // prepare display format
-  const displayFormat = IConst.getDatePickerDisplayFormat(props.localization);
+  const displayFormat = IUtils.getDatePickerDisplayFormat(props.localization);
 
   
   const handleChange = (value) =>
@@ -80,7 +82,7 @@ export default function IFieldDate (props) {
   }
 
   const selectedDate = props.value;
-  const formattedDate = IConst.formatDateTime(
+  const formattedDate = IUtils.formatDateTime(
     selectedDate, 
     IConst.format_DateLong, 
     props.localization);
@@ -118,7 +120,7 @@ export default function IFieldDate (props) {
   }
   else
   {
-    const dateText = IConst.formatDateTime(value, props.header.datetimeFormat, props.localization);
+    const dateText = IUtils.formatDateTime(value, props.header.datetimeFormat, props.localization);
     return (
       <IFieldReadOnly
         width={props.header.width}

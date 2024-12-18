@@ -161,9 +161,6 @@ export const useStyles = () => ({
     cursor: 'row-resize',
     margin: '0px', 
     padding: '0px',
-    //"&:hover": {
-    //  backgroundColor: '#8888FF',
-    //}
   },
 
   // cell resizer EW

@@ -25,7 +25,6 @@ class ITableCellWidthResizer extends React.Component {
 
   render() 
   {
-
     const {
       classes, 
       headers,
@@ -37,7 +36,6 @@ class ITableCellWidthResizer extends React.Component {
       verticalAlign,
       hasHeaderMenu,
     } = this.props;
-
 
     return (
       <TableCell className={classes.table_head_cell} >

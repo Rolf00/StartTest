@@ -24,7 +24,6 @@ import IDataDialog_First from './IDataDialog_First';
 //import IHeaderManage from './IHeaderManage';
 
 
-
 const avaiableDialogs = {
   // TODO
   //dialog_MainData: IDataDialog_First,
@@ -48,7 +47,6 @@ class ITable extends React.Component {
   
     this.state = {
       headers: headers,
-      primaryKey: primaryKey,
       data: this.getDataList(),
       page: 0,
       limit: 10,
@@ -56,7 +54,6 @@ class ITable extends React.Component {
       // selection in header
       mainChecked: false,
       mainIndeterminated: false,
-      mainCheckIcon: IConst.imgChkboxUnchecked,
 
       // props for button dialog
       openButtonDialog: false,
@@ -139,9 +136,9 @@ class ITable extends React.Component {
 
   checkHeaders()
   {
+    // here we fill default values for each empty value and for each header
     for(let h = 0; h < this.state.headers.length; h++) 
     {
-      // databaseField:
       if (!this.state.headers[h].headerTitle) this.state.headers[h].headerTitle = "";
       if (!this.state.headers[h].isResizable) this.state.headers[h].isResizable = true;
       if (!this.state.headers[h].isEditable) this.state.headers[h].isEditable = false;
@@ -328,10 +325,103 @@ class ITable extends React.Component {
     this.setState({data: [...this.state.data, newRow]});
   }
 
+  handleSaveOneRow(row, state)
+  {
+    // save one changed row
+    if (this.props.handleSaveOneRowClick(row, state))
+    {
+      const infoIndex = this.state.rowInfoList.findIndex(i => i.id === row[this.props.primaryKey]);
+      const newlist = this.state.rowInfoList;
+      newlist[infoIndex].state = IConst.rowStateUnchanged;
+      this.setState({rowInfoList: newlist, });
+    }
+    else
+    {
+      // TODO error message here ?
+    }
+  }
+
   handleSaveAll()
   {
-    // save all changes
-    alert("TODO: save all is not implemented yet");
+    // save all changed rows
+    const rowList = [];
+    const stateList = this.state.rowInfoList.filter(i => i.state !== IConst.rowStateUnchanged);
+    for (let r = 0; r < stateList.length; r++)
+    {
+      const index = this.state.data.findIndex(d => d[this.props.primaryKey] === stateList[r].id);
+      const row = this.state.data[index];
+      rowList.push(row);
+    }
+
+    // check first, if all rows have correct data
+    let errorTextAll = "";
+    let hasErrorAll = false;
+    for (let r = 0; r < rowList.length; r++)
+    {
+      let errorText = "";
+      let hasError = false;
+      for (let h = 0; h < this.props.headers.lenght; h++)
+      {
+        const value = this.state.row[this.props.headers[h].dataFieldName];
+        if (IConst.hasError(value, this.props.headers[h])) 
+        {
+          errorText += 
+            this.props.headers[h].headerTitle + ": " + 
+            this.props.headers[h].helperText + "\n";
+          hasError = true;
+          hasErrorAll = true;
+        }
+      }
+      if (hasError) 
+      {
+        errorTextAll += "Error on row " + rowList[this.props.primaryKey] + " : \n";
+        errorTextAll += errorText + "\n"
+      }
+    }
+
+    if (hasErrorAll)
+    {
+      // TODO make a nicer dialog
+      alert("Data has errors. Fix them first: " + errorTextAll);
+
+      // we found errors in the data, thus, we dont allow to save
+      this.showDataErrorMessage(errorTextAll);
+      return;
+    }
+
+    // no error found, this we can save now
+    if (this.props.handleSaveAllRowsClick(rowList, stateList))
+    {
+      const newlist = this.state.rowInfoList;
+      for (let s = 0; s < newlist.length; s++) newlist[s].state = IConst.rowStateUnchanged;
+      this.setState({rowInfoList: newlist});
+    }
+    else
+    {
+      // TODO error message here ?
+    }
+  }
+
+  showDataErrorMessage(errorText)
+  {
+    // show a dalog with the error messages 
+    let newText = errorText;
+    const lines = errorText.split("\n");
+    if (lines.lenght > 15)
+    {
+      newText = "";
+      for (let t = 0; t < 15; t++) newText += newText + "\n";
+    }
+
+    this.setState({
+      buttonDialogId: "DataError",
+      openButtonDialog: true,
+      buttonDialogTitle: "Error in data found",
+      question: newText,
+      buttonList: [],
+      buttonDialogListType: IConst.buttonDialogTypeOk,
+      dialogIconType: IConst.buttonDialogIconType_Stop,
+    });
   }
 
   UndoAllRows()
@@ -451,8 +541,6 @@ class ITable extends React.Component {
 
   handleTest()
   {
-    //this.UndoAllRows();
-    //return;
     const buttons = [
       { caption: "Yes", icon: IConst.imgIconYes, horizontalAlign: 'left', X: 1, Y: 1, },
       { caption: "No", icon: IConst.imgIconNo, horizontalAlign: 'left', X: 2, Y: 1, },
@@ -614,56 +702,57 @@ class ITable extends React.Component {
     // now set the same selection for all rows
     const newlist = [...this.state.rowInfoList];
     newlist.forEach((row) => {row.selected = ischecked});
-    this.setState({rowInfoList: newlist});
 
-    this.setState({mainCheckIcon: 
-      ischecked ? IConst.imgChkboxChecked : IConst.imgChkboxUnchecked});
+    this.setState({
+      rowInfoList: newlist,
+      mainChecked: ischecked,
+      mainIndeterminated: false
+    });
   }
 
   handleSelectionClickRow(rowid)
   {
     // create a new list in order to be up to date
     const rowIndex = this.getRowIndex(rowid);
-
     let newlist = [...this.state.rowInfoList];
-    let oldSelected = newlist[rowIndex].selected;
-    oldSelected = !oldSelected;
-    newlist[rowIndex].selected = oldSelected;
-
-    let allAreSame = true;
-    newlist.forEach((row) => {
-      const thisRowIsSelected = row.selected;
-      if (row.selected !== oldSelected)
-      {
-        allAreSame = false;
-      }
+    newlist[rowIndex].selected = !newlist[rowIndex].selected;
+    const newSelected = newlist[rowIndex].selected;
+    let allRowsAreSame = true;
+    newlist.forEach((row) => 
+    {
+      if (row.selected !== newSelected) allRowsAreSame = false;
     });
 
-    if (allAreSame)
+    if (allRowsAreSame)
     {
-      this.setState({mainIndeterminated: false});
-      if (oldSelected)
+      if (newSelected)
       {
         // all rows are selected
-        this.setState({mainChecked: true});
-        this.setState({mainCheckIcon: IConst.imgChkboxChecked});
+        this.setState({
+          rowInfoList: newlist,
+          mainChecked: true,
+          mainIndeterminated: false,
+        });
       }
       else
       {
         // no row is selected
-        this.setState({mainChecked: false});
-        this.setState({mainCheckIcon: IConst.imgChkboxUnchecked});
+        this.setState({
+          rowInfoList: newlist,
+          mainChecked: false,
+          mainIndeterminated: false,
+        });
       }
     }
     else
     {
       // different states exists
-      this.setState({mainIndeterminated: true});
-      this.setState({mainCheckIcon: IConst.imgChkboxIndeterminate});
+      this.setState({
+        rowInfoList: newlist,
+        mainChecked: true,
+        mainIndeterminated: true,
+      });
     }
-
-    // now update the main list
-    this.setState({rowInfoList: newlist});
   }
 
 
@@ -779,6 +868,9 @@ class ITable extends React.Component {
 
   getHasError(header, value)
   {
+
+    // TODO : use IConst.hasError
+
     if (!header.isEditable) return false;
 
     // check text fields
@@ -913,7 +1005,6 @@ class ITable extends React.Component {
   // ---------------------------------------------------------------------------------------
   // resizing row heights and column widths events
 
-
   handleMouseDownRowEW(e, index)
   {
     // resizing column width
@@ -1023,7 +1114,7 @@ class ITable extends React.Component {
     }
     else 
     {
-      alert("Unknown type for soertings: " + this.state.headers[headerIndex].editType);
+      alert("Unknown type for sortings: " + this.state.headers[headerIndex].editType);
     }
   }
 
@@ -1035,7 +1126,6 @@ class ITable extends React.Component {
     const data = this.state.data.slice(page * limit, page * limit + limit);
     const mainChecked = this.state.mainChecked;
     const mainIndeterminated = this.state.mainIndeterminated;
-
     const mainButtonsDisabled = this.state.mainButtonsDisabled;
     const headers = this.state.headers;
 
@@ -1102,13 +1192,15 @@ class ITable extends React.Component {
                     rowInfoList={this.state.rowInfoList}
                     rowInfoIndex={rowInfoIndex}
                     oldRow={row}
-                    rowId={rowid}
+                    primaryKey={this.props.primaryKey}
                     row={row}
                     setMainButtonState={() => this.setMainButtonState()}
                     handleUndoInsertedRows={(rowIndex) => this.handleRowEditButtons(rowIndex)}
                     handleSelectionClickRow={(rowid) => this.handleSelectionClickRow(rowid)}
                     handleSpecialButtonClick={(rowid, field) => this.props.handleSpecialButtonClick(rowid, field)}
                     handleDataChange={(newvalue, rowid, field) => this.handleDataChange(newvalue, rowid, field)}
+                    handleSaveOneRow = {(row, state) =>  this.handleSaveOneRow(row, state)}
+                    showDataErrorMessage = {(errorText) =>  this.showDataErrorMessage(errorText)}
                     openModalDataDialog={(row) => this.openModalDataDialog(row)}  
                   />
                 );
@@ -1150,11 +1242,12 @@ class ITable extends React.Component {
               >
               <img 
                 src={IConst.imgAddButton}
+                title='Ctrl-I'
                 style={{ 
                   width: sizeMainButton, 
                   height: sizeMainButton,
                  }} 
-              />&nbsp;New row (ctrl-i)</IconButton>
+              />&nbsp;New row</IconButton>
               }
 
               {/* save all --------------------------------------------------------------------- */}    
@@ -1232,7 +1325,7 @@ class ITable extends React.Component {
                 onClick={e => this.handleManageColumns()}
               >
               <img 
-                //src={IConst.imgExcelButton}
+                src={IConst.imgColumsButton}
                 title='Ctrl-M'
                 style={{ 
                   width: sizeMainButton, 

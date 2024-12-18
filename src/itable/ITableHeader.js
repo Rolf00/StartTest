@@ -9,15 +9,16 @@ import {
 } from '@mui/material';
 
 import IConst from './IConst';
+import IUtils from './IUtils';
 import ITableCellWidthResizer from './ITableCellWidthResizer';
 import { useStyles } from './styles';
 
 
 class ITableHeader extends React.Component {
 
-  //constructor(props) {
-  //  super(props)
-  //}
+  constructor(props) {
+    super(props);
+  }
 
   componentDidMount() {
   }
@@ -53,6 +54,7 @@ class ITableHeader extends React.Component {
       mainIndeterminated,
     } = this.props;
   
+    // TODO: is this correct? do we need state here?
     // state
     this.state = {
       mainChecked: mainChecked,
@@ -86,6 +88,9 @@ class ITableHeader extends React.Component {
             //const headerVerticalAlign = settings.rowsVerticalAlign;
             const newheaderWidth = 
               isSelectionHeader || isButtonHeader  ? header.width + 8 : header.width;
+
+            const btnHoverWidth = settings.buttonSizeOnRowsHover;
+
             const headerRowHeight = settings.initialHeaderHeight;
             const imgWidth = settings.buttonSizeOnRows;
 
@@ -96,8 +101,8 @@ class ITableHeader extends React.Component {
             // only show this column when it's defined as visible
             const visible = header.isVisible;
 
-            const horizontalAlign = IConst.getHorizontalAlign(header.horizontalAlign);
-            const verticalAlign = IConst.getVerticalAlign(settings.rowsVerticalAlign);
+            const horizontalAlign = IUtils.getHorizontalAlign(header.horizontalAlign);
+            const verticalAlign = IUtils.getVerticalAlign(settings.rowsVerticalAlign);
 
             if (visible) {
               return (
@@ -117,10 +122,20 @@ class ITableHeader extends React.Component {
                   SortColumn={(sortAscending) => this.props.SortColumn(headerIndex, sortAscending)}
                   >
                   {isSelectionHeader &&
+                  <div
+                    style={{ 
+                      padding: '0px 0px 0px 7px', 
+                      width: '100%', 
+                      height: '100%',
+                      display: 'flex',
+                      flexGrow: 1,
+                      justifyContent: horizontalAlign, 
+                      alignItems: verticalAlign,
+                    }}>
                   <IconButton
                     style={{ 
-                      width: newheaderWidth, 
-                      height: newheaderWidth }} 
+                      width: btnHoverWidth, 
+                      height: btnHoverWidth }} 
                     onClick={(e) => this.props.handleCheckboxClickHeader(e)}>
                     <img 
                       src={mainCheckIcon}
@@ -131,7 +146,8 @@ class ITableHeader extends React.Component {
                       }} 
                       />
                   </IconButton>
-                  }
+                  </div>}
+
                   {!isSelectionHeader &&
                     <div
                       style={{ 

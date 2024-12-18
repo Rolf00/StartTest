@@ -1,588 +1,86 @@
-          
-{/* main button dialog */}     
-import InselDialog_MainData from './InselDialog_MainData';
+TODO list
+=========
+- EXCEL export excel with line break inside the cell?
+  now I replace "\n" => " | " : value = value.replace("\n", " | ");
+  put the text in parentesis
+  problem with export to excel for multilines
 
-const avaiableDialogs = {
-  dialog_MainData: InselDialog_MainData,
-  //dialog1: ComponentB,
-};
+- TEST numbers and decimal (decimal with letters?)
 
-const EditDialog = avaiableDialogs[this.props.dialogName];
+- DnD npm install react-beautiful-dnd
 
-      {/* main button dialog */}     
-      {this.props.dialogName.length > 0 &&
-        <EditDialog
-          headers = {this.props.headers}
-          row = {this.state.data[rowIndex]}
-          setDataFromDialog = {this.props.setDataFromDialog(row)}
-        >
-        </EditDialog>
-      }
+- Icons hint: 
+  <a target="_blank" href="https://icons8.com">Icons are from Icons8.com</a>
 
-      setDataFromDialog(rowid, row)      
-      {
-        const index = this.getRowIndex(rowid);
-        const newlist = this.state.data;
-        newlist[index] = row;
-        this.setState({data, newlist});
-        // TODO can we update only one row like: setState({row[index]: row});
-      }
+- IDataDialog_First.js
+  implement dates on "datachange"
 
+- Data check for DateTime fields?
 
-{/* 03.12.2024 */}   
-{/*
-import React, { useState } from "react";
+- make file IUtils.js
 
-// Modal component
-const Modal = ({ onClose, onConfirm }) => {
-  return (
-    <div style={styles.modalOverlay}>
-      <div style={styles.modal}>
-        <h2>Are you sure?</h2>
-        <div>
-          <button onClick={onConfirm} style={styles.button}>YES</button>
-          <button onClick={onClose} style={styles.button}>NO</button>
-        </div>
-      </div>
-    </div>
-  );
-};
+- REMOVE ITable => getHasError
 
-const App = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+- testing error messsages with several lines
 
-  // Handle open modal
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
+- button sort in header
 
-  // Handle close modal
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
-
-  // Handle confirm action
-  const handleConfirm = () => {
-    console.log("User confirmed");
-    closeModal();
-  };
-
-  return (
-    <div>
-      <button onClick={openModal} style={styles.openButton}>Open Modal</button>
-
-      {isModalOpen && (
-        <Modal onClose={closeModal} onConfirm={handleConfirm} />
-      )}
-    </div>
-  );
-};
-
-const styles = {
-  openButton: {
-    padding: '10px 20px',
-    fontSize: '16px',
-    cursor: 'pointer',
-  },
-  modalOverlay: {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modal: {
-    backgroundColor: 'white',
-    padding: '20px',
-    borderRadius: '5px',
-    textAlign: 'center',
-  },
-  button: {
-    margin: '10px',
-    padding: '10px 20px',
-    fontSize: '16px',
-    cursor: 'pointer',
-    border: 'none',
-    borderRadius: '5px',
-  },
-};
-
-export default App;
-*/} 
-
-// Menu with side sub menu
-// https://github.com/mui/material-ui/issues/11723
-
-//import ArrowRight from "@mui/icons-material/ChevronRightRounded";
-//import NewIcon 
-
-//https://mui-nested-menu.vercel.app/nested-dropdown
-
-//https://codesandbox.io/p/sandbox/material-ui-nested-menu-item-example-b25j6?file=%2Fsrc%2FApp.tsx%3A34%2C1 
-
-//https://purecode.ai/blogs/mui-menuitem
-
-//export default function InselTableMenu(headerIndex) 
+- 1 transaction all rows? 
 
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-// newCode from here
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-
-// TODO table menu
-// => in IconButton => onClick={(e) => handleClick(e)}
-// => in Menu => onClose={() => handleClose()}
-    //onmouseenter={(e) => handleOpenCloseManageColumns(e, true)}
-    //onmouseleave={(e) => handleOpenCloseManageColumns(e, false)}
-// => in SubMenu => 
-
-  const handleSortColumn = (sortAscending) => 
-  {
-    // hide the menu
-    handleClose(); 
-
-    // sort the data for one field
-    // TODO
-    const newData = this.state.data.sort((a, b) => {
-      if (sortAscending)
-      {
-        return a[fieldname].localeCompare(b[fieldname]);
-      }
-      else
-      {
-        return b[fieldname].localeCompare(a[fieldname]);
-      }
-    });
-
-    console.log("ordered newData", newData);
-
-    // now re-render data
-    // TODO how to render?
-    //this.setState({data: newData});
-  }  
-
-  const handleHideColumn = () =>
-  {
-    // hide the menu 
-    handleClose(); 
-    props.headers[props.headerIndex].isVisible = true;
-    // TODO hot to render headers?
-  }
-  
-  const handleUnhideColumn = () =>
-  {
-    // close the sub menu
-    setAnchorManageColumns(null);
-    props.headers[props.headerIndex].isVisible = true;
-    // TODO hot to render headers?
-  }
-
-//////////////////////////////////////// 
-// hedaer menu manage columns 
-  <div
-    id="submenu"
-    style={{
-      position: 'absolute',
-      top: '0px',
-      left: '100%',  // This places the submenu to the right 
-      display: 'none', 
-      minWidth: '150px'
-    }}
-  >
-    <Menu
-      open={openManageColumns}
-      anchorEl={anchorManageColumns}
-    >
-
-{/*
-          {invisibleMenus.map((header, index) => {
-            const title = header.headerTitle;
-            const newIndex = index + 100;
-            return (
-              <MenuItem 
-                key={newIndex}
-                onclick={() => handleUnhideColumn()} 
-              >
-                Show column "{title}"
-              </MenuItem>
-            );
-          })}
-*/}
-
-      <MenuItem key={6} onClick={() => handleUnhideColumn()}>Show hided column 1</MenuItem>
-      <MenuItem key={7} onClick={() => handleUnhideColumn()}>Show hided column 2</MenuItem>
-      <MenuItem key={8} onClick={() => handleUnhideColumn()}>Show hided column 3</MenuItem>
-      <MenuItem key={9} onClick={() => handleUnhideColumn()}>Show hided column 4</MenuItem>
-    </Menu>
-  </div>
+Files done
+==========
+Done until IHeaderManage.js
 
 
-// InselButtonDialog
-
-
-
-
-
-
-// button dialog
-
-<Table>
-<TableRow>
-  <TableCell 
-    rowSpan={2}
-    valign="middle"
-    style={{
-      padding: '10px',
-      textAlign: 'center',
-      borderStyle: 'none'
-    }}
-  >
-    <img 
-      src={mainIconQuestion}
-      style={{ 
-        width: '50px', 
-        height: '50px',
-      }}/>
-  </TableCell>
-
-  <TableCell 
-    style={{
-      padding: '10px',
-      fontSize: '24px',
-      fontWeight: 'bold',
-      textAlign: 'center',
-      borderStyle: 'none'
-    }}>
-
-    <div
-      style={{
-        fontSize: 24,
-        fontWeight: 'bold', 
-        padding: '5px 10px',
-        textAlign: 'center',
-      }}>{this.props.title}</div>
-
-    <div
-      style={{
-        fontSize: 24,
-        fontWeight: 'bold', 
-        padding: '5px 10px',
-        textAlign: 'center',
-      }}>{this.props.question}</div>
-
-    <div
-      style={{
-        fontSize: 36,
-        fontWeight: 'bold', 
-        width: btnWidth, 
-        height: '52px',
-        borderRadius: '16px',
-        padding: '5px 10px',
-        textAlign: 'center',
-      }}>
-      <IconButton
-        onClick={() => this.handleOnClick(0)}
-        style={{
-          fontSize: 16,
-          fontWeight: 'bold', 
-          width: btnWidth, 
-          height: '52px',
-          borderRadius: '16px',
-          padding: '5px 10px',
-        }}>
-        <img 
-          src={mainIconYes}
-          style={{ 
-            width: '32px', 
-            height: '32px',
-          }} 
-        />
-        Yes
-      </IconButton>
-      &nbsp;
-      &nbsp;
-      &nbsp;
-      <IconButton
-        onClick={() => this.handleOnClick(1)}
-        style={{
-          fontSize: 16,
-          fontWeight: 'bold', 
-          width: btnWidth, 
-          height: '52px',
-          borderRadius: '16px',
-          padding: '5px 10px',
-        }}>
-        <img 
-          src={mainIconNo}
-          style={{ 
-            width: '32px', 
-            height: '32px',
-            paddingRight: '10px',
-          }} 
-        />
-        No
-      </IconButton>
-
-      </div>
-    </TableCell>
-  </TableRow>
-</Table>
-
-
-
-///////////////////////////////////////////////////////////
-
-
-  // InselButtonDialog => delete =>
-  handleOnClick(index)
-  {
-    //console.log("handleOnClick", this.props.handleDialogButtons);
-    this.setState({open: false});
-    this.props.handleDialogButtons(index, this.state.id);
-  }
 
 /////////////////////////////////////////////
+18.12.2024
 
-///////////////////////////////////////////
-// Button dialog
+- IConst.js
+  => new comments: static hasError(value, header) 
 
-  return (
-    <Grid container direction="row" spacing={2}>
-      <Grid
-        item
-        style={{
-          display: "flex",
-          alignItems: "center",
-        }}
-      >
-        Items image
-      </Grid>
-      <Grid item>
-        <Grid container direction="column">
-          <Grid item>
-            <TextField
-              value={value}
-              placeholder="0.000"
-              onFocus={handleFocus}
-              onBlur={handleBlur}
-              onChange={(e) => handleChangeValue(e)}
-            ></TextField>
-          </Grid>
-          <Grid item>
-            <TextField value={"Text"}></TextField>
-          </Grid>
-          <Grid item>Items 2</Grid>
-          <Grid item>Items 2</Grid>
-        </Grid>
-      </Grid>
-    </Grid>
-  );
-}
+- IDataDialog_First.js
+  => dataChanged(e, fieldname, editType) : paramter editType überall hinzufügen
+  onChange={(e) => this.dataChanged(e, "birthday")}
+    => onChange={(e) => this.dataChanged(e, 
+         this.props.headers[birthday_Index].dataFieldName,
+         this.props.headers[birthday_Index].editType )}
 
+- IDialog_MainData.js: delete
 
-///////////////////////////////////////////////////////////
+- IFieldChipMenu.js : add example of definition
 
+- IFieldDate.js : delete unötiges
+  const handleChange = (value) => nicht format of e :
 
-// TODO implemantation in ITable.js
-getRowErrorList(row);
-{
-  // check the whole row for errors
-  let errorText = "";
-  for (let h = 0; h < this.state.header.length; h++)
-  {
-    const header = this.state.header[h];
-    if (header.isEditable)
+- IFieldNumber.js
+  hasError => use the common check in IConst
+
+- IFieldRowEditButton.js
+  //console.log( => löschen
+  Button dialog immer aktiv
+  const title = => ändern, wenn im editiermodus : 
+  else if (editType === IConst.editType_ButtonEdit)
     {
-      const value = row[header.dataFieldName];
+      disabled = TRUE;
 
-      // required?
-      if (header.isRequired && (value === null || value === ""))
-        errorText = errorText + "ERROR field {header.headerTitle}: a value is required.\n";
+- IFieldSelection.js
+  Konrtolle im Header: padding korrekt?
 
-      // check numbers
-      const isNumber = 
-        header.editType === IConst.editType_Integer ||
-        header.editType === IConst.editType_Decimal;
-      if (isNumber && 
-        (value > header.numberMaxValue || value < header.numberMinValue))
-        errorText = errorText + "ERROR field {header.headerTitle}: {header.helperText}.\n";
+  
 
-      // check text length
-      const isText = 
-        header.editType === IConst.editType_Textfield ||
-        header.editType === IConst.editType_TextfieldMultiline;
+- IFieldText.js
+  hasError => use the common check in IConst
+  besser machen:
+  const color = hasError ? IConst.errorColor : 'black';
+  auch andere componten korrekt einfärebn : IFieldNumber.js
 
-      if (isText && value.length > header.textMaxLength)
-        errorText = errorText + "ERROR field {header.headerTitle}: {header.helperText}.\n";
+- IHeaderManage.js
+  TODO all ?
 
-    }
-  }
-}
+- TODO: iUtils: tatic rowHasError(headers, row)
 
-handleRowButtonClick(rowid, fieldname)
-{
-  // first check the selected row
-  const rowIndex = this.getRowIndex(rowid);
-  const rowState = this.getRowState(rowid);
-  if (rowState !== IConst.rowStateUnchanged)
-  {
-    const errorText = this.getRowErrorText(this.data[rowIndex]);
-    if (hasErrors)
-    {
-      alert("Errors in row (rowid):\n" + errorText);
-      return;
-    }
-  }
-
-  // now also chedk all other edited / deleted / inserted rows
-  const rowList = this.state.data.filter(r => r.state !== IConst.rowStateUnchanged);
-  for (let r = 0; r < rowList.length; r++) 
-  {
-    const errorText = this.getRowErrorText(rowList[r]);
-    if (hasErrors)
-    {
-      const rowid = rowList[this.props.primaryKey];
-      alert("Errors in row {rowid}:\n" + errorText);
-      return;
-    }
-  }
-
-  if (rowList.length !== 0)
-  {
-    // TODO
-    // not all rows are saved, thus, ask what to do
-    alert("Not all rows are saved. \nTODO: Do you want to save => (yes, no, cancel).")
-  }
-
-  this.props.handleRowButtonClick(rowid, fieldname);
-}
-
-//// TODO for 10.12.2024
-//// TODO : integer anf float fields: make float not accept letters
-// <TextField inputProps={{ type: 'number'}} />
-
-import * as React from "react";
-import { TextField } from "@mui/material";
-
-export default function App() {
-  const [phone, setPhone] = React.useState("123");
-  const [info, setinfo] = React.useState();
-
-  let focusedName = "";
-
-  const handleEnter = (e) => {
-    //focusedName = e.target.name;
-    //setinfo(e.target.name);
-  };
-
-  const handleLeave = (e) => {
-    //focusedName = "";
-    //setinfo(" no fcusedName2");
-
-    const val = e.target.value;
-    const haspos = val.includes(".");
-    if (haspos) {
-      const form = (Math.round(val * 100) / 100).toFixed(2);
-      setinfo(form);
-    }
-
-  };
-
-  const handleChange = (event) => {
-    //if (val.match(/[^0-9]./)) {
-    //  return event.preventDefault();
-    //}
-
-    /*-
-    if (info === event.target.id) {
-    } else {
-      const haspos = val.contains(".");
-      if (haspos) {
-        const pos = val.IndexOf(".");
-        const p1 = val.substring(0, pos);
-        const p2 = val.substring(pos + 1, val.length - pos);
-      }
-      // val.toFixed(3);
-    }
-    */
-    const val = event.target.value;
-    /*
-    const haspos = val.includes(".");
-    if (haspos) {
-      const pos = val.indexOf(".");
-      const p1 = val.substring(0, pos);
-      const p2 = val.substring(pos + 1);
-      //const p3 = p2.substring(0, 2);
-      const p3 = Math.round(val * 20) / 20;
-      //setinfo(p3);
-      //const newval = p1 + "." + p2;
-      //setPhone(newval);
-      //return;
-    }
-    */
-
-    setPhone(val);
-  };
-
-  return (
-    <div>
-      <TextField
-        id="phone_number"
-        name="name1"
-        label="Phone Number"
-        variant="outlined"
-        type="number"
-        inputProps={{ inputMode: "numeric" }}
-        value={phone}
-        onChange={(e) => handleChange(e)}
-        onEnter={(e) => handleEnter(e)}
-        onBlur={(e) => handleLeave(e)}
-      />
-      <TextField
-        id="phone_number2"
-        name="name2"
-        label="Phone Number"
-        variant="outlined"
-        type="number"
-        inputProps={{ inputMode: "numeric" }}
-        //value={phone}
-        //onChange={(e) => handleChange(e)}
-        onEnter={(e) => handleEnter(e)}
-        onBlur={(e) => handleLeave(e)}
-      />
-      <TextField value={info}></TextField>
-    </div>
-  );
-}
-
-
-
-
-
-
-
-
-//////////////////////////////////////////////////
-// 13.12.2024
-// TODO: export excel with line break inside the cell?
-// TODO: fill headers with default values: also in DOC: checkHeaders
-// TODO: header menu: https://mui.com/x/react-data-grid/
-// TODO: Datepicker
-// TODO DOC : textWrap
-// TODO DOC: chip mousehover change color
-
-
-
-
-
-
-
-
-
-
+- TODO: iDataDialog_First => closeDialog(saveIt)
 
 

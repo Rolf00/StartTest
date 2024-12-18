@@ -53,13 +53,11 @@ export default function IFieldText (props) {
           textAlign: horizontalAlign, 
           width: width, 
         }}
-        sx={{ '& .MuiInputBase-root': { height: props.editHeight,  }, }}
-        inputProps={{
-          sx: {
-            color: color,
-            backgroundColor: background
-          },
-        }}
+        sx={{ '& .MuiInputBase-root': { 
+          height: props.editHeight,  
+          backgroundColor: background,
+          color: {color},
+        }, }}
         onChange={(event) => handleChange(event)}
       />
       </div>

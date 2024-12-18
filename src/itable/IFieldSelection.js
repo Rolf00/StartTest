@@ -13,12 +13,13 @@ export default function IFieldSelection (props) {
   const iconCheckbox = value ? 
     IConst.imgChkboxChecked: 
     IConst.imgChkboxUnchecked;
-  
+
+ 
   return (
     <div 
     style={{ 
       padding: '5px 0px', 
-      width: props.width, 
+      width: '100%', 
       height: '100%',
       display: 'flex',
       flexGrow: 1,
@@ -27,7 +28,7 @@ export default function IFieldSelection (props) {
     }}
     >       
     <IconButton
-      onClick={e => this.handleSelectionClickRow(e, rowid)}
+      onClick={() => props.handleSelectionClickRow(rowid)}
       style={{ width: btnHoverWidth, height: btnHoverWidth, }} 
       >
       <img 

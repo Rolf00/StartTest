@@ -1,0 +1,15 @@
+  16.12.2024
+  ----------
+  DONE
+- button dialog like confirm
+- modal dialog for editing
+- analyze management of headers
+- hide one column
+- save one row / save all rows
+
+  TODO
+- sorting a column asc
+- sorting a column desc is not working yet
+- paging: << < > >> ???
+
+

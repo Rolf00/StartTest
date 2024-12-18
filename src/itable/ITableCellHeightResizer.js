@@ -42,8 +42,9 @@ class ITableCellHeightResizer extends React.Component {
           <div
             className={classes.resizerNS}
             onMouseDown={(e) => this.props.handleMouseDownRowNS(e)} 
-            onMouseEnter={(e) => this.props.handleMouseEnterNS(e)} 
-            onMouseLeave={(e) => this.props.handleMouseLeaveNS(e)} 
+            // we dont want flickering all over each row
+            //onMouseEnter={(e) => this.props.handleMouseEnterNS(e)} 
+            //onMouseLeave={(e) => this.props.handleMouseLeaveNS(e)} 
             style={{
               backgroundColor: this.props.isHeightResizing ? 
                 this.props.resizerBackgroundColor : 'transparent'
