@@ -61,9 +61,7 @@ export default function InselTableMenu  (props)
   {
     // hide the menu 
     handleClose(); 
-    // TODO 
-    alert("Searching and filtering are not implemented yet.");
-    //props.handleFilter
+    props.FilterColumn(props.headerIndex)
   }
 
   const handleHideColumn = () =>
@@ -77,7 +75,7 @@ export default function InselTableMenu  (props)
     {
       // close the sub menu
       //setAnchorManageColumns(null);
-      props.headers[props.headerIndex].isVisible = true;
+      // props.headers[props.headerIndex].isVisible = true;
       // TODO hot to render headers?
     }
 
@@ -113,18 +111,15 @@ export default function InselTableMenu  (props)
 
         <MenuItem key='1' 
           onClick={() => handleSortColumn(true)}
-          //onMouseOver={(e) => handleOpenCloseManageColumns(e, false)}
         >Sort ascending</MenuItem>
         <MenuItem key='2' 
           onClick={() => handleSortColumn(false)}
-          //onMouseOver={(e) => handleOpenCloseManageColumns(e, false)}
         >Sort descending</MenuItem>
 
         <Divider sx={{ my: 0.5 }} />
         <MenuItem key='3' 
           onClick={() => handleFilter()}
-          //onMouseOver={(e) => handleOpenCloseManageColumns(e, false)}
-        >Search value</MenuItem>
+        >Filter rows</MenuItem>
 
         <Divider sx={{ my: 0.5 }} />
         <MenuItem key='5' 
@@ -219,9 +214,15 @@ export default function InselTableMenu  (props)
           </div>
         </MenuItem>
       </Menu>
+
+
     </div>
 
 */}
+
+
     </div>
+
+
   );
 }

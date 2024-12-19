@@ -121,19 +121,33 @@ class IUtils {
     if (header.editType === IConst.editType_Integer ||
       header.editType === IConst.editType_Decimal)
     {
-    // cases with no errors
-    if (!value && !header.required) return false;
+      // cases with no errors
+      if (!value && !header.required) return false;
 
-    // cases with errors
-    if (
-      (!value && header.required) ||
-      (value > header.numberMaxValue) ||
-      (value < header.numberMinValue)
-    ) return true;
+      // cases with errors
+      if (
+        (!value && header.required) ||
+        (value > header.numberMaxValue) ||
+        (value < header.numberMinValue)
+      ) return true;
 
       // no errors found
       return false;
     }
+
+    // dropdown fields
+    if (header.editType === IConst.editType_Dropdown)
+    {
+      // cases with no errors
+      if (!value && !header.required) return false;
+
+      // cases with errors
+      if (!value && header.required) return true;
+
+      // no errors found
+      return false;
+    }
+
 
     // TODO datefields
 
@@ -141,15 +155,41 @@ class IUtils {
     return false;
   }
 
-  static rowHasError(headers, row)
+  static getRowErrorText(headers, row)
   {
-    if (!row) return;
+    if (!row) return "";
 
-    // TODO
-    //for(let h = 0; h < )
+    let errorText = "";
+    headers.forEach((header) => 
+    {
+      const value = row[header.dataFieldName];
+      if (this.hasError(value, header))  
+        errorText += "Field " + header.headerTitle + " : " + 
+          header.helperText + "\n";
+    });
 
+    return errorText;
   }
-  
+
+  static getAllRowsErrorText(headers, rows, primaryKey)
+  {
+    if (!rows) return "";
+    if (rows.length === 0) return "";
+
+    let errorTextAll = "";
+    rows.forEach((row) => {
+      const errorText = this.getRowErrorText(headers, row);
+      if (errorText !== "")
+      {
+        errorTextAll += "Error on row " + row[primaryKey] + " : \n";
+        errorTextAll += errorText + "\n\n";
+      }
+    });
+    return errorTextAll;
+  }
+
+
+
 }
 
 export default IUtils;

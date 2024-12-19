@@ -1,15 +1,17 @@
-  16.12.2024
-  ----------
+  16.12.2024 - 20.12.2024
+  ----------------------
   DONE
 - button dialog like confirm
 - modal dialog for editing
 - analyze management of headers
 - hide one column
-- save one row / save all rows
+- save one row / save all rows with checks of values and error message
+- pagination button added first last
+- filtering in progress: and? or? many different columns?
+  at the moment: just on column and one value
+- save data: error message needed when error whil saving SQL database?
+- save data before special button click
 
-  TODO
-- sorting a column asc
-- sorting a column desc is not working yet
-- paging: << < > >> ???
+
 
 

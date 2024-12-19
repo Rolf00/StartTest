@@ -139,33 +139,8 @@ class ITableRow  extends React.Component {
     }
     else if (action === IConst.editType_ButtonSave)
     {
-      // button SAVE for one row was clicked
-      // TODO: check data
-
-      let errorText = "";
-      let hasError = false;
-      for (let h = 0; h < this.props.headers.lenght; h++)
-      {
-        const value = this.state.row[this.props.headers[h].dataFieldName];
-        if (IConst.hasError(value, this.props.headers[h])) 
-        {
-          errorText += 
-            this.props.headers[h].headerTitle + ": " + 
-            this.props.headers[h].helperText + "\n";
-          hasError = true;
-        }
-      }
-
-      if (hasError)
-      {
-        // we found errors in the data, thus, we dont allow to save
-        this.props.showDataErrorMessage(errorText);
-        return;
-      }
-
       // now we can save one row
-      const state = this.props.rowInfoList[this.props.rowInfoIndex].state;
-      this.props.handleSaveOneRow(this.state.row, state);
+      this.props.handleSaveOneRow(this.state.row);
     }
     else if (action === IConst.editType_ButtonUndo)
     {
@@ -260,12 +235,12 @@ class ITableRow  extends React.Component {
 
     return (
       <TableRow
+        key={`ITableRow-row-${rowid}`} 
         height={rowHeight}
         style={{
           height: rowHeight,
           backgroundColor: rowBackgroundColor,
         }}
-        key={`table-row-${rowid}`} 
       >
       {this.props.headers.map((header, headerIndex) => {
 

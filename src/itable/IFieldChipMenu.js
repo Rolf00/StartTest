@@ -4,6 +4,69 @@ import MenuItem from '@mui/material/MenuItem';
 import Avatar from '@mui/material/Avatar';
 import Chip from '@mui/material/Chip';
 
+
+
+/*
+// HOW TO USE CHIP FIELDS
+// -------------------------------------------------------------------
+// you are free to design colors, texts and the lenght of chip array
+// -------------------------------------------------------------------
+// example of colors
+// -----------------
+// #BFBFBF LightGrey
+// #FFFF00 yellow
+// #FF7F00 orange
+// #FF0000 red
+// #FF00FF purple
+// #0000FF blue
+// #00FFFF turqoise
+// #00FF00 green
+// 
+// example of icons
+// ----------------
+import imgChipStatusLightGrey from './CircleLightGrey.png'; 
+import imgChipStatusYellow from './CircleYellow.png'; 
+import imgChipStatusOrange from './CircleOrange.png'; 
+import imgChipStatusRed from './CircleRed.png'; 
+import imgChipStatusPurple from './CirclePurple.png'; 
+import imgChipStatusBlue from './CircleBlue.png'; 
+import imgChipStatusTurqoise from './CircleTurqoise.png'; 
+import imgChipStatusGreen from './CircleGreen.png'; 
+import imgPerson48 from './imgPerson48.png';
+// 
+// example of a header definition
+// ------------------------------
+  {
+    id: 13,
+    databaseField: "chipstate",
+    headerTitle: "State",
+    isResizable: true,
+    isEditable: true,
+    isRequired: true,
+    isVisible: true,
+    isSortable: true,
+    width: 120,
+    minWidth: 100,
+    maxWidth: 320,
+    editType: 'chip',
+    chipList: [
+      { id: 1, label: 'open',    color: '#F3F3F3', colorHover: '#F5F5F5', icon: imgChipStatusLightGrey, },
+      { id: 2, label: 'new',     color: '#FFFFBB', colorHover: '#FFFF99', icon: imgChipStatusYellow, },
+      { id: 3, label: 'invited', color: '#FFE1BF', colorHover: '#FFDFC1', icon: imgChipStatusOrange, },
+      { id: 4, label: 'surgery', color: '#FFBBFF', colorHover: '#99BB99', icon: imgChipStatusPurple, },
+      { id: 5, label: 'visited', color: '#BBFFFF', colorHover: '#99FFFF', icon: imgChipStatusTurqoise, },
+      { id: 6, label: 'invest.', color: '#BBBBFF', colorHover: '#9999FF', icon: imgChipStatusBlue, },
+      { id: 7, label: 'all ok',  color: '#BBFFBB', colorHover: '#99FF99', icon: imgChipStatusGreen, },
+      { id: 8, label: 'danger',  color: '#FFBBBB', colorHover: '#FF9999', icon: imgChipStatusRed, },
+    ],
+    chipWidth: 100,
+    chipIconWidth: 32,
+    dataFieldName: 'chipstate',
+    horizontalAlign: 'center',
+    hasHeaderMenu: false,
+  },
+*/
+
 export default function IChipMenu (props) 
 {
   const [anchorEl, setAnchorEl] = React.useState(null);

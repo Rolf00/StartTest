@@ -198,9 +198,9 @@ export const useStyles = () => ({
     borderRightStyle: 'solid',
     borderRightWidth: 1,
     cursor: 'col-resize',
-    "&:hover": {
-      backgroundColor: '#8888FF',
-    },
+    //"&:hover": {
+    //  backgroundColor: '#8888FF',
+    //},
   },
 
   // main buttons

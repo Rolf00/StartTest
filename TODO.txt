@@ -17,70 +17,47 @@ TODO list
 
 - Data check for DateTime fields?
 
-- make file IUtils.js
-
-- REMOVE ITable => getHasError
-
 - testing error messsages with several lines
 
 - button sort in header
 
 - 1 transaction all rows? 
 
+- check for datefields?
+
+- show a message, when saving failed?
+
+- buttonDilaog : key=´dlg-button-row${rowIndex}-col${colIndex}´;
+
+- TODO : can we measure rect of a text (IButtonDialog)
+
+- how about paging buttons: <<  < ....  >  >>
+- how about buttons: for rows per view : [10] [20] [50] [100]
+- Table pagination in own style?
+
+- input filtering : modal dialog ok? or overlay field?
+
+- filtering and? or? differnt columns with different values and? or?
+- filtering in same column: and? or?
+
+- what belongs to IConst? iStyles? settings? 
+
+- foreach is not a function?
+
+- Warning: Each child in a list should have a unique “key” prop.
+
+- Warning: <div> cannot appear as a child of <tr>.
+
+
+20 TODOs
 
 Files done
 ==========
 Done until IHeaderManage.js
 
 
-
 /////////////////////////////////////////////
-18.12.2024
+20.12.2024
 
-- IConst.js
-  => new comments: static hasError(value, header) 
-
-- IDataDialog_First.js
-  => dataChanged(e, fieldname, editType) : paramter editType überall hinzufügen
-  onChange={(e) => this.dataChanged(e, "birthday")}
-    => onChange={(e) => this.dataChanged(e, 
-         this.props.headers[birthday_Index].dataFieldName,
-         this.props.headers[birthday_Index].editType )}
-
-- IDialog_MainData.js: delete
-
-- IFieldChipMenu.js : add example of definition
-
-- IFieldDate.js : delete unötiges
-  const handleChange = (value) => nicht format of e :
-
-- IFieldNumber.js
-  hasError => use the common check in IConst
-
-- IFieldRowEditButton.js
-  //console.log( => löschen
-  Button dialog immer aktiv
-  const title = => ändern, wenn im editiermodus : 
-  else if (editType === IConst.editType_ButtonEdit)
-    {
-      disabled = TRUE;
-
-- IFieldSelection.js
-  Konrtolle im Header: padding korrekt?
-
-  
-
-- IFieldText.js
-  hasError => use the common check in IConst
-  besser machen:
-  const color = hasError ? IConst.errorColor : 'black';
-  auch andere componten korrekt einfärebn : IFieldNumber.js
-
-- IHeaderManage.js
-  TODO all ?
-
-- TODO: iUtils: tatic rowHasError(headers, row)
-
-- TODO: iDataDialog_First => closeDialog(saveIt)
 
 

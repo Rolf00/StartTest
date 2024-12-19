@@ -91,6 +91,7 @@ class ITableCellWidthResizer extends React.Component {
               headerIndex={headerIndex}
               HideColumn={() => this.props.HideColumn(headerIndex)}
               SortColumn={(sortAscending) => this.props.SortColumn(headerIndex, sortAscending)}
+              FilterColumn={() => this.props.FilterColumn(headerIndex)}
               ></ITableMenu>
           </div>
           }

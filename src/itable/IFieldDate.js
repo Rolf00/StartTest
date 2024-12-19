@@ -3,6 +3,9 @@ import React, { useState } from "react";
 
 import TextField from '@mui/material/TextField';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import FormHelperText from '@mui/material/FormHelperText';
+
+
 //import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
 // not exported?
@@ -31,7 +34,12 @@ export default function IFieldDate (props) {
   const value = props.value;
   const fieldname = props.header.dataFieldName
   const disabled = !props.header.isEditable;
-  const width = props.header.width;
+
+  const hasError = IUtils.hasError(value, props.header);
+  const color = hasError ? IConst.errorColor : 'black';
+  const background = hasError ? IConst.errorColorBackground : 'transparent';
+  const helperText =  hasError ? props.header.helperText : '';
+
 
   // prepare the date from JS to DatePicker
   const oldJSDate = props.value;
@@ -109,7 +117,23 @@ export default function IFieldDate (props) {
         value={pickerDate}
         format="DD.MM.YYYY"
         style={{ width: '100%', }}
-        sx={{ '& .MuiInputBase-root': { height: props.editHeight,  }, }}
+        sx={{ 
+          '& .MuiInputBase-root': { 
+            backgroundColor: background,
+            color: color,
+            padding: '0px 10px 0px 0px',
+          }, 
+          '& .MuiInputBase-input': { 
+            height: props.editHeight,  
+            padding: '6px',
+          }, 
+        }}
+        slotProps={{
+          textField: {
+            error: hasError, // Bolean
+            helperText: helperText, // String
+          },
+        }}        
         onChange={(value) => handleChange(value)}
         renderInput={(params) => <TextField {...params} />}
       />

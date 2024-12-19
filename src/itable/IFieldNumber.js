@@ -1,6 +1,8 @@
 import * as React from 'react';
 import TextField from '@mui/material/TextField';
+
 import IConst from './IConst';
+import IUtils from './IUtils';
 import IFieldReadOnly from './IFieldReadOnly';
 
 export default function IFieldNumber (props) {
@@ -8,21 +10,15 @@ export default function IFieldNumber (props) {
   const editing = props.editing;
   const value = props.value;
   const fieldname = props.header.dataFieldName
-  const hasError = 
-    (value < props.header.numberMinValue) ||
-    (value > props.header.numberMaxValue) ||
-    (value === null && props.header.required) ||
-    (value === '' && props.header.required);
-
-  const helperText = hasError ? props.header.helperText : "";
   const isInteger = props.header.editType === IConst.editType_Integer;
   const type = isInteger ? 'number' : 'text';
   const disabled = !props.header.isEditable;
   const width = props.header.width;
 
+  const hasError = IUtils.hasError(value, props.header);
   const color = hasError ? IConst.errorColor : 'black';
   const background = hasError ? IConst.errorColorBackground : 'transparent';
-
+  const helperText = hasError ? props.header.helperText : '';
 
   const handleChange = (e) =>
   {
@@ -45,7 +41,7 @@ export default function IFieldNumber (props) {
       <div 
       style={{ 
         padding: '5px 0px', 
-        width: props.width, 
+        width: '100%', 
         height: '100%',
         display: 'flex',
         flexGrow: 1,
@@ -63,11 +59,17 @@ export default function IFieldNumber (props) {
         style={{ 
           width: width, 
         }}
-        sx={{ '& .MuiInputBase-root': { 
-          height: props.editHeight,  
-          backgroundColor: background,
-          color: {color},
-        }, }}
+        sx={{ 
+          '& .MuiInputBase-root': {
+            backgroundColor: background,
+            color: color,
+            padding: '0px',
+          },
+          '& .MuiInputBase-input': { 
+            height: props.editHeight,  
+            padding: '6px',
+          }, 
+        }}
         inputProps={{
           type: type,
           sx: {
@@ -87,7 +89,7 @@ export default function IFieldNumber (props) {
     const showtext = isInteger ? value : value.toFixed(props.header.decimalCount);
     return (
       <IFieldReadOnly
-        width={props.header.width}
+        width='100%'
         verticalAlign={props.verticalAlign} 
         horizontalAlign={props.horizontalAlign}
         value={showtext}

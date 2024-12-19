@@ -15,8 +15,16 @@ import {
   TableRow,
 } from '@mui/material';
 
+
+import SkipPreviousIcon from '@mui/icons-material/SkipPrevious';
+import SkipNextIcon from '@mui/icons-material/SkipNext';
+import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
+import ArrowRightIcon from '@mui/icons-material/ArrowRight';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+
 import { useStyles } from './styles';
 import IConst from './IConst';
+import IUtils from './IUtils';
 import ITableHeader from './ITableHeader';
 import ITableRow from './ITableRow'; 
 import IButtonDialog from './IButtonDialog';
@@ -56,20 +64,23 @@ class ITable extends React.Component {
       mainIndeterminated: false,
 
       // props for button dialog
-      openButtonDialog: false,
       buttonDialogId: "",
+      buttonDialogOpen: false,
       buttonDialogTitle: "",
       buttonDialogQuestion: "",
       buttonDialogButtons: [],
       buttonDialogListType: 0,
-      dialogIconType: 0,
-      buttonWidth: 120,
+      buttonDialogIconType: 0,
+      buttonDialogHorizontalAlign: '',
+      buttonDialogSizeType: 0,
+      buttonDialogWidth: 120,
   
       // props for edit dialog
       openDataModalDialog: false,
       selectedRow: null,
       isHoveredOrResizing: false,
 
+      // props for managing columns
       openManageColumns: false,
 
       // enabling / disabling buttons SAVE ALL and UNDO ALL
@@ -79,6 +90,10 @@ class ITable extends React.Component {
       colwidth: 120,
       headerHeight: 35,
       minRowHeight: 29,
+
+      // filtering
+      filterField: "",
+      filterValue: "",
 
       //headerWidthList: this.setHeaderWidthList(),
       rowInfoList: this.setRowInfoList(),
@@ -325,18 +340,35 @@ class ITable extends React.Component {
     this.setState({data: [...this.state.data, newRow]});
   }
 
-  handleSaveOneRow(row, state)
+  handleSaveOneRow(row)
   {
-    // save one changed row
+    // button SAVE for one row was clicked
+    // first we check the data
+    const errorText = IUtils.getRowErrorText(this.state.headers, row);
+    if (errorText !== "")
+    {
+      // we found errors in the data, thus, we dont allow to save
+      this.showDataErrorMessage(errorText);
+      return;
+    }
+
+    // now we can save one row
+    const infoIndex = this.state.rowInfoList.findIndex(i => i.id === row[this.props.primaryKey]);
+    const state = this.state.rowInfoList[infoIndex].state;
     if (this.props.handleSaveOneRowClick(row, state))
     {
-      const infoIndex = this.state.rowInfoList.findIndex(i => i.id === row[this.props.primaryKey]);
-      const newlist = this.state.rowInfoList;
-      newlist[infoIndex].state = IConst.rowStateUnchanged;
-      this.setState({rowInfoList: newlist, });
+        // row was be saved, so we set the row to state UNCHANGED
+        const newList = this.state.rowInfoList;
+        newList[infoIndex].state = IConst.rowState_Unschanged;
+        const mainEnabled = this.getMainButtonsEnabled();    
+        this.setState({
+          rowInfoList: newList,
+          mainButtonsDisabled: mainEnabled        
+        });
     }
     else
     {
+      // the rows were not saved, we let the previous state
       // TODO error message here ?
     }
   }
@@ -353,76 +385,82 @@ class ITable extends React.Component {
       rowList.push(row);
     }
 
+    if (rowList.length === 0) return true;
+
     // check first, if all rows have correct data
-    let errorTextAll = "";
-    let hasErrorAll = false;
-    for (let r = 0; r < rowList.length; r++)
+    const errorTextAll = IUtils.getAllRowsErrorText(
+      this.state.headers, rowList, this.props.primaryKey);
+    if (errorTextAll !== "")
     {
-      let errorText = "";
-      let hasError = false;
-      for (let h = 0; h < this.props.headers.lenght; h++)
-      {
-        const value = this.state.row[this.props.headers[h].dataFieldName];
-        if (IConst.hasError(value, this.props.headers[h])) 
-        {
-          errorText += 
-            this.props.headers[h].headerTitle + ": " + 
-            this.props.headers[h].helperText + "\n";
-          hasError = true;
-          hasErrorAll = true;
-        }
-      }
-      if (hasError) 
-      {
-        errorTextAll += "Error on row " + rowList[this.props.primaryKey] + " : \n";
-        errorTextAll += errorText + "\n"
-      }
-    }
-
-    if (hasErrorAll)
-    {
-      // TODO make a nicer dialog
-      alert("Data has errors. Fix them first: " + errorTextAll);
-
       // we found errors in the data, thus, we dont allow to save
       this.showDataErrorMessage(errorTextAll);
-      return;
+      return false;
     }
 
-    // no error found, this we can save now
+    // no error found, thus we can save all rows now
     if (this.props.handleSaveAllRowsClick(rowList, stateList))
     {
       const newlist = this.state.rowInfoList;
       for (let s = 0; s < newlist.length; s++) newlist[s].state = IConst.rowStateUnchanged;
-      this.setState({rowInfoList: newlist});
+      const mainEnabled = this.getMainButtonsEnabled();    
+      this.setState({
+        rowInfoList: newlist,
+        mainButtonsDisabled: mainEnabled
+      });
+      return true;
     }
     else
     {
-      // TODO error message here ?
+      // the rows were not saved, we let the previous state
+      // TODO show a message here?
+      return false;
     }
   }
 
   showDataErrorMessage(errorText)
   {
-    // show a dalog with the error messages 
-    let newText = errorText;
-    const lines = errorText.split("\n");
-    if (lines.lenght > 15)
-    {
-      newText = "";
-      for (let t = 0; t < 15; t++) newText += newText + "\n";
-    }
+      // show a dalog with the error messages 
+      let newText = errorText;
+      /*
+      // TODO what do when to many lines in the error message?
+      const lines = errorText.split("\n");
+      if (lines.lenght > 25)
+      {
+        // if there are more than 25 error lines, 
+        // we show only 25, but we show that there are more
+        // furthermore, in this case we add a button "copy to clipboard"
+        newText = "";
+        for (let t = 0; t < 25; t++) newText += newText + lines[t] + "\n";
+        newText += newText + "...\n";
+        newText += newText + "...\n";
+        newText += newText + "[more than 25 error messages ]\n";
+      }
 
-    this.setState({
-      buttonDialogId: "DataError",
-      openButtonDialog: true,
-      buttonDialogTitle: "Error in data found",
-      question: newText,
-      buttonList: [],
-      buttonDialogListType: IConst.buttonDialogTypeOk,
-      dialogIconType: IConst.buttonDialogIconType_Stop,
-    });
-  }
+      const buttons = lines.lenght > 25 
+        ? [ { caption: "Close", icon: IConst.imgIconOk, horizontalAlign: 'left', X: 1, Y: 1, },
+            { caption: "Copy", icon: IConst.imgIconCopy, horizontalAlign: 'left', X: 2, Y: 1, }, ]
+        : IConst.defaultButtonsOk; 
+
+      */
+
+      const buttons = [ 
+        { caption: "Close", icon: IConst.imgIconOk, horizontalAlign: 'left', X: 1, Y: 1, },
+        { caption: "Copy", icon: IConst.imgCopyButton, horizontalAlign: 'left', X: 2, Y: 1, }, 
+      ];
+
+      this.setState({
+        buttonDialogId: "DataError",
+        buttonDialogOpen: true,
+        buttonDialogTitle: "Error in data found",
+        buttonDialogQuestion: newText,
+        buttonDialogButtons: buttons,
+        buttonDialogListType: -1, // -1 : dont use pre-defined buttons
+        buttonDialogIconType: IConst.buttonDialogIconType_Stop,
+        buttonDialogHorizontalAlign: IConst.horizontalAlign_Left,
+        buttonDialogSizeType: IConst.buttonDialogSizeType_ParentPercentages,
+        buttonDialogButtonWidth: 120, // in pixel
+      });
+    }
 
   UndoAllRows()
   {
@@ -445,13 +483,15 @@ class ITable extends React.Component {
     //return;
     this.setState({
       buttonDialogId: "UndoAll",
+      buttonDialogOpen: true,
       buttonDialogTitle: "Undo all rows",
       buttonDialogQuestion: "Do you really want to undo all changes?",
       buttonDialogButtons: [],
       buttonDialogListType: IConst.buttonDialogTypeYesNo,
-      dialogIconType: IConst.buttonDialogIconType_Question,
-      buttonWidth: 120,
-      openButtonDialog: true,
+      buttonDialogIconType: IConst.buttonDialogIconType_Question,
+      buttonDialogHorizontalAlign: IConst.horizontalAlign_Center,
+      buttonDialogSizeType: IConst.buttonDialogSizeType_ButtonWidths,
+      buttonDialogButtonWidth: 120,
     });
   }
 
@@ -552,14 +592,31 @@ class ITable extends React.Component {
       { caption: "no way", icon: IConst.imgIconCancel, horizontalAlign: 'left', X: 3, Y: 3, },
     ];
     this.setState({
-      buttonDialogId: "UndoAll",
+      buttonDialogId: "Test",
+      buttonDialogOpen: true,
       buttonDialogTitle: "Undo all rows",
       buttonDialogQuestion: "Do you really want to undo all changes?",
       buttonDialogButtons: buttons,
       buttonDialogListType: -1,
-      dialogIconType: IConst.buttonDialogIconType_Question,
-      buttonWidth: 120,
-      openButtonDialog: true,
+      buttonDialogIconType: IConst.buttonDialogIconType_Question,
+      buttonDialogHorizontalAlign: IConst.horizontalAlign_Center,
+      buttonDialogSizeType: IConst.buttonDialogSizeType_ButtonWidths,
+      buttonDialogButtonWidth: 120,
+      // TODO
+      /*
+
+      buttonDialogId: "",
+      buttonDialogOpen: false,
+      buttonDialogTitle: "",
+      buttonDialogQuestion: "",
+      buttonDialogButtons: [],
+      buttonDialogListType: 0,
+      buttonDialogIconType: 0,
+      buttonDialogHorizontalAlign: '',
+      buttonDialogSizeType: 0,
+      buttonDialogWidth: 120,
+      */
+
     });
   }
 
@@ -631,22 +688,21 @@ class ITable extends React.Component {
   handleDialogButtons(buttonIndex, dialogID)
   {
     // close the dialog
-    this.setState({openButtonDialog: false});
+    this.setState({buttonDialogOpen: false});
 
     if (dialogID === "UndoAll")
     {
+
+      // answer from buttonDialog (yes | no);
       if (buttonIndex === 0)
       {
         // button yes was pressed
-        alert("undo all rows: index = " + buttonIndex + ", dialogID = " + dialogID);
-        // TODO
-        // this.UndoAllRows();
+        this.UndoAllRows();
       }
       else if (buttonIndex === 1)
       {
         // button no was pressed
         // nothing to do here
-        alert("undo all rows CANCELLED");
       }
       return;
     }
@@ -696,8 +752,6 @@ class ITable extends React.Component {
     // selection in the header was clicked
     let ischecked = this.state.mainChecked;
     ischecked = !ischecked;
-    this.setState({mainIndeterminated: false});
-    this.setState({mainChecked: ischecked});
 
     // now set the same selection for all rows
     const newlist = [...this.state.rowInfoList];
@@ -725,24 +779,11 @@ class ITable extends React.Component {
 
     if (allRowsAreSame)
     {
-      if (newSelected)
-      {
-        // all rows are selected
-        this.setState({
-          rowInfoList: newlist,
-          mainChecked: true,
-          mainIndeterminated: false,
-        });
-      }
-      else
-      {
-        // no row is selected
-        this.setState({
-          rowInfoList: newlist,
-          mainChecked: false,
-          mainIndeterminated: false,
-        });
-      }
+      this.setState({
+        rowInfoList: newlist,
+        mainChecked: newSelected,
+        mainIndeterminated: false,
+      });
     }
     else
     {
@@ -754,6 +795,19 @@ class ITable extends React.Component {
       });
     }
   }
+
+
+  handleSpecialButtonClick(rowid, field)
+  {
+    if (!this.handleSaveAll()) 
+    {
+      alert("TODO: data could be saved.")
+      return;
+    }
+    this.props.handleSpecialButtonClick(rowid, field);
+  }
+
+
 
 
   // ---------------------------------------------------------------------------------------
@@ -846,64 +900,7 @@ class ITable extends React.Component {
 
   // ---------------------------------------------------------------------------------------
   // cell editing procedures and functions
-
-  /*
-  setRowState(rowid, state)
-  {
-    // set a new row state
-    // if the old state is INSERTED, then we dont change it to edited
-    const oldState = this.getRowxxxxState(rowid);
-    if (oldState === IConst.rowStateInserted) return;
-
-    // set a new row state
-    const index = this.getRowIndex(rowid);
-    const newlist = this.state.rowInfoList;
-    newlist[index].state = state;
-    this.setState({rowInfoList: newlist});
-
-    // update main buttons
-    this.setMainxxxxxButtons();
-  } 
-    */ 
-
-  getHasError(header, value)
-  {
-
-    // TODO : use IConst.hasError
-
-    if (!header.isEditable) return false;
-
-    // check text fields
-    const isText = 
-      header.editType === IConst.editType_Textfield ||
-      header.editType === IConst.editType_TextfieldMultiline;
-    if (isText)
-    {
-      if (header.required && (value === "" || value === null)) return true;
-      if (value.length > header.textMaxLength) return true;
-      return false;
-    }
-
-    // check number fields
-    const isInteger = header.editType === IConst.editType_Integer;
-    const isDecimal = header.editType === IConst.editType_Decimal;
-    if (isInteger || isDecimal)
-    {
-      if (header.required && (value === null)) return true;
-      const actValue = isInteger ?
-        parseInt(value) :
-        parseFloat(value);
-      if (actValue > header.numberMaxValue || 
-          actValue < header.numberMinValue) return true;
-      return false;
-    }
-
-    // TODO others?
-
-    return false;
-
-  }
-  
+ 
   handleTextfieldChange(e, rowid, fieldName)
   {
     // TODO delete
@@ -1119,11 +1116,37 @@ class ITable extends React.Component {
   }
 
 
+  FilterColumn(headerIndex)
+  {
+    const newFilterValue = "test";
+    this.setState({
+      filterField: this.state.headers[headerIndex].dataFieldName,
+      filterValue: newFilterValue
+    });
+  }
+
   render() 
   {
     const { classes } = this.props;
     const { page, limit } = this.state;
-    const data = this.state.data.slice(page * limit, page * limit + limit);
+
+
+    // TODO test
+    const filterValue = "4838 Avenue M";
+    this.state.filterField = "";
+
+    let data = [];
+    if (this.state.filterField !== "")
+    {
+      // filtering 
+      data = this.state.data.filter(d => d[this.state.filterField].includes(filterValue));
+      if (data.length < page * limit) page = 0;
+    }
+    else
+    {
+      data = this.state.data.slice(page * limit, page * limit + limit);
+    }
+
     const mainChecked = this.state.mainChecked;
     const mainIndeterminated = this.state.mainIndeterminated;
     const mainButtonsDisabled = this.state.mainButtonsDisabled;
@@ -1176,6 +1199,7 @@ class ITable extends React.Component {
               handleCheckboxClickHeader={(e)=>this.handleCheckboxClickHeader(e)}
               HideColumn={(headerIndex) => this.HideColumn(headerIndex)}
               SortColumn={(headerIndex, sortAscending) => this.SortColumn(headerIndex, sortAscending)}
+              FilterColumn={(headerIndex) => this.FilterColumn(headerIndex)}
             />
             <TableBody 
               className={classes.table_body_row}
@@ -1187,6 +1211,7 @@ class ITable extends React.Component {
 
                 return(
                   <ITableRow
+                    key={`itablerow-row${rowIndex}`}
                     settings={this.props.settings}
                     headers={this.props.headers}
                     rowInfoList={this.state.rowInfoList}
@@ -1197,9 +1222,9 @@ class ITable extends React.Component {
                     setMainButtonState={() => this.setMainButtonState()}
                     handleUndoInsertedRows={(rowIndex) => this.handleRowEditButtons(rowIndex)}
                     handleSelectionClickRow={(rowid) => this.handleSelectionClickRow(rowid)}
-                    handleSpecialButtonClick={(rowid, field) => this.props.handleSpecialButtonClick(rowid, field)}
+                    handleSpecialButtonClick={(rowid, field) => this.handleSpecialButtonClick(rowid, field)}
                     handleDataChange={(newvalue, rowid, field) => this.handleDataChange(newvalue, rowid, field)}
-                    handleSaveOneRow = {(row, state) =>  this.handleSaveOneRow(row, state)}
+                    handleSaveOneRow = {(row) =>  this.handleSaveOneRow(row)}
                     showDataErrorMessage = {(errorText) =>  this.showDataErrorMessage(errorText)}
                     openModalDataDialog={(row) => this.openModalDataDialog(row)}  
                   />
@@ -1368,6 +1393,9 @@ class ITable extends React.Component {
                 page={page}
                 rowsPerPage={limit}
                 rowsPerPageOptions={[5, 10, 20, 100]}
+                showFirstButton
+                showLastButton
+
                 sx={{
                   borderTop: '1px solid rgba(224, 224, 224, 1)',
                   overflow: 'hidden',
@@ -1386,7 +1414,7 @@ class ITable extends React.Component {
                     margin: 0,
                     fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
                     fontWeight: 400,
-                    fontSize: '0.75rem', //'0.875rem',
+                    fontSize: '1rem', //'0.875rem',
                     lineHeight: 1.43,
                     letterSpacing: '0.01071em',
                     marginRight: '4px', // added
@@ -1397,12 +1425,13 @@ class ITable extends React.Component {
                     paddingLeft: '4px', // Reduced from 8px
                     textAlign: 'left',
                     textAlignLast: 'left',
+                    fontSize: '1rem',
                   },
                   '.MuiTablePagination-displayedRows': {
                     margin: 0,
                     fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
                     fontWeight: 400,
-                    fontSize: '0.75rem', // Smaller font
+                    fontSize: '1rem', // Smaller font
                     lineHeight: 1.43,
                     letterSpacing: '0.01071em',
                     marginLeft: '4px',
@@ -1410,8 +1439,9 @@ class ITable extends React.Component {
                   },
                   '.MuiIconButton-root': {
                     padding: '4px', // Reduced from 12px
-                    borderRadius: '50%',
+                    borderRadius: '20%',
                     overflow: 'isVisible',
+                    width: '30px',
                     color: 'inherit',
                     transition:
                       'background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
@@ -1433,16 +1463,18 @@ class ITable extends React.Component {
         </Table>
 
         {/* button dialog */}
-        {this.state.buttonDialogId && this.state.openButtonDialog &&
+        {this.state.buttonDialogId && this.state.buttonDialogOpen &&
         <IButtonDialog
-          id={this.buttonDialogId}
-          open={this.state.openButtonDialog}
-          title={this.state.buttonDialogTitle}
-          question={this.state.buttonDialogQuestion}
-          buttonList={this.state.buttonDialogButtons}
+          buttonDialogId={this.buttonDialogId}
+          buttonDialogOpen={this.state.buttonDialogOpen}
+          buttonDialogTitle={this.state.buttonDialogTitle}
+          buttonDialogQuestion={this.state.buttonDialogQuestion}
+          buttonDialogButtons={this.state.buttonDialogButtons}
           buttonDialogListType={this.state.buttonDialogListType}
-          dialogIconType={this.state.dialogIconType}
-          buttonWidth={120}
+          buttonDialogIconType = {this.state.buttonDialogIconType}
+          buttonDialogHorizontalAlign = {this.state.buttonDialogHorizontalAlign}
+          buttonDialogSizeType = {this.state.buttonDialogSizeType}
+          buttonDialogButtonWidth={this.state.buttonDialogButtonWidth}
           handleDialogButtons={(index) => this.handleDialogButtons(index, this.state.buttonDialogId)}
         />}
 
@@ -1465,6 +1497,7 @@ class ITable extends React.Component {
             row={this.state.selectedRow}
             primaryKey={this.props.primaryKey}
             handleSubmitModalDialog={(row, saveIt) => this.handleSubmitModalDialog(row, saveIt)}
+            showDataErrorMessage={(errorText) => this.showDataErrorMessage(errorText)}
           >
           </IDataDialog_First>
         }

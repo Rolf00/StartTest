@@ -9,6 +9,7 @@ import imgUndoButton from './imgUndo48.png';
 import imgAddButton from './imgAdd48.png'; 
 import imgExcelButton from './imgExcel48.png'; 
 import imgColumsButton from './imgColums48.png'; 
+import imgCopyButton from './imgCopyButton48.png'; 
 
 
 import imgIconOk from './imgYes48.png'; 
@@ -57,6 +58,7 @@ class IConst {
   static imgAddButton = imgAddButton; 
   static imgExcelButton = imgExcelButton; 
   static imgColumsButton = imgColumsButton;
+  static imgCopyButton = imgCopyButton;
 
   // alignments
   static horizontalAlign_Left = "left";
@@ -102,6 +104,21 @@ class IConst {
     { caption: "No", icon: imgIconNo, horizontalAlign: 'left', X: 2, Y: 1, },
     { caption: "Cancel", icon: imgIconCancel, horizontalAlign: 'left', X: 3, Y: 1, }
   ];
+
+  // calucalted from the elnght of all buttons horizontally aligned
+  static buttonDialogSizeType_ButtonWidths = 0;
+  // fixed width from window 80 percent
+  static buttonDialogSizeType_ParentWidth80Percent = 1; 
+  // fixed height from parent in percentage
+  static buttonDialogSizeType_ParentHeight80Percent = 2; 
+  // fixed width and height from parent in percentage
+  static buttonDialogSizeType_Parent80Percent = 3;
+  // TODO can we measure rect of a text
+  // fixed width | height from text
+  //static buttonDialogSizeType_Width_TextHeight = 4;
+  // TODO can we measure rect of a text
+  // fixed height | width from text
+  //static buttonDialogSizeType_Height_TextWidth = 5;
   
   // row states 
   static rowStateUnchanged = 0;  

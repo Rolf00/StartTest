@@ -1,7 +1,8 @@
 import * as React from 'react';
-
 import TextField from '@mui/material/TextField';
+
 import IConst from './IConst';
+import IUtils from './IUtils';
 import IFieldReadOnly from './IFieldReadOnly';
 
 export default function IFieldText (props) {
@@ -12,15 +13,11 @@ export default function IFieldText (props) {
   const disabled = !props.header.isEditable;
   const multiline = props.header.editType === IConst.editType_TextfieldMultiline;
   const horizontalAlign = props.header.horizontalAlign
-  const hasError = ( 
-    value.length > props.header.textMaxLength ||
-    (value === null && props.header.required) ||
-    (value === '' && props.header.required));
-    const helperText = hasError ? props.header.helperText : "";
-    const width = props.header.width;
 
+  const hasError = IUtils.hasError(value, props.header);
   const color = hasError ? IConst.errorColor : 'black';
   const background = hasError ? IConst.errorColorBackground : 'transparent';
+  const helperText = hasError ? props.header.helperText : '';
 
   const handleChange = (e) =>
   {
@@ -51,13 +48,19 @@ export default function IFieldText (props) {
         multiline={multiline}
         style={{ 
           textAlign: horizontalAlign, 
-          width: width, 
+          width: '100%', 
         }}
-        sx={{ '& .MuiInputBase-root': { 
-          height: props.editHeight,  
-          backgroundColor: background,
-          color: {color},
-        }, }}
+        sx={{ 
+          '& .MuiInputBase-root': {
+            backgroundColor: background,
+            color: color,
+            padding: '0px',
+          },
+          '& .MuiInputBase-input': { 
+            height: props.editHeight,  
+            padding: '6px',
+          }, 
+        }}
         onChange={(event) => handleChange(event)}
       />
       </div>
@@ -72,7 +75,7 @@ export default function IFieldText (props) {
     {
       return (
         <IFieldReadOnly
-          width={width}
+          width={'100%'}
           verticalAlign={props.verticalAlign} 
           horizontalAlign={props.horizontalAlign}
           value={value}
@@ -84,7 +87,7 @@ export default function IFieldText (props) {
       return(
         <div style={{ 
           padding: '5px 0px', 
-          width: width, 
+          width: '100%', 
           display: 'flex',
           flexGrow: 1,
           justifyContent: props.horizontalAlign, 
@@ -94,7 +97,7 @@ export default function IFieldText (props) {
           return(
             <div style={{ 
               padding: '0px', 
-              width: width, 
+              width: '100%', 
               textAlign: props.singleHorizontalAlign,
             }}>{line}</div>
           );

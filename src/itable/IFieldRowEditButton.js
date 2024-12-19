@@ -7,7 +7,6 @@ export default function IFieldRowEditButton (props) {
   // Component for buttons placed on each row.
   // Their onClick event will be handled inside the ITableRow component. 
 
-  const rowid = props.rowId;
   const dataFieldName = props.header.editType;
   const rowState = props.rowState;
   const editType = props.header.editType;
@@ -43,7 +42,6 @@ export default function IFieldRowEditButton (props) {
 
   const imgWidth = props.settings.buttonSizeOnRows;
   const btnHoverWidth = props.settings.buttonSizeOnRowsHover;
-  ;
 
   const icon = 
     props.header.editType === IConst.editType_ButtonEditRow ? 
@@ -54,7 +52,8 @@ export default function IFieldRowEditButton (props) {
     props.header.editType === IConst.editType_ButtonDelete ? IConst.imgDeleteButton : null;
 
   const title = 
-    props.header.editType === IConst.editType_ButtonEditRow ? "Edit this row" :
+    props.header.editType === IConst.editType_ButtonEditRow ? 
+      editing ? "Stop editing row" : "Edit this row" :
     props.header.editType === IConst.editType_ButtonEdit ? "Edit this row in modal dialog" :
     props.header.editType === IConst.editType_ButtonSave ? "Save this row" :
     props.header.editType === IConst.editType_ButtonUndo ? "Undo this row" :

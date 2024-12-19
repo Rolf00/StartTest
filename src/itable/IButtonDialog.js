@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from "react";
 import PropTypes, { func } from 'prop-types';
 import { withStyles } from 'tss-react/mui';
 import 'react-resizable/css/styles.css';
@@ -22,14 +22,16 @@ class IButtonDialog extends React.Component {
 
     const {
       classes,
-      id,
-      open,
-      title,
-      question,
-      buttonList,
+      buttonDialogId,
+      buttonDialogOpen,
+      buttonDialogTitle,
+      buttonDialogQuestion,
+      buttonDialogButtons,
       buttonDialogListType, 
-      dialogIconType,
-      buttonWidth
+      buttonDialogIconType,
+      buttonDialogHorizontalAlign,
+      buttonDialogSizeType,
+      buttonDialogButtonWidth
     } = this.props;
   }
 
@@ -39,10 +41,25 @@ class IButtonDialog extends React.Component {
     this.props.handleDialogButtons(index, this.props.id);
   }
 
+  calculateText(measureHeight)
+  {
+    /*
+    const rect = containerRef.current.getBoundingClientRect();
+    if (measureHeight)
+    {
+      return rect.height;
+    }
+    else
+    {
+      return rect.width;
+    }
+    */
+  }
+
   render ()
   {
     const { classes } = this.props;
-
+  
     const buttons = 
       this.props.buttonDialogListType === IConst.buttonDialogTypeOk ?  
         IConst.defaultButtonsOk :
@@ -50,16 +67,16 @@ class IButtonDialog extends React.Component {
         IConst.defaultButtonsYesNo :
       this.props.buttonDialogListType === IConst.buttonDialogTypeYesNoCancel ?  
         IConst.defaultButtonsYesNoCancel :
-        this.props.buttonList;
+        this.props.buttonDialogButtons;
 
-    const title = this.props.title;
-    const question = this.props.question;
+    const title = this.props.buttonDialogTitle;
+    const question = this.props.buttonDialogQuestion;
     const mainIcon = 
-      this.props.dialogIconType === IConst.buttonDialogIconType_Info ? IConst.imgDialogBigIconInfo :
-      this.props.dialogIconType === IConst.buttonDialogIconType_Question ? IConst.imgDialogBigIconQuestion :
-      this.props.dialogIconType === IConst.buttonDialogIconType_Stop ?  IConst.imgDialogBigIconStop : null;
+      this.props.buttonDialogIconType === IConst.buttonDialogIconType_Info ? IConst.imgDialogBigIconInfo :
+      this.props.buttonDialogIconType === IConst.buttonDialogIconType_Question ? IConst.imgDialogBigIconQuestion :
+      this.props.buttonDialogIconType === IConst.buttonDialogIconType_Stop ?  IConst.imgDialogBigIconStop : null;
 
-    const buttonWidth = this.props.buttonWidth;
+    const buttonWidth = this.props.buttonDialogButtonWidth;
 
     const colCount = Math.max(...buttons.map((item) => item.X));
     const rowCount = Math.max(...buttons.map((item) => item.Y));
@@ -67,19 +84,80 @@ class IButtonDialog extends React.Component {
     for (let c = 0; c < colCount; c++) col.push(c);
     const row = [];
     for (let r = 0; r < rowCount; r++) row.push(r);
-  
-    // TODO button dialog settings
-    const imageWidth = 72;
-    const iconSize = 36;
+
+    
     const spaceWidth = 10;
-    const entireWidth = (colCount * buttonWidth) + ((colCount + 1) * spaceWidth) + imageWidth;
+    const imageWidth = 96;
+    const iconSize = 36;
     const open = true;
+
+    // TODO window size
+    //const entireMaxWidth = window.innerWidth * 80 / 100;    // 80 %
+    //const entireMaxHeight = window.innerHeight * 80 / 100;  // 80 %
+    let entireMaxWidth = 1200;
+    let entireMaxHeight = 960;
+
+    let entireMinWidth = 100;
+    let entireMinHeight = 100;
+    let textWidth = entireMaxWidth;
+    let textHeight = entireMaxHeight;
+    
+    if (this.props.buttonDialogSizeType === IConst.buttonDialogSizeType_ButtonWidths)
+    {
+      // calculated from the length of all buttons horizontally aligned
+      entireMaxWidth = (colCount * buttonWidth) + ((colCount + 1) * spaceWidth) + imageWidth;
+    }
+    else if (this.props.buttonDialogSizeType === IConst.buttonDialogSizeType_ParentWidth80Percent)
+    { 
+      // fixed width from window 80 percent
+      entireMinWidth = entireMaxWidth;
+    }
+    else if (this.props.buttonDialogSizeType === IConst.buttonDialogSizeType_ParentHeight80Percent)
+    { 
+      // fixed height from parent in percentage
+      entireMinHeight = entireMaxHeight;
+    }
+    else if (this.props.buttonDialogSizeType === IConst.buttonDialogSizeType_Parent80Percent)
+    {
+      // fixed width and height from parent in percentage
+      entireMinWidth = entireMaxWidth;
+      entireMinHeight = entireMaxHeight;
+    }
+    else if (this.props.buttonDialogSizeType === IConst.dialogSizeTypes_CalculateFromText)
+    {
+      // fixed width and height from parent in percentage
+      entireMinWidth = entireMaxWidth;
+      entireMinHeight = entireMaxHeight;
+    }
+    /*
+    else if (this.props.buttonDialogSizeType === IConst.buttonDialogSizeType_Width_TextHeight )
+    {
+      // fixed width | height from text
+      entireMinWidth = entireMaxWidth;
+      textHeight = this.calculateText(question, true);
+      if (textHeight > entireMaxHeight) textHeight = entireMaxHeight;
+    }
+    else if (this.props.buttonDialogSizeType === IConst.buttonDialogSizeType_Height_TextWidth )
+    {
+      // fixed height | width from text
+      entireMinHeight = entireMaxHeight;
+      textWidth = this.calculateText(question, false);
+      if (textWidth > entireMaxWidth) textWidth = entireMaxWidth;
+    }
+      */
+    
+    // TODO
+    // <Typography ref={containerRef}
+
+
 
     return(
       <Dialog 
-        width={entireWidth}
-        maxWidth={entireWidth}
-        minWidth={entireWidth}
+        //width={entireWidth}
+        maxWidth={entireMaxWidth}
+        minWidth={entireMinWidth}
+        maxHeight={entireMaxHeight}
+        minHeight={entireMinHeight}
         open={open} 
         // TODO  BackdropProps deprecated
         BackdropProps={{
@@ -109,7 +187,14 @@ class IButtonDialog extends React.Component {
         <Grid item direction="column" spacing={2} align="center">
 
         <Grid item>
-          <Typography variant="h5">{title}</Typography>
+          <Typography 
+            variant="h5"
+            style={{
+              maxHeight: textHeight,
+              maxWidth: textWidth,
+
+            }}
+          >{title}</Typography>
         </Grid>
 
         <Grid item>
@@ -117,9 +202,11 @@ class IButtonDialog extends React.Component {
         </Grid>
 
         <Grid item>
-        <Table style={{ width: entireWidth}}>
+        <Table>
           {row.map((rowIndex) => (
-            <TableRow key={rowIndex}>
+            <TableRow 
+              key={`buttonDialog-TableRow${rowIndex}`}
+            >
               {col.map((colIndex) => {
                 const btnIndex = buttons.findIndex(
                   (b) => b.X === colIndex + 1 && b.Y === rowIndex + 1
@@ -127,7 +214,7 @@ class IButtonDialog extends React.Component {
                 if (btnIndex === -1) {
                   return (
                     <TableCell
-                      key={rowIndex + 10 * colIndex}
+                      key={`buttonDialog-row${rowIndex}-column${colIndex}`}
                       style={{ border: "0px", padding: "0px", margin: "0px" }}
                     ></TableCell>
                   );
@@ -138,7 +225,7 @@ class IButtonDialog extends React.Component {
                   const icon = button.icon;
                   return (
                     <TableCell
-                      key={`button-item-${rowIndex}-${colIndex}`} 
+                      key={`buttonDialog-row${rowIndex}-column${colIndex}`}
                       style={{ border: "0px", padding: "5px 5px", margin: "0px" }}>
                       <IconButton
                         size="small"

@@ -1,8 +1,14 @@
 import * as React from 'react';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import FormHelperText from '@mui/material/FormHelperText';
 import MenuItem from '@mui/material/MenuItem';
 
+
+
+
+import IConst from './IConst';
+import IUtils from './IUtils';
 import IFieldReadOnly from './IFieldReadOnly';
 
 export default function IFieldDropDown (props) {
@@ -14,6 +20,11 @@ export default function IFieldDropDown (props) {
   const disabled = !props.header.isEditable;
   const dropdownWidth = props.header.width - 10;
   
+  const hasError = IUtils.hasError(value, props.header);
+  const color = hasError ? IConst.errorColor : 'black';
+  const background = hasError ? IConst.errorColorBackground : 'transparent';
+  const helperText = hasError ? props.header.helperText : '';
+
   const handleChange = (e) =>
   {
     const newValue = e.target.value;
@@ -39,7 +50,17 @@ export default function IFieldDropDown (props) {
         style={{ 
           width: '100%', // {dropdownWidth}, 
         }} 
-        sx={{ '& .MuiInputBase-root': { height: props.editHeight,  }, }}
+        sx={{ 
+          '& .MuiInputBase-root': { 
+            backgroundColor: background,
+            color: color,
+            padding: '0px 10px 0px 0px',
+          }, 
+          '& .MuiInputBase-input': { 
+            height: props.editHeight,  
+            padding: '6px',
+          }, 
+        }}
         >
         <Select
           disabled={disabled}
@@ -57,6 +78,7 @@ export default function IFieldDropDown (props) {
           );
         })}
         </Select> 
+        <FormHelperText>{helperText}</FormHelperText>        
       </FormControl>
       </div>
     );

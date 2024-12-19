@@ -1,3 +1,6 @@
+// Modification
+// 01.01.2025 RHE : new implementation
+
 import React from 'react';
 import PropTypes, { func } from 'prop-types';
 import { withStyles } from 'tss-react/mui';
@@ -53,7 +56,7 @@ class IDataDialog_First extends React.Component {
   dataChanged(e, fieldname, editType)
   {
     const rowChanged = this.state.row;
-    if (editType == IConst.editType_Date)
+    if (editType === IConst.editType_Date)
     {
       // TODO dates
     }
@@ -66,12 +69,19 @@ class IDataDialog_First extends React.Component {
 
   closeDialog(saveIt)
   {
-
     if (saveIt)
     {
       // TODO
       //if (this.hasErrors)
-      
+      const errorText = IUtils.getRowErrorText(this.props.headers, this.state.row);
+      if (errorText !== "")
+      {
+        // we found errors in the data, thus, we dont allow to save
+        this.props.showDataErrorMessage(errorText);
+        return;
+      }      
+
+      // no errors found, we can save the row
       this.props.handleSubmitModalDialog(this.state.row, saveIt);
     }
     else
@@ -198,17 +208,26 @@ class IDataDialog_First extends React.Component {
         }}>
         <DialogTitle
           textAlign={'center'}
-          >Sample Modal</DialogTitle>
+          >ExampleModal Dialog for editing rows</DialogTitle>
 
-          <DialogContent>
+          <DialogContent 
+            sx={{ 
+              '& .MuiDialogTitle-root+.css-1j8zwea-MuiDialogContent-root': {
+                border: 'none',
+                padding: '2px 2px'
+              }, 
+            }}>
+            {/* 
           <Typography 
               variant="h6"
               textAlign={'center'}
           >Edit the row:</Typography>
+          */}
 
-          <Table style={{ width: "100%" }}>
+          <Table style={{ width: "100%", }} 
+            sx={{ verticalAlign: 'top', border: 'none',  }}
+          >
             <TableRow>
-
               <TableCell 
                 style={{ textAlign: "left", width: "35%", }}
                 sx={{ verticalAlign: 'top', border: 'none', padding: "6px 6px", }}>
@@ -217,7 +236,9 @@ class IDataDialog_First extends React.Component {
                   disabled={this.props.headers[firstname_Index].isEditable}
                   label={this.props.headers[firstname_Index].headerTitle}
                   //helperText={firstname_HelperText}
-                  onChange={(e) => this.dataChanged(e, "firstname")}
+                  onChange={(e) => this.dataChanged(e, 
+                    this.props.headers[firstname_Index].dataFieldName,
+                    this.props.headers[firstname_Index].editType)}
                   style={{ width: "100%" }}
                   sx={{ '& .MuiInputBase-root': { 
                     height: editHeight,  
@@ -233,7 +254,9 @@ class IDataDialog_First extends React.Component {
                   disabled={this.props.headers[lastname_Index].isEditable}
                   label={this.props.headers[lastname_Index].headerTitle}
                   //helperText={lastname_HelperText}
-                  onChange={(e) => this.dataChanged(e, "lastname")}
+                  onChange={(e) => this.dataChanged(e, 
+                    this.props.headers[lastname_Index].dataFieldName,
+                    this.props.headers[lastname_Index].editType)}
                   style={{ width: "100%" }}
                   sx={{ '& .MuiInputBase-root': { 
                     height: editHeight,  
@@ -250,7 +273,9 @@ class IDataDialog_First extends React.Component {
                   disabled={!this.props.headers[age_Index].isEditable}
                   label={this.props.headers[age_Index].headerTitle}
                   helperText={age_HelperText}
-                  onChange={(e) => this.dataChanged(e, "age")}
+                  onChange={(e) => this.dataChanged(e, 
+                    this.props.headers[age_Index].dataFieldName,
+                    this.props.headers[age_Index].editType)}
                   style={{ width: "100%" }}
                   sx={{ '& .MuiInputBase-root': { 
                     height: editHeight,  
@@ -267,7 +292,9 @@ class IDataDialog_First extends React.Component {
                   disabled={!this.props.headers[birthday_Index].isEditable}
                   label={this.props.headers[birthday_Index].headerTitle}
                   helperText={birthday_HelperText}
-                  onChange={(e) => this.dataChanged(e, "birthday")}
+                  onChange={(e) => this.dataChanged(e, 
+                    this.props.headers[birthday_Index].dataFieldName,
+                    this.props.headers[birthday_Index].editType)}
                   style={{ width: "100%" }}
                   sx={{ '& .MuiInputBase-root': { 
                     height: editHeight,  
@@ -287,7 +314,9 @@ class IDataDialog_First extends React.Component {
                   disabled={!this.props.headers[address_Index].isEditable}
                   label={this.props.headers[address_Index].headerTitle}
                   helperText={address_HelperText}
-                  onChange={(e) => this.dataChanged(e, "address")}
+                  onChange={(e) => this.dataChanged(e, 
+                    this.props.headers[address_Index].dataFieldName,
+                    this.props.headers[address_Index].editType)}
                   style={{ width: "100%" }}
                   sx={{ '& .MuiInputBase-root': { 
                     height: editHeight,  
@@ -304,7 +333,9 @@ class IDataDialog_First extends React.Component {
                   disabled={!this.props.headers[gender_Index].isEditable}
                   label={this.props.headers[gender_Index].headerTitle}
                   helperText={gender_HelperText}
-                  onChange={(e) => this.dataChanged(e, "gender")}
+                  onChange={(e) => this.dataChanged(e, 
+                    this.props.headers[gender_Index].dataFieldName,
+                    this.props.headers[gender_Index].editType)}
                   style={{ width: "100%" }}
                   sx={{ '& .MuiInputBase-root': { 
                     height: editHeight,  
@@ -321,7 +352,9 @@ class IDataDialog_First extends React.Component {
                   disabled={!this.props.headers[weight_Index].isEditable}
                   label={this.props.headers[weight_Index].headerTitle}
                   helperText={weight_HelperText}
-                  onChange={(e) => this.dataChanged(e, "weight")}
+                  onChange={(e) => this.dataChanged(e, 
+                    this.props.headers[weight_Index].dataFieldName,
+                    this.props.headers[weight_Index].editType)}
                   style={{ width: "100%" }}
                   sx={{ '& .MuiInputBase-root': { 
                     height: editHeight,  
@@ -341,7 +374,9 @@ class IDataDialog_First extends React.Component {
                   disabled={!this.props.headers[nationality_Index].isEditable}
                   label={this.props.headers[nationality_Index].headerTitle}
                   helperText={nationality_HelperText}
-                  onChange={(e) => this.dataChanged(e, "nationality")}
+                  onChange={(e) => this.dataChanged(e, 
+                    this.props.headers[nationality_Index].dataFieldName,
+                    this.props.headers[nationality_Index].editType)}
                   style={{ width: "100%" }}
                   sx={{ '& .MuiInputBase-root': { 
                     height: editHeight,  
@@ -366,7 +401,9 @@ class IDataDialog_First extends React.Component {
                   disabled={!this.props.headers[diagnosis_Index].isEditable}
                   label={this.props.headers[diagnosis_Index].headerTitle}
                   helperText={diagnosis_HelperText}
-                  onChange={(e) => this.dataChanged(e, "diagnosis")}
+                  onChange={(e) => this.dataChanged(e, 
+                    this.props.headers[diagnosis_Index].dataFieldName,
+                    this.props.headers[diagnosis_Index].editType)}
                   style={{ width: "100%" }}
                   sx={{ '& .MuiInputBase-root': { 
                     height: editHeight,  
@@ -382,7 +419,9 @@ class IDataDialog_First extends React.Component {
                   disabled={!this.props.headers[bloodPressure_Index].isEditable}
                   label={this.props.headers[bloodPressure_Index].headerTitle}
                   helperText={bloodPressure_HelperText}
-                  onChange={(e) => this.dataChanged(e, "bloodPressure")}
+                  onChange={(e) => this.dataChanged(e, 
+                    this.props.headers[bloodPressure_Index].dataFieldName,
+                    this.props.headers[bloodPressure_Index].editType)}
                   style={{ width: "100%" }}
                   sx={{ '& .MuiInputBase-root': { 
                     height: editHeight,  
@@ -395,20 +434,34 @@ class IDataDialog_First extends React.Component {
             <TableRow >
               <TableCell colSpan={4}
                 style={{ textAlign: "left" }}
-                sx={{ verticalAlign: 'top', border: 'none', padding: "6px 6px", }}>
+                sx={{ 
+                  padding: "6px 6px", 
+                  '& .MuiInputBase-root': { 
+                  height: editHeight,  
+                  backgroundColor: bloodPressure_hasError ? IConst.errorColorBackground : 'transparent',
+                  color: bloodPressure_hasError ? IConst.errorColor : 'black',
+                }, }}                
+                >
                 <TextField
                   value={dateText}
                   label={this.props.headers[lastUpdate_Index].headerTitle}
                   disabled={true}
                   style={{ width: "100%" }}
-                   
                 />
               </TableCell>
             </TableRow>
           </Table>
 
         </DialogContent>
-        <DialogActions>
+
+
+        <DialogActions
+                    sx={{ 
+                      '& .MuiDialogActions-root': {
+                        border: 'none'
+                      }, 
+                    }}
+        >
           <div style={{display: 'flex', paddingRight: '20px', }}>
           <IconButton
             className={classes.mainButtons}

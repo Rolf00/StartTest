@@ -6,6 +6,8 @@ import {
   TableHead,
   TableRow,
   IconButton,
+  Button,
+  TextField,
 } from '@mui/material';
 
 import IConst from './IConst';
@@ -107,6 +109,7 @@ class ITableHeader extends React.Component {
             if (visible) {
               return (
                 <ITableCellWidthResizer
+                  key={`ITableCellWidthResizer-headerindex${headerIndex}`}
                   headers={this.props.headers}
                   headerIndex={headerIndex}
                   notResizable={!isResizable}
@@ -120,6 +123,7 @@ class ITableHeader extends React.Component {
                   hasHeaderMenu={hasHeaderMenu}
                   HideColumn={() => this.props.HideColumn(headerIndex)}
                   SortColumn={(sortAscending) => this.props.SortColumn(headerIndex, sortAscending)}
+                  FilterColumn={() => this.props.FilterColumn(headerIndex)}
                   >
                   {isSelectionHeader &&
                   <div
@@ -167,7 +171,25 @@ class ITableHeader extends React.Component {
             }
           })}
         </TableRow>
-      </TableHead>                
+
+        {/* 
+
+        <div style={{ 
+          display: 'block', position: 'absolute', 
+          width: '320px', zIndex: 1, 
+          background: 'white', color: 'black',
+          display: 'flex', alignItems: 'flex-start', flexDirection: 'column'}}>
+        <div style={{ padding: '10px' }}>Search value in data</div>
+        <div style={{ display: 'flex', flexDirection: 'row' }}>
+        <TextField label={"filder rows"}></TextField>
+        <IconButton style={{ padding: '5px 15px', borderRadius: '6px'}}>Search</IconButton>
+        </div>
+        </div>
+        */}
+
+      </TableHead>     
+      
+      
     );
   }
 }
