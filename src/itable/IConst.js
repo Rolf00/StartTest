@@ -2,6 +2,7 @@ import imgChkboxChecked from './imgCheckboxChecked48.png';
 import imgChkboxUnchecked from './imgCheckboxUnchecked48.png'; 
 import imgChkboxIndeterminate from './imgCheckboxIndeterminate48.png'; 
 import imgEditButton from './imgEdit48.png'; 
+import imgEditEditDialogButton from './imgEditDialog48.png'; 
 import imgEditStop from './imgStop48.png'; 
 import imgDeleteButton from './imgDelete48.png'; 
 import imgSaveButton from './imgSave48.png'; 
@@ -25,6 +26,12 @@ import imgDialogWarning from './imgWarning96.png';
 
 
 class IConst {
+
+  // colors for icons
+  static iconColorRed = "#AA0000";
+  static iconColorGreen = "#00AA00";
+  static iconColorBlue = "#0000AA";
+  static iconColorDarkYellow = "#CCCC00";
 
   // colors for row backgrounds unselected
   static rowColorDeleted = "#FFEEEE";
@@ -51,6 +58,7 @@ class IConst {
 
   // icons selection / checkbox / data functions on row
   static imgEditButton = imgEditButton; 
+  static imgEditEditDialogButton = imgEditEditDialogButton; 
   static imgEditStop = imgEditStop; 
   static imgDeleteButton = imgDeleteButton; 
   static imgSaveButton = imgSaveButton; 
@@ -126,6 +134,10 @@ class IConst {
   static rowStateDeleted = 2;  
   static rowStateInserted = 3;  
 
+  // sow sorting
+  static sortingASC = 'asc';
+  static sortingDESC = 'desc';
+
   // edit types
   static editType_PrimaryKey = 'primaryKey';
   static editType_SelectionIcon = 'selectionIcon';
@@ -146,7 +158,7 @@ class IConst {
   static editType_ButtonUndo = 'btnUndo';
   static editType_ButtonDelete = 'btnDelete';
 
-  // localizarions
+  // localizations
   static datetimeLocalization_deCH = "de-CH"; 
   static datetimeLocalization_frCH = "fr-CH"; 
   static datetimeLocalization_enUS = "en-US"; 

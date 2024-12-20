@@ -135,7 +135,7 @@ export default function IFieldDate (props) {
           },
         }}        
         onChange={(value) => handleChange(value)}
-        renderInput={(params) => <TextField {...params} />}
+        //renderInput={(params) => <TextField {...params} />}
       />
       </LocalizationProvider>   
 

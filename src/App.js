@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Grid } from '@mui/material';
+import { Alert, Grid, Snackbar } from '@mui/material';
 
 // => icons für chip erstellen
 // #FF7F00 orange
@@ -32,7 +32,7 @@ const headersWaldo = [
     isEditable: true,
     isRequired: true,
     isVisible: true,
-    isSortable: false,
+    isSortable: true,
     width: 45,
     minWidth: 45,
     maxWidth: 55,
@@ -338,7 +338,7 @@ const headersWaldo = [
     isEditable: false,
     isRequired: true,
     isVisible: true,
-    isSortable: true,
+    isSortable: false,
     defaultSorting: 'asc',
     width: 150,
     minWidth: 120,
@@ -585,11 +585,15 @@ const App = ()=> {
     hasButtonUndoAll: true,
     hasButtonExcelAll: true,
     hasButtonExcelSelected: true,
+    hasButtonContinue: true,
+    hasButtonBack: true,
 
     // localization
     localization: IConst.datetimeLocalization_deCH,
   };
   
+  // open slack
+  const [open,setOpen] = React.useState(false);
 
   function handleSpecialButtonClick(rowid, fieldname)
   {
@@ -599,39 +603,17 @@ const App = ()=> {
 
   function handleSaveOneRowClick(row, state)
   {
-    // TODO
-    // this key has to be same as the one user in callinr ITable
-    const primKey = "id";
-    const f1 = row[primKey];
-
-    // TODO 
-    alert("Button 'SAVE ONE ROW' was clicked (row-id, state) = (" + f1 + ", " + state + ")");
-
-    /////////////////////////////////////////////////////////////////////////////
-    // important: without return TRUE, the row will stay in previous state:    //
-    // edited / inserted / deleted                                             //    
-    /////////////////////////////////////////////////////////////////////////////
-    return true;
+    setOpen(true);
   }
 
   function handleSaveAllRowsClick(rows, states)
   {
-    alert("Button 'SAVE ALL ROWS' was clicked (rows, states) = (" + rows.length + ", " + states.length + ")");
-
-    // TODO 
-    // do we want to save all rows in one transaction or 
-    // one transaction for each row?
-    // A: save all rows in one transaction would be easier, because we just can  use one return TRUE or FALSE.
-    // B: ose 1 transaction for each row wouls need to deliver a list of TRUE or FALSE values.
-
-    /////////////////////////////////////////////////////////////////////////////
-    // important: without return TRUE, the row will stay in previous state:    //
-    // edited / inserted / deleted                                             //    
-    /////////////////////////////////////////////////////////////////////////////
+    setOpen(true);
     return true;
   }
   
   return(
+    <>
     <Grid container  style={{ width: '100%' }} >
 
       <Grid item style={{ width: '100%' }} >
@@ -646,13 +628,22 @@ const App = ()=> {
           handleSaveOneRowClick={(row, state) => handleSaveOneRowClick(row, state)}
           handleSaveAllRowsClick={(rows, states) => handleSaveAllRowsClick(rows, states)}
         />
-
-        <div style={{ textAlign: 'center'}}>
-        <a target="_blank" href="https://icons8.com">Icons are from Icons8.com</a>
-        </div>
       </Grid>
-
     </Grid>
+
+    <Snackbar 
+      open={open} 
+      autoHideDuration={5000} 
+      onClose={()=>setOpen(false)} 
+      anchorOrigin={{ vertical:"top", horizontal:"right" }}>
+      <Alert
+        onClose={()=>setOpen(false)}
+        severity="success"
+        variant="filled"
+        sx={{ width: '100%' }}
+      >Saving in progress. Wait until done.</Alert>
+    </Snackbar>
+    </>
   )
 }
 export default App

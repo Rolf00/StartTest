@@ -10,17 +10,17 @@ import {
   TableBody,
   TableCell,
   TableContainer,
-  TableFooter,
   TablePagination,
   TableRow,
+  Grid,
+  Tooltip,
 } from '@mui/material';
 
 
-import SkipPreviousIcon from '@mui/icons-material/SkipPrevious';
-import SkipNextIcon from '@mui/icons-material/SkipNext';
-import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
-import ArrowRightIcon from '@mui/icons-material/ArrowRight';
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import AddBoxIcon from '@mui/icons-material/AddBox';
+import SaveIcon from '@mui/icons-material/Save';
+import UndoIcon from '@mui/icons-material/Undo';
+import ForwardIcon from '@mui/icons-material/Forward';
 
 import { useStyles } from './styles';
 import IConst from './IConst';
@@ -29,7 +29,6 @@ import ITableHeader from './ITableHeader';
 import ITableRow from './ITableRow'; 
 import IButtonDialog from './IButtonDialog';
 import IDataDialog_First from './IDataDialog_First';
-//import IHeaderManage from './IHeaderManage';
 
 
 const avaiableDialogs = {
@@ -80,11 +79,10 @@ class ITable extends React.Component {
       selectedRow: null,
       isHoveredOrResizing: false,
 
-      // props for managing columns
-      openManageColumns: false,
-
       // enabling / disabling buttons SAVE ALL and UNDO ALL
       mainButtonsDisabled: true,
+      savingInProgressOneRow: false,
+      savingInProgressAll: false,
 
       rowHeight: 200,
       colwidth: 120,
@@ -102,7 +100,6 @@ class ITable extends React.Component {
 
   componentDidMount() 
   {
-    // TODO where to place "checkHeaders"
     // we check the headers and fill empty fields with default values
     this.checkHeaders();
   }
@@ -159,7 +156,7 @@ class ITable extends React.Component {
       if (!this.state.headers[h].isEditable) this.state.headers[h].isEditable = false;
       if (!this.state.headers[h].isRequired) this.state.headers[h].isRequired = false;
       if (!this.state.headers[h].isVisible) this.state.headers[h].isVisible = true;
-      if (!this.state.headers[h].isSortable) this.state.headers[h].isSortable = true;
+      if (!this.state.headers[h].isSortable) this.state.headers[h].isSortable = false;
       if (!this.state.headers[h].defaultSorting) this.state.headers[h].defaultSorting = "asc";
       if (!this.state.headers[h].width) this.state.headers[h].width = 160;
       if (!this.state.headers[h].minWidth) this.state.headers[h].minWidth = 80;
@@ -355,22 +352,11 @@ class ITable extends React.Component {
     // now we can save one row
     const infoIndex = this.state.rowInfoList.findIndex(i => i.id === row[this.props.primaryKey]);
     const state = this.state.rowInfoList[infoIndex].state;
-    if (this.props.handleSaveOneRowClick(row, state))
-    {
-        // row was be saved, so we set the row to state UNCHANGED
-        const newList = this.state.rowInfoList;
-        newList[infoIndex].state = IConst.rowState_Unschanged;
-        const mainEnabled = this.getMainButtonsEnabled();    
-        this.setState({
-          rowInfoList: newList,
-          mainButtonsDisabled: mainEnabled        
-        });
-    }
-    else
-    {
-      // the rows were not saved, we let the previous state
-      // TODO error message here ?
-    }
+    this.props.handleSaveOneRowClick(row, state);
+    this.setState({
+      savingInProgressOneRow: true,
+      mainButtonsDisabled: true
+    });
   }
 
   handleSaveAll()
@@ -398,23 +384,11 @@ class ITable extends React.Component {
     }
 
     // no error found, thus we can save all rows now
-    if (this.props.handleSaveAllRowsClick(rowList, stateList))
-    {
-      const newlist = this.state.rowInfoList;
-      for (let s = 0; s < newlist.length; s++) newlist[s].state = IConst.rowStateUnchanged;
-      const mainEnabled = this.getMainButtonsEnabled();    
-      this.setState({
-        rowInfoList: newlist,
-        mainButtonsDisabled: mainEnabled
-      });
-      return true;
-    }
-    else
-    {
-      // the rows were not saved, we let the previous state
-      // TODO show a message here?
-      return false;
-    }
+    this.props.handleSaveAllRowsClick(rowList, stateList);
+    this.setState({
+      savingInProgressAll: true,
+      mainButtonsDisabled: true
+    });
   }
 
   showDataErrorMessage(errorText)
@@ -562,64 +536,6 @@ class ITable extends React.Component {
     alert("Data was copied to clipboard.");
   }
 
-  handleManageColumns()
-  {
-    this.setState({
-      openManageColumns: true,
-      headers: this.state.headers,
-    });
-  }
-
-  arrangeColumns(doIt, newlist)
-  {
-    // TODO
-    alert("TODO: manage columns not implemented yet,");
-    this.setState({
-      openManageColumns: false,
-    });
-  }
-
-  handleTest()
-  {
-    const buttons = [
-      { caption: "Yes", icon: IConst.imgIconYes, horizontalAlign: 'left', X: 1, Y: 1, },
-      { caption: "No", icon: IConst.imgIconNo, horizontalAlign: 'left', X: 2, Y: 1, },
-      { caption: "Cancel", icon: IConst.imgIconCancel, horizontalAlign: 'left', X: 3, Y: 1, },
-      { caption: "Maybe", icon: IConst.imgIconYes, horizontalAlign: 'left', X: 1, Y: 2, },
-      { caption: "NoAtAll", icon: IConst.imgIconNo, horizontalAlign: 'left', X: 2, Y: 2, },
-      { caption: "Unsure", icon: IConst.imgIconCancel, horizontalAlign: 'left', X: 3, Y: 2, },
-      { caption: "ok", icon: IConst.imgIconCancel, horizontalAlign: 'left', X: 1, Y: 3, },
-      { caption: "no way", icon: IConst.imgIconCancel, horizontalAlign: 'left', X: 3, Y: 3, },
-    ];
-    this.setState({
-      buttonDialogId: "Test",
-      buttonDialogOpen: true,
-      buttonDialogTitle: "Undo all rows",
-      buttonDialogQuestion: "Do you really want to undo all changes?",
-      buttonDialogButtons: buttons,
-      buttonDialogListType: -1,
-      buttonDialogIconType: IConst.buttonDialogIconType_Question,
-      buttonDialogHorizontalAlign: IConst.horizontalAlign_Center,
-      buttonDialogSizeType: IConst.buttonDialogSizeType_ButtonWidths,
-      buttonDialogButtonWidth: 120,
-      // TODO
-      /*
-
-      buttonDialogId: "",
-      buttonDialogOpen: false,
-      buttonDialogTitle: "",
-      buttonDialogQuestion: "",
-      buttonDialogButtons: [],
-      buttonDialogListType: 0,
-      buttonDialogIconType: 0,
-      buttonDialogHorizontalAlign: '',
-      buttonDialogSizeType: 0,
-      buttonDialogWidth: 120,
-      */
-
-    });
-  }
-
   // ---------------------------------------------------------------------------------------
   // clicks from button dialog
   
@@ -648,7 +564,6 @@ class ITable extends React.Component {
 
   handleDataChange(newvalue, rowid, field)
   {
-
     // update new values to the data
     const rowIndex = this.getRowIndex(rowid);
     if (rowIndex === -1) return;
@@ -674,9 +589,6 @@ class ITable extends React.Component {
 
   openModalDataDialog(row)
   {
-    //alert("Modal Dialog: not implemented. ");
-    //return;
-
     // open the new edit dialog
     const rowIndex = this.getRowIndex(row[this.props.primaryKey]);
     this.setState({
@@ -1125,27 +1037,40 @@ class ITable extends React.Component {
     });
   }
 
+
+  filterTable(){
+    return true;
+  }
+
+
   render() 
   {
     const { classes } = this.props;
     const { page, limit } = this.state;
 
-
     // TODO test
-    const filterValue = "4838 Avenue M";
-    this.state.filterField = "";
+    const filter = {
+      operation:'',
+      field:'',
+      value:''
+    }
 
+    /*
+    TODO filtering
     let data = [];
     if (this.state.filterField !== "")
     {
       // filtering 
-      data = this.state.data.filter(d => d[this.state.filterField].includes(filterValue));
+      data = this.state.data.filter(d => this.filterTable(d, null, filter));
       if (data.length < page * limit) page = 0;
     }
     else
     {
       data = this.state.data.slice(page * limit, page * limit + limit);
     }
+      */
+
+    const data = this.state.data.slice(page * limit, page * limit + limit);
 
     const mainChecked = this.state.mainChecked;
     const mainIndeterminated = this.state.mainIndeterminated;
@@ -1249,218 +1174,161 @@ class ITable extends React.Component {
             </TableBody>
           </Table>
         </TableContainer>
-        <Table
-          sx={{
-            position: 'sticky',
-            bottom: 0,
-            backgroundColor: 'background.paper',
-            boxShadow: '0px -2px 4px rgba(0,0,0,0.1)',  // Optional: adds shadow to separate pagination
-          }}>
-          <TableFooter>
-            <TableRow>
 
-              {/* new row button --------------------------------------------------------------- */}
+
+        <Grid container>
+          <Grid item style={{ flex: 1}}> 
+
+              {/* back */}
+              {this.props.settings.hasButtonBack &&
+              <IconButton
+                className={classes.mainButtons}
+                onClick={e => this.handleCopyForExcel(false)}>
+                <ForwardIcon 
+                  style={{ transform: 'rotate(180deg)'}} 
+                  sx={{ color: IConst.iconColorBlue, }}/>
+                &nbsp;Go back
+              </IconButton>}
+
+              {/* new row */}
               {this.props.settings.hasButtonNewRow &&
+              <Tooltip title="Ctrl-I" arrow>
               <IconButton
                 className={classes.mainButtons}
-                onClick={e => this.handleNewRow()}
-              >
-              <img 
-                src={IConst.imgAddButton}
-                title='Ctrl-I'
-                style={{ 
-                  width: sizeMainButton, 
-                  height: sizeMainButton,
-                 }} 
-              />&nbsp;New row</IconButton>
-              }
+                onClick={e => this.handleNewRow()}>
+              <AddBoxIcon sx={{ color: IConst.iconColorDarkYellow, }}/>
+              &nbsp;New row</IconButton></Tooltip>}
 
-              {/* save all --------------------------------------------------------------------- */}    
+              {/* save all */}
               {this.props.settings.hasButtonSaveAll &&
+              <Tooltip title="Ctrl-S" arrow>
               <IconButton
-                //disabled={!this.state.rowsWereEdited}
-                disabled={mainButtonsDisabled}
                 className={classes.mainButtons}
-                onClick={e => this.handleSaveAll(e)}
-              >
-              <img 
-                src={IConst.imgSaveButton}
-                title='Ctrl-S'
-                style={{ 
-                  width: sizeMainButton, 
-                  height: sizeMainButton,
-                  opacity: (!mainButtonsDisabled ? 1 : 0.2) 
-                 }} 
-              />Save all</IconButton>
-              }
+                disabled={mainButtonsDisabled}
+                onClick={e => this.handleSaveAll(e)}>
+                <SaveIcon sx={{ 
+                  color: IConst.iconColorGreen, 
+                  opacity: mainButtonsDisabled ? 0.2 : 1 }}/>
+              &nbsp;Save all</IconButton></Tooltip>}
 
-              {/* undo all ------------------------------------------------------------------ */}     
+              {/* undo all  */}
               {this.props.settings.hasButtonUndoAll &&
+              <Tooltip title="Ctrl-U" arrow>
               <IconButton
+                className={classes.mainButtons}
                 disabled={mainButtonsDisabled}
-                className={classes.mainButtons}
-                onClick={e => this.handleUndoAll(e)}
-              >
-              <img 
-                src={IConst.imgUndoButton}
-                title='Ctrl-U'
-                style={{ 
-                  width: sizeMainButton, 
-                  height: sizeMainButton,
-                  opacity: (!mainButtonsDisabled ? 1 : 0.2) 
-                 }} 
-              />&nbsp;Undo all</IconButton>
-              }
+                onClick={e => this.handleUndoAll(e)}>
+              <UndoIcon sx={{ 
+                color: IConst.iconColorRed,
+                opacity: mainButtonsDisabled ? 0.2 : 1 }}/>
+              &nbsp;Undo all</IconButton></Tooltip>}
 
-              {/* export for excel all rows ----------------------------------------------------- */}    
+              {/* export for excel all rows */}    
               {this.props.settings.hasButtonExcelAll && 
+              <Tooltip title="Ctrl-E" arrow>
               <IconButton
                 className={classes.mainButtons}
-                onClick={e => this.handleCopyForExcel(true)}
-              >
-              <img 
-                src={IConst.imgExcelButton}
-                title='Ctrl-Shift-C'
-                style={{ 
-                  width: sizeMainButton, 
-                  height: sizeMainButton,
-                 }} 
-              />&nbsp;Copy all rows</IconButton>
-              }
+                onClick={e => this.handleCopyForExcel(true)}>
+              &nbsp;Copy all rows</IconButton></Tooltip>}
 
-              {/* export for excel only selected rows --------------------------------------------- */}
+              {/* export for excel only selected rows */}
               {this.props.settings.hasButtonExcelSelected &&
+              <Tooltip title="Ctrl-Shift-E" arrow>
               <IconButton
                 className={classes.mainButtons}
-                onClick={e => this.handleCopyForExcel(false)}
-              >
-              <img 
-                src={IConst.imgExcelButton}
-                title='Ctrl-Shift-E'
-                style={{ 
-                  width: sizeMainButton, 
-                  height: sizeMainButton,
-                 }} 
-              />&nbsp;Copy selected rows</IconButton>
-              }
+                onClick={e => this.handleCopyForExcel(false)}>
+              &nbsp;Copy selected rows</IconButton></Tooltip>}
 
-              {/* manage columns ----------------------------------------------------------- */}
+              {/* continue */}
+              {this.props.settings.hasButtonContinue &&
               <IconButton
                 className={classes.mainButtons}
-                onClick={e => this.handleManageColumns()}
-              >
-              <img 
-                src={IConst.imgColumsButton}
-                title='Ctrl-M'
-                style={{ 
-                  width: sizeMainButton, 
-                  height: sizeMainButton,
-                 }} 
-              />&nbsp;Manage columns</IconButton>
+                onClick={e => this.handleCopyForExcel(false)}>
+                Continue
+                <ForwardIcon sx={{ color: IConst.iconColorBlue, }}/>
+              </IconButton>}
 
+          </Grid>
 
-              {/* tests ----------------------------------------------------------- */}
-              <IconButton
-                className={classes.mainButtons}
-                onClick={e => this.handleTest()}
-              >
-              <img 
-                //src={IConst.imgExcelButton}
-                title='Ctrl-M'
-                style={{ 
-                  width: sizeMainButton, 
-                  height: sizeMainButton,
-                 }} 
-              />&nbsp;Test</IconButton>
-
-              <TablePagination
-                component="div"
-                count={this.state.data.length}
-                labelDisplayedRows={({ from, to, count }) =>
-                  `${from}-${to} of ${count}`
-                }
-                labelRowsPerPage="Rows:" // Shorter label
-                onPageChange={(event, page) => {
-                  event.preventDefault();
-                  this.setState({ page });
-                }}
-                onRowsPerPageChange={event => {
-                  this.setState({
-                    page: 0,
-                    limit: parseInt(event.target.value, 10),
-                  });
-                }}
-                page={page}
-                rowsPerPage={limit}
-                rowsPerPageOptions={[5, 10, 20, 100]}
-                showFirstButton
-                showLastButton
-
-                sx={{
-                  borderTop: '1px solid rgba(224, 224, 224, 1)',
-                  overflow: 'hidden',
-                  '.MuiTablePagination-toolbar': {
-                    minHeight: '40px', // Reduced from 52px
-                    paddingLeft: '8px', // Reduced from 16px
-                    paddingRight: '8px',
-                    display: 'flex',
-                    alignItems: 'center',
+          <Grid item style={{ display: 'flex', alignItems: 'center'}}>
+            <TablePagination
+              component="div"
+              count={this.state.data.length}
+              labelDisplayedRows={({ from, to, count }) => `${from} - ${to} of ${count}` }
+              labelRowsPerPage="Rows:" // Shorter label
+              onPageChange={(event, page) => {
+                event.preventDefault();
+                this.setState({ page });
+              }}
+              onRowsPerPageChange={event => {
+                this.setState({
+                  page: 0,
+                  limit: parseInt(event.target.value, 10),
+                });
+              }}
+              page={page}
+              rowsPerPage={limit}
+              rowsPerPageOptions={[5, 10, 20, 100]}
+              showFirstButton
+              showLastButton
+              sx={{
+                overflow: 'hidden',
+                '.MuiTablePagination-toolbar': {
+                  minHeight: '40px', 
+                  paddingLeft: '8px', 
+                  paddingRight: '8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  fontSize: '1rem', 
+                },
+                '.MuiTablePagination-selectLabel': {
+                  margin: 0,
+                  fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+                  fontWeight: 400,
+                  fontSize: '1rem', 
+                  lineHeight: 1.43,
+                  letterSpacing: '0.01071em',
+                  marginRight: '4px', 
+                },
+                '.MuiTablePagination-select': {
+                  minWidth: '16px',
+                  paddingRight: '12px', 
+                  paddingLeft: '4px', 
+                  textAlign: 'left',
+                  textAlignLast: 'left',
+                  fontSize: '1rem',
+                },
+                '.MuiTablePagination-displayedRows': {
+                  margin: 0,
+                  fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+                  fontWeight: 400,
+                  fontSize: '1rem', 
+                  lineHeight: 1.43,
+                  letterSpacing: '0.01071em',
+                  marginLeft: '4px',
+                  marginRight: '4px',
+                },
+                '.MuiIconButton-root': {
+                  padding: '4px', 
+                  borderRadius: '50%',
+                  overflow: 'isVisible',
+                  color: 'inherit',
+                  transition:
+                    'background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+                  '&.Mui-disabled': {
+                    color: 'rgba(0, 0, 0, 0.26)',
                   },
-                  '.MuiTablePagination-spacer': {
-                    flex: '1 1 100%',
-                    // flex: '0.2', // Reduced flex space
-                  },
-                  '.MuiTablePagination-selectLabel': {
-                    margin: 0,
-                    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-                    fontWeight: 400,
-                    fontSize: '1rem', //'0.875rem',
-                    lineHeight: 1.43,
-                    letterSpacing: '0.01071em',
-                    marginRight: '4px', // added
-                  },
-                  '.MuiTablePagination-select': {
-                    minWidth: '16px',
-                    paddingRight: '12px', // Reduced from 24px
-                    paddingLeft: '4px', // Reduced from 8px
-                    textAlign: 'left',
-                    textAlignLast: 'left',
-                    fontSize: '1rem',
-                  },
-                  '.MuiTablePagination-displayedRows': {
-                    margin: 0,
-                    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-                    fontWeight: 400,
-                    fontSize: '1rem', // Smaller font
-                    lineHeight: 1.43,
-                    letterSpacing: '0.01071em',
-                    marginLeft: '4px',
-                    marginRight: '4px',
-                  },
-                  '.MuiIconButton-root': {
-                    padding: '4px', // Reduced from 12px
-                    borderRadius: '20%',
-                    overflow: 'isVisible',
-                    width: '30px',
-                    color: 'inherit',
-                    transition:
-                      'background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
-                    '&.Mui-disabled': {
-                      color: 'rgba(0, 0, 0, 0.26)',
-                    },
-                  },
-                  '.MuiSvgIcon-root': {
-                    fontSize: '1.2rem', // Smaller icons
-                  },
-                  // Make the whole pagination more compact
-                  '& .MuiToolbar-root': {
-                    gap: '2px',
-                  },
-                }}
-              />
-            </TableRow>
-          </TableFooter>
-        </Table>
+                },
+                '.MuiSvgIcon-root': {
+                  fontSize: '1.4rem', 
+                },
+                '& .MuiToolbar-root': {
+                  gap: '2px',
+                },
+              }}
+            />
+          </Grid>
+        </Grid>
 
         {/* button dialog */}
         {this.state.buttonDialogId && this.state.buttonDialogOpen &&
@@ -1478,16 +1346,6 @@ class ITable extends React.Component {
           handleDialogButtons={(index) => this.handleDialogButtons(index, this.state.buttonDialogId)}
         />}
 
-        {/* button dialog 
-        {this.state.openManageColumns && 
-        <IHeaderManage
-          open={this.state.openManageColumns}
-          headers={this.state.headers}
-          arrangeColumns={(doIt, newlist) => this.arrangeColumns(doIt, newlist)}
-        />
-        }
-        */}
-
         {/* main edit dialog */}
         {this.props.dialogName === 'IDataDialog_First' &&  this.state.openDataModalDialog &&
           <IDataDialog_First
@@ -1497,8 +1355,7 @@ class ITable extends React.Component {
             row={this.state.selectedRow}
             primaryKey={this.props.primaryKey}
             handleSubmitModalDialog={(row, saveIt) => this.handleSubmitModalDialog(row, saveIt)}
-            showDataErrorMessage={(errorText) => this.showDataErrorMessage(errorText)}
-          >
+            showDataErrorMessage={(errorText) => this.showDataErrorMessage(errorText)}>
           </IDataDialog_First>
         }
 

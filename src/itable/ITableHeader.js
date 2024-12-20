@@ -6,9 +6,12 @@ import {
   TableHead,
   TableRow,
   IconButton,
-  Button,
-  TextField,
+  Tooltip
 } from '@mui/material';
+
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import IndeterminateCheckBoxIcon from '@mui/icons-material/IndeterminateCheckBox';
 
 import IConst from './IConst';
 import IUtils from './IUtils';
@@ -31,19 +34,6 @@ class ITableHeader extends React.Component {
   componentWillUnmount() {
   }
 
-  // functions
-  /*
-  setHeaderWidthList()
-  {
-    let newlist = [];
-    for (let i = 0; i < this.props.headers.length; i++)
-    {
-      newlist.push(this.props.headers[i].width);
-    }
-    return newlist;
-  }
-    */
-
   render()
   {
 
@@ -56,12 +46,10 @@ class ITableHeader extends React.Component {
       mainIndeterminated,
     } = this.props;
   
-    // TODO: is this correct? do we need state here?
     // state
     this.state = {
       mainChecked: mainChecked,
       mainIndeterminated: mainIndeterminated,
-      //headerWidthList: this.setHeaderWidthList(),
     }
 
     return (
@@ -136,20 +124,25 @@ class ITableHeader extends React.Component {
                       justifyContent: horizontalAlign, 
                       alignItems: verticalAlign,
                     }}>
+                  <Tooltip title="Select / Unselect all rows" arrow>
                   <IconButton
                     style={{ 
                       width: btnHoverWidth, 
                       height: btnHoverWidth }} 
                     onClick={(e) => this.props.handleCheckboxClickHeader(e)}>
-                    <img 
-                      src={mainCheckIcon}
-                      style={{ 
-                        width: imgWidth, 
-                        height: imgWidth,
-                        padding: '0px',
-                      }} 
-                      />
+
+                    {(!this.state.mainIndeterminated) && (this.state.mainChecked) &&
+                    <CheckBoxIcon sx={{ color: IConst.iconColorGreen}}/>}
+
+                    {(!this.state.mainIndeterminated) && (!this.state.mainChecked) &&
+                    <CheckBoxOutlineBlankIcon sx={{ color: IConst.iconColorGreen}}/>}
+
+                    {this.state.mainIndeterminated && 
+                    <IndeterminateCheckBoxIcon  sx={{ color: IConst.iconColorGreen}}/>}
+
                   </IconButton>
+                  </Tooltip>
+
                   </div>}
 
                   {!isSelectionHeader &&

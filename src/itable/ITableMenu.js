@@ -87,6 +87,7 @@ export default function InselTableMenu  (props)
         aria-controls={open ? 'long-menu' : undefined}
         aria-expanded={open ? 'true' : undefined}
         aria-haspopup="true"
+        sx={{ width: '23px', height: '40px', borderRadius: '3px' }}
         onClick={(e) => handleClick(e)}
       >
         <MoreVertIcon />

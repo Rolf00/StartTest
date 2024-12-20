@@ -234,7 +234,7 @@ class IButtonDialog extends React.Component {
                         style={{
                           width: buttonWidth,
                           display: "flex",
-                          // TODO ButtoDialog lign buttons
+                          // TODO ButtoDialog align buttons
                           //justifyContent: align === "right" ? "flex-end" : "flex-start",
                           justifyContent: "flex-start",
                         }}>

@@ -1,16 +1,64 @@
 TODO list
 =========
+
+- ChipMenuDialog: keep the icons as png?
+  SpecialButtons: keep the icons as png?
+  ButtonDialog: keep the icons as png?
+
 - EXCEL export excel with line break inside the cell?
   now I replace "\n" => " | " : value = value.replace("\n", " | ");
   put the text in parentesis
   problem with export to excel for multilines
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 - TEST numbers and decimal (decimal with letters?)
 
 - DnD npm install react-beautiful-dnd
+  NO DRAG AND ROP 
+- 100 columns: whats the best component for automatically scrollbars?
+  npm install react-perfect-scrollbar
+  <PerfectScrollbar>
+    <div style={{ height: '300px', overflow: 'auto' }}>
+      {/* Content goes here */}
+    </div>
+  </PerfectScrollbar>
+
+  <Box
+      sx={{
+        width: '100%', // Full width
+        height: '300px', // Fixed height
+        overflowY: 'auto', // Automatically show vertical scrollbar when content overflows
+        border: '1px solid #ccc', // Optional border for visibility
+        padding: '10px', // Optional padding
+      }}
+    >
+      {/* Content that might overflow */}
+      <div style={{ height: '500px' }}>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi.
+      </div>
+    </Box>
+
+
 
 - Icons hint: 
   <a target="_blank" href="https://icons8.com">Icons are from Icons8.com</a>
+  Or all icons from MUI?
+  Different colors
+  ALL FROM MUI, Color change in settings
 
 - IDataDialog_First.js
   implement dates on "datachange"
@@ -20,34 +68,78 @@ TODO list
 - testing error messsages with several lines
 
 - button sort in header
+  below button header menu? so we could gain space
+  ALWAYS SORT button
 
 - 1 transaction all rows? 
+  Button "save all" are only for saving.
+  feedback sucess / error? message in iTable or outside?
+  messages: server time out?
+            key violation?
+            no connection?
+  ASSYNCCHRNOUS
+
+- getter and setter for fields?
+  example? getter = firstname + " " + lastname.
+
+- column width resizing not possible when window too small? 
+  column widths are resize when resizing the window => thus thir width maybe smaller than the defined min width
 
 - check for datefields?
+  example from / to : date 2 > than date 1 / date 1 < than date 2
+  example birthday : date > today
+  example death : date < today
+  LATER
+
+- resizer: on lines i removed the hover color
+  do the same in the header
 
 - show a message, when saving failed?
+  NO
 
-- buttonDilaog : key=´dlg-button-row${rowIndex}-col${colIndex}´;
+- buttonDialog : key=´dlg-button-row${rowIndex}-col${colIndex}´;
 
 - TODO : can we measure rect of a text (IButtonDialog)
 
 - how about paging buttons: <<  < ....  >  >>
 - how about buttons: for rows per view : [10] [20] [50] [100]
 - Table pagination in own style?
+  shoud be rows count per view an option? or put in settings?
+  NO
 
 - input filtering : modal dialog ok? or overlay field?
 
-- filtering and? or? differnt columns with different values and? or?
+- filtering and? or? different columns with different values and? or?
 - filtering in same column: and? or?
-
+- remove filter in table menu OK? additional button somewhere?
+ 
 - what belongs to IConst? iStyles? settings? 
-
-- foreach is not a function?
+  I will add: table can be edited = TRUE / FALSE
+  IConst arte fixed for all tables
+  settings can vary individually for each usage of iTable
 
 - Warning: Each child in a list should have a unique “key” prop.
+  Why this message when a key is defined?
 
 - Warning: <div> cannot appear as a child of <tr>.
+  How to find in code?
+  tableFooter: isn't a TableCell needed?
 
+- TableRow didMount? Update?
+
+- row select by mouse move? See example sandox
+
+- saving: i will give the possibiity to add buttons: example: goOn, back, 
+  how many buttons? only 2 or more?
+
+- best choice for partioning an aera
+  div with flex?
+  table?
+  grid?
+  stack?
+  
+
+- Block edited rows while saving
 
 20 TODOs
 
@@ -60,4 +152,7 @@ Done until IHeaderManage.js
 20.12.2024
 
 
+- icons edit dialog einbinden: imgEditDialog48.png
+- icons dataset : imgDataset...48.png
+- icons Copy: imgCopy48.png
 

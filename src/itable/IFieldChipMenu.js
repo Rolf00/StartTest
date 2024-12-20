@@ -4,6 +4,8 @@ import MenuItem from '@mui/material/MenuItem';
 import Avatar from '@mui/material/Avatar';
 import Chip from '@mui/material/Chip';
 
+import AdjustIcon from '@mui/icons-material/Adjust';
+
 
 
 /*
@@ -126,7 +128,8 @@ export default function IChipMenu (props)
       >
         <Chip 
           label={chipLabel}
-          avatar={<Avatar alt="" src={chipIcon} />}
+          //avatar={<Avatar alt="" src={<AdjustIcon/>} />}
+          avatar={<AdjustIcon/>}
           clickable={chipClickable}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}      
@@ -200,7 +203,8 @@ export default function IChipMenu (props)
       >
         <Chip 
           label={chipLabel}
-          avatar={<Avatar alt="" src={chipIcon} />}
+          //avatar={<Avatar alt="" src={chipIcon} />}
+          avatar={<AdjustIcon/>}
           style={{
             minWidth: chipWidth,
           }}

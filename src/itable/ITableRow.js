@@ -1,5 +1,8 @@
 import React from 'react';
-import { TableRow, } from '@mui/material';
+import { 
+  TableRow, 
+  Tooltip, } from '@mui/material';
+
 import { withStyles } from 'tss-react/mui';
 import PropTypes, { func } from 'prop-types';
   
@@ -46,7 +49,6 @@ class ITableRow  extends React.Component {
   componentDidMount() { }
 
   componentDidUpdate() {
-    
     const {row} = this.props;
     if (row[this.props.primaryKey] !== this.state.row[this.props.primaryKey])
     {
@@ -140,6 +142,7 @@ class ITableRow  extends React.Component {
     else if (action === IConst.editType_ButtonSave)
     {
       // now we can save one row
+      this.setState({rowEditing: false})
       this.props.handleSaveOneRow(this.state.row);
     }
     else if (action === IConst.editType_ButtonUndo)
@@ -235,7 +238,7 @@ class ITableRow  extends React.Component {
 
     return (
       <TableRow
-        key={`ITableRow-row-${rowid}`} 
+        
         height={rowHeight}
         style={{
           height: rowHeight,
@@ -295,10 +298,11 @@ class ITableRow  extends React.Component {
 
         const editHeight = this.props.settings.editComponentHeight;
 
-        
         if (visible) {
           return (
             <ITableCellHeightResizer
+            // TODO
+            //key={headerIndex}
               height={rowHeight}
               setHeight={(height) => this.setState({rowHeight: height})}
               isHeightResizing={this.state.isHeightResizing}

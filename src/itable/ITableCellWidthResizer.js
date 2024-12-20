@@ -1,7 +1,9 @@
 import React from 'react';
-import { TableCell } from "@mui/material";
+import { IconButton, TableCell } from "@mui/material";
 import { withStyles } from 'tss-react/mui';
 import PropTypes from 'prop-types';
+
+import SwapVertIcon from '@mui/icons-material/SwapVert';          
 
 import IConst from './IConst';
 import ITableMenu from './ITableMenu';
@@ -12,6 +14,7 @@ import { useStyles } from './styles';
 class ITableCellWidthResizer extends React.Component {
   constructor(props) {
       super(props)
+
   }
 
   componentDidMount() {
@@ -22,6 +25,17 @@ class ITableCellWidthResizer extends React.Component {
 
   componentWillUnmount() {
   }
+
+  SortColumn = () =>
+    {
+      // sorting : when not defined, we start with DESC
+      /*
+      const isSortedAscending = headers[headerIndex].defaultSorting ?
+        headers[headerIndex].defaultSorting === IConst.sortingASC : false;
+      const newIsSortedAscending = !isSortedAscending;
+      this.props.SortColumn(headerIndex, newIsSortedAscending)
+      */
+    }
 
   render() 
   {
@@ -37,6 +51,10 @@ class ITableCellWidthResizer extends React.Component {
       hasHeaderMenu,
     } = this.props;
 
+    const isSortable = headers[headerIndex].isSortable;
+    const isSortedAscending = headers[headerIndex].defaultSorting ?
+      headers[headerIndex].defaultSorting === IConst.sortingASC : false;
+
     return (
       <TableCell className={classes.table_head_cell} >
         <div 
@@ -49,23 +67,39 @@ class ITableCellWidthResizer extends React.Component {
             borderBottomStyle: 'solid',
             borderBottomWidth: '1px',
             padding: '0px',
-         }}
-        >
+          }}>
           {hasHeaderMenu && this.props.headerHorizontalAlign === IConst.horizontalAlign_Right &&
           <div style={{
             display: 'flex',
             justifyContent: 'flex_end', 
             alignItems: verticalAlign, 
             textAlign: 'left',
-            width: '40px',
-            padding: '0px 1px',
+            width: '25px',
+            padding: '0px',
           }}>
             <ITableMenu
               headers={this.props.headers}
               headerIndex={headerIndex}
               HideColumn={() => this.props.HideColumn(headerIndex)}
-              SortColumn={(sortAscending) => this.props.SortColumn(headerIndex, sortAscending)}
+              SortColumn={(isSortedAsc) => this.props.SortColumn(headerIndex, isSortedAsc)}
             ></ITableMenu>
+          </div>}
+
+          {isSortable && this.props.headerHorizontalAlign === IConst.horizontalAlign_Right &&
+          <div style={{
+            display: 'flex',
+            justifyContent: 'flex_end', 
+            alignItems: verticalAlign, 
+            textAlign: 'left',
+            width: '25px',
+            padding: '0px',
+          }}>   
+          <IconButton 
+            stlye={{ borderRadius: '3px' }}
+            //onClick={() => this.SortColumn()}
+            >
+          <SwapVertIcon sx={{ transform: isSortedAscending ? '' : 'scaleX(-1)' }}/>
+          </IconButton>
           </div>}
 
           <div style={{
@@ -77,31 +111,43 @@ class ITableCellWidthResizer extends React.Component {
             padding: '5px',
           }}>{children}</div>
 
+          {isSortable && this.props.headerHorizontalAlign !== IConst.horizontalAlign_Right &&
+          <div style={{
+            display: 'flex',
+            justifyContent: 'flex_start', 
+            alignItems: verticalAlign, 
+            textAlign: 'left',
+            width: '25px',
+            padding: '0px',
+          }}>   
+          <IconButton sx={{ width: '23px', height: '40px', borderRadius: '3px' }}>
+            <SwapVertIcon sx={{ transform: isSortedAscending ? '' : 'scaleX(-1)' }}/>
+          </IconButton>
+          </div>}
+
           {hasHeaderMenu && this.props.headerHorizontalAlign !== IConst.horizontalAlign_Right &&
           <div style={{
             display: 'flex',
             justifyContent: 'flex-start', 
             alignItems: verticalAlign, 
             textAlign: 'left',
-            width: '40px',
-            padding: '0px 1px',
+            width: '25px',
+            padding: '0px',
           }}>
             <ITableMenu
               headers={this.props.headers}
               headerIndex={headerIndex}
               HideColumn={() => this.props.HideColumn(headerIndex)}
-              SortColumn={(sortAscending) => this.props.SortColumn(headerIndex, sortAscending)}
+              SortColumn={(isSortedAsc) => this.props.SortColumn(headerIndex, isSortedAsc)}
               FilterColumn={() => this.props.FilterColumn(headerIndex)}
               ></ITableMenu>
-          </div>
-          }
+          </div>}
 
           {(!notResizable) &&
           <div 
             className={classes.resizerEW}
             onMouseDown={(e) => this.props.handleMouseDownRowEW(e, headerIndex)} 
-          >&nbsp;</div>
-          }
+          >&nbsp;</div>}
 
         </div>
       </TableCell>

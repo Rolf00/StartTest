@@ -1,5 +1,11 @@
 import * as React from 'react';
 import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
+
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+
+
 import IConst from './IConst';
 
 export default function IFieldSelection (props) {
@@ -7,13 +13,7 @@ export default function IFieldSelection (props) {
   // Component for the row selection column on each row.
   const value = props.value;
   const rowid = props.rowid;
-  const imgWidth = props.settings.buttonSizeOnRows;
   const btnHoverWidth = props.settings.buttonSizeOnRowsHover;
-
-  const iconCheckbox = value ? 
-    IConst.imgChkboxChecked: 
-    IConst.imgChkboxUnchecked;
-
  
   return (
     <div 
@@ -27,17 +27,14 @@ export default function IFieldSelection (props) {
       alignItems: props.verticalAlign,
     }}
     >       
+    <Tooltip title="Select / Unselect this row" arrow> 
     <IconButton
       onClick={() => props.handleSelectionClickRow(rowid)}
-      style={{ width: btnHoverWidth, height: btnHoverWidth, }} 
-      >
-      <img 
-        src = {iconCheckbox}
-        alt="img"
-        title="Select / Unselect this row"
-        style={{ width: imgWidth, height: imgWidth, padding: '0px', }} 
-      />
+      style={{ width: btnHoverWidth, height: btnHoverWidth, }}>
+      {value && <CheckBoxIcon sx={{ color: IConst.iconColorGreen}}/>}
+      {!value && <CheckBoxOutlineBlankIcon sx={{ color: IConst.iconColorGreen}}/>}
     </IconButton>
+    </Tooltip>
     </div>
   );
 }
