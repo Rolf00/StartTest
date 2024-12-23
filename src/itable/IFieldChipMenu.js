@@ -165,13 +165,13 @@ export default function IChipMenu (props)
             },
           }}
         >
-          {props.header.chipList.map((chip) => {
+          {props.header.chipList.map((chip, index) => {
             const chipId = chip.id;
             const title = chip.label;
             const color = chip.color;
             return (
               <MenuItem 
-                key={chipId}
+                key={`chipmenu-item${index}-header${props.header.id}`}
                 onClick={() => handleChipClickHere(chip)} 
                 style={{
                   backgroundColor: color,

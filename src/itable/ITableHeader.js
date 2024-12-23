@@ -23,6 +23,7 @@ class ITableHeader extends React.Component {
 
   constructor(props) {
     super(props);
+
   }
 
   componentDidMount() {
@@ -56,7 +57,7 @@ class ITableHeader extends React.Component {
 
       <TableHead className={classes.table_head}>
         <TableRow className={classes.table_head_row}>
-          {headers.map((header, headerIndex) => {
+          {this.props.headers.map((header, headerIndex) => {
 
             const isSelectionHeader = 
               header.editType === IConst.editType_SelectionIcon;
@@ -98,8 +99,10 @@ class ITableHeader extends React.Component {
               return (
                 <ITableCellWidthResizer
                   key={`ITableCellWidthResizer-headerindex${headerIndex}`}
+                  settings={this.props.settings}
                   headers={this.props.headers}
                   headerIndex={headerIndex}
+                  filters={this.props.filters}
                   notResizable={!isResizable}
                   width={newheaderWidth}
                   minWidth={headerMinWidth}
@@ -107,11 +110,12 @@ class ITableHeader extends React.Component {
                   verticalAlign={verticalAlign}
                   height= {headerRowHeight}
                   setWidth={(colwidth) => this.setState({colwidth: colwidth})}
+
                   handleMouseDownRowEW={(e, headerIndex)=>this.props.handleMouseDownRowEW(e, headerIndex)}
                   hasHeaderMenu={hasHeaderMenu}
-                  HideColumn={() => this.props.HideColumn(headerIndex)}
+                  setChangedHeaders={(newheaders) => this.props.setChangedHeaders(newheaders)}
+                  setChangedFilters={(newfilters) => this.props.setChangedFilters(newfilters)}
                   SortColumn={(sortAscending) => this.props.SortColumn(headerIndex, sortAscending)}
-                  FilterColumn={() => this.props.FilterColumn(headerIndex)}
                   >
                   {isSelectionHeader &&
                   <div

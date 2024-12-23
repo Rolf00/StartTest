@@ -261,6 +261,7 @@ class ITableRow  extends React.Component {
         const isDate = header.editType === IConst.editType_Date;
         const isChip = header.editType === IConst.editType_Chip;
         const isSpecialButton = header.editType === IConst.editType_SpecialButton;
+        const isGetter = header.editType === IConst.editType_Getter;
         const isRowEditButton = 
           header.editType === IConst.editType_ButtonEditRow ||
           header.editType === IConst.editType_ButtonEdit ||
@@ -274,15 +275,20 @@ class ITableRow  extends React.Component {
         // checking about typos
         const typeFound = (
           isSelectionIcon || isTextfield || isNumber || isDropdown || 
-          isCheckbox || isDate || isChip || isSpecialButton || isRowEditButton
+          isCheckbox || isDate || isChip || isSpecialButton || isGetter || isRowEditButton
         );
 
         // get fieldname and the value of the field
+        /*
         const field = header.dataFieldName;
         let tmp = row[header.dataFieldName];
         // TODO decimals 
         //if (isDecimal) tmp = tmp.toFixed(header.decimalCount);
-        const value = tmp;
+        if (isGetter) tmp = eval(header.valueGetter);
+        */
+
+        const field = header.dataFieldName;
+        const value = IUtils.getCellValue(row, field, isGetter, header.valueGetter);
 
         //const selected = this.props.rowInfoList[rowInfoIndex].selected;
 
@@ -301,8 +307,7 @@ class ITableRow  extends React.Component {
         if (visible) {
           return (
             <ITableCellHeightResizer
-            // TODO
-            //key={headerIndex}
+              key={`TableRow-row${rowid}.header${headerIndex}`}
               height={rowHeight}
               setHeight={(height) => this.setState({rowHeight: height})}
               isHeightResizing={this.state.isHeightResizing}
@@ -404,6 +409,19 @@ class ITableRow  extends React.Component {
                 rowid={rowid}
                 handleSpecialButtonClick = {() => this.props.handleSpecialButtonClick(rowid, header.dataFieldName)}
               />}
+
+              {isGetter && 
+              <IFieldText
+                editing={editing}
+                horizontalAlign={horizontalAlign}
+                verticalAlign={verticalAlign}
+                editHeight={editHeight}
+                singleHorizontalAlign={header.horizontalAlign}
+                header={header}
+                value={value}
+                //handleDataChange= {e => this.handleDataChange(e, field)}
+              />}
+
 
               {isRowEditButton &&
               <IFieldRowEditButton

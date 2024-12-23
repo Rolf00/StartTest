@@ -25,6 +25,7 @@ import ForwardIcon from '@mui/icons-material/Forward';
 import { useStyles } from './styles';
 import IConst from './IConst';
 import IUtils from './IUtils';
+import IUtilsSort from './IUtilsSort';
 import ITableHeader from './ITableHeader';
 import ITableRow from './ITableRow'; 
 import IButtonDialog from './IButtonDialog';
@@ -90,8 +91,7 @@ class ITable extends React.Component {
       minRowHeight: 29,
 
       // filtering
-      filterField: "",
-      filterValue: "",
+      filters: [],
 
       //headerWidthList: this.setHeaderWidthList(),
       rowInfoList: this.setRowInfoList(),
@@ -152,12 +152,12 @@ class ITable extends React.Component {
     for(let h = 0; h < this.state.headers.length; h++) 
     {
       if (!this.state.headers[h].headerTitle) this.state.headers[h].headerTitle = "";
-      if (!this.state.headers[h].isResizable) this.state.headers[h].isResizable = true;
-      if (!this.state.headers[h].isEditable) this.state.headers[h].isEditable = false;
-      if (!this.state.headers[h].isRequired) this.state.headers[h].isRequired = false;
-      if (!this.state.headers[h].isVisible) this.state.headers[h].isVisible = true;
-      if (!this.state.headers[h].isSortable) this.state.headers[h].isSortable = false;
-      if (!this.state.headers[h].defaultSorting) this.state.headers[h].defaultSorting = "asc";
+      if (this.state.headers[h].isResizable === null) this.state.headers[h].isResizable = true;
+      if (this.state.headers[h].isEditable === null) this.state.headers[h].isEditable = false;
+      if (this.state.headers[h].isRequired === null) this.state.headers[h].isRequired = false;
+      if (this.state.headers[h].isVisible === null) this.state.headers[h].isVisible = true;
+      if (this.state.headers[h].isSortable === null) this.state.headers[h].isSortable = false;
+      if (!this.state.headers[h].defaultSorting) this.state.headers[h].defaultSorting = "";
       if (!this.state.headers[h].width) this.state.headers[h].width = 160;
       if (!this.state.headers[h].minWidth) this.state.headers[h].minWidth = 80;
       if (!this.state.headers[h].maxWidth) this.state.headers[h].maxWidth = 320;
@@ -170,7 +170,7 @@ class ITable extends React.Component {
       if (!this.state.headers[h].dataFieldName) this.state.headers[h].dataFieldName = "";
       if (!this.state.headers[h].horizontalAlign) this.state.headers[h].horizontalAlign = "left";
       if (!this.state.headers[h].dropdownSelection) this.state.headers[h].dropdownSelection = [];
-      if (!this.state.headers[h].hasHeaderMenu) this.state.headers[h].hasHeaderMenu = false;
+      if (this.state.headers[h].hasHeaderMenu === null) this.state.headers[h].hasHeaderMenu = false;
     }
   }
 
@@ -362,6 +362,7 @@ class ITable extends React.Component {
   handleSaveAll()
   {
     // save all changed rows
+    if (this.state.mainButtonsDisabled) return;
     const rowList = [];
     const stateList = this.state.rowInfoList.filter(i => i.state !== IConst.rowStateUnchanged);
     for (let r = 0; r < stateList.length; r++)
@@ -713,8 +714,8 @@ class ITable extends React.Component {
   {
     if (!this.handleSaveAll()) 
     {
-      alert("TODO: data could be saved.")
-      return;
+      // TODO asynchroneous ???
+      //return;
     }
     this.props.handleSpecialButtonClick(rowid, field);
   }
@@ -972,111 +973,98 @@ class ITable extends React.Component {
   // ---------------------------------------------------------------------------------------
   // header menu events
 
-  HideColumn(headerIndex)
+  setChangedHeaders(newHeaders)
   {
-    // hide one column
-    const newHeaders = this.state.headers;
-    newHeaders[headerIndex].isVisible = false;
+    // change hide one column
     this.setState({headers: newHeaders});
   }
 
-  SortColumn(headerIndex, sortAscending)
+  setChangedFilters(newFilters)
   {
-    // sort the data for one field
-    const field = this.state.headers[headerIndex].dataFieldName;
-    if (this.state.headers[headerIndex].editType === IConst.editType_Textfield ||
-      this.state.headers[headerIndex].editType === IConst.editType_TextfieldMultiline)
-    {
-      // strings
-      const newData = [...this.state.data].sort((a, b) => {
-        if (sortAscending)
-        {
-          return a[field].localeCompare(b[field]);
-        }
-        else
-        {
-          return b[field].localeCompare(a[field]);
-        }
-      });
-      this.setState({data: newData});
-      return;
-    }
-    else
-    if (this.state.headers[headerIndex].editType === IConst.editType_Integer ||
-      this.state.headers[headerIndex].editType === IConst.editType_Decimal ||
-      this.state.headers[headerIndex].editType === IConst.editType_Dropdown ||
-      this.state.headers[headerIndex].editType === IConst.editType_Date)
-    {
-      // numbers, dates, dropdowns
-      const newData = [...this.state.data].sort((a, b) => {
-        if (sortAscending)
-        {
-          return a[field] - b[field];
-        }
-        else
-        {
-          return b[field] - a[field];
-        }
-      });
-      this.setState({data: newData});
-      return;
-    }
-    else 
-    {
-      alert("Unknown type for sortings: " + this.state.headers[headerIndex].editType);
-    }
+    // change hide one column
+    this.setState({filters: newFilters});
+
+
   }
 
-
-  FilterColumn(headerIndex)
+  menuButtonClick(index)
   {
-    const newFilterValue = "test";
-    this.setState({
-      filterField: this.state.headers[headerIndex].dataFieldName,
-      filterValue: newFilterValue
-    });
+    if (!this.state.mainButtonsDisabled)
+    {
+      // TODO asynchroneous solution?
+      //if (!this.handleSaveAll()) return;     
+      this.handleSaveAll();     
+    }
+    this.props.menuButtonClick(index);
   }
-
-
-  filterTable(){
-    return true;
-  }
-
 
   render() 
   {
     const { classes } = this.props;
     const { page, limit } = this.state;
 
-    // TODO test
-    const filter = {
-      operation:'',
-      field:'',
-      value:''
+    let data = this.state.data;
+
+    if (this.state.filters !== null && this.state.filters.length > 0)
+    {
+      for (let f = 0; f < this.state.filters.length; f++) {
+        const filterField = this.state.filters[f].fieldname;
+        const filterOperator = this.state.filters[f].operator;
+        const index = this.state.headers.findIndex((h) => h.dataFieldName === filterField);
+        const getter = this.state.headers[index].getter;
+        const editType = this.state.headers[index].editType;
+        const isGetter = editType === IConst.editType_Getter;
+  
+        const filterValue = 
+          editType === IConst.editType_Integer ? parseInt(this.state.filters[f].value) :
+          editType === IConst.editType_Decimal ? parseFloat(this.state.filters[f].value) :
+          // TODO
+          //editType === IConst.editType_Date ? getTime(this.state.filters[f].value) :
+          this.state.filters[f].value;
+  
+        if (data.length > 0) 
+        {
+          data = data.filter((row) =>
+            filterOperator === IConst.filterOperator_Contains ? 
+              IUtils.getCellValue(row, filterField, isGetter, getter).includes(filterValue) :
+            filterOperator === IConst.filterOperator_ContainsNot ? 
+              !IUtils.getCellValue(row, filterField, isGetter, getter).includes(filterValue) :
+            filterOperator === IConst.filterOperator_Equals ? 
+              IUtils.getCellValue(row, filterField, isGetter, getter) === filterValue :
+            filterOperator === IConst.filterOperator_EqualsNot ? 
+              !IUtils.getCellValue(row, filterField, isGetter, getter) !== filterValue :
+            filterOperator === IConst.filterOperator_StartsWith ? 
+              IUtils.getCellValue(row, filterField, isGetter, getter).startsWith(filterValue) :
+            filterOperator === IConst.filterOperator_StartsWithNot ? 
+              !IUtils.getCellValue(row, filterField, isGetter, getter).startsWith(filterValue) :
+            filterOperator === IConst.filterOperator_EndsWith ? 
+              IUtils.getCellValue(row, filterField, isGetter, getter).endsWith(filterValue) :
+            filterOperator === IConst.filterOperator_EndsWithNot ? 
+              !IUtils.getCellValue(row, filterField, isGetter, getter).endsWith(filterValue) :
+            filterOperator === IConst.filterOperator_IsEmpty ? 
+              IUtils.getCellValue(row, filterField, isGetter, getter) === null :
+            filterOperator === IConst.filterOperator_IsEmptyNot ? 
+              IUtils.getCellValue(row, filterField, isGetter, getter) !== null :
+            filterOperator === IConst.filterOperator_IsSmallerThan ? 
+              IUtils.getCellValue(row, filterField, isGetter, getter) < filterValue :
+            filterOperator === IConst.filterOperator_IsBiggerThan ? 
+              IUtils.getCellValue(row, filterField, isGetter, getter) > filterValue :
+            true
+          );
+        }
+      }
     }
 
-    /*
-    TODO filtering
-    let data = [];
-    if (this.state.filterField !== "")
-    {
-      // filtering 
-      data = this.state.data.filter(d => this.filterTable(d, null, filter));
-      if (data.length < page * limit) page = 0;
-    }
-    else
-    {
-      data = this.state.data.slice(page * limit, page * limit + limit);
-    }
-      */
-
-    const data = this.state.data.slice(page * limit, page * limit + limit);
+    // TODO sorting
+    const order = "asc";
+    const orderBy = "firstname";
+    data = IUtilsSort.getSortRows(data, IUtilsSort.getSortFunc(order, orderBy, this.setState.headers));
+  
+    data = data.slice(page * limit, page * limit + limit);
 
     const mainChecked = this.state.mainChecked;
     const mainIndeterminated = this.state.mainIndeterminated;
     const mainButtonsDisabled = this.state.mainButtonsDisabled;
-    const headers = this.state.headers;
-
     const sizeMainButton = this.props.settings.buttonSizeMain;
 
     return (
@@ -1117,14 +1105,14 @@ class ITable extends React.Component {
             <ITableHeader
               className={classes.table_head_row}
               settings={this.props.settings}
-              headers={headers}
+              headers={this.state.headers}
+              filters={this.state.filters}
               mainChecked={mainChecked}
               mainIndeterminated={mainIndeterminated}
               handleMouseDownRowEW={(e, colHeadIndex)=>this.handleMouseDownRowEW(e, colHeadIndex)}
               handleCheckboxClickHeader={(e)=>this.handleCheckboxClickHeader(e)}
-              HideColumn={(headerIndex) => this.HideColumn(headerIndex)}
-              SortColumn={(headerIndex, sortAscending) => this.SortColumn(headerIndex, sortAscending)}
-              FilterColumn={(headerIndex) => this.FilterColumn(headerIndex)}
+              setChangedHeaders={(newheaders) => this.setChangedHeaders(newheaders)}
+              setChangedFilters={(newfilters) => this.setChangedFilters(newfilters)}
             />
             <TableBody 
               className={classes.table_body_row}
@@ -1179,16 +1167,20 @@ class ITable extends React.Component {
         <Grid container>
           <Grid item style={{ flex: 1}}> 
 
-              {/* back */}
-              {this.props.settings.hasButtonBack &&
-              <IconButton
-                className={classes.mainButtons}
-                onClick={e => this.handleCopyForExcel(false)}>
-                <ForwardIcon 
-                  style={{ transform: 'rotate(180deg)'}} 
-                  sx={{ color: IConst.iconColorBlue, }}/>
-                &nbsp;Go back
-              </IconButton>}
+              {this.props.settings.menuButtonList.map((button, index) => {
+                const iconSize = this.props.settings.buttonSizeMain;
+                if (button.positionStart === true)
+                return (
+                  <IconButton
+                    key={`menuButtonList-button${index}`}
+                    className={classes.mainButtons}
+                    disabled={this.state.savingInProgressAll}
+                    onClick={(index) => this.menuButtonClick(index)}>
+                    <img src={button.icon} style={{ width: iconSize, height:iconSize }} />
+                    {button.caption}
+                  </IconButton>
+                );
+              })}
 
               {/* new row */}
               {this.props.settings.hasButtonNewRow &&
@@ -1239,14 +1231,21 @@ class ITable extends React.Component {
                 onClick={e => this.handleCopyForExcel(false)}>
               &nbsp;Copy selected rows</IconButton></Tooltip>}
 
-              {/* continue */}
-              {this.props.settings.hasButtonContinue &&
-              <IconButton
-                className={classes.mainButtons}
-                onClick={e => this.handleCopyForExcel(false)}>
-                Continue
-                <ForwardIcon sx={{ color: IConst.iconColorBlue, }}/>
-              </IconButton>}
+              {this.props.settings.menuButtonList.map((button, index) => {
+                const iconSize = this.props.settings.buttonSizeMain;
+                if (button.positionStart === false)
+                return (
+                  <IconButton
+                    key={`menuButtonList-button${index}`}
+                    className={classes.mainButtons}
+                    disabled={this.state.savingInProgressAll}
+                    onClick={(index) => this.menuButtonClick(index)}>
+                    <img src={button.icon} style={{ width: iconSize, height:iconSize }} />
+                    {button.caption}
+                  </IconButton>
+                );
+              })}
+
 
           </Grid>
 

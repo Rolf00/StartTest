@@ -32,7 +32,7 @@ const headersWaldo = [
     isEditable: true,
     isRequired: true,
     isVisible: true,
-    isSortable: true,
+    isSortable: false,
     width: 45,
     minWidth: 45,
     maxWidth: 55,
@@ -51,7 +51,7 @@ const headersWaldo = [
     isRequired: true,
     isVisible: true,
     isSortable: true,
-    defaultSorting: 'asc',
+    defaultSorting: '',
     width: 65,
     minWidth: 65,
     maxWidth: 120,
@@ -69,7 +69,7 @@ const headersWaldo = [
     isRequired: true,
     isVisible: true,
     isSortable: true,
-    defaultSorting: 'asc',
+    defaultSorting: '',
     width: 180,
     minWidth: 140,
     maxWidth: 300,
@@ -81,13 +81,13 @@ const headersWaldo = [
   {
     id: 3,
     databaseField: "lastName",
-    headerTitle: "lastName",
+    headerTitle: "Lastame",
     isResizable: true,
     isEditable: true,
     isRequired: true,
     isVisible: true,
     isSortable: true,
-    defaultSorting: 'asc',
+    defaultSorting: '',
     width: 180,
     minWidth: 80,
     maxWidth: 300,
@@ -105,7 +105,7 @@ const headersWaldo = [
     isRequired: true,
     isVisible: true,
     isSortable: true,
-    defaultSorting: 'asc',
+    defaultSorting: '',
     width: 80,
     minWidth: 80,
     maxWidth: 120,
@@ -126,7 +126,7 @@ const headersWaldo = [
     isRequired: true,
     isVisible: true,
     isSortable: true,
-    defaultSorting: 'asc',
+    defaultSorting: '',
     width: 120,
     minWidth: 120,
     maxWidth: 120,
@@ -145,7 +145,7 @@ const headersWaldo = [
     isRequired: true,
     isVisible: true,
     isSortable: true,
-    defaultSorting: 'asc',
+    defaultSorting: '',
     width: 80,
     minWidth: 40,
     maxWidth: 120,
@@ -163,7 +163,7 @@ const headersWaldo = [
     isRequired: true,
     isVisible: true,
     isSortable: true,
-    defaultSorting: 'asc',
+    defaultSorting: '',
     width: 120,
     minWidth: 90,
     maxWidth: 220,
@@ -181,7 +181,7 @@ const headersWaldo = [
     isRequired: true,
     isVisible: true,
     isSortable: true,
-    defaultSorting: 'asc',
+    defaultSorting: '',
     width: 120,
     minWidth: 100,
     maxWidth: 120,
@@ -199,7 +199,7 @@ const headersWaldo = [
     isRequired: true,
     isVisible: true,
     isSortable: true,
-    defaultSorting: 'asc',
+    defaultSorting: '',
     width: 80,
     minWidth: 60,
     maxWidth: 120,
@@ -217,7 +217,7 @@ const headersWaldo = [
     isRequired: true,
     isVisible: true,
     isSortable: true,
-    defaultSorting: 'asc',
+    defaultSorting: '',
     width: 260,
     minWidth: 150,
     maxWidth: 320,
@@ -236,7 +236,7 @@ const headersWaldo = [
     isRequired: true,
     isVisible: true,
     isSortable: true,
-    defaultSorting: 'asc',
+    defaultSorting: '',
     width: 160,
     minWidth: 80,
     maxWidth: 320,
@@ -254,7 +254,7 @@ const headersWaldo = [
     isRequired: true,
     isVisible: true,
     isSortable: true,
-    defaultSorting: 'asc',
+    defaultSorting: '',
     width: 120,
     minWidth: 80,
     maxWidth: 220,
@@ -301,7 +301,7 @@ const headersWaldo = [
     isRequired: true,
     isVisible: true,
     isSortable: true,
-    defaultSorting: 'asc',
+    defaultSorting: '',
     width: 290,
     minWidth: 190,
     maxWidth: 420,
@@ -320,7 +320,7 @@ const headersWaldo = [
     isRequired: true,
     isVisible: true,
     isSortable: true,
-    defaultSorting: 'asc',
+    defaultSorting: '',
     width: 290,
     minWidth: 190,
     maxWidth: 420,
@@ -339,7 +339,7 @@ const headersWaldo = [
     isRequired: true,
     isVisible: true,
     isSortable: false,
-    defaultSorting: 'asc',
+    defaultSorting: '',
     width: 150,
     minWidth: 120,
     maxWidth: 320,
@@ -365,7 +365,7 @@ const headersWaldo = [
     isRequired: true,
     isVisible: true,
     isSortable: true,
-    defaultSorting: 'asc',
+    defaultSorting: '',
     width: 180,
     minWidth: 180,
     maxWidth: 300,
@@ -507,16 +507,37 @@ const headersWaldo = [
     dropdownSelection: [],
     hasHeaderMenu: false,
   },
+  {
+    id: 23,
+    databaseField: "",
+    headerTitle: "Getter",
+    isResizable: true,
+    isEditable: false,
+    isRequired: false,
+    isVisible: true,
+    isSortable: true,
+    defaultSorting: '',
+    width: 120,
+    minWidth: 100,
+    maxWidth: 300,
+    editType: 'getter',
+    defaultValue: '',
+    dataFieldName: '',
+    horizontalAlign: 'left',
+    hasHeaderMenu: true,
+    valueGetter: "`${row.lastName} ${row.firstName}`",
+  },
+
 ];
 
-/*
-headersWaldo[3].isVisible = false;
 headersWaldo[4].isVisible = false;
 headersWaldo[6].isVisible = false;
 headersWaldo[7].isVisible = false;
 headersWaldo[8].isVisible = false;
 headersWaldo[9].isVisible = false;
-*/
+headersWaldo[11].isVisible = false;
+headersWaldo[12].isVisible = false;
+headersWaldo[15].isVisible = false;
 
 // data Waldo
 const patients = [];
@@ -569,7 +590,7 @@ const App = ()=> {
 
     // rows settings (top, middle, bottom)
     rowsVerticalAlign: IConst.verticalAlign_Middle,
-    editComponentHeight: 21,
+    editComponentHeight: 23,
     resizerBackgroundColor: '#8888FF',
     iconImageSize: 30,
 
@@ -590,6 +611,12 @@ const App = ()=> {
 
     // localization
     localization: IConst.datetimeLocalization_deCH,
+
+    // menu buttons
+    menuButtonList: [
+      { id:1, caption: "Back", hint: "go to previous page", icon: "", positionStart: true },
+      { id:2, caption: "Next", hint: "go to next page", icon: "", positionStart: false },
+    ],
   };
   
   // open slack
@@ -611,6 +638,16 @@ const App = ()=> {
     setOpen(true);
     return true;
   }
+
+  function menuButtonClick(index)
+  {
+    if (index === 1)
+    {
+      // button with id = 1 was clicked
+      // see settings.menuButtonList
+    }
+  }
+
   
   return(
     <>
@@ -627,6 +664,7 @@ const App = ()=> {
           handleSpecialButtonClick={(rowid, fieldname) => handleSpecialButtonClick(rowid, fieldname)}
           handleSaveOneRowClick={(row, state) => handleSaveOneRowClick(row, state)}
           handleSaveAllRowsClick={(rows, states) => handleSaveAllRowsClick(rows, states)}
+          menuButtonClick={(index) => menuButtonClick(index)}
         />
       </Grid>
     </Grid>

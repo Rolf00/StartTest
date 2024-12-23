@@ -188,6 +188,11 @@ class IUtils {
     return errorTextAll;
   }
 
+  static getCellValue = (row, field, isGetter, getter) => {
+    let text = row[field];
+    if (isGetter) text = eval(getter);
+    return text;
+  };
 
 
 }

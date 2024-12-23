@@ -151,6 +151,7 @@ class IConst {
   static editType_Date = 'date';
   static editType_Chip = 'chip';
   static editType_SpecialButton = 'button';
+  static editType_Getter = 'getter';
   // only buttons
   static editType_ButtonEditRow = 'btnEditRow';
   static editType_ButtonEdit = 'btnEdit';
@@ -193,6 +194,21 @@ class IConst {
   static format_DateLong_Time24h = 10;
   // Mittwoch, dd. Dezember yyyy 11:MM:ss  AM/PM
   static format_DateLong_Time12h = 11;
+
+  // filtering
+  static filterOperator_Contains = "1";
+  static filterOperator_ContainsNot = "2";
+  static filterOperator_Equals = "3";
+  static filterOperator_EqualsNot = "4";
+  static filterOperator_StartsWith = "5";
+  static filterOperator_StartsWithNot = "6";
+  static filterOperator_EndsWith = "7";
+  static filterOperator_EndsWithNot = "8";
+  static filterOperator_IsEmpty = "9";
+  static filterOperator_IsEmptyNot = "10";
+  static filterOperator_IsSmallerThan= "11";
+  static filterOperator_IsBiggerThan = "12";
+  //static filterOperator_IsAnyOf = "13";
 
 }
 

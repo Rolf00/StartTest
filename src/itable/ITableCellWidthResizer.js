@@ -3,7 +3,11 @@ import { IconButton, TableCell } from "@mui/material";
 import { withStyles } from 'tss-react/mui';
 import PropTypes from 'prop-types';
 
-import SwapVertIcon from '@mui/icons-material/SwapVert';          
+import SwapVertIcon from '@mui/icons-material/SwapVert';     
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
+
 
 import IConst from './IConst';
 import ITableMenu from './ITableMenu';
@@ -14,7 +18,7 @@ import { useStyles } from './styles';
 class ITableCellWidthResizer extends React.Component {
   constructor(props) {
       super(props)
-
+  
   }
 
   componentDidMount() {
@@ -26,19 +30,21 @@ class ITableCellWidthResizer extends React.Component {
   componentWillUnmount() {
   }
 
-  SortColumn = () =>
-    {
-      // sorting : when not defined, we start with DESC
-      /*
-      const isSortedAscending = headers[headerIndex].defaultSorting ?
-        headers[headerIndex].defaultSorting === IConst.sortingASC : false;
-      const newIsSortedAscending = !isSortedAscending;
-      this.props.SortColumn(headerIndex, newIsSortedAscending)
-      */
-    }
+  changeSortingClick = () =>
+  {
+    // change the sorting => ASC - DESC - none
+    const sorting = this.props.headers[this.props.headerIndex].defaultSorting;
+    const newsorting = 
+      sorting === IConst.sortingASC ? IConst.sortingDESC :
+      sorting === IConst.sortingDESC ? '' : IConst.sortingASC;
+      this.props.headers[this.props.headerIndex].defaultSorting = newsorting;
+    const newheaders = [...this.props.headers];
+    this.props.setChangedHeaders(newheaders);
+  }
 
   render() 
   {
+
     const {
       classes, 
       headers,
@@ -51,12 +57,19 @@ class ITableCellWidthResizer extends React.Component {
       hasHeaderMenu,
     } = this.props;
 
-    const isSortable = headers[headerIndex].isSortable;
-    const isSortedAscending = headers[headerIndex].defaultSorting ?
-      headers[headerIndex].defaultSorting === IConst.sortingASC : false;
+    const isSortable = this.props.headers[this.props.headerIndex].isSortable;
+    const isSortedAscending = this.props.headers[this.props.headerIndex].defaultSorting ?
+    this.props.headers[this.props.headerIndex].defaultSorting === IConst.sortingASC : false;
+    const sorting = this.props.headers[this.props.headerIndex].defaultSorting;
 
     return (
-      <TableCell className={classes.table_head_cell} >
+      <TableCell 
+        className={classes.table_head_cell} 
+        key={`tablecell-header${headerIndex}`}
+        //id="tablecell-${headerIndex}"
+        //width={width}>
+        >
+
         <div 
           style={{
             display: 'flex',
@@ -80,8 +93,8 @@ class ITableCellWidthResizer extends React.Component {
             <ITableMenu
               headers={this.props.headers}
               headerIndex={headerIndex}
-              HideColumn={() => this.props.HideColumn(headerIndex)}
-              SortColumn={(isSortedAsc) => this.props.SortColumn(headerIndex, isSortedAsc)}
+              filters={this.props.filters}
+              setChangedHeaders={(newheaders) => this.props.setChangedHeaders(newheaders)}
             ></ITableMenu>
           </div>}
 
@@ -95,10 +108,11 @@ class ITableCellWidthResizer extends React.Component {
             padding: '0px',
           }}>   
           <IconButton 
-            stlye={{ borderRadius: '3px' }}
-            //onClick={() => this.SortColumn()}
-            >
-          <SwapVertIcon sx={{ transform: isSortedAscending ? '' : 'scaleX(-1)' }}/>
+            sx={{ width: '23px', height: '40px', borderRadius: '3px' }}
+            onClick={() => this.changeSortingClick()}>
+            {sorting === IConst.sortingASC && <ArrowUpwardIcon/>}
+            {sorting === IConst.sortingDESC && <ArrowDownwardIcon/>}
+            {sorting === '' && <SwapVertIcon/>}
           </IconButton>
           </div>}
 
@@ -120,8 +134,12 @@ class ITableCellWidthResizer extends React.Component {
             width: '25px',
             padding: '0px',
           }}>   
-          <IconButton sx={{ width: '23px', height: '40px', borderRadius: '3px' }}>
-            <SwapVertIcon sx={{ transform: isSortedAscending ? '' : 'scaleX(-1)' }}/>
+          <IconButton 
+            sx={{ width: '23px', height: '40px', borderRadius: '3px' }}
+            onClick={() => this.changeSortingClick()}>
+            {sorting === IConst.sortingASC && <ArrowUpwardIcon/>}
+            {sorting === IConst.sortingDESC && <ArrowDownwardIcon/>}
+            {sorting === '' && <SwapVertIcon/>}
           </IconButton>
           </div>}
 
@@ -135,11 +153,12 @@ class ITableCellWidthResizer extends React.Component {
             padding: '0px',
           }}>
             <ITableMenu
+              settings={this.props.settings}
               headers={this.props.headers}
               headerIndex={headerIndex}
-              HideColumn={() => this.props.HideColumn(headerIndex)}
-              SortColumn={(isSortedAsc) => this.props.SortColumn(headerIndex, isSortedAsc)}
-              FilterColumn={() => this.props.FilterColumn(headerIndex)}
+              filters={this.props.filters}
+              setChangedHeaders={(newheaders) => this.props.setChangedHeaders(newheaders)}
+              setChangedFilters={(newfilters) => this.props.setChangedFilters(newfilters)}
               ></ITableMenu>
           </div>}
 
