@@ -1,3 +1,5 @@
+import IConst from './IConst';
+
 export const getSortFunc = (order, orderBy, headers) => {
   // Order = desc, asc orderBy = field
   return order === 'desc' ? 
@@ -12,7 +14,7 @@ export const descGrid = (a, b, orderBy, headers) =>
   let value_b = b[orderBy];
   if (orderBy) 
   {
-    const index = headers.map(x => x.field).indexOf(orderBy);
+    const index = headers.map(x => x.dataFieldName).indexOf(orderBy);
     if (index !== -1) 
     {
       const header = headers[index];
@@ -30,9 +32,8 @@ export const descGrid = (a, b, orderBy, headers) =>
 
 export const isDateTime = (type, field) =>
 {
-
-  // TODO 
-  return false;
+  // TODO : we dont need the field here
+  return type === IConst.editType_Date;
 }
 
 export const getCellValue = (header, row, sort = false) => 
@@ -79,7 +80,7 @@ export const getCellValue = (header, row, sort = false) =>
   return row[dataFieldName];
 };
 
-export const getSortRows = (array, cmp) => {
+export const  getSortRows = (array, cmp) => {
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
     const order = cmp(a[0], b[0]);
@@ -89,4 +90,3 @@ export const getSortRows = (array, cmp) => {
   return stabilizedThis.map(el => el[0]);
 };
 
-export default IUtilsSort;

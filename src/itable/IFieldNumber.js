@@ -7,7 +7,7 @@ import IFieldReadOnly from './IFieldReadOnly';
 
 export default function IFieldNumber (props) {
 
-  const editing = props.editing;
+  const editing = (props.editing && !props.savingInProgressAll);
   const value = props.value;
   const fieldname = props.header.dataFieldName
   const isInteger = props.header.editType === IConst.editType_Integer;

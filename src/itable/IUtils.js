@@ -148,10 +148,41 @@ class IUtils {
       return false;
     }
 
-
-    // TODO datefields
-
     // no component to check errors
+    return false;
+  }
+
+  static hasErrorDate(value, header, row)  
+  {
+    // field is not editable, thus we dont check anyting 
+    if (!header.isEditable) return false;
+    if ((!value) && header.required) return true;
+    if ((!value) && !header.required) return false;
+
+    if (header.datetimeCheck === IConst.datetimeCheck_Before)
+    {
+       // date not before today
+       if (value < new Date()) return true;
+    }
+    else if (header.datetimeCheck === IConst.datetimeCheck_After)
+    {
+      // date not after today
+      if (value > new Date()) return true;
+    }
+    else if (header.datetimeCheck === IConst.datetimeCheck_BeforeAnother)
+    {
+      // date not after field "xyz"
+      const otherValue = row[header.datetimeCheckField];
+      if (value > otherValue) return true;
+    }
+    else if (header.datetimeCheck === IConst.datetimeCheck_AfterAnother)
+    {
+      // date not before field "xyz"
+      const otherValue = row[header.datetimeCheckField];
+      if (value < otherValue) return true;
+    }
+
+    // no errors found
     return false;
   }
 
@@ -163,9 +194,20 @@ class IUtils {
     headers.forEach((header) => 
     {
       const value = row[header.dataFieldName];
-      if (this.hasError(value, header))  
-        errorText += "Field " + header.headerTitle + " : " + 
-          header.helperText + "\n";
+      if (header.editType === IConst.editType_Date)
+      {
+        // special checks for date fields
+        if (this.hasErrorDate(value, header, row))
+          errorText += "Field " + header.headerTitle + " : " + 
+        header.helperText + "\n";
+      }
+      else
+      {
+        // normal for all other fields
+        if (this.hasError(value, header))  
+          errorText += "Field " + header.headerTitle + " : " + 
+            header.helperText + "\n";
+      }
     });
 
     return errorText;

@@ -4,7 +4,7 @@ import IConst from './IConst';
 
 export default function IFieldCheckbox (props) {
 
-  const editing = props.editing;
+  const editing = (props.editing && !props.savingInProgressAll);
   const rowid = props.rowid;
   const value = props.value;
   const fieldname = props.header.dataFieldName

@@ -527,7 +527,46 @@ const headersWaldo = [
     hasHeaderMenu: true,
     valueGetter: "`${row.lastName} ${row.firstName}`",
   },
-
+  { 
+    id: 24,
+    headerTitle: " Date From",
+    helperText: "not after 'Date To'",
+    isResizable: true,
+    isEditable: true,
+    isVisible: true,
+    isSortable: true,
+    width: 120,
+    minWidth: 100,
+    maxWidth: 320,
+    editType: 'date',
+    datetimeFormat: IConst.format_DateShort,
+    dataFieldName: 'datefrom',
+    datetimeCheck: 3,
+    datetimeCheckField: "dateto",
+    datetimeCheckDifference: 5,
+    horizontalAlign: 'center',
+    hasHeaderMenu: true,
+  },
+  { 
+  id: 25,
+    headerTitle: "Date To",
+    helperText: "not before 'Date From'",
+    isResizable: true,
+    isEditable: true,
+    isVisible: true,
+    isSortable: true,
+    width: 120,
+    minWidth: 100,
+    maxWidth: 320,
+    editType: 'date',
+    datetimeFormat: IConst.format_DateShort,
+    dataFieldName: 'dateto',
+    datetimeCheck: 4,
+    datetimeCheckField: "datefrom",
+    datetimeCheckDifference: 10,
+    horizontalAlign: 'center',
+    hasHeaderMenu: true,
+  },
 ];
 
 headersWaldo[4].isVisible = false;
@@ -568,6 +607,9 @@ for (let i = 0; i < 100; i++) {
     lastUpdate2: randomUpdate,
     chipstate: i < 9 ? i : null,
     dropdownvalue: i <= 6 ? i : null,
+    datefrom: new Date(Date.now() + (i * 24 * 3600 * 1000)),
+    dateto: new Date(Date.now() + ((i + 3) * 24* 3600 * 1000)),
+  
   });
 }
 

@@ -111,7 +111,7 @@ class ITableHeader extends React.Component {
                   height= {headerRowHeight}
                   setWidth={(colwidth) => this.setState({colwidth: colwidth})}
 
-                  handleMouseDownRowEW={(e, headerIndex)=>this.props.handleMouseDownRowEW(e, headerIndex)}
+                  //handleMouseDownRowEW={(e, headerIndex)=>this.props.handleMouseDownRowEW(e, headerIndex)}
                   hasHeaderMenu={hasHeaderMenu}
                   setChangedHeaders={(newheaders) => this.props.setChangedHeaders(newheaders)}
                   setChangedFilters={(newfilters) => this.props.setChangedFilters(newfilters)}

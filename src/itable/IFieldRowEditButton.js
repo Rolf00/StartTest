@@ -30,30 +30,34 @@ export default function IFieldRowEditButton (props) {
   const editing = props.editing;
 
   let disabled = true;
-  if (editType === IConst.editType_ButtonEditRow)
+  if (!props.savingInProgressAll)
   {
-    disabled = false;
+    if (editType === IConst.editType_ButtonEditRow)
+    {
+      disabled = false;
+    }
+    else if (editType === IConst.editType_ButtonEdit)
+    {
+      disabled = false;
+    }
+    else if (editType === IConst.editType_ButtonSave)
+    {
+      disabled = !isChanged;
+    }    
+    else if (editType === IConst.editType_ButtonUndo)
+    {
+      disabled = !isChanged
+    }    
+    else if (editType === IConst.editType_ButtonDelete)
+    {
+      disabled = isDeleted && rowState !== IConst.rowStateInserted;
+    }    
   }
-  else if (editType === IConst.editType_ButtonEdit)
-  {
-    disabled = false;
-  }
-  else if (editType === IConst.editType_ButtonSave)
-  {
-    disabled = !isChanged;
-  }    
-  else if (editType === IConst.editType_ButtonUndo)
-  {
-    disabled = !isChanged
-  }    
-  else if (editType === IConst.editType_ButtonDelete)
-  {
-    disabled = isDeleted && rowState !== IConst.rowStateInserted;
-  }    
 
   const imgWidth = props.settings.buttonSizeOnRows;
   const btnHoverWidth = props.settings.buttonSizeOnRowsHover;
 
+  /*
   const icon = 
     props.header.editType === IConst.editType_ButtonEditRow ? 
       editing ? IConst.imgEditStop : IConst.imgEditButton :
@@ -61,6 +65,7 @@ export default function IFieldRowEditButton (props) {
     props.header.editType === IConst.editType_ButtonSave ? IConst.imgSaveButton :
     props.header.editType === IConst.editType_ButtonUndo ? IConst.imgUndoButton :
     props.header.editType === IConst.editType_ButtonDelete ? IConst.imgDeleteButton : null;
+  */
 
   const title = 
     props.header.editType === IConst.editType_ButtonEditRow ? 

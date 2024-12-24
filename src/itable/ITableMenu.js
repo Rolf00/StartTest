@@ -1,16 +1,26 @@
 import React, { useState } from 'react';
-import IconButton from '@mui/material/IconButton';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import Divider from '@mui/material/Divider';
-import Popover from '@mui/material/Popover';
-import Grid from '@mui/material/Grid';
-import Typography from '@mui/material/Typography';
-import Select from '@mui/material/Select';
-import TextField from '@mui/material/TextField';
-import Tooltip from '@mui/material/Tooltip';
+
+import {
+  IconButton,
+  Snackbar, 
+  Alert, 
+  Menu,
+  MenuItem,
+  ListItemText,
+  ListItemIcon,
+  Divider,
+  Popover,
+  Grid,
+  Typography,
+  Select,
+  TextField,
+  Tooltip
+} from '@mui/material';
+
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs from 'dayjs';
 
 
 import MoreVertIcon from '@mui/icons-material/MoreVert';
@@ -62,6 +72,8 @@ export default function ITableMenu (props)
   const openFiltering = Boolean(anchorFiltering);
   const [filterOperator, setFilterOperator] = React.useState(fOperator);
   const [filterValue, setFilterValue] = React.useState(fValue);
+  const [filterDateValue, setFilterDateValue] = React.useState(fValue);
+
   const openCloseFiltering = (e) =>
   {
     if (e === null)
@@ -83,6 +95,19 @@ export default function ITableMenu (props)
   {
     setFilterValue(e.target.value);
   }
+
+  const filterDateChange = (value) =>
+  {
+    const year = parseInt(value.$y);
+    const month = parseInt(value.$M);
+    const day = parseInt(value.$D);
+    const newDateJS = new Date(year, month, day);
+    setFilterDateValue(newDateJS);
+  }
+
+
+  const [openSnack,setOpenSnack] = React.useState(false);
+  
         
   const handleClick = (event) =>
   {
@@ -101,6 +126,11 @@ export default function ITableMenu (props)
   {
     // sort a column
     handleClose(); 
+
+    // first we delete all older sortings
+    for (let h = 0; h < props.headers.length; h++)
+      props.headers[h].defaultSorting = "";
+
     props.headers[props.headerIndex].defaultSorting = sortAscending;
     const newList = [...props.headers];
     props.setChangedHeaders(newList);
@@ -115,16 +145,18 @@ export default function ITableMenu (props)
     props.setChangedHeaders(newList);
   }
 
-  const openFilter = () =>
-  {
-    // open filter menu
-    handleClose(); 
-    props.FilterColumn(props.headerIndex)
-  }
-
   const addFilterClick = () =>
   {
     // add a new filter
+    if (filterOperator === null)
+    {
+      // dont add filters without operators
+      setOpenSnack(true);
+      return;
+    }
+
+    openCloseFiltering(null);
+
     // first check, if it already exists
     const field = props.headers[props.headerIndex].dataFieldName;
     let index = -1;
@@ -145,7 +177,7 @@ export default function ITableMenu (props)
     }
     else
     {
-      // it exists already
+      // it exists already, so we edit the old one
       newlist[index].operator = filterOperator;
       newlist[index].value = filterValue;
     }
@@ -155,6 +187,7 @@ export default function ITableMenu (props)
   const removeRowFilter = () =>
   {
     // remove filter of one column
+    openCloseFiltering(null);
     const field = props.headers[props.headerIndex].dataFieldName;
     const newList = props.filters.filter(f => f.fieldname !== field);
     props.setChangedFilters(newList);
@@ -218,6 +251,16 @@ export default function ITableMenu (props)
   const hList = props.headers.filter(h => h.isVisible === false);
   const noHidedColumnExists = hList.length === 0;
   const isSortable = props.headers[props.headerIndex].isSortable;
+ 
+  // evaluate the type to edit the value
+  const isNumber = 
+    props.headers[props.headerIndex].editType === IConst.editType_Integer ||
+    props.headers[props.headerIndex].editType === IConst.editType_Decimal;
+  const isDate = props.headers[props.headerIndex].editType === IConst.editType_Date;
+  const isDropdown = props.headers[props.headerIndex].editType === IConst.editType_Dropdown;
+  const isTextfield = !(isNumber || isDate || isDropdown);
+
+  const filterEditWidth = 210;
 
   return (
     <div>
@@ -239,7 +282,6 @@ export default function ITableMenu (props)
         }}
         anchorEl={anchorEl}
         open={open}
-        //onMouseLeave={(e) => handleClose(e)}
         onClose={handleClose}
         slotProps={{
           paper: {
@@ -301,7 +343,7 @@ export default function ITableMenu (props)
           disabled={noRowFilterExists}
           onClick={() => removeRowFilter()}>
           <ListItemIcon></ListItemIcon>
-          <ListItemText>Remove filter</ListItemText>
+          <ListItemText>Remove filter for this field</ListItemText>
         </MenuItem>
 
         <MenuItem key='ITableMenu_Item7' 
@@ -348,9 +390,6 @@ export default function ITableMenu (props)
         transformOrigin={{
           vertical: 'top',
           horizontal: 'left',
-        }}
-        MenuListProps={{
-          onMouseLeave: handleClose, // Close subsubmenu when mouse leaves
         }}>
         {props.headers.map((header, index) => {
           if (!header.isVisible)
@@ -393,14 +432,14 @@ export default function ITableMenu (props)
           </Grid>
 
           <Grid item direction={"column"}>
-            <Grid item style={{ width: "170px", padding: "8px 4px 2px 4px" }}>
+            <Grid item style={{ width: filterEditWidth, padding: "8px 4px 2px 4px" }}>
               <Typography>Operator</Typography >
             </Grid>
-            <Grid item style={{ width: "170px", padding: "2px 4px 8px 4px", display: "flex", alignItems: "center" }}>
+            <Grid item style={{ width: filterEditWidth, padding: "2px 4px 8px 4px", display: "flex", alignItems: "center" }}>
               <Select
                 onChange={(e) => filterOperatorChange(e)}
                 value={filterOperator}
-                style={{ width: "170px",  }}
+                style={{ width: filterEditWidth,  }}
                 sx={{ 
                   '& .MuiInputBase-root': {
                     padding: '0px',
@@ -440,13 +479,16 @@ export default function ITableMenu (props)
           </Grid>
 
           <Grid item direction={"column"}>
-            <Grid item style={{ width: "170px", padding: "8px 4px 2px 4px" }}>
+            <Grid item style={{ width: filterEditWidth, padding: "8px 4px 2px 4px" }}>
               <Typography >Value</Typography >
             </Grid>
-            <Grid item style={{ width: "170px", padding: "2px 4px 8px 4px" }}>
+            <Grid item style={{ width: filterEditWidth, padding: "2px 4px 8px 4px" }}>
+
+              {isTextfield &&
               <TextField 
                 value={filterValue}
                 onChange = {(e) => filterValueChange(e)}
+                style={{ width: '100%' }}
                 sx={{ 
                   '& .MuiInputBase-root': {
                     padding: '0px',
@@ -456,7 +498,55 @@ export default function ITableMenu (props)
                     padding: '6px',
                   }, 
                 }}                  
-                />
+              />}
+
+              {isDate &&
+              <LocalizationProvider dateAdapter={AdapterDayjs} locale='de'>
+              <DatePicker 
+                value={filterDateValue}
+                format="DD.MM.YYYY"
+                onChange = {(e) => filterDateChange(e)}
+                style={{ width: '100%' }}
+                sx={{ 
+                  '& .MuiInputBase-root': {
+                    padding: '0px 10px 0px 0px',
+                  },
+                  '& .MuiInputBase-input': { 
+                    height: props.settings.editComponentHeight,  
+                    padding: '6px',
+                  }, 
+                }}
+              /></LocalizationProvider>}
+
+              {isDropdown &&
+              <Select 
+                value={filterValue}
+                onChange = {(e) => filterValueChange(e)}
+                style={{ width: '100%' }}
+                sx={{ 
+                  '& .MuiInputBase-root': {
+                    padding: '0px',
+                  },
+                  '& .MuiInputBase-input': { 
+                    height: props.settings.editComponentHeight,  
+                    padding: '6px',
+                  }, 
+                }}>
+                  {props.headers[props.headerIndex].dropdownSelection.map((item, itemIndex) =>
+                  {
+                    const ddId = item.id;
+                    const ddValue = item.value;
+                    return (
+                      <MenuItem 
+                        key={`tablemenu-selectitem${itemIndex}`}
+                        value={ddId}
+                      >{ddValue}</MenuItem>
+                    );
+                  })}
+              </Select>}
+
+
+
             </Grid>
           </Grid>
 
@@ -484,7 +574,23 @@ export default function ITableMenu (props)
           
         </Grid>
       </Popover>
+
+      <Snackbar 
+        open={openSnack} 
+        autoHideDuration={5000} 
+        onClose={()=>setOpenSnack(false)} 
+        anchorOrigin={{ vertical:"top", horizontal:"right" }}>
+        <Alert
+          onClose={()=>setOpenSnack(false)}
+          severity="success"
+          variant="filled"
+          sx={{ width: '100%' }}
+        >Choose an operator before adding a filter</Alert>
+      </Snackbar>
+
     </div>
+
+
 
   );
 }

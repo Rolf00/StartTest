@@ -6,17 +6,19 @@ export const useStyles = () => ({
   paper: {
     backgroundColor: 'rgb(255, 255, 255)',
     color: 'rgb(42, 53, 71)',
-    transition: 'box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1)',
-    borderRadius: '7px',
+    //transition: 'box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1)',
+    borderRadius: '8px',
     backgroundImage: 'none',
     marginLeft: '8px',
     marginRight: '8px',
     marginTop: '8px',
-    border: '1px solid rgb(229, 234, 239)',
+    //border: '1px solid rgb(229, 234, 239)',
   },
   table_container: {
     width: '100%',
-    overflowX: 'auto',
+    //overflowX: 'auto',
+    border: '1px solid black',
+    borderRadius: '8px',
   },
   table: {
     width: '100%',
@@ -49,7 +51,7 @@ export const useStyles = () => ({
     //textAlign: 'left',
     height: '100%',
     padding: '0px',
-    //borderBottom: '1px solid black',
+    //border: '1px solid black',
   },
   table_head_check: {
     width: 30,

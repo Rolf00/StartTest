@@ -13,7 +13,7 @@ import IFieldReadOnly from './IFieldReadOnly';
 
 export default function IFieldDropDown (props) {
 
-  const editing = props.editing;
+  const editing = (props.editing && !props.savingInProgressAll);
   const value = props.value;
   const fieldname = props.header.dataFieldName
   const dropdownList = props.header.dropdownSelection;

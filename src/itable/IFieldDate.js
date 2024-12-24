@@ -30,12 +30,12 @@ import IFieldReadOnly from './IFieldReadOnly';
 
 export default function IFieldDate (props) {
 
-  const editing = props.editing;
+  const editing = (props.editing && !props.savingInProgressAll);
   const value = props.value;
   const fieldname = props.header.dataFieldName
   const disabled = !props.header.isEditable;
 
-  const hasError = IUtils.hasError(value, props.header);
+  const hasError = IUtils.hasErrorDate(value, props.header, props.row);
   const color = hasError ? IConst.errorColor : 'black';
   const background = hasError ? IConst.errorColorBackground : 'transparent';
   const helperText =  hasError ? props.header.helperText : '';
@@ -84,10 +84,12 @@ export default function IFieldDate (props) {
     props.handleDataChange(newDateJS, fieldname);
   }
 
+  /*
   const handleTextChange = (e) =>
   {
     props.handleDataChange(e, fieldname);
   }
+    */
 
   const selectedDate = props.value;
   const formattedDate = IUtils.formatDateTime(

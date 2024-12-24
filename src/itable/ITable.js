@@ -25,16 +25,18 @@ import ForwardIcon from '@mui/icons-material/Forward';
 import { useStyles } from './styles';
 import IConst from './IConst';
 import IUtils from './IUtils';
-import IUtilsSort from './IUtilsSort';
+import { getSortRows } from './IUtilsSort';
+import { getSortFunc } from './IUtilsSort';
 import ITableHeader from './ITableHeader';
 import ITableRow from './ITableRow'; 
 import IButtonDialog from './IButtonDialog';
 import IDataDialog_First from './IDataDialog_First';
 
 
-const avaiableDialogs = {
-  // TODO
-  //dialog_MainData: IDataDialog_First,
+const availableDialogs = {
+  IDataDialog_First: IDataDialog_First,
+  // here more dialogs can be listed, 
+  // depending on the dataset what should be edited. 
   //dialog1: ComponentB,
 };
 
@@ -49,9 +51,6 @@ class ITable extends React.Component {
       primaryKey,
       data,
       dialogName } = this.props;
-
-    // TODO
-    const EditDialog = avaiableDialogs[this.props.dialogName];
   
     this.state = {
       headers: headers,
@@ -158,6 +157,7 @@ class ITable extends React.Component {
       if (this.state.headers[h].isVisible === null) this.state.headers[h].isVisible = true;
       if (this.state.headers[h].isSortable === null) this.state.headers[h].isSortable = false;
       if (!this.state.headers[h].defaultSorting) this.state.headers[h].defaultSorting = "";
+      if (this.state.headers[h].defaultSorting !== "") this.state.headers[h].defaultSorting = "";
       if (!this.state.headers[h].width) this.state.headers[h].width = 160;
       if (!this.state.headers[h].minWidth) this.state.headers[h].minWidth = 80;
       if (!this.state.headers[h].maxWidth) this.state.headers[h].maxWidth = 320;
@@ -915,6 +915,7 @@ class ITable extends React.Component {
   // ---------------------------------------------------------------------------------------
   // resizing row heights and column widths events
 
+  /*
   handleMouseDownRowEW(e, index)
   {
     // resizing column width
@@ -969,6 +970,7 @@ class ITable extends React.Component {
     document.addEventListener('mouseup', onMouseUpRowEW);    
     document.body.style.userSelect = "none";  
   }
+    */
 
   // ---------------------------------------------------------------------------------------
   // header menu events
@@ -1003,10 +1005,13 @@ class ITable extends React.Component {
     const { classes } = this.props;
     const { page, limit } = this.state;
 
+    // if a edit dialog is declared corretly, it can be opened
+    const EditDialog = availableDialogs[this.props.dialogName];
+    
     let data = this.state.data;
-
     if (this.state.filters !== null && this.state.filters.length > 0)
     {
+      // we apply all filters
       for (let f = 0; f < this.state.filters.length; f++) {
         const filterField = this.state.filters[f].fieldname;
         const filterOperator = this.state.filters[f].operator;
@@ -1055,10 +1060,16 @@ class ITable extends React.Component {
       }
     }
 
-    // TODO sorting
-    const order = "asc";
-    const orderBy = "firstname";
-    data = IUtilsSort.getSortRows(data, IUtilsSort.getSortFunc(order, orderBy, this.setState.headers));
+    // sorting
+    const indexSort = this.state.headers.findIndex(h => h.defaultSorting != '');
+    const order = indexSort === -1 ? '' : this.state.headers[indexSort].defaultSorting;
+    const orderBy = indexSort === -1 ? '' : this.state.headers[indexSort].dataFieldName;
+
+    if (order !== '') 
+    {
+      // we only order something, when an order is defined
+      data = getSortRows(data, getSortFunc(order, orderBy, this.state.headers));
+    }
   
     data = data.slice(page * limit, page * limit + limit);
 
@@ -1067,9 +1078,12 @@ class ITable extends React.Component {
     const mainButtonsDisabled = this.state.mainButtonsDisabled;
     const sizeMainButton = this.props.settings.buttonSizeMain;
 
+    console.log("data", this.state.data[0]);
+
     return (
       <Paper 
         className={classes.paper}
+        style={{ overflowX: 'auto' }}
         >
         <TableContainer
           tabIndex={0}
@@ -1079,7 +1093,7 @@ class ITable extends React.Component {
           style={{
             height: 650, // Set the max height to allow scrolling after 5 items
             overflowY: 'auto', // Enables vertical scrolling
-            overflowX: 'auto',
+            //overflowX: 'auto',
             '&::-webkit-scrollbar': {
               width: '8px',
               height: '8px',
@@ -1100,7 +1114,7 @@ class ITable extends React.Component {
           <Table 
             className={classes.table} 
             stickyHeader
-            sx={{ width: '1800px', }}
+            //sx={{ width: '1800px', }}
           >
             <ITableHeader
               className={classes.table_head_row}
@@ -1109,7 +1123,6 @@ class ITable extends React.Component {
               filters={this.state.filters}
               mainChecked={mainChecked}
               mainIndeterminated={mainIndeterminated}
-              handleMouseDownRowEW={(e, colHeadIndex)=>this.handleMouseDownRowEW(e, colHeadIndex)}
               handleCheckboxClickHeader={(e)=>this.handleCheckboxClickHeader(e)}
               setChangedHeaders={(newheaders) => this.setChangedHeaders(newheaders)}
               setChangedFilters={(newfilters) => this.setChangedFilters(newfilters)}
@@ -1125,6 +1138,7 @@ class ITable extends React.Component {
                 return(
                   <ITableRow
                     key={`itablerow-row${rowIndex}`}
+                    savingInProgressAll={this.state.savingInProgressAll}
                     settings={this.props.settings}
                     headers={this.props.headers}
                     rowInfoList={this.state.rowInfoList}
@@ -1164,7 +1178,11 @@ class ITable extends React.Component {
         </TableContainer>
 
 
-        <Grid container>
+        <Grid container sx={{ 
+          border: '1px solid black', 
+          borderRadius: '8px',
+          margin: '6px 0px', 
+          backgroundColor: 'rgb(243, 244, 246)' }}>
           <Grid item style={{ flex: 1}}> 
 
               {this.props.settings.menuButtonList.map((button, index) => {
@@ -1347,7 +1365,7 @@ class ITable extends React.Component {
 
         {/* main edit dialog */}
         {this.props.dialogName === 'IDataDialog_First' &&  this.state.openDataModalDialog &&
-          <IDataDialog_First
+          <EditDialog
             open={this.state.openDataModalDialog}
             settings={this.props.settings}
             headers={this.props.headers}
@@ -1355,7 +1373,7 @@ class ITable extends React.Component {
             primaryKey={this.props.primaryKey}
             handleSubmitModalDialog={(row, saveIt) => this.handleSubmitModalDialog(row, saveIt)}
             showDataErrorMessage={(errorText) => this.showDataErrorMessage(errorText)}>
-          </IDataDialog_First>
+          </EditDialog>
         }
 
       </Paper>

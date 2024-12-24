@@ -40,7 +40,7 @@ class ITableRow  extends React.Component {
       rowEditing: false,
       rowHeight: rowInfoList[rowInfoIndex].height,
       isHeightResizing: false,
-      resiszigInAction: false,
+      resizingInAction: false,
       row
     }
 
@@ -77,6 +77,7 @@ class ITableRow  extends React.Component {
       this.props.rowInfoList[this.props.rowInfoIndex].state = IConst.rowStateEdited;
   }
 
+
   handleMouseDownRowNS(e)
   {
     // resizing row height
@@ -86,7 +87,7 @@ class ITableRow  extends React.Component {
     const element = e.target;
     element.style.backgroundColor = IConst.colorResizerBackground;
     this.setState({isHeightResizing: true});
-    this.state.resiszigInAction = true;
+    this.state.resizingInAction = true;
 
     const onMouseMoveRowNS = (e) => {
       const newheight = e.clientY - mouseStart + oldRowHeight;
@@ -99,7 +100,7 @@ class ITableRow  extends React.Component {
       document.removeEventListener('mouseup', onMouseUpRowNS);
       document.body.style.userSelect = "auto";  
       element.style.backgroundColor = 'transparent';
-      this.state.resiszigInAction = false;
+      this.state.resizingInAction = false;
       this.setState({isHeightResizing: false});
     };    
 
@@ -115,7 +116,7 @@ class ITableRow  extends React.Component {
 
   handleMouseLeaveNS()
   {
-    if (!this.state.resiszigInAction)
+    if (!this.state.resizingInAction)
       this.setState({isHeightResizing: false});
   }
 
@@ -333,6 +334,7 @@ class ITableRow  extends React.Component {
               {isTextfield && 
               <IFieldText
                 editing={editing}
+                savingInProgressAll={this.props.savingInProgressAll}
                 horizontalAlign={horizontalAlign}
                 verticalAlign={verticalAlign}
                 editHeight={editHeight}
@@ -345,6 +347,7 @@ class ITableRow  extends React.Component {
               {isNumber &&
               <IFieldNumber
                 editing={editing}
+                savingInProgressAll={this.props.savingInProgressAll}
                 horizontalAlign={horizontalAlign}
                 verticalAlign={verticalAlign}
                 rowsVerticalAlign={this.props.settings.rowsVerticalAlign}
@@ -357,6 +360,7 @@ class ITableRow  extends React.Component {
               {isDropdown &&
               <IFieldDropDown
                 editing={editing}
+                savingInProgressAll={this.props.savingInProgressAll}
                 horizontalAlign={horizontalAlign}
                 verticalAlign={verticalAlign}
                 rowsVerticalAlign={this.props.settings.rowsVerticalAlign}
@@ -369,6 +373,7 @@ class ITableRow  extends React.Component {
               {isCheckbox &&
               <IFieldCheckbox
                 editing={editing}
+                savingInProgressAll={this.props.savingInProgressAll}
                 horizontalAlign={horizontalAlign}
                 verticalAlign={verticalAlign}
                 rowsVerticalAlign={this.props.settings.rowsVerticalAlign}
@@ -381,12 +386,14 @@ class ITableRow  extends React.Component {
               {isDate &&
               <IFieldDate
                 editing={editing}
+                savingInProgressAll={this.props.savingInProgressAll}
                 horizontalAlign={horizontalAlign}
                 verticalAlign={verticalAlign}
                 rowsVerticalAlign={this.props.settings.rowsVerticalAlign}
                 editHeight={editHeight}
                 header={header}
                 value={value}
+                row={row}
                 localization={this.props.settings.localization}
                 handleDataChange= {e => this.handleDataChange(e, field)}
               />}
@@ -394,6 +401,7 @@ class ITableRow  extends React.Component {
               {isChip &&
               <IFieldChipMenu
                 editing={editing}
+                savingInProgressAll={this.props.savingInProgressAll}
                 horizontalAlign={horizontalAlign}
                 verticalAlign={verticalAlign}
                 header={header}
@@ -413,6 +421,7 @@ class ITableRow  extends React.Component {
               {isGetter && 
               <IFieldText
                 editing={editing}
+                savingInProgressAll={this.props.savingInProgressAll}
                 horizontalAlign={horizontalAlign}
                 verticalAlign={verticalAlign}
                 editHeight={editHeight}
@@ -426,6 +435,7 @@ class ITableRow  extends React.Component {
               {isRowEditButton &&
               <IFieldRowEditButton
                 editing={editing}
+                savingInProgressAll={this.props.savingInProgressAll}
                 horizontalAlign={horizontalAlign}
                 verticalAlign={verticalAlign}
                 settings = {this.props.settings}

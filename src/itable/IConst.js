@@ -195,6 +195,13 @@ class IConst {
   // Mittwoch, dd. Dezember yyyy 11:MM:ss  AM/PM
   static format_DateLong_Time12h = 11;
 
+  // special checks for dates
+  static datetimeCheck_Before = 1; // date not before today
+  static datetimeCheck_After = 2; // date not after today
+  static datetimeCheck_BeforeAnother = 3; // date not after field "xyz"
+  static datetimeCheck_AfterAnother = 4; // date not before field "xyz"
+
+
   // filtering
   static filterOperator_Contains = "1";
   static filterOperator_ContainsNot = "2";
