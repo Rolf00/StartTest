@@ -81,6 +81,7 @@ class ITable extends React.Component {
 
       // enabling / disabling buttons SAVE ALL and UNDO ALL
       mainButtonsDisabled: true,
+      countChangedRows: 0,
       savingInProgressOneRow: false,
       savingInProgressAll: false,
 
@@ -204,8 +205,10 @@ class ITable extends React.Component {
       this.state.rowInfoList[rowIndex].state = IConst.rowStateDeleted;
       // update the buttons SAVE ALL, UNDO ALL
       const mainEnabled = this.getMainButtonsEnabled();    
+      const cntChangedRows = this.getCountChangedRows();
       this.setState({ 
-        mainButtonsDisabled: mainEnabled
+        mainButtonsDisabled: mainEnabled,
+        countChangedRows: cntChangedRows
       });
     }
   }
@@ -217,9 +220,11 @@ class ITable extends React.Component {
     newlist.splice(rowIndex, 1);
     // update the buttons SAVE ALL, UNDO ALL
     const mainEnabled = this.getMainButtonsEnabled();    
+    const cntChangedRows = this.getCountChangedRows();
     this.setState({ 
       data: newlist,
-      mainButtonsDisabled: mainEnabled
+      mainButtonsDisabled: mainEnabled,
+      countChangedRows: cntChangedRows
     });
   }
 
@@ -247,10 +252,11 @@ class ITable extends React.Component {
 
       // update the buttons SAVE ALL, UNDO ALL
       const mainEnabled = this.getMainButtonsEnabled();
-
-      this.setState({
+      const cntChangedRows = this.getCountChangedRows();
+      this.setState({ 
         data: newlist,
-        mainButtonsDisabled: mainEnabled
+        mainButtonsDisabled: mainEnabled,
+        countChangedRows: cntChangedRows
       });
     }
     else if (oldState === IConst.rowStateInserted)
@@ -264,10 +270,11 @@ class ITable extends React.Component {
 
       // update the buttons SAVE ALL, UNDO ALL
       const mainEnabled = this.getMainButtonsEnabled();
-
-      this.setState({
+      const cntChangedRows = this.getCountChangedRows();
+      this.setState({ 
         data: newlist,
-        mainButtonsDisabled: mainEnabled
+        mainButtonsDisabled: mainEnabled,
+        countChangedRows: cntChangedRows
       });
     }
     else if (oldState === IConst.rowStateDeleted)
@@ -281,66 +288,82 @@ class ITable extends React.Component {
 
       // update the buttons SAVE ALL, UNDO ALL
       const mainEnabled = this.getMainButtonsEnabled();
-
-      this.setState({
+      const cntChangedRows = this.getCountChangedRows();
+      this.setState({ 
         data: newlist,
-        mainButtonsDisabled: mainEnabled
+        mainButtonsDisabled: mainEnabled,
+        countChangedRows: cntChangedRows
       });
     }
   }
 
   handleNewRow()
   {
-    // button INSERT a new row was clicked
+    // first get a new id
+    const min = Math.min(...this.state.rowInfoList.map(item => item.id));
+    const minid = min >= 0 ? -1: min - 1;
 
     let newRow = [];
-    if (this.props.data.lenght === 0)
-    {
-      // no data was defined, thus we need to copy from empty rows
-      newRow = this.props.emptyRow;
-    }
-    else
-    {
-      // data was defined, thus we copy the first row and set all fields to null
-      newRow = this.state.data[0];
-      for (let f = 0; f < newRow.length; f++) newRow[0][f] = null;
-    }
-
+    let objRow = {};
+    objRow[this.props.primaryKey] = minid;
     // now we fill all default values
-    for (let h = 0; h < this.props.headers.length; h++)
-    {
-      const header = this.props.headers[h];
-      if (header.dataFieldName !== "" && header.dataFieldName !== null) 
-        newRow[header.dataFieldName] = header.defaultValue;
-    }
 
-    // now we get a new primary key: -1, -2, -3,
-    const allPrimaryKeys = this.state.data.map(el => {
-      return { id: el[this.props.primaryKey] }
-    });
-    let min = Math.min(...allPrimaryKeys);
-    if (min >= 0) min = 0;
-    min = min - 1;
-    newRow[this.props.primaryKey] = min;
+    for (let h = 0; h < this.state.headers.length; h++)
+    {
+      if (this.state.headers[h].dataFieldName !== "" && 
+          this.state.headers[h].dataFieldName !== this.props.primaryKey)
+      {
+        if (this.state.headers[h].editType === IConst.editType_Date)
+          objRow[this.state.headers[h].dataFieldName] = new Date();
+        else
+          objRow[this.state.headers[h].dataFieldName] = this.state.headers[h].defaultValue;
+      }
+    }
+    const newRows = [...this.state.data, objRow];
 
     // first add the new row to rowInfoList
-    const newRowInfo = [];
+    const newInfoList = [...this.state.rowInfoList];
     let obj = {};
-    obj['id'] = min;
+    obj['id'] = minid;
     obj['height'] = this.props.settings.initialRowHeight;
     obj['state'] = IConst.rowStateInserted; // edited, deleted, inserted, 
     obj['selected'] = false; // edited, deleted, inserted, 
-    newRowInfo.push(obj);
-    this.setState({rowInfoList: [...this.state.rowInfoList, newRowInfo]});
+    newInfoList.push(obj);
+
+    // now add the filter "inserted rows"
+    // if not, the new row might be not found in the dataset 
+    let newfilters = this.state.filters.length === 0 ? [] : [...this.state.filters];
+    const index = newfilters.findIndex(f => f.filterFieldname === "");
+    if (index === -1)  
+    {
+      const oneFilter = { filterFieldname: "", filterOperator: IConst.filterOperator_Inserted, filterValue: "" };
+      newfilters.push(oneFilter);
+    }
+    else
+    {
+      newfilters[index].filterOperator = IConst.filterOperator_Inserted;
+    }
+
+
+    const cntChangedRows = this.getCountChangedRows();
 
     // now add the new row to data
-    this.setState({data: [...this.state.data, newRow]});
+    this.setState({
+      data: newRows,
+      rowInfoList: newInfoList,
+      filters: newfilters,
+      mainButtonsDisabled: false,
+      countChangedRows: cntChangedRows + 1
+     });
   }
 
   handleSaveOneRow(row)
   {
     // button SAVE for one row was clicked
     // first we check the data
+
+    //console.log("ITable handleSaveOneRow", row[this.props.primaryKey]);
+
     const errorText = IUtils.getRowErrorText(this.state.headers, row);
     if (errorText !== "")
     {
@@ -534,7 +557,9 @@ class ITable extends React.Component {
 
     // now copy to clipboard
     navigator.clipboard.writeText(txt);
-    alert("Data was copied to clipboard.");
+
+    // TODO slack
+    //alert("Data was copied to clipboard.");
   }
 
   // ---------------------------------------------------------------------------------------
@@ -545,6 +570,12 @@ class ITable extends React.Component {
     const newlist = this.state.rowInfoList.filter(r => r.state !== IConst.rowStateUnchanged);
     const disable = newlist.length === 0;
     return disable;
+  }
+
+  getCountChangedRows()
+  {
+    const newlist = this.state.rowInfoList.filter(r => r.state !== IConst.rowStateUnchanged);
+    return newlist.length;
   }
 
   setRowStateIndex(rowIndex, newstate)
@@ -983,10 +1014,8 @@ class ITable extends React.Component {
 
   setChangedFilters(newFilters)
   {
-    // change hide one column
+    // change filtering
     this.setState({filters: newFilters});
-
-
   }
 
   menuButtonClick(index)
@@ -1000,6 +1029,8 @@ class ITable extends React.Component {
     this.props.menuButtonClick(index);
   }
 
+
+  
   render() 
   {
     const { classes } = this.props;
@@ -1012,48 +1043,76 @@ class ITable extends React.Component {
     if (this.state.filters !== null && this.state.filters.length > 0)
     {
       // we apply all filters
-      for (let f = 0; f < this.state.filters.length; f++) {
-        const filterField = this.state.filters[f].fieldname;
-        const filterOperator = this.state.filters[f].operator;
-        const index = this.state.headers.findIndex((h) => h.dataFieldName === filterField);
-        const getter = this.state.headers[index].getter;
-        const editType = this.state.headers[index].editType;
-        const isGetter = editType === IConst.editType_Getter;
+      for (let f = 0; f < this.state.filters.length; f++) 
+      {
+        const filterField = this.state.filters[f].filterFieldname;
+        const filterOperator = this.state.filters[f].filterOperator;
+
+        let index = -1;
+        let getter = "";
+        let editType = "";
+        let isGetter = "";
+
+
+        if (filterField === "")
+        {
+          // filtering row states 
+        }
+        else
+        {
+          index = this.state.headers.findIndex((h) => h.dataFieldName === filterField);
+          if (index > -1)
+          {
+            getter = this.state.headers[index].getter;
+            editType = this.state.headers[index].editType;
+            isGetter = editType === IConst.editType_Getter;
+          }
+        }
   
-        const filterValue = 
-          editType === IConst.editType_Integer ? parseInt(this.state.filters[f].value) :
-          editType === IConst.editType_Decimal ? parseFloat(this.state.filters[f].value) :
+        const filterTypeValue = 
+          editType === IConst.editType_Integer ? parseInt(this.state.filters[f].filterValue) :
+          editType === IConst.editType_Decimal ? parseFloat(this.state.filters[f].filterValue) :
           // TODO
-          //editType === IConst.editType_Date ? getTime(this.state.filters[f].value) :
-          this.state.filters[f].value;
+          //editType === IConst.editType_Date ? getTime(this.state.filters[f].filterValue) :
+          this.state.filters[f].filterValue;
   
         if (data.length > 0) 
         {
           data = data.filter((row) =>
             filterOperator === IConst.filterOperator_Contains ? 
-              IUtils.getCellValue(row, filterField, isGetter, getter).includes(filterValue) :
+              IUtils.getCellValue(row, filterField, isGetter, getter).includes(filterTypeValue) :
             filterOperator === IConst.filterOperator_ContainsNot ? 
-              !IUtils.getCellValue(row, filterField, isGetter, getter).includes(filterValue) :
+              !IUtils.getCellValue(row, filterField, isGetter, getter).includes(filterTypeValue) :
             filterOperator === IConst.filterOperator_Equals ? 
-              IUtils.getCellValue(row, filterField, isGetter, getter) === filterValue :
+              IUtils.getCellValue(row, filterField, isGetter, getter) === filterTypeValue :
             filterOperator === IConst.filterOperator_EqualsNot ? 
-              !IUtils.getCellValue(row, filterField, isGetter, getter) !== filterValue :
+              !IUtils.getCellValue(row, filterField, isGetter, getter) !== filterTypeValue :
             filterOperator === IConst.filterOperator_StartsWith ? 
-              IUtils.getCellValue(row, filterField, isGetter, getter).startsWith(filterValue) :
+              IUtils.getCellValue(row, filterField, isGetter, getter).startsWith(filterTypeValue) :
             filterOperator === IConst.filterOperator_StartsWithNot ? 
-              !IUtils.getCellValue(row, filterField, isGetter, getter).startsWith(filterValue) :
+              !IUtils.getCellValue(row, filterField, isGetter, getter).startsWith(filterTypeValue) :
             filterOperator === IConst.filterOperator_EndsWith ? 
-              IUtils.getCellValue(row, filterField, isGetter, getter).endsWith(filterValue) :
+              IUtils.getCellValue(row, filterField, isGetter, getter).endsWith(filterTypeValue) :
             filterOperator === IConst.filterOperator_EndsWithNot ? 
-              !IUtils.getCellValue(row, filterField, isGetter, getter).endsWith(filterValue) :
+              !IUtils.getCellValue(row, filterField, isGetter, getter).endsWith(filterTypeValue) :
             filterOperator === IConst.filterOperator_IsEmpty ? 
               IUtils.getCellValue(row, filterField, isGetter, getter) === null :
             filterOperator === IConst.filterOperator_IsEmptyNot ? 
               IUtils.getCellValue(row, filterField, isGetter, getter) !== null :
             filterOperator === IConst.filterOperator_IsSmallerThan ? 
-              IUtils.getCellValue(row, filterField, isGetter, getter) < filterValue :
+              IUtils.getCellValue(row, filterField, isGetter, getter) < filterTypeValue :
             filterOperator === IConst.filterOperator_IsBiggerThan ? 
-              IUtils.getCellValue(row, filterField, isGetter, getter) > filterValue :
+              IUtils.getCellValue(row, filterField, isGetter, getter) > filterTypeValue :
+
+            // filtering states
+            filterOperator === IConst.filterOperator_Edited ? 
+              IUtils.getRowState(row[this.props.primaryKey], this.state.rowInfoList) === IConst.rowStateEdited : 
+            filterOperator === IConst.filterOperator_Deleted ? 
+              IUtils.getRowState(row[this.props.primaryKey], this.state.rowInfoList) === IConst.rowStateDeleted : 
+            filterOperator === IConst.filterOperator_Inserted ? 
+              IUtils.getRowState(row[this.props.primaryKey], this.state.rowInfoList) === IConst.rowStateInserted : 
+            filterOperator === IConst.filterOperator_Modified ? 
+              IUtils.getRowState(row[this.props.primaryKey], this.state.rowInfoList) !== IConst.rowStateUnchanged : 
             true
           );
         }
@@ -1077,8 +1136,6 @@ class ITable extends React.Component {
     const mainIndeterminated = this.state.mainIndeterminated;
     const mainButtonsDisabled = this.state.mainButtonsDisabled;
     const sizeMainButton = this.props.settings.buttonSizeMain;
-
-    console.log("data", this.state.data[0]);
 
     return (
       <Paper 
@@ -1194,7 +1251,7 @@ class ITable extends React.Component {
                     className={classes.mainButtons}
                     disabled={this.state.savingInProgressAll}
                     onClick={(index) => this.menuButtonClick(index)}>
-                    <img src={button.icon} style={{ width: iconSize, height:iconSize }} />
+                    {button.icon && <img src={button.icon} style={{ width: iconSize, height:iconSize }} />}
                     {button.caption}
                   </IconButton>
                 );
@@ -1219,7 +1276,7 @@ class ITable extends React.Component {
                 <SaveIcon sx={{ 
                   color: IConst.iconColorGreen, 
                   opacity: mainButtonsDisabled ? 0.2 : 1 }}/>
-              &nbsp;Save all</IconButton></Tooltip>}
+              &nbsp;Save all ({this.state.countChangedRows})</IconButton></Tooltip>}
 
               {/* undo all  */}
               {this.props.settings.hasButtonUndoAll &&
@@ -1231,7 +1288,7 @@ class ITable extends React.Component {
               <UndoIcon sx={{ 
                 color: IConst.iconColorRed,
                 opacity: mainButtonsDisabled ? 0.2 : 1 }}/>
-              &nbsp;Undo all</IconButton></Tooltip>}
+              &nbsp;Undo all ({this.state.countChangedRows})</IconButton></Tooltip>}
 
               {/* export for excel all rows */}    
               {this.props.settings.hasButtonExcelAll && 
@@ -1258,7 +1315,7 @@ class ITable extends React.Component {
                     className={classes.mainButtons}
                     disabled={this.state.savingInProgressAll}
                     onClick={(index) => this.menuButtonClick(index)}>
-                    <img src={button.icon} style={{ width: iconSize, height:iconSize }} />
+                    {button.icon && <img src={button.icon} style={{ width: iconSize, height:iconSize }} />}
                     {button.caption}
                   </IconButton>
                 );

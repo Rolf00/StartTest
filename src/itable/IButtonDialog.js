@@ -71,6 +71,9 @@ class IButtonDialog extends React.Component {
 
     const title = this.props.buttonDialogTitle;
     const question = this.props.buttonDialogQuestion;
+
+    const questionLines = question.split("\n");
+
     const mainIcon = 
       this.props.buttonDialogIconType === IConst.buttonDialogIconType_Info ? IConst.imgDialogBigIconInfo :
       this.props.buttonDialogIconType === IConst.buttonDialogIconType_Question ? IConst.imgDialogBigIconQuestion :
@@ -192,13 +195,19 @@ class IButtonDialog extends React.Component {
             style={{
               maxHeight: textHeight,
               maxWidth: textWidth,
-
+              textAlign: this.props.buttonDialogHorizontalAlign
             }}
           >{title}</Typography>
         </Grid>
 
         <Grid item>
-          <Typography variant="h6" >{question}</Typography>
+          {questionLines.map((question, qIndex) => (
+          <Typography 
+            key={`buttonDialog-Lines${qIndex}`}
+            variant="h6" 
+            style={{ textAlign: this.props.buttonDialogHorizontalAlign }}
+          >{question}</Typography>
+          ))}
         </Grid>
 
         <Grid item>

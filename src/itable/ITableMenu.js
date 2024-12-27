@@ -60,19 +60,21 @@ export default function ITableMenu (props)
   }
 
   
-  const field = props.headers[props.headerIndex].dataFieldName;
+  const selectedDataFieldname = props.headers[props.headerIndex].dataFieldName;
   let fIndex = -1;
-  if (props.filters !== null)
+  if (props.filters.length > 0)
   {
-    fIndex = props.filters.findIndex(f => f.field = field);
+    fIndex = props.filters.findIndex(f => f.filterFieldname = selectedDataFieldname);
   }
-  const fOperator = fIndex === -1 ? null : props.filters[fIndex].operator;
-  const fValue = fIndex === -1 ? null : props.filters[fIndex].value;
+  const fOperator = fIndex === -1 ? null : props.filters[fIndex].filterOperator;
+  const fValue = fIndex === -1 ? "" : props.filters[fIndex].filterValue;
   const [anchorFiltering, setAnchorFiltering] = React.useState(null);
   const openFiltering = Boolean(anchorFiltering);
-  const [filterOperator, setFilterOperator] = React.useState(fOperator);
-  const [filterValue, setFilterValue] = React.useState(fValue);
-  const [filterDateValue, setFilterDateValue] = React.useState(fValue);
+
+  
+  const [selfilterOperator, setFilterOperator] = React.useState(fOperator);
+  const [selfilterValue, setFilterValue] = React.useState(fValue);
+  const [selfilterDateValue, setFilterDateValue] = React.useState(fValue);
 
   const openCloseFiltering = (e) =>
   {
@@ -105,9 +107,7 @@ export default function ITableMenu (props)
     setFilterDateValue(newDateJS);
   }
 
-
   const [openSnack,setOpenSnack] = React.useState(false);
-  
         
   const handleClick = (event) =>
   {
@@ -120,7 +120,6 @@ export default function ITableMenu (props)
     setAnchorEl(null);
     openCloseManageColumns(null);
   }
-
 
   const sortColumn = (sortAscending) => 
   {
@@ -145,10 +144,53 @@ export default function ITableMenu (props)
     props.setChangedHeaders(newList);
   }
 
+
+  function addFilter(newField, newOperator, newValue)
+  {
+    // first check, if it already exists
+    let index = -1;
+
+    let newlist = props.filters.length === 0 ? [] : [...props.filters];
+    index = newlist.findIndex(f => f.filterFieldname === newField);
+    if (index === -1)
+    {
+
+    // TODO : why a field "dateto" is added here?
+    //console.log("TableMenu addFilter props.filters", props.filters);    
+    //console.log("TableMenu addFilter index", index);    
+    //console.log("TableMenu addFilter newField", newField);    
+
+      // it doesnt exist yet, so we create a new one
+      const oneFilter = { filterFieldname: newField, filterOperator: newOperator, filterValue: newValue };
+      newlist.push(oneFilter);
+    }
+    else
+    {
+      // it exists already, so we edit the old one
+      newlist[index].filterOperator = newOperator;
+      newlist[index].filterValue = newValue;
+    }
+
+    //const newfilters = [...props.filters];
+
+    console.log("TableMenu addFilter newlist", newlist);    
+
+    props.setChangedFilters(newlist);
+  }
+  
+  function removeFilter(field)
+  {
+    const newlist = [...props.filters].filter(f => f.filterFieldname !== field);
+
+    console.log("TableMenu removeFilter newfilters", newlist);    
+
+    props.setChangedFilters(newlist);
+  }
+  
   const addFilterClick = () =>
   {
     // add a new filter
-    if (filterOperator === null)
+    if (selfilterOperator === null)
     {
       // dont add filters without operators
       setOpenSnack(true);
@@ -159,38 +201,76 @@ export default function ITableMenu (props)
 
     // first check, if it already exists
     const field = props.headers[props.headerIndex].dataFieldName;
-    let index = -1;
-    if (props.filters !== null)
-    {
-      index = props.filters.findIndex(f => f.field === field);
-    }
+    addFilter(field, selfilterOperator, selfilterValue);
+  }
 
-    let newlist = [...props.filters];
+  const addRowStateFilter = (operator) =>
+  {
+    // close the menu
+    handleClose(null);
+  
+    //setFilterState(operator);
+    //addFilter("", operator, "");
+
+    console.log("TableMenu addRowStateFilter props.filters", props.filters);    
+
+
+    let index = -1;
+
+    let newlist = props.filters.length === 0 ? [] : [...props.filters];
+    index = newlist.findIndex(f => f.filterFieldname === "");
     if (index === -1)
     {
+
+    // TODO : why a field "dateto" is added here?
+    //console.log("TableMenu addFilter props.filters", props.filters);    
+    //console.log("TableMenu addFilter index", index);    
+    //console.log("TableMenu addFilter newField", newField);    
+
       // it doesnt exist yet, so we create a new one
-      let obj = {};
-      obj['fieldname'] = field;
-      obj['operator'] = filterOperator;
-      obj['value'] = filterValue;
-      newlist.push(obj);
+      // TODO why suddenly oneFilter.filterFieldname = 'dateto'
+      const oneFilter = { filterFieldname: "", filterOperator: operator, filterValue: "" };
+
+      console.log("TableMenu addRowStateFilter oneFilter", oneFilter);    
+
+      newlist.push(oneFilter);
+
+      console.log("TableMenu addRowStateFilter newlist", newlist);    
+
     }
     else
     {
       // it exists already, so we edit the old one
-      newlist[index].operator = filterOperator;
-      newlist[index].value = filterValue;
+      newlist[index].filterOperator = operator;
+      //newlist[index].filterValue = newValue;
     }
+
+    //const newfilters = [...props.filters];
+
+    console.log("TableMenu addRowStateFilter newlist", newlist);    
+
     props.setChangedFilters(newlist);
+
+  }
+
+  const removeRowStateFilter = () =>
+  {
+    // close the menu
+    handleClose(null);
+
+    // remove filter where field === ''
+    removeFilter("");
+    setFilterState(null);
   }
 
   const removeRowFilter = () =>
   {
+    // close the menu
+    handleClose(null);
+
     // remove filter of one column
-    openCloseFiltering(null);
     const field = props.headers[props.headerIndex].dataFieldName;
-    const newList = props.filters.filter(f => f.fieldname !== field);
-    props.setChangedFilters(newList);
+    removeFilter(field);
   }
 
   const removeAllFilters = () =>
@@ -260,7 +340,17 @@ export default function ITableMenu (props)
   const isDropdown = props.headers[props.headerIndex].editType === IConst.editType_Dropdown;
   const isTextfield = !(isNumber || isDate || isDropdown);
 
+  // get the old filter state
+  const oldIndex = props.filters.findIndex(f => f.filterFieldname === "");
+  const oldState = oldIndex === -1 ? null : props.filters[oldIndex].filterOperator;
+  const [filterState, setFilterState] = React.useState(oldState);
+
   const filterEditWidth = 210;
+
+  const countSortings = props.headers.filter(f => f.defaultSorting !== "").length;
+  const countFilters = props.filters.length;
+  const countHidedColumns = props.headers.filter(h => h.isVisible === false).length;
+
 
   return (
     <div>
@@ -328,7 +418,7 @@ export default function ITableMenu (props)
           disabled={noSortingExists}
           onClick={() => removeAllSorting('')}>
           <ListItemIcon></ListItemIcon>
-          <ListItemText>Remove all sortings</ListItemText>
+          <ListItemText>Remove all sortings ({countSortings})</ListItemText>
         </MenuItem>
 
         <Divider sx={{ my: 0.5 }} />
@@ -336,21 +426,58 @@ export default function ITableMenu (props)
         <MenuItem key='ITableMenu_Item5' 
           onClick={(e) => openCloseFiltering(e)}>
           <ListItemIcon></ListItemIcon>
-          <ListItemText>Add filter</ListItemText>
+          <ListItemText>Add filter for '{props.headers[props.headerIndex].headerTitle}'</ListItemText>
         </MenuItem>
 
         <MenuItem key='ITableMenu_Item6' 
           disabled={noRowFilterExists}
           onClick={() => removeRowFilter()}>
           <ListItemIcon></ListItemIcon>
-          <ListItemText>Remove filter for this field</ListItemText>
+          <ListItemText>Remove filter for '{props.headers[props.headerIndex].headerTitle}'</ListItemText>
         </MenuItem>
 
         <MenuItem key='ITableMenu_Item7' 
           disabled={noFilterExists}
           onClick={() => removeAllFilters()}>
           <ListItemIcon></ListItemIcon>
-          <ListItemText>Remove all filters</ListItemText>
+          <ListItemText>Remove all filters ({countFilters})</ListItemText>
+        </MenuItem>
+
+        <Divider sx={{ my: 0.5 }} />
+
+        <MenuItem key='ITableMenu_ItemState1' 
+          disabled={filterState === IConst.filterOperator_Edited}
+          onClick={() => addRowStateFilter(IConst.filterOperator_Edited)}>
+          <ListItemIcon></ListItemIcon>
+          <ListItemText>Show only states 'edited rows'</ListItemText>
+        </MenuItem>
+
+        <MenuItem key='ITableMenu_ItemState2' 
+          disabled={filterState === IConst.filterOperator_Deleted}
+          onClick={() => addRowStateFilter(IConst.filterOperator_Deleted)}>
+          <ListItemIcon></ListItemIcon>
+          <ListItemText>Show only states 'deleted rows'</ListItemText>
+        </MenuItem>
+
+        <MenuItem key='ITableMenu_ItemState3' 
+          disabled={filterState === IConst.filterOperator_Inserted}
+          onClick={() => addRowStateFilter(IConst.filterOperator_Inserted)}>
+          <ListItemIcon></ListItemIcon>
+          <ListItemText>Show only states 'inserted rows'</ListItemText>
+        </MenuItem>
+
+        <MenuItem key='ITableMenu_ItemState4' 
+          disabled={filterState === IConst.filterOperator_Modified}
+          onClick={() => addRowStateFilter(IConst.filterOperator_Modified)}>
+          <ListItemIcon></ListItemIcon>
+          <ListItemText>Show all 'modified rows'</ListItemText>
+        </MenuItem>
+
+        <MenuItem key='ITableMenu_ItemState5' 
+          disabled={filterState === ""}
+          onClick={() => removeRowStateFilter()}>
+          <ListItemIcon></ListItemIcon>
+          <ListItemText>Remove state filter</ListItemText>
         </MenuItem>
 
         <Divider sx={{ my: 0.5 }} />
@@ -365,7 +492,7 @@ export default function ITableMenu (props)
           disabled={noHidedColumnExists}
           onClick={() => unhideAllColumns()}>
           <ListItemIcon><VisibilityOutlinedIcon /></ListItemIcon>
-          <ListItemText>Unhide all columns</ListItemText>
+          <ListItemText>Unhide all columns ({countHidedColumns})</ListItemText>
         </MenuItem>
 
         <MenuItem key='ITableMenu_Item10' 
@@ -374,7 +501,7 @@ export default function ITableMenu (props)
           disabled={noHidedColumnExists}
           onClick={(e) => openCloseManageColumns(e)}>
           <ListItemIcon></ListItemIcon>
-          <ListItemText>Manage columns</ListItemText>
+          <ListItemText>Manage columns ({countHidedColumns})</ListItemText>
           <ListItemIcon><ArrowRightIcon/></ListItemIcon>
         </MenuItem>
       </Menu>
@@ -438,7 +565,7 @@ export default function ITableMenu (props)
             <Grid item style={{ width: filterEditWidth, padding: "2px 4px 8px 4px", display: "flex", alignItems: "center" }}>
               <Select
                 onChange={(e) => filterOperatorChange(e)}
-                value={filterOperator}
+                value={selfilterOperator}
                 style={{ width: filterEditWidth,  }}
                 sx={{ 
                   '& .MuiInputBase-root': {
@@ -486,7 +613,7 @@ export default function ITableMenu (props)
 
               {isTextfield &&
               <TextField 
-                value={filterValue}
+                value={selfilterValue}
                 onChange = {(e) => filterValueChange(e)}
                 style={{ width: '100%' }}
                 sx={{ 
@@ -503,7 +630,7 @@ export default function ITableMenu (props)
               {isDate &&
               <LocalizationProvider dateAdapter={AdapterDayjs} locale='de'>
               <DatePicker 
-                value={filterDateValue}
+                value={selfilterDateValue}
                 format="DD.MM.YYYY"
                 onChange = {(e) => filterDateChange(e)}
                 style={{ width: '100%' }}
@@ -520,7 +647,7 @@ export default function ITableMenu (props)
 
               {isDropdown &&
               <Select 
-                value={filterValue}
+                value={selfilterValue}
                 onChange = {(e) => filterValueChange(e)}
                 style={{ width: '100%' }}
                 sx={{ 
@@ -544,8 +671,6 @@ export default function ITableMenu (props)
                     );
                   })}
               </Select>}
-
-
 
             </Grid>
           </Grid>

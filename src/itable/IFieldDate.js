@@ -43,7 +43,7 @@ export default function IFieldDate (props) {
 
   // prepare the date from JS to DatePicker
   const oldJSDate = props.value;
-  const jsdt = new Date(
+  const jsdt = oldJSDate === null || oldJSDate === "" ? new Date() : new Date(
     oldJSDate.getFullYear(), 
     oldJSDate.getMonth(), 
     oldJSDate.getDate());

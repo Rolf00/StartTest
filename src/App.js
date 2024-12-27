@@ -18,7 +18,10 @@ import imgChipStatusPurple from './CirclePurple.png';
 import imgChipStatusBlue from './CircleBlue.png'; 
 import imgChipStatusTurqoise from './CircleTurqoise.png'; 
 import imgChipStatusGreen from './CircleGreen.png'; 
+
 import imgPerson48 from './imgPerson48.png';
+import imgIconOk from './itable/imgYes48.png'; 
+import imgDialogStop from './itable/imgStop96.png'; 
 
 import IConst from './itable/IConst';
 import ITable from './itable/ITable';
@@ -77,6 +80,7 @@ const headersWaldo = [
     dataFieldName: 'firstName',
     horizontalAlign: 'left',
     hasHeaderMenu: true,
+    helperText: "The firstname is required.",
   },
   {
     id: 3,
@@ -95,6 +99,7 @@ const headersWaldo = [
     dataFieldName: 'lastName',
     horizontalAlign: 'left',
     hasHeaderMenu: true,
+    helperText: "The lastname is required.",
   },
   {
     id: 4,
@@ -642,7 +647,7 @@ const App = ()=> {
     // button options
     buttonSizeOnRows: 32,
     buttonSizeOnRowsHover: 38,
-    buttonSizeMain: 40,
+    buttonSizeMain: 32,
     hasButtonNewRow: true,
     hasButtonSaveAll: true,
     hasButtonUndoAll: true,
@@ -656,8 +661,8 @@ const App = ()=> {
 
     // menu buttons
     menuButtonList: [
-      { id:1, caption: "Back", hint: "go to previous page", icon: "", positionStart: true },
-      { id:2, caption: "Next", hint: "go to next page", icon: "", positionStart: false },
+      { id:1, caption: "Back", hint: "go to previous page", icon: imgDialogStop, positionStart: true },
+      { id:2, caption: "Next", hint: "go to next page", icon: imgIconOk, positionStart: false },
     ],
   };
   
@@ -693,9 +698,13 @@ const App = ()=> {
   
   return(
     <>
-    <Grid container  style={{ width: '100%' }} >
+    <Grid container
+      //style={{ width: '100%' }} 
+    >
 
-      <Grid item style={{ width: '100%' }} >
+      <Grid item 
+        style={{ overflowX: 'auto' }} 
+      >
         <div style={{ paddingTop: 30, fontSize: 24, fontWeight: 'bold'}}>Table with own components</div>
         <ITable 
           settings={settings}

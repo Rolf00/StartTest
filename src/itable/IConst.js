@@ -217,6 +217,11 @@ class IConst {
   static filterOperator_IsBiggerThan = "12";
   //static filterOperator_IsAnyOf = "13";
 
+  // fitering states
+  static filterOperator_Edited = "E";
+  static filterOperator_Deleted = "D";
+  static filterOperator_Inserted = "I";
+  static filterOperator_Modified = "U";
 }
 
 export default IConst;

@@ -27,7 +27,7 @@ class IUtils {
     {
       // dd.MM.yyyy
       optionsDate = { month: "2-digit", day: "2-digit", year: "numeric", };
-      dateText = date.toLocaleDateString(localization, optionsDate);
+      dateText =  date === "" ? "" : date.toLocaleDateString(localization, optionsDate);
     }
     else 
     if (format === IConst.format_DateMiddle ||
@@ -36,7 +36,7 @@ class IUtils {
     {
       // Mi., dd. Dez. yyyy
       optionsDate = { weekday: "short", month: "short", day: "2-digit", year: "numeric", };
-      dateText = date.toLocaleDateString(localization, optionsDate);
+      dateText =  date === "" ? "" : date.toLocaleDateString(localization, optionsDate);
     }
     else 
     if (format === IConst.format_DateLong ||
@@ -45,7 +45,7 @@ class IUtils {
     {
       // Mittwoch, dd. Dezember yyyy
       optionsDate = { weekday: "long", month: "long", day: "2-digit", year: "numeric", };
-      dateText = date.toLocaleDateString(localization, optionsDate);
+      dateText = date === "" ? "" : date.toLocaleDateString(localization, optionsDate);
     }
 
     // Format the time
@@ -58,7 +58,7 @@ class IUtils {
     {
       // 23:MM:ss
       optionsTime = { hour12: false, hour: "2-digit", minute: "2-digit", second: "2-digit", };
-      timeText += date.toLocaleTimeString(localization, optionsTime);
+      timeText +=  date === "" ? "" : date.toLocaleTimeString(localization, optionsTime);
     }
     else 
     if (format === IConst.format_Time12h ||
@@ -68,7 +68,7 @@ class IUtils {
     {
       // 11:MM:ss AM/PM
       optionsTime = { hour12: false, hour: "2-digit", minute: "2-digit", second: "2-digit", };
-      timeText += date.toLocaleTimeString(localization, optionsTime);
+      timeText +=  date === "" ? "" : date.toLocaleTimeString(localization, optionsTime);
     }
 
     // now combine date and time
@@ -92,68 +92,48 @@ class IUtils {
 
   static hasError(value, header)  
   {
+    let hasErrorResult = false;
+
     // field is not editable, thus we dont check anyting 
-    if (!header.isEditable) return false;
+    if (!header.isEditable) hasErrorResult = false;
 
     // text fields
     if (header.editType === IConst.editType_Textfield ||
     header.editType === IConst.editType_TextfieldMultiline)
     {
-      // cases with no errors
-      if (
-        (!value && !header.required) || 
-        (value === "" && !header.required) ||
-        !header.textMaxLength
-      ) return false;
-
       // cases with errors
-      if (
-        (!value && header.required) ||
-        (value === "" && header.required) ||
-        (value.length > header.textMaxLength)
-      ) return true;
-
-      // no errors found
-      return false;
+      if (!value && header.isRequired) hasErrorResult = true;
+      if (value === undefined && header.isRequired) hasErrorResult = true;
+      if (value === "" && header.isRequired) hasErrorResult = true;
+      if (value.length > header.textMaxLength) hasErrorResult = true;
     }
 
     // number fields
     if (header.editType === IConst.editType_Integer ||
       header.editType === IConst.editType_Decimal)
     {
-      // cases with no errors
-      if (!value && !header.required) return false;
-
-      // cases with errors
-      if (
-        (!value && header.required) ||
-        (value > header.numberMaxValue) ||
-        (value < header.numberMinValue)
-      ) return true;
-
-      // no errors found
-      return false;
+      if (!value && header.isRequired) hasErrorResult = true;
+      if (value === undefined && header.isRequired) hasErrorResult = true;
+      if (value > header.numberMaxValue) hasErrorResult = true;
+      if (value < header.numberMinValue) hasErrorResult = true;
     }
 
     // dropdown fields
     if (header.editType === IConst.editType_Dropdown)
     {
-      // cases with no errors
-      if (!value && !header.required) return false;
-
       // cases with errors
       if (!value && header.required) return true;
-
-      // no errors found
-      return false;
+      if (value === undefined && header.isRequired) hasErrorResult = true;
     }
 
     // no component to check errors
-    return false;
+    return hasErrorResult;
   }
 
   static hasErrorDate(value, header, row)  
   {
+    // TODO do correct checks for dates
+
     // field is not editable, thus we dont check anyting 
     if (!header.isEditable) return false;
     if ((!value) && header.required) return true;
@@ -188,28 +168,28 @@ class IUtils {
 
   static getRowErrorText(headers, row)
   {
-    if (!row) return "";
-
     let errorText = "";
-    headers.forEach((header) => 
+    for (let h = 0; h < headers.length; h++)
     {
-      const value = row[header.dataFieldName];
-      if (header.editType === IConst.editType_Date)
+      if (headers[h].dataFieldName !== "" && headers[h].dataFieldName !== undefined)
       {
-        // special checks for date fields
-        if (this.hasErrorDate(value, header, row))
-          errorText += "Field " + header.headerTitle + " : " + 
-        header.helperText + "\n";
+        const value = row[headers[h].dataFieldName];
+        if (headers[h].editType === IConst.editType_Date)
+        {
+          // special checks for date fields
+          if (this.hasErrorDate(value, headers[h], row))
+            errorText += headers[h].headerTitle + " : " + headers[h].helperText + "\n";
+        }
+        else
+        {
+          // normal for all other fields
+          if (this.hasError(value, headers[h]))  
+          {
+            errorText += headers[h].headerTitle + " : " + headers[h].helperText + "\n";
+          }
+        }
       }
-      else
-      {
-        // normal for all other fields
-        if (this.hasError(value, header))  
-          errorText += "Field " + header.headerTitle + " : " + 
-            header.helperText + "\n";
-      }
-    });
-
+    };
     return errorText;
   }
 
@@ -236,6 +216,12 @@ class IUtils {
     return text;
   };
 
+  static getRowState(rowid, infoList)
+  {
+     const index = infoList.findIndex(i => i.id === rowid);
+     if (index === -1) return null;
+     return infoList[index].state;
+  }  
 
 }
 
