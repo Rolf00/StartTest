@@ -133,6 +133,7 @@ class IButtonDialog extends React.Component {
       entireMinHeight = entireMaxHeight;
     }
     /*
+    // TODO : special calculations for dialog dimension in casr of long text
     else if (this.props.buttonDialogSizeType === IConst.buttonDialogSizeType_Width_TextHeight )
     {
       // fixed width | height from text

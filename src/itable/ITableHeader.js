@@ -43,6 +43,7 @@ class ITableHeader extends React.Component {
       classes,
       settings,
       headers,
+      sortings,
       mainChecked,
       mainIndeterminated,
     } = this.props;
@@ -103,6 +104,7 @@ class ITableHeader extends React.Component {
                   headers={this.props.headers}
                   headerIndex={headerIndex}
                   filters={this.props.filters}
+                  sortings={this.props.sortings}
                   notResizable={!isResizable}
                   width={newheaderWidth}
                   minWidth={headerMinWidth}
@@ -110,17 +112,16 @@ class ITableHeader extends React.Component {
                   verticalAlign={verticalAlign}
                   height= {headerRowHeight}
                   setWidth={(colwidth) => this.setState({colwidth: colwidth})}
-
-                  //handleMouseDownRowEW={(e, headerIndex)=>this.props.handleMouseDownRowEW(e, headerIndex)}
                   hasHeaderMenu={hasHeaderMenu}
                   setChangedHeaders={(newheaders) => this.props.setChangedHeaders(newheaders)}
                   setChangedFilters={(newfilters) => this.props.setChangedFilters(newfilters)}
+                  setChangedSortings={(newsortings) => this.props.setChangedSortings(newsortings)}
                   SortColumn={(sortAscending) => this.props.SortColumn(headerIndex, sortAscending)}
                   >
                   {isSelectionHeader &&
                   <div
                     style={{ 
-                      padding: '0px 0px 0px 7px', 
+                      padding: '5px 0px', 
                       width: '100%', 
                       height: '100%',
                       display: 'flex',

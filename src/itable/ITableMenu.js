@@ -17,6 +17,7 @@ import {
   Tooltip
 } from '@mui/material';
 
+
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -37,10 +38,40 @@ import SwapVertIcon from '@mui/icons-material/SwapVert';
 
 
 import IConst from './IConst';
+import { getNewSortingList } from './IUtilsSort';
+
+// TODO
+//import ISortingDialog from './ISortingDialog';
 
 
 export default function ITableMenu (props) 
 {
+
+  const filterTopButton =
+  {
+    padding: "4px 4px 2px 4px",
+    display: 'flex',
+    alignItems: 'center',
+  }
+
+  const filterEdit =
+  {
+    width: "210px", 
+    padding: "4px 4px 2px 4px" ,
+    margin: '0px 4px 8px 4px',
+    display: 'flex',
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
+  }
+
+  const filterTopText =
+  {
+    padding: "8px 4px 2px 4px" ,
+    margin: '0px 4px 0px 4px',
+    display: 'flex',
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
+  }
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -58,23 +89,24 @@ export default function ITableMenu (props)
       setAnchorManageColumns(e.currentTarget );
     }
   }
-
   
-  const selectedDataFieldname = props.headers[props.headerIndex].dataFieldName;
-  let fIndex = -1;
-  if (props.filters.length > 0)
-  {
-    fIndex = props.filters.findIndex(f => f.filterFieldname = selectedDataFieldname);
-  }
-  const fOperator = fIndex === -1 ? null : props.filters[fIndex].filterOperator;
-  const fValue = fIndex === -1 ? "" : props.filters[fIndex].filterValue;
   const [anchorFiltering, setAnchorFiltering] = React.useState(null);
   const openFiltering = Boolean(anchorFiltering);
-
   
-  const [selfilterOperator, setFilterOperator] = React.useState(fOperator);
-  const [selfilterValue, setFilterValue] = React.useState(fValue);
-  const [selfilterDateValue, setFilterDateValue] = React.useState(fValue);
+  const [selfilterOperator, setFilterOperator] = React.useState("");
+  const [selfilterValue, setFilterValue] = React.useState("");
+
+  // prepare the datepicker
+  /*
+  const oldJSDate = props.value;
+  const jsdt = oldJSDate === null || oldJSDate === "" ? new Date() : new Date(
+    oldJSDate.getFullYear(), 
+    oldJSDate.getMonth(), 
+    oldJSDate.getDate());
+    */
+  const jsdt = new Date();
+  const pickerDate = dayjs(jsdt);
+  const [selfilterDateValue, setFilterDateValue] = React.useState(pickerDate);
 
   const openCloseFiltering = (e) =>
   {
@@ -126,71 +158,69 @@ export default function ITableMenu (props)
     // sort a column
     handleClose(); 
 
-    // first we delete all older sortings
-    for (let h = 0; h < props.headers.length; h++)
-      props.headers[h].defaultSorting = "";
-
-    props.headers[props.headerIndex].defaultSorting = sortAscending;
-    const newList = [...props.headers];
-    props.setChangedHeaders(newList);
+    const field = props.headers[props.headerIndex].dataFieldName;
+    const newSortingList = getNewSortingList(props.sortings, sortAscending, field);
+    props.setChangedSortings(newSortingList);
   }
 
   const removeAllSorting = () =>
   {
     // remove all sortings
-    handleClose(); 
-    for (let h = 0; h < props.headers.length; h++) props.headers[h].defaultSorting = '';
-    const newList = [...props.headers];
-    props.setChangedHeaders(newList);
+    const newList = [];
+    props.setChangedSortings(newList);
   }
 
-
-  function addFilter(newField, newOperator, newValue)
+  const [openSortingDialog, setOpenSortingDialog] = React.useState(true);
+  const manageSortings = () =>
   {
-    // first check, if it already exists
-    let index = -1;
+    setOpenSortingDialog(true);
+  }
 
-    let newlist = props.filters.length === 0 ? [] : [...props.filters];
-    index = newlist.findIndex(f => f.filterFieldname === newField);
-    if (index === -1)
+  const addFilter = (newField, newOperator, newValue) =>
+  {
+    // first check, if this filter it already exists
+    const index = props.filters.findIndex(f => f.filterFieldname === newField);
+
+    let newlist;
+    if (index === -1) 
     {
-
-    // TODO : why a field "dateto" is added here?
-    //console.log("TableMenu addFilter props.filters", props.filters);    
-    //console.log("TableMenu addFilter index", index);    
-    //console.log("TableMenu addFilter newField", newField);    
-
       // it doesnt exist yet, so we create a new one
-      const oneFilter = { filterFieldname: newField, filterOperator: newOperator, filterValue: newValue };
-      newlist.push(oneFilter);
-    }
-    else
+      const onerow = { 
+        filterFieldname: newField, 
+        filterOperator: newOperator, 
+        filterValue: newValue };
+
+      if (props.filters.length === 0) 
+      {
+        newlist = [onerow];
+      } 
+      else 
+      {
+        newlist = [...props.filters, onerow];
+      }
+    } 
+    else 
     {
       // it exists already, so we edit the old one
+      newlist = [...props.filters];
       newlist[index].filterOperator = newOperator;
       newlist[index].filterValue = newValue;
     }
 
-    //const newfilters = [...props.filters];
-
-    console.log("TableMenu addFilter newlist", newlist);    
-
     props.setChangedFilters(newlist);
   }
   
-  function removeFilter(field)
+  const removeFilter = (field) =>
   {
+    // remove a filter
     const newlist = [...props.filters].filter(f => f.filterFieldname !== field);
-
-    console.log("TableMenu removeFilter newfilters", newlist);    
-
     props.setChangedFilters(newlist);
   }
   
   const addFilterClick = () =>
   {
     // add a new filter
-    if (selfilterOperator === null)
+    if (selfilterOperator === null || selfilterOperator === "")
     {
       // dont add filters without operators
       setOpenSnack(true);
@@ -207,66 +237,28 @@ export default function ITableMenu (props)
   const addRowStateFilter = (operator) =>
   {
     // close the menu
-    handleClose(null);
-  
-    //setFilterState(operator);
-    //addFilter("", operator, "");
+    handleClose();
 
-    console.log("TableMenu addRowStateFilter props.filters", props.filters);    
-
-
-    let index = -1;
-
-    let newlist = props.filters.length === 0 ? [] : [...props.filters];
-    index = newlist.findIndex(f => f.filterFieldname === "");
-    if (index === -1)
-    {
-
-    // TODO : why a field "dateto" is added here?
-    //console.log("TableMenu addFilter props.filters", props.filters);    
-    //console.log("TableMenu addFilter index", index);    
-    //console.log("TableMenu addFilter newField", newField);    
-
-      // it doesnt exist yet, so we create a new one
-      // TODO why suddenly oneFilter.filterFieldname = 'dateto'
-      const oneFilter = { filterFieldname: "", filterOperator: operator, filterValue: "" };
-
-      console.log("TableMenu addRowStateFilter oneFilter", oneFilter);    
-
-      newlist.push(oneFilter);
-
-      console.log("TableMenu addRowStateFilter newlist", newlist);    
-
-    }
-    else
-    {
-      // it exists already, so we edit the old one
-      newlist[index].filterOperator = operator;
-      //newlist[index].filterValue = newValue;
-    }
-
-    //const newfilters = [...props.filters];
-
-    console.log("TableMenu addRowStateFilter newlist", newlist);    
-
-    props.setChangedFilters(newlist);
-
+    // add filter wihtout a fieldname 
+    addFilter("", operator, "");
   }
 
   const removeRowStateFilter = () =>
   {
     // close the menu
-    handleClose(null);
+    handleClose();
 
     // remove filter where field === ''
     removeFilter("");
-    setFilterState(null);
   }
 
   const removeRowFilter = () =>
   {
     // close the menu
-    handleClose(null);
+    handleClose();
+    setFilterOperator("");
+    setFilterValue("");
+    setFilterDateValue(new Date());
 
     // remove filter of one column
     const field = props.headers[props.headerIndex].dataFieldName;
@@ -275,12 +267,16 @@ export default function ITableMenu (props)
 
   const removeAllFilters = () =>
   {
+    // close the menu
+    handleClose();
     // remove all filters
     const newList = [];
     props.setChangedFilters(newList);
   }
 
-  const cancelFilter = () => {
+  const cancelFilter = () => 
+  {
+    // close the fiter menu
     openCloseFiltering(null);
   }
 
@@ -318,14 +314,8 @@ export default function ITableMenu (props)
   const noSortingExists = sList.length === 0;
 
   // enable / disable menu items for filtering
-  let noRowFilterExists = true;
-  let noFilterExists = true;
-  if (props.filters)
-  {
-    const fList = props.filters.filter(f => f.field === props.headers[props.headerIndex].dataFieldName);
-    noRowFilterExists = fList.length === 0;
-    noFilterExists = props.filters.length === 0;
-  }
+  const noFilterExists = props.filters.length === 0;
+  const noRowFilterExists = props.filters.filter(f => f.filterFieldname === props.headers[props.headerIndex].dataFieldName).length === 0;
 
   // enable / disable menu items for hiding
   const hList = props.headers.filter(h => h.isVisible === false);
@@ -341,16 +331,22 @@ export default function ITableMenu (props)
   const isTextfield = !(isNumber || isDate || isDropdown);
 
   // get the old filter state
-  const oldIndex = props.filters.findIndex(f => f.filterFieldname === "");
-  const oldState = oldIndex === -1 ? null : props.filters[oldIndex].filterOperator;
-  const [filterState, setFilterState] = React.useState(oldState);
+  const hasNoStateFilter = props.filters.filter(f => f.filterFieldname === "").length === 0;
+  let stateFilter = null;
+  if (!hasNoStateFilter)
+  {
+    const stIndex = props.filters.findIndex(f => f.filterFieldname === "");
+    stateFilter = props.filters[stIndex].filterOperator;
+  }
 
+  // preparing views
   const filterEditWidth = 210;
-
   const countSortings = props.headers.filter(f => f.defaultSorting !== "").length;
   const countFilters = props.filters.length;
   const countHidedColumns = props.headers.filter(h => h.isVisible === false).length;
 
+  // prepare the old values of filtering
+  // TODO
 
   return (
     <div>
@@ -373,13 +369,6 @@ export default function ITableMenu (props)
         anchorEl={anchorEl}
         open={open}
         onClose={handleClose}
-        slotProps={{
-          paper: {
-            style: {
-              //width: '20ch',
-            },
-          },
-        }}
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'center',
@@ -421,6 +410,12 @@ export default function ITableMenu (props)
           <ListItemText>Remove all sortings ({countSortings})</ListItemText>
         </MenuItem>
 
+        <MenuItem key='ITableMenu_Item4' 
+          onClick={() => manageSortings()}>
+          <ListItemIcon></ListItemIcon>
+          <ListItemText>Manage sortings ...</ListItemText>
+        </MenuItem>
+
         <Divider sx={{ my: 0.5 }} />
 
         <MenuItem key='ITableMenu_Item5' 
@@ -446,35 +441,35 @@ export default function ITableMenu (props)
         <Divider sx={{ my: 0.5 }} />
 
         <MenuItem key='ITableMenu_ItemState1' 
-          disabled={filterState === IConst.filterOperator_Edited}
+          disabled={stateFilter === IConst.filterOperator_Edited}
           onClick={() => addRowStateFilter(IConst.filterOperator_Edited)}>
           <ListItemIcon></ListItemIcon>
           <ListItemText>Show only states 'edited rows'</ListItemText>
         </MenuItem>
 
         <MenuItem key='ITableMenu_ItemState2' 
-          disabled={filterState === IConst.filterOperator_Deleted}
+          disabled={stateFilter === IConst.filterOperator_Deleted}
           onClick={() => addRowStateFilter(IConst.filterOperator_Deleted)}>
           <ListItemIcon></ListItemIcon>
           <ListItemText>Show only states 'deleted rows'</ListItemText>
         </MenuItem>
 
         <MenuItem key='ITableMenu_ItemState3' 
-          disabled={filterState === IConst.filterOperator_Inserted}
+          disabled={stateFilter === IConst.filterOperator_Inserted}
           onClick={() => addRowStateFilter(IConst.filterOperator_Inserted)}>
           <ListItemIcon></ListItemIcon>
           <ListItemText>Show only states 'inserted rows'</ListItemText>
         </MenuItem>
 
         <MenuItem key='ITableMenu_ItemState4' 
-          disabled={filterState === IConst.filterOperator_Modified}
+          disabled={stateFilter === IConst.filterOperator_Modified}
           onClick={() => addRowStateFilter(IConst.filterOperator_Modified)}>
           <ListItemIcon></ListItemIcon>
           <ListItemText>Show all 'modified rows'</ListItemText>
         </MenuItem>
 
         <MenuItem key='ITableMenu_ItemState5' 
-          disabled={filterState === ""}
+          disabled={hasNoStateFilter}
           onClick={() => removeRowStateFilter()}>
           <ListItemIcon></ListItemIcon>
           <ListItemText>Remove state filter</ListItemText>
@@ -547,9 +542,10 @@ export default function ITableMenu (props)
         }}
         >
         <Grid container direction={"row"}>
-          <Grid item direction={"column"}>
-            <Grid item style={{ padding: "8px 4px 2px 4px" }}>&nbsp;</Grid>
-            <Grid item style={{ display: "flex", alignItems: "center", padding: "2px 4px 8px 4px", }}>
+
+          <Grid item >
+            <Grid item style={filterTopText}>&nbsp;</Grid>
+            <Grid item style={filterTopButton}>
               <Tooltip title="Delete this filter">
               <IconButton
                 onClick={() => removeRowFilter()}
@@ -558,11 +554,11 @@ export default function ITableMenu (props)
             </Grid>
           </Grid>
 
-          <Grid item direction={"column"}>
-            <Grid item style={{ width: filterEditWidth, padding: "8px 4px 2px 4px" }}>
+          <Grid item>
+            <Grid item style={filterTopText}>
               <Typography>Operator</Typography >
             </Grid>
-            <Grid item style={{ width: filterEditWidth, padding: "2px 4px 8px 4px", display: "flex", alignItems: "center" }}>
+            <Grid item style={filterEdit}>
               <Select
                 onChange={(e) => filterOperatorChange(e)}
                 value={selfilterOperator}
@@ -605,11 +601,11 @@ export default function ITableMenu (props)
             </Grid>
           </Grid>
 
-          <Grid item direction={"column"}>
-            <Grid item style={{ width: filterEditWidth, padding: "8px 4px 2px 4px" }}>
+          <Grid item>
+            <Grid item style={filterTopText}>
               <Typography >Value</Typography >
             </Grid>
-            <Grid item style={{ width: filterEditWidth, padding: "2px 4px 8px 4px" }}>
+            <Grid item style={filterEdit}>
 
               {isTextfield &&
               <TextField 
@@ -675,9 +671,9 @@ export default function ITableMenu (props)
             </Grid>
           </Grid>
 
-          <Grid item direction={"column"}>
-            <Grid item style={{ padding: "8px 4px 2px 4px" }}>&nbsp;</Grid>
-            <Grid item style={{ display: "flex", alignItems: "center", padding: "2px 4px 8px 4px", }}>
+          <Grid item>
+            <Grid item style={filterTopText}>&nbsp;</Grid>
+            <Grid item style={filterTopButton}>
               <Tooltip title="Add this filter">
               <IconButton
                 onClick={() => addFilterClick()}
@@ -686,9 +682,9 @@ export default function ITableMenu (props)
             </Grid>
           </Grid>
 
-          <Grid item direction={"column"}>
-            <Grid item style={{ padding: "8px 4px 2px 4px" }}>&nbsp;</Grid>
-            <Grid item style={{ display: "flex", alignItems: "center", padding: "2px 4px 8px 4px", }}>
+          <Grid item>
+            <Grid item style={filterTopText}>&nbsp;</Grid>
+            <Grid item style={filterTopButton}>
               <Tooltip title="Cancel editing">
               <IconButton
                 onClick={() => cancelFilter()}
@@ -713,9 +709,16 @@ export default function ITableMenu (props)
         >Choose an operator before adding a filter</Alert>
       </Snackbar>
 
+{/* 
+      {openSortingDialog &&
+      <ISortingDialog
+        open={openSortingDialog}
+        headers={props.headers}
+        sortings={[]}
+      />}
+*/}      
+
     </div>
-
-
 
   );
 }

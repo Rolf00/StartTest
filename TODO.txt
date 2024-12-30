@@ -5,26 +5,28 @@ DONE list
 QUESTION
 ========
 - multiple sorting needed?
-- multiple filtering needed?
-- filtering chips?
-- sorting chips?
+  sorting date is not working yet
+
+- multiple filtering on one field needed?
+  filtering between : from ... to? 
+  filtering is without the possibility of case sensitive
+
 - ChipMenuDialog: keep the icons as png?
   SpecialButtons: keep the icons as png?
   ButtonDialog: keep the icons as png?
+
 - saving rows: what will the component receive after saving?
   all rows ? => all editing must be blocked
   only saved rows ? => how?
   when will the component know, when saving is finished
   asynchroneous: is the user allowed to change the page?
-- in IUtilsSort: isDateTime: why the paramter "field"
-- sorting is always in only one field
-- filtering Dropdown fields: filter what? Text or Value?
-  when dropdown disable "is smaller than"?
-  when text disable "is smaller than"?
+
 - Grid: how to show the scrollbar automatically
-- filtering problem => always "dateto"?
+
 - how to debug
-- filtering between : from ... to? 
+
+
+
 
 
 
@@ -36,47 +38,8 @@ TODO list
   put the text in parentesis
   problem with export to excel for multilines
 
-- TEST numbers and decimal (decimal with letters?)
-
-- column width resizing not possible when window too small? 
-  column widths are resize when resizing the window => thus thir width maybe     smaller than the defined min width
-
-- show the count filters in the menu
-- show the count row changes "save all", "undo all"
-
-- test button new row
-
-
 ----------------------------------------------
 
 Files done
 ==========
 Done until IHeaderManage.js
-
-
-/////////
-// sortings:
-    const sortings = [
-      { order: "asc", orderBy: "last" },
-      { order: "asc", orderBy: "first" },
-      { order: "desc", orderBy: "address" },
-    ];
-
-    for (let s = sortings.length - 1; s >= 0; s--) {
-      data = getSortRows(
-        data,
-        getSortFunc(sortings[s].order, sortings[s].orderBy, headers)
-      );
-    }
-
-
- 
-
-
-
-
-
-
-
-
-

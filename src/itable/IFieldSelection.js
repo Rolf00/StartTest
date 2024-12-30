@@ -5,7 +5,6 @@ import Tooltip from '@mui/material/Tooltip';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 
-
 import IConst from './IConst';
 
 export default function IFieldSelection (props) {

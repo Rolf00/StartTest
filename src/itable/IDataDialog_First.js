@@ -454,13 +454,12 @@ class IDataDialog_First extends React.Component {
 
         </DialogContent>
 
-
         <DialogActions
-                    sx={{ 
-                      '& .MuiDialogActions-root': {
-                        border: 'none'
-                      }, 
-                    }}
+          sx={{ 
+            '& .MuiDialogActions-root': {
+              border: 'none'
+            }, 
+          }}
         >
           <div style={{display: 'flex', paddingRight: '20px', }}>
           <IconButton

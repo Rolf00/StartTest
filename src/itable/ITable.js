@@ -55,6 +55,7 @@ class ITable extends React.Component {
     this.state = {
       headers: headers,
       data: this.getDataList(),
+      sortings: this.getSortingList(),
       page: 0,
       limit: 10,
 
@@ -119,6 +120,24 @@ class ITable extends React.Component {
     return newlist;
   }
 
+  getSortingList()
+  {
+    let sortList = [];
+    for (let i = 0; i < this.props.headers.length; i++)
+    {
+      if (this.props.headers[i].defaultSorting === IConst.sortingASC ||
+        this.props.headers[i].defaultSorting === IConst.sortingDESC)
+      {
+        const oneSort = { 
+          order: this.props.headers[i].defaultSorting, 
+          orderByField : this.props.headers[i].dataFieldName };
+        sortList.push(oneSort);
+      }
+    }
+
+    return sortList;
+  }
+
   setHeaderWidthList()
   {
     // a list for column widths
@@ -158,7 +177,6 @@ class ITable extends React.Component {
       if (this.state.headers[h].isVisible === null) this.state.headers[h].isVisible = true;
       if (this.state.headers[h].isSortable === null) this.state.headers[h].isSortable = false;
       if (!this.state.headers[h].defaultSorting) this.state.headers[h].defaultSorting = "";
-      if (this.state.headers[h].defaultSorting !== "") this.state.headers[h].defaultSorting = "";
       if (!this.state.headers[h].width) this.state.headers[h].width = 160;
       if (!this.state.headers[h].minWidth) this.state.headers[h].minWidth = 80;
       if (!this.state.headers[h].maxWidth) this.state.headers[h].maxWidth = 320;
@@ -344,7 +362,6 @@ class ITable extends React.Component {
       newfilters[index].filterOperator = IConst.filterOperator_Inserted;
     }
 
-
     const cntChangedRows = this.getCountChangedRows();
 
     // now add the new row to data
@@ -361,9 +378,6 @@ class ITable extends React.Component {
   {
     // button SAVE for one row was clicked
     // first we check the data
-
-    //console.log("ITable handleSaveOneRow", row[this.props.primaryKey]);
-
     const errorText = IUtils.getRowErrorText(this.state.headers, row);
     if (errorText !== "")
     {
@@ -419,6 +433,7 @@ class ITable extends React.Component {
   {
       // show a dalog with the error messages 
       let newText = errorText;
+
       /*
       // TODO what do when to many lines in the error message?
       const lines = errorText.split("\n");
@@ -438,7 +453,6 @@ class ITable extends React.Component {
         ? [ { caption: "Close", icon: IConst.imgIconOk, horizontalAlign: 'left', X: 1, Y: 1, },
             { caption: "Copy", icon: IConst.imgIconCopy, horizontalAlign: 'left', X: 2, Y: 1, }, ]
         : IConst.defaultButtonsOk; 
-
       */
 
       const buttons = [ 
@@ -475,7 +489,6 @@ class ITable extends React.Component {
     // ask before undoing all rows
     // open the confirm dialog YES / NO
     //alert("UndoAll : not implemented yet.");
-
 
     //this.UndoAllRows();
     //return;
@@ -656,15 +669,6 @@ class ITable extends React.Component {
 
   // ---------------------------------------------------------------------------------------
   // row procedures / functions
-
-  /*
-  getRowxxStateIndex(rowIndex)
-  {
-    const index = this.getRowIndex(rowid);
-    if (index === -1) return IConst.rowStateUnchanged;
-    return this.state.rowInfoList[index].state;
-  }
-    */
 
   getRowHeight(rowid)
   {
@@ -869,21 +873,6 @@ class ITable extends React.Component {
 
   handleTextfieldNumberChange(e, rowid, fieldName)
   {
-    // TODO delete
-    // check the data
-    /*
-    const indexHeader = this.props.headers.findIndex(h => h.dataFieldName === fieldName);
-    if (indexHeader === -1)
-    {
-      alert("ERROR handleTextfieldChange: indexHeader === -1.");
-      return;
-    }
-
-    // if the entered value is not correct, we show the helpertext
-    const header = this.props.headers[indexHeader];
-    const hasError = this.getHasError(header, e.target.value);
-    e.target.style.color = hasError ? 'red' : 'black';
-    */
 
     // change the data when a field was selected
     const index = this.getRowIndex(rowid);
@@ -894,7 +883,7 @@ class ITable extends React.Component {
     if (oldState === IConst.rowStateUnchanged) 
       this.state.rowInfoList[index].state = IConst.rowStateEdited;
 
-    // TODO parseInt
+    // TODO parseInt ?
     const number = parseFloat(e.target.value);
     newList[index][fieldName] = number;
 
@@ -932,76 +921,18 @@ class ITable extends React.Component {
 
   handleCellEditKeyUp(e, rowId, fieldname)
   {
-    // TODO delete
+    // TODO : implement key strokes 
     if (e.key === 'Enter' || e.keyCode === 13)
     {
 
+      e.key = null;
     }
     else if (e.key === 'Escape')
     {
       
+      e.key = null;
     }
   }
-
-  // ---------------------------------------------------------------------------------------
-  // resizing row heights and column widths events
-
-  /*
-  handleMouseDownRowEW(e, index)
-  {
-    // resizing column width
-    const mouseStart = e.clientX;
-    const colindex = index;
-    const cellWidth = this.state.headers[colindex].width;
-    
-    const element = e.target;
-    element.style.backgroundColor = IConst.colorResizerBackground;
-
-    const onMouseMoveRowEW = (e) => 
-    {
-      const newwidth = e.clientX - mouseStart + cellWidth;
-      if (newwidth > this.state.headers[colindex].maxWidth &&
-          newwidth !== this.state.headers[colindex].maxWidth)
-      {
-        const newList2 = this.state.headers;
-        newList2[colindex].width = this.state.headers[colindex].maxWidth;
-        this.setState({headers : newList2});
-      }
-      else
-      if (newwidth < this.state.headers[colindex].minWidth &&
-        newwidth !== this.state.headers[colindex].minWidth)
-      {
-        const newList2 = this.state.headers;
-        newList2[colindex].width = this.state.headers[colindex].minWidth;
-        this.setState({headers : newList2});
-      }
-      else
-      if (newwidth < this.state.headers[colindex].maxWidth &&
-          newwidth > this.state.headers[colindex].minWidth)
-      {
-        const newList2 = this.state.headers;
-        newList2[colindex].width = newwidth;
-        this.setState({headers : newList2});
-      }
-      else 
-      {
-        //console.log("onMouseUpRowEW no resizing possible");
-      }
-    }
-
-    const onMouseUpRowEW = (e) => 
-    {
-      document.removeEventListener('mousemove', onMouseMoveRowEW);
-      document.removeEventListener('mouseup', onMouseUpRowEW);
-      document.body.style.userSelect = "auto"; 
-      element.style.backgroundColor = 'transparent';
-    };    
-
-    document.addEventListener('mousemove', onMouseMoveRowEW);
-    document.addEventListener('mouseup', onMouseUpRowEW);    
-    document.body.style.userSelect = "none";  
-  }
-    */
 
   // ---------------------------------------------------------------------------------------
   // header menu events
@@ -1018,6 +949,12 @@ class ITable extends React.Component {
     this.setState({filters: newFilters});
   }
 
+  setChangedSortings(newSortings)
+  {
+    // change sorting
+    this.setState({sortings: newSortings});
+  }
+
   menuButtonClick(index)
   {
     if (!this.state.mainButtonsDisabled)
@@ -1028,7 +965,6 @@ class ITable extends React.Component {
     }
     this.props.menuButtonClick(index);
   }
-
 
   
   render() 
@@ -1120,6 +1056,7 @@ class ITable extends React.Component {
     }
 
     // sorting
+    /*
     const indexSort = this.state.headers.findIndex(h => h.defaultSorting != '');
     const order = indexSort === -1 ? '' : this.state.headers[indexSort].defaultSorting;
     const orderBy = indexSort === -1 ? '' : this.state.headers[indexSort].dataFieldName;
@@ -1129,7 +1066,17 @@ class ITable extends React.Component {
       // we only order something, when an order is defined
       data = getSortRows(data, getSortFunc(order, orderBy, this.state.headers));
     }
+      */
   
+    for (let s = this.state.sortings.length - 1; s >= 0; s--) {
+      data = getSortRows(data,
+        getSortFunc(
+          this.state.sortings[s].order, 
+          this.state.sortings[s].orderByField, 
+          this.state.headers)
+      );
+    }
+
     data = data.slice(page * limit, page * limit + limit);
 
     const mainChecked = this.state.mainChecked;
@@ -1151,14 +1098,14 @@ class ITable extends React.Component {
             height: 650, // Set the max height to allow scrolling after 5 items
             overflowY: 'auto', // Enables vertical scrolling
             //overflowX: 'auto',
-            '&::-webkit-scrollbar': {
-              width: '8px',
-              height: '8px',
+            '&::WebkitScrollbar': {
+              width: '12px',
+              height: '12px',
             },
-            '&::-webkit-scrollbar-track': {
+            '&::WebkitScrollbarTrack': {
               backgroundColor: '#f1f1f1',
             },
-            '&::-webkit-scrollbar-thumb': {
+            '&::WebkitScrollbarThumb': {
               backgroundColor: '#888',
               borderRadius: '4px',
               '&:hover': {
@@ -1178,11 +1125,13 @@ class ITable extends React.Component {
               settings={this.props.settings}
               headers={this.state.headers}
               filters={this.state.filters}
+              sortings={this.state.sortings}
               mainChecked={mainChecked}
               mainIndeterminated={mainIndeterminated}
               handleCheckboxClickHeader={(e)=>this.handleCheckboxClickHeader(e)}
               setChangedHeaders={(newheaders) => this.setChangedHeaders(newheaders)}
               setChangedFilters={(newfilters) => this.setChangedFilters(newfilters)}
+              setChangedSortings={(newsortings) => this.setChangedSortings(newsortings)}
             />
             <TableBody 
               className={classes.table_body_row}
@@ -1264,11 +1213,11 @@ class ITable extends React.Component {
                 className={classes.mainButtons}
                 onClick={e => this.handleNewRow()}>
               <AddBoxIcon sx={{ color: IConst.iconColorDarkYellow, }}/>
-              &nbsp;New row</IconButton></Tooltip>}
+              New row</IconButton></Tooltip>}
 
               {/* save all */}
               {this.props.settings.hasButtonSaveAll &&
-              <Tooltip title="Ctrl-S" arrow>
+              <Tooltip title="Ctrl-S" arrow><span>
               <IconButton
                 className={classes.mainButtons}
                 disabled={mainButtonsDisabled}
@@ -1276,11 +1225,12 @@ class ITable extends React.Component {
                 <SaveIcon sx={{ 
                   color: IConst.iconColorGreen, 
                   opacity: mainButtonsDisabled ? 0.2 : 1 }}/>
-              &nbsp;Save all ({this.state.countChangedRows})</IconButton></Tooltip>}
+              Save all ({this.state.countChangedRows})</IconButton></span></Tooltip>}
 
               {/* undo all  */}
               {this.props.settings.hasButtonUndoAll &&
-              <Tooltip title="Ctrl-U" arrow>
+              
+              <Tooltip title="Ctrl-U" arrow><span>
               <IconButton
                 className={classes.mainButtons}
                 disabled={mainButtonsDisabled}
@@ -1288,7 +1238,7 @@ class ITable extends React.Component {
               <UndoIcon sx={{ 
                 color: IConst.iconColorRed,
                 opacity: mainButtonsDisabled ? 0.2 : 1 }}/>
-              &nbsp;Undo all ({this.state.countChangedRows})</IconButton></Tooltip>}
+              Undo all ({this.state.countChangedRows})</IconButton></span></Tooltip>}
 
               {/* export for excel all rows */}    
               {this.props.settings.hasButtonExcelAll && 
@@ -1296,7 +1246,7 @@ class ITable extends React.Component {
               <IconButton
                 className={classes.mainButtons}
                 onClick={e => this.handleCopyForExcel(true)}>
-              &nbsp;Copy all rows</IconButton></Tooltip>}
+              Copy all rows</IconButton></Tooltip>}
 
               {/* export for excel only selected rows */}
               {this.props.settings.hasButtonExcelSelected &&
@@ -1304,7 +1254,15 @@ class ITable extends React.Component {
               <IconButton
                 className={classes.mainButtons}
                 onClick={e => this.handleCopyForExcel(false)}>
-              &nbsp;Copy selected rows</IconButton></Tooltip>}
+              Copy selected rows</IconButton></Tooltip>}
+
+              {/* manage the sortings of rows */}
+              {this.props.settings.hasButtonExcelSelected &&
+              <Tooltip title="Ctrl-Shift-M" arrow>
+              <IconButton
+                className={classes.mainButtons}
+                onClick={e => this.handleCopyForExcel(false)}>
+              Manage sorting ...</IconButton></Tooltip>}
 
               {this.props.settings.menuButtonList.map((button, index) => {
                 const iconSize = this.props.settings.buttonSizeMain;

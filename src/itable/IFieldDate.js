@@ -5,23 +5,9 @@ import TextField from '@mui/material/TextField';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import FormHelperText from '@mui/material/FormHelperText';
 
-
-//import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-
-// not exported?
-//import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-
-// doesnt work
-//import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon';
-//import { DateTime } from 'luxon';
-
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
-
-
-
-//import DatePicker from 'react-datepicker';
 import { de } from 'date-fns/locale'; // German (Switzerland)
 
 import IConst from './IConst';
@@ -84,22 +70,8 @@ export default function IFieldDate (props) {
     props.handleDataChange(newDateJS, fieldname);
   }
 
-  /*
-  const handleTextChange = (e) =>
-  {
-    props.handleDataChange(e, fieldname);
-  }
-    */
-
-  const selectedDate = props.value;
-  const formattedDate = IUtils.formatDateTime(
-    selectedDate, 
-    IConst.format_DateLong, 
-    props.localization);
-
   if (editing)
   {
-
 
     return (
       <div 

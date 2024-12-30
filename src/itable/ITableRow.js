@@ -64,7 +64,6 @@ class ITableRow  extends React.Component {
     const newRow = this.state.row;
     newRow[field] = value;
     this.setNewRowState_Edit()
-//    this.setState({row: newRow});
     // update main buttons SAVE and UNDO in ITable
     this.props.setMainButtonState();
   }
@@ -76,7 +75,6 @@ class ITableRow  extends React.Component {
     if (oldState === IConst.rowStateUnchanged)
       this.props.rowInfoList[this.props.rowInfoIndex].state = IConst.rowStateEdited;
   }
-
 
   handleMouseDownRowNS(e)
   {
@@ -279,19 +277,8 @@ class ITableRow  extends React.Component {
           isCheckbox || isDate || isChip || isSpecialButton || isGetter || isRowEditButton
         );
 
-        // get fieldname and the value of the field
-        /*
-        const field = header.dataFieldName;
-        let tmp = row[header.dataFieldName];
-        // TODO decimals 
-        //if (isDecimal) tmp = tmp.toFixed(header.decimalCount);
-        if (isGetter) tmp = eval(header.valueGetter);
-        */
-
         const field = header.dataFieldName;
         const value = IUtils.getCellValue(row, field, isGetter, header.valueGetter);
-
-        //const selected = this.props.rowInfoList[rowInfoIndex].selected;
 
         // enable / disbable the editing of one row
         // if "this.props.settings.alwaysActivateEditing" is TRUE, editing is always enabled

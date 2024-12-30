@@ -2,20 +2,31 @@
   ----------------------
   DONE
 - button dialog like confirm
+
 - modal dialog for editing
-- analyze management of headers: unhide in a submenu
-- hide one column
+
 - save one row / save all rows with checks of values and error message
+
 - pagination button added first last
-- hiding and managing columns
-- filtering in progress: done 
-  at the moment: just one operator per column 
+
 - save data before special button click
   after editing, the user should not leave whithout saving
+
 - date from...to: solution made
+  now a check is implemented
+  dates from...to with correct checks are now possible, see example
+
 - sorting done with only one sorting of one column
-- resizing the column width is much faster now, but not 
-- dates from...to with correct checks are now possible, see example
+
+- resizing the column width is much faster now
+
+- hiding and managing columns
+  hide one column
+  header menu: unhide in a submenu
+
+- header menu filtering 
+  at the moment: just one operator per column 
+  header menu filtering states edited, deleted, inserted
 
 
 

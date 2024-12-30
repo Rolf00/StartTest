@@ -12,7 +12,6 @@ import imgExcelButton from './imgExcel48.png';
 import imgColumsButton from './imgColums48.png'; 
 import imgCopyButton from './imgCopyButton48.png'; 
 
-
 import imgIconOk from './imgYes48.png'; 
 import imgIconYes from './imgYes48.png'; 
 import imgIconNo from './imgNo48.png'; 
@@ -22,7 +21,6 @@ import imgDialogInfo from './imgInfo96.png';
 import imgDialogQuestion from './imgQuestion96.png'; 
 import imgDialogStop from './imgStop96.png'; 
 import imgDialogWarning from './imgWarning96.png'; 
-
 
 
 class IConst {
@@ -215,6 +213,7 @@ class IConst {
   static filterOperator_IsEmptyNot = "10";
   static filterOperator_IsSmallerThan= "11";
   static filterOperator_IsBiggerThan = "12";
+  // TODO : what is meant with any of
   //static filterOperator_IsAnyOf = "13";
 
   // fitering states

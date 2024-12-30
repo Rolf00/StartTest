@@ -1,6 +1,7 @@
 import IConst from './IConst';
 
-export const getSortFunc = (order, orderBy, headers) => {
+export const getSortFunc = (order, orderBy, headers) => 
+{
   // Order = desc, asc orderBy = field
   return order === 'desc' ? 
     (a, b) => descGrid(a, b, orderBy, headers) : 
@@ -9,6 +10,7 @@ export const getSortFunc = (order, orderBy, headers) => {
 
 export const descGrid = (a, b, orderBy, headers) => 
 {
+  // sorting rows
   if (orderBy === '') return 0;
   let value_a = a[orderBy];
   let value_b = b[orderBy];
@@ -38,6 +40,7 @@ export const isDateTime = (type, field) =>
 
 export const getCellValue = (header, row, sort = false) => 
 {
+  // get the value of one cell
   if (header === undefined || !header) return '';
   const { dataFieldName, valueGetter, editType } = header;
   if (valueGetter)
@@ -51,8 +54,7 @@ export const getCellValue = (header, row, sort = false) =>
       }
     }
     
-    const params = {...row, 
-      getValue: name => 
+    const params = {...row, getValue: name => 
       {
         if (row[name] === undefined) return '';
         return row[name];
@@ -81,6 +83,7 @@ export const getCellValue = (header, row, sort = false) =>
 };
 
 export const  getSortRows = (array, cmp) => {
+  // sorting rows
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
     const order = cmp(a[0], b[0]);
@@ -89,4 +92,29 @@ export const  getSortRows = (array, cmp) => {
   });
   return stabilizedThis.map(el => el[0]);
 };
+
+export const getNewSortingList = (sortings, newsorting, field) =>
+{
+  // adding a new sorting at the first position
+  const oldList = [...sortings].filter(s => s.orderByField !== field);
+  let finalList = [];
+  if (newsorting === IConst.sortingASC || newsorting === IConst.sortingDESC)
+  {
+    const oneSort = { 
+      order: newsorting, 
+      orderByField : field };    
+    finalList.push(oneSort);
+
+    // we set the new sorting at first position
+    finalList = [...finalList, ...oldList];
+  }
+  else
+  {
+    finalList = [...oldList];
+  }
+  return finalList;
+}
+
+
+
 
