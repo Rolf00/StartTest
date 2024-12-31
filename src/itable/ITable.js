@@ -29,12 +29,14 @@ import { getSortRows } from './IUtilsSort';
 import { getSortFunc } from './IUtilsSort';
 import ITableHeader from './ITableHeader';
 import ITableRow from './ITableRow'; 
-import IButtonDialog from './IButtonDialog';
-import IDataDialog_First from './IDataDialog_First';
+
+import IDialogButton from './IDialogButton';
+import IDialogSorting from './IDialogSorting';
+import IDialogData_First from './IDialogData_First';
 
 
 const availableDialogs = {
-  IDataDialog_First: IDataDialog_First,
+  IDialogData_First: IDialogData_First,
   // here more dialogs can be listed, 
   // depending on the dataset what should be edited. 
   //dialog1: ComponentB,
@@ -575,6 +577,11 @@ class ITable extends React.Component {
     //alert("Data was copied to clipboard.");
   }
 
+  openDialogSorting()
+  {
+    // TODO : open dialog manage sorting
+  }
+
   // ---------------------------------------------------------------------------------------
   // clicks from button dialog
   
@@ -794,6 +801,23 @@ class ITable extends React.Component {
     }
   };
 
+  setChangedSortings(newSorting) 
+  {
+    if (newSorting === null)
+    {
+      // cancel was pressed
+      this.setState({openSortingDialog: false});
+    }
+    else
+    {
+      // here we render the new sorting of rows
+      this.setState({
+        openSortingDialog: false,
+        sortings: newSorting,
+      });
+    }
+  }
+
   // ---------------------------------------------------------------------------------------
   // copy selection
 
@@ -947,12 +971,6 @@ class ITable extends React.Component {
   {
     // change filtering
     this.setState({filters: newFilters});
-  }
-
-  setChangedSortings(newSortings)
-  {
-    // change sorting
-    this.setState({sortings: newSortings});
   }
 
   menuButtonClick(index)
@@ -1132,6 +1150,7 @@ class ITable extends React.Component {
               setChangedHeaders={(newheaders) => this.setChangedHeaders(newheaders)}
               setChangedFilters={(newfilters) => this.setChangedFilters(newfilters)}
               setChangedSortings={(newsortings) => this.setChangedSortings(newsortings)}
+              openDialogSorting={() => this.openDialogSorting()}
             />
             <TableBody 
               className={classes.table_body_row}
@@ -1191,7 +1210,8 @@ class ITable extends React.Component {
           backgroundColor: 'rgb(243, 244, 246)' }}>
           <Grid item style={{ flex: 1}}> 
 
-              {this.props.settings.menuButtonList.map((button, index) => {
+              {this.props.settings.menuButtonList && 
+                this.props.settings.menuButtonList.map((button, index) => {
                 const iconSize = this.props.settings.buttonSizeMain;
                 if (button.positionStart === true)
                 return (
@@ -1257,14 +1277,15 @@ class ITable extends React.Component {
               Copy selected rows</IconButton></Tooltip>}
 
               {/* manage the sortings of rows */}
-              {this.props.settings.hasButtonExcelSelected &&
+              {this.props.settings.hasButtonManageSorting &&
               <Tooltip title="Ctrl-Shift-M" arrow>
               <IconButton
                 className={classes.mainButtons}
-                onClick={e => this.handleCopyForExcel(false)}>
+                onClick={e => this.openDialogSorting(false)}>
               Manage sorting ...</IconButton></Tooltip>}
 
-              {this.props.settings.menuButtonList.map((button, index) => {
+              {this.props.settings.menuButtonList &&
+                this.props.settings.menuButtonList.map((button, index) => {
                 const iconSize = this.props.settings.buttonSizeMain;
                 if (button.positionStart === false)
                 return (
@@ -1364,7 +1385,7 @@ class ITable extends React.Component {
 
         {/* button dialog */}
         {this.state.buttonDialogId && this.state.buttonDialogOpen &&
-        <IButtonDialog
+        <IDialogButton
           buttonDialogId={this.buttonDialogId}
           buttonDialogOpen={this.state.buttonDialogOpen}
           buttonDialogTitle={this.state.buttonDialogTitle}
@@ -1379,7 +1400,7 @@ class ITable extends React.Component {
         />}
 
         {/* main edit dialog */}
-        {this.props.dialogName === 'IDataDialog_First' &&  this.state.openDataModalDialog &&
+        {this.props.dialogName === 'IDialogData_First' &&  this.state.openDataModalDialog &&
           <EditDialog
             open={this.state.openDataModalDialog}
             settings={this.props.settings}
@@ -1390,6 +1411,17 @@ class ITable extends React.Component {
             showDataErrorMessage={(errorText) => this.showDataErrorMessage(errorText)}>
           </EditDialog>
         }
+
+      {/* 
+      {true && // openSortingDialog
+      <IDialogSorting
+        open={true}
+        headers={this.state.headers}
+        sortings={this.state.sortings}
+        setChangesSortings={(newlist) => this.setChangesSortings(newlist)}
+      />}
+      */}
+
 
       </Paper>
     );

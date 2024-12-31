@@ -7,8 +7,6 @@
 
 - save one row / save all rows with checks of values and error message
 
-- pagination button added first last
-
 - save data before special button click
   after editing, the user should not leave whithout saving
 
@@ -16,7 +14,9 @@
   now a check is implemented
   dates from...to with correct checks are now possible, see example
 
-- sorting done with only one sorting of one column
+- sorting done with many columns
+  fixed bug sorting of dates in your code: not parseINT, but Date.parse
+  now it works. please check it.
 
 - resizing the column width is much faster now
 
@@ -24,9 +24,10 @@
   hide one column
   header menu: unhide in a submenu
 
-- header menu filtering 
+- header menu : filtering with multiple columns
   at the moment: just one operator per column 
   header menu filtering states edited, deleted, inserted
+  but maybe a dialog is needed. prepared, bot only working in sandbox
 
 
 

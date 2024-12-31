@@ -653,17 +653,18 @@ const App = ()=> {
     hasButtonUndoAll: true,
     hasButtonExcelAll: true,
     hasButtonExcelSelected: true,
-    hasButtonContinue: true,
-    hasButtonBack: true,
+    hasButtonManageSorting: true,
 
     // localization
     localization: IConst.datetimeLocalization_deCH,
 
     // menu buttons
+    /*
     menuButtonList: [
       { id:1, caption: "Back", hint: "go to previous page", icon: imgDialogStop, positionStart: true },
       { id:2, caption: "Next", hint: "go to next page", icon: imgIconOk, positionStart: false },
     ],
+    */
   };
   
   // open slack
@@ -711,7 +712,7 @@ const App = ()=> {
           headers={headersWaldo} 
           primaryKey="id"
           data={patients}  
-          dialogName="IDataDialog_First"
+          dialogName="IDialogData_First"
           handleSpecialButtonClick={(rowid, fieldname) => handleSpecialButtonClick(rowid, fieldname)}
           handleSaveOneRowClick={(row, state) => handleSaveOneRowClick(row, state)}
           handleSaveAllRowsClick={(rows, states) => handleSaveAllRowsClick(rows, states)}

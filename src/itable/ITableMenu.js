@@ -40,10 +40,6 @@ import SwapVertIcon from '@mui/icons-material/SwapVert';
 import IConst from './IConst';
 import { getNewSortingList } from './IUtilsSort';
 
-// TODO
-//import ISortingDialog from './ISortingDialog';
-
-
 export default function ITableMenu (props) 
 {
 
@@ -170,10 +166,10 @@ export default function ITableMenu (props)
     props.setChangedSortings(newList);
   }
 
-  const [openSortingDialog, setOpenSortingDialog] = React.useState(true);
   const manageSortings = () =>
   {
-    setOpenSortingDialog(true);
+    handleClose();
+    props.openDialogSorting();
   }
 
   const addFilter = (newField, newOperator, newValue) =>
@@ -410,7 +406,7 @@ export default function ITableMenu (props)
           <ListItemText>Remove all sortings ({countSortings})</ListItemText>
         </MenuItem>
 
-        <MenuItem key='ITableMenu_Item4' 
+        <MenuItem key='ITableMenu_Item5' 
           onClick={() => manageSortings()}>
           <ListItemIcon></ListItemIcon>
           <ListItemText>Manage sortings ...</ListItemText>
@@ -418,20 +414,20 @@ export default function ITableMenu (props)
 
         <Divider sx={{ my: 0.5 }} />
 
-        <MenuItem key='ITableMenu_Item5' 
+        <MenuItem key='ITableMenu_Item6' 
           onClick={(e) => openCloseFiltering(e)}>
           <ListItemIcon></ListItemIcon>
           <ListItemText>Add filter for '{props.headers[props.headerIndex].headerTitle}'</ListItemText>
         </MenuItem>
 
-        <MenuItem key='ITableMenu_Item6' 
+        <MenuItem key='ITableMenu_Item7' 
           disabled={noRowFilterExists}
           onClick={() => removeRowFilter()}>
           <ListItemIcon></ListItemIcon>
           <ListItemText>Remove filter for '{props.headers[props.headerIndex].headerTitle}'</ListItemText>
         </MenuItem>
 
-        <MenuItem key='ITableMenu_Item7' 
+        <MenuItem key='ITableMenu_Item8' 
           disabled={noFilterExists}
           onClick={() => removeAllFilters()}>
           <ListItemIcon></ListItemIcon>
@@ -477,20 +473,20 @@ export default function ITableMenu (props)
 
         <Divider sx={{ my: 0.5 }} />
 
-        <MenuItem key='ITableMenu_Item8' 
+        <MenuItem key='ITableMenu_Item9' 
           onClick={() => hideColumn()}>
           <ListItemIcon><VisibilityOffOutlinedIcon /></ListItemIcon>
           <ListItemText>Hide this column</ListItemText>
         </MenuItem>
 
-        <MenuItem key='ITableMenu_Item9' 
+        <MenuItem key='ITableMenu_Item10' 
           disabled={noHidedColumnExists}
           onClick={() => unhideAllColumns()}>
           <ListItemIcon><VisibilityOutlinedIcon /></ListItemIcon>
           <ListItemText>Unhide all columns ({countHidedColumns})</ListItemText>
         </MenuItem>
 
-        <MenuItem key='ITableMenu_Item10' 
+        <MenuItem key='ITableMenu_Item11' 
           id="nestedMenusManageColumns"
           anchorEl={anchorManageColumns}
           disabled={noHidedColumnExists}
@@ -708,17 +704,6 @@ export default function ITableMenu (props)
           sx={{ width: '100%' }}
         >Choose an operator before adding a filter</Alert>
       </Snackbar>
-
-{/* 
-      {openSortingDialog &&
-      <ISortingDialog
-        open={openSortingDialog}
-        headers={props.headers}
-        sortings={[]}
-      />}
-*/}      
-
     </div>
-
   );
 }

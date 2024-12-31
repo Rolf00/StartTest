@@ -49,7 +49,11 @@ export const getCellValue = (header, row, sort = false) =>
     {
       if (isDateTime(editType, dataFieldName)) 
       {
-        try { return parseInt(row[dataFieldName]); } 
+        try { 
+          // TODO is this ok?
+          //return parseInt(row[dataFieldName]);
+          return Date.parse(row[dataFieldName]);
+        } 
         catch (error) { return row[dataFieldName]; }
       }
     }
@@ -73,7 +77,11 @@ export const getCellValue = (header, row, sort = false) =>
     {
       if (isDateTime(editType, dataFieldName)) 
       {
-        try { return parseInt(row[dataFieldName]);} 
+        try { 
+          // TODO is this ok?
+          //return parseInt(row[dataFieldName]);
+          return Date.parse(row[dataFieldName]);
+        }
         catch (error) { return row[dataFieldName]; }
       }
     }

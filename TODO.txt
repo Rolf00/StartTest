@@ -25,8 +25,8 @@ QUESTION
 
 - how to debug
 
-
-
+- sorting Dates: see IUtilsSort.js => fixed:
+  return Date.parse(row[dataFieldName]);
 
 
 
@@ -43,3 +43,10 @@ TODO list
 Files done
 ==========
 Done until IHeaderManage.js
+
+
+// 21.12.2024
+- test withou buttons BACK & NEXT
+- all dialogs the same color and borders
+
+
