@@ -37,11 +37,11 @@ class ITableRow  extends React.Component {
     } = this.props;
 
     this.state = { 
-      rowEditing: false,
+      rowEditing: rowInfoList[rowInfoIndex].editing,
       rowHeight: rowInfoList[rowInfoIndex].height,
       isHeightResizing: false,
       resizingInAction: false,
-      row
+      row: {...this.props.row}
     }
 
   }
@@ -52,8 +52,16 @@ class ITableRow  extends React.Component {
     const {row} = this.props;
     if (row[this.props.primaryKey] !== this.state.row[this.props.primaryKey])
     {
-      this.setState({row})
+      //const rowid = row[this.props.primaryKey];
+      //const infoIndex = this.props.rowInfoIndex.findIndex(i => i.id === rowid)
+      //const newediting = infoIndex === -1 ? false : this.props.rowInfoList[infoIndex].ed
+      this.setState({
+        row: {...this.props.row},
+        //rowEditing: newediting,
+      })
     }
+
+    console.log("componentDidUpdate row[this.props.primaryKey] ", row[this.props.primaryKey] );
   }
   
   componentWillUnmount() { }
@@ -63,7 +71,7 @@ class ITableRow  extends React.Component {
     // change the row values and update row color and main buttons
     const newRow = this.state.row;
     newRow[field] = value;
-    this.setNewRowState_Edit()
+    this.setNewRowState_Edit();
     // update main buttons SAVE and UNDO in ITable
     this.props.setMainButtonState();
   }
@@ -131,6 +139,7 @@ class ITableRow  extends React.Component {
     {
       // button EDIT for one row was clicked
       const newEditing = !this.state.rowEditing;
+      this.props.rowInfoList[this.props.rowInfoIndex].editing = newEditing;
       this.setState({rowEditing: newEditing})
     }
     if (action === IConst.editType_ButtonEdit)
@@ -141,17 +150,22 @@ class ITableRow  extends React.Component {
     else if (action === IConst.editType_ButtonSave)
     {
       // now we can save one row
-      this.setState({rowEditing: false})
+      this.props.rowInfoList[this.props.rowInfoIndex].editing = false;
+      this.setState({rowEditing: false});
       this.props.handleSaveOneRow(this.state.row);
     }
     else if (action === IConst.editType_ButtonUndo)
     {
       // button UNDO for one row was clicked
+      this.props.rowInfoList[this.props.rowInfoIndex].editing = false;
+      this.setState({rowEditing: false});
       this.handleUndoRow();
     }
     else if (action === IConst.editType_ButtonDelete)
     {
       // button DELETE for one row was clicked
+      this.props.rowInfoList[this.props.rowInfoIndex].editing = false;
+      this.setState({rowEditing: false});
       this.handleDeleteRow();
     }
   }
@@ -167,7 +181,6 @@ class ITableRow  extends React.Component {
       const field = keys[f];
       newRow[field] = oldRow[field];
     }
-
 
     this.setState({row: newRow});
 
@@ -190,7 +203,8 @@ class ITableRow  extends React.Component {
     else if (oldState === IConst.rowStateInserted)
     {
       // row was inserted, thus we remove it from the data list
-      this.props.handleUndoInsertedRows(this.props.rowInfoIndex);
+      const rowid = this.props.row[this.props.primaryKey];
+      this.props.handleUndoInsertedRows(rowid);
     }
     else if (oldState === IConst.rowStateDeleted)
     {
@@ -226,6 +240,7 @@ class ITableRow  extends React.Component {
     const isRowDeleted = rowState === IConst.rowStateDeleted;
     const isRowInserted = rowState === IConst.rowStateInserted;
     const isRowChanged = rowState === IConst.rowStateEdited || isRowDeleted || isRowInserted;
+
     const rowBackgroundColor =
       isRowSelected && isRowDeleted ? IConst.rowColorSelDeleted :
       isRowSelected && isRowChanged ? IConst.rowColorSelChanged :
@@ -248,10 +263,12 @@ class ITableRow  extends React.Component {
 
         // edit types
         const isSelectionIcon = header.editType === IConst.editType_SelectionIcon;
+
         const isTextfield =
           header.editType === IConst.editType_PrimaryKey ||
           header.editType === IConst.editType_Textfield ||
           header.editType === IConst.editType_TextfieldMultiline;
+
         const isNumber = 
           header.editType === IConst.editType_Integer ||
           header.editType === IConst.editType_Decimal;
@@ -278,11 +295,16 @@ class ITableRow  extends React.Component {
         );
 
         const field = header.dataFieldName;
-        const value = IUtils.getCellValue(row, field, isGetter, header.valueGetter);
+        let value = row[field];
+        if (isGetter) value = eval(header.valueGetter);
 
         // enable / disbable the editing of one row
         // if "this.props.settings.alwaysActivateEditing" is TRUE, editing is always enabled
-        const editing = this.props.settings.alwaysActivateEditing || this.state.rowEditing;
+        const isCurrentEditing = this.props.rowInfoList[this.props.rowInfoIndex].editing;
+        const editing = 
+          this.props.settings.alwaysActivateEditing || 
+          isCurrentEditing;
+        const saving = this.props.rowInfoList[this.props.rowInfoIndex].saving;
         
         // only show this column when it's defined as visible
         const visible = header.isVisible;
@@ -422,6 +444,7 @@ class ITableRow  extends React.Component {
               {isRowEditButton &&
               <IFieldRowEditButton
                 editing={editing}
+                saving={saving}
                 savingInProgressAll={this.props.savingInProgressAll}
                 horizontalAlign={horizontalAlign}
                 verticalAlign={verticalAlign}

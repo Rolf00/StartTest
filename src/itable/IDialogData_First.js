@@ -27,6 +27,22 @@ import IConst from './IConst';
 import IUtils from './IUtils'; 
 import { useStyles } from './styles';
 
+const StyleDialogBackdrop = { style: { 
+  backgroundColor: 'rgba(0, 0, 0, 0.2)'  
+}};
+
+const StyleDialogPaper = { style: { 
+  borderRadius: '20px',
+  backgroundColor: 'transparent', 
+}};
+
+const StyleDialogContent = {
+  width: "920px",
+  maxWidth: '100%',
+  border: '3px solid #444444', // Set border color
+  borderRadius: '20px',  
+  backgroundColor: 'white',
+};
 
 class IDialogData_First extends React.Component {
   constructor(props) 
@@ -185,9 +201,6 @@ class IDialogData_First extends React.Component {
 
       <Dialog 
         open={open} 
-        width={120}
-        maxWidth={120}
-        minWidth={120}
         BackdropProps={{
           style: {
             backgroundColor: 'rgba(0, 0, 0, 0.2)', // Custom backdrop color 
@@ -202,7 +215,7 @@ class IDialogData_First extends React.Component {
           '& .MuiDialog-paper': {
             width: '920px', // Set your custom width here
             maxWidth: '100%', // Ensure it doesn't overflow beyond the screen
-            border: '3px solid #555555', // Set border color
+            border: '3px solid #444444', // Set border color
             borderRadius: '20px',    
           },
         }}>
@@ -217,12 +230,6 @@ class IDialogData_First extends React.Component {
                 padding: '2px 2px'
               }, 
             }}>
-            {/* 
-          <Typography 
-              variant="h6"
-              textAlign={'center'}
-          >Edit the row:</Typography>
-          */}
 
           <Table style={{ width: "100%", }} 
             sx={{ verticalAlign: 'top', border: 'none',  }}

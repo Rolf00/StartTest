@@ -16,6 +16,21 @@ import IConst from './IConst';
 import { useStyles } from './styles';
 
 
+const StyleDialogBackdrop = { style: { 
+  backgroundColor: 'rgba(0, 0, 0, 0.2)'  
+}};
+
+const StyleDialogPaper = { style: { 
+  borderRadius: '20px',
+  backgroundColor: 'transparent', 
+}};
+
+const StyleDialogContent = {
+  border: '3px solid #444444', // Set border color
+  borderRadius: '20px',  
+  backgroundColor: 'white',
+};
+
 class IDialogButton extends React.Component {
   constructor(props) {
     super(props);
@@ -34,7 +49,7 @@ class IDialogButton extends React.Component {
       buttonDialogButtonWidth
     } = this.props;
   }
-
+  
   handleClick(index)
   {
     // close the dialog  => return the index of the pressed button, and the dialog id
@@ -157,26 +172,15 @@ class IDialogButton extends React.Component {
 
     return(
       <Dialog 
-        //width={entireWidth}
         maxWidth={entireMaxWidth}
         minWidth={entireMinWidth}
         maxHeight={entireMaxHeight}
         minHeight={entireMinHeight}
         open={open} 
-        // TODO  BackdropProps deprecated
-        BackdropProps={{
-          style: {
-            backgroundColor: 'rgba(0, 0, 0, 0.2)', // Custom backdrop color 
-          }
-        }}          
-        sx={{
-          '& .MuiDialog-paper': {
-            border: '5px solid #1976d2', // Set border color
-            borderRadius: '20px',        // Optional: set border radius for rounded corners
-          }
-        }}>
+        BackdropProps={StyleDialogBackdrop}         
+        PaperProps={StyleDialogPaper}>
 
-        <DialogContent>
+        <DialogContent style={StyleDialogContent}>
         <Grid container direction="row" spacing={2}>
         <Grid item
           style={{
@@ -249,7 +253,7 @@ class IDialogButton extends React.Component {
                           justifyContent: "flex-start",
                         }}>
                         <img src={icon}
-                          style={{ width: iconSize, height: iconSize}}/ >
+                          style={{ width: iconSize, height: iconSize}}/>
                         {caption}
                       </IconButton>
                     </TableCell>

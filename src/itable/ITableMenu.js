@@ -91,6 +91,7 @@ export default function ITableMenu (props)
   
   const [selfilterOperator, setFilterOperator] = React.useState("");
   const [selfilterValue, setFilterValue] = React.useState("");
+  const [selfilterSecondValue, setFilterSecondValue] = React.useState("");
 
   // prepare the datepicker
   /*
@@ -103,6 +104,9 @@ export default function ITableMenu (props)
   const jsdt = new Date();
   const pickerDate = dayjs(jsdt);
   const [selfilterDateValue, setFilterDateValue] = React.useState(pickerDate);
+  const [selfilterDateSecondValue, setFilterDateSecondValue] = React.useState(pickerDate);
+
+  
 
   const openCloseFiltering = (e) =>
   {
@@ -116,8 +120,11 @@ export default function ITableMenu (props)
     }
   }
 
+  const [hasTwoEditFields, setHasTwoEditFields] = React.useState(false);
   const filterOperatorChange = (e) =>
   {
+    const has2fields = e.target.value === IConst.filterOperator_IsBetween;
+    setHasTwoEditFields(has2fields);
     setFilterOperator(e.target.value);
   }
 
@@ -126,14 +133,31 @@ export default function ITableMenu (props)
     setFilterValue(e.target.value);
   }
 
+  const filterSecondValueChange = (e) =>
+  {
+    setFilterSecondValue(e.target.value);
+  }
+
   const filterDateChange = (value) =>
   {
     const year = parseInt(value.$y);
     const month = parseInt(value.$M);
     const day = parseInt(value.$D);
     const newDateJS = new Date(year, month, day);
-    setFilterDateValue(newDateJS);
+    const pickerDate = dayjs(newDateJS);
+    setFilterDateValue(pickerDate);
   }
+
+  const filterDateSecondChange = (value) =>
+  {
+    const year = parseInt(value.$y);
+    const month = parseInt(value.$M);
+    const day = parseInt(value.$D);
+    const newDateJS = new Date(year, month, day);
+    const pickerDate = dayjs(newDateJS);
+    setFilterDateSecondValue(pickerDate);
+  }
+  
 
   const [openSnack,setOpenSnack] = React.useState(false);
         
@@ -141,6 +165,9 @@ export default function ITableMenu (props)
   {
     setAnchorEl(event.currentTarget);
     event.currentTarget.focus();
+
+console.log("props.headers[props.headerIndex].dataFieldName", props.headers[props.headerIndex].dataFieldName);
+
   }
 
   const handleClose = () =>
@@ -172,7 +199,7 @@ export default function ITableMenu (props)
     props.openDialogSorting();
   }
 
-  const addFilter = (newField, newOperator, newValue) =>
+  const addFilter = (newField, newOperator, newValue, newSecondValue) =>
   {
     // first check, if this filter it already exists
     const index = props.filters.findIndex(f => f.filterFieldname === newField);
@@ -184,7 +211,9 @@ export default function ITableMenu (props)
       const onerow = { 
         filterFieldname: newField, 
         filterOperator: newOperator, 
-        filterValue: newValue };
+        filterValue: newValue,
+        filterSecondValue: newSecondValue,
+      };
 
       if (props.filters.length === 0) 
       {
@@ -201,6 +230,7 @@ export default function ITableMenu (props)
       newlist = [...props.filters];
       newlist[index].filterOperator = newOperator;
       newlist[index].filterValue = newValue;
+      newlist[index].filterSecondValue = newSecondValue;
     }
 
     props.setChangedFilters(newlist);
@@ -227,7 +257,11 @@ export default function ITableMenu (props)
 
     // first check, if it already exists
     const field = props.headers[props.headerIndex].dataFieldName;
-    addFilter(field, selfilterOperator, selfilterValue);
+    const fValue = props.headers[props.headerIndex].editType === IConst.editType_Date ?  
+      selfilterDateValue : selfilterValue;
+    const fSecondValue = props.headers[props.headerIndex].editType === IConst.editType_Date ?  
+      selfilterDateSecondValue : selfilterSecondValue;
+    addFilter(field, selfilterOperator, fValue, fSecondValue);
   }
 
   const addRowStateFilter = (operator) =>
@@ -236,7 +270,7 @@ export default function ITableMenu (props)
     handleClose();
 
     // add filter wihtout a fieldname 
-    addFilter("", operator, "");
+    addFilter("", operator, "", "");
   }
 
   const removeRowStateFilter = () =>
@@ -325,7 +359,7 @@ export default function ITableMenu (props)
   const isDate = props.headers[props.headerIndex].editType === IConst.editType_Date;
   const isDropdown = props.headers[props.headerIndex].editType === IConst.editType_Dropdown;
   const isTextfield = !(isNumber || isDate || isDropdown);
-
+  
   // get the old filter state
   const hasNoStateFilter = props.filters.filter(f => f.filterFieldname === "").length === 0;
   let stateFilter = null;
@@ -340,9 +374,6 @@ export default function ITableMenu (props)
   const countSortings = props.headers.filter(f => f.defaultSorting !== "").length;
   const countFilters = props.filters.length;
   const countHidedColumns = props.headers.filter(h => h.isVisible === false).length;
-
-  // prepare the old values of filtering
-  // TODO
 
   return (
     <div>
@@ -569,30 +600,67 @@ export default function ITableMenu (props)
                   }, 
                 }}                  
                 >
-                <MenuItem key="filterOp1" value={IConst.filterOperator_Contains}
+                <MenuItem key="filterOp1" 
+                  value={IConst.filterOperator_Contains}
+                  disabled={!isTextfield}
                 >contains</MenuItem>
-                <MenuItem key="filterOp2" value={IConst.filterOperator_ContainsNot}
+
+                <MenuItem key="filterOp2" 
+                  value={IConst.filterOperator_ContainsNot}
+                  disabled={!isTextfield}
                 >does not contain</MenuItem>
-                <MenuItem key="filterOp3" value={IConst.filterOperator_Equals}
+
+                <MenuItem key="filterOp3" 
+                  value={IConst.filterOperator_Equals}
                 >equals</MenuItem>
-                <MenuItem key="filterOp4" value={IConst.filterOperator_EqualsNot}
+
+                <MenuItem key="filterOp4" 
+                  value={IConst.filterOperator_EqualsNot}
                 >does not equal</MenuItem>
-                <MenuItem key="filterOp5" value={IConst.filterOperator_StartsWith}
+
+                <MenuItem key="filterOp5" 
+                  value={IConst.filterOperator_StartsWith}
+                  disabled={!isTextfield}
                 >starts with</MenuItem>
-                <MenuItem key="filterOp6" value={IConst.filterOperator_StartsWithNot}
+
+                <MenuItem key="filterOp6" 
+                  value={IConst.filterOperator_StartsWithNot}
+                  disabled={!isTextfield}
                 >not starts with</MenuItem>
-                <MenuItem key="filterOp7" value={IConst.filterOperator_EndsWith}
+
+                <MenuItem key="filterOp7" 
+                  value={IConst.filterOperator_EndsWith}
+                  disabled={!isTextfield}
                 >ends with</MenuItem>
-                <MenuItem key="filterOp8" value={IConst.filterOperator_EndsWithNot}
+
+                <MenuItem key="filterOp8" 
+                  value={IConst.filterOperator_EndsWithNot}
+                  disabled={!isTextfield}
                 >not ends with</MenuItem>
-                <MenuItem key="filterOp9" value={IConst.filterOperator_IsEmpty}
+
+                <MenuItem key="filterOp9" 
+                  value={IConst.filterOperator_IsEmpty}
                 >is empty</MenuItem>
-                <MenuItem key="filterOp10" value={IConst.filterOperator_IsEmptyNot}
+
+                <MenuItem key="filterOp10" 
+                  value={IConst.filterOperator_IsEmptyNot}
                 >is not empty</MenuItem>
-                <MenuItem key="filterOp11" value={IConst.filterOperator_IsSmallerThan}
+
+                <MenuItem key="filterOp11" 
+                  value={IConst.filterOperator_IsSmallerThan}
+                  disabled={isTextfield}
                 >is smaller than</MenuItem>
-                <MenuItem key="filterOp12" value={IConst.filterOperator_IsBiggerThan}
+
+                <MenuItem key="filterOp12" 
+                  value={IConst.filterOperator_IsBiggerThan}
+                  disabled={isTextfield}
                 >is bigger than</MenuItem>
+
+                <MenuItem key="filterOp13" 
+                  value={IConst.filterOperator_IsBetween} 
+                  disabled={isTextfield}
+                >is between</MenuItem>
+
               </Select>
             </Grid>
           </Grid>
@@ -603,9 +671,10 @@ export default function ITableMenu (props)
             </Grid>
             <Grid item style={filterEdit}>
 
-              {isTextfield &&
+              {isTextfield || isNumber &&
               <TextField 
                 value={selfilterValue}
+                type={isNumber ? "number" : "text" }
                 onChange = {(e) => filterValueChange(e)}
                 style={{ width: '100%' }}
                 sx={{ 
@@ -663,6 +732,56 @@ export default function ITableMenu (props)
                     );
                   })}
               </Select>}
+
+            </Grid>
+          </Grid>
+
+          <Grid item>
+            <Grid item style={filterTopText}>
+              <Typography
+                sx={{
+                  color: hasTwoEditFields ? 'black' : 'lightgray',
+                }} 
+              >Second value</Typography >
+            </Grid>
+            <Grid item style={filterEdit}>
+
+              {isNumber &&
+              <TextField 
+                value={selfilterSecondValue}
+                disabled={!hasTwoEditFields}
+                type="number"
+                onChange = {(e) => filterSecondValueChange(e)}
+                style={{ width: '100%' }}
+                sx={{ 
+                  '& .MuiInputBase-root': {
+                    padding: '0px',
+                  },
+                  '& .MuiInputBase-input': { 
+                    height: props.settings.editComponentHeight,  
+                    padding: '6px',
+                  }, 
+                }}                  
+              />}
+
+              {isDate &&
+              <LocalizationProvider dateAdapter={AdapterDayjs} locale='de'>
+              <DatePicker 
+                value={selfilterDateSecondValue}
+                disabled={!hasTwoEditFields}
+                format="DD.MM.YYYY"
+                onChange = {(e) => filterDateSecondChange(e)}
+                style={{ width: '100%' }}
+                sx={{ 
+                  '& .MuiInputBase-root': {
+                    padding: '0px 10px 0px 0px',
+                  },
+                  '& .MuiInputBase-input': { 
+                    height: props.settings.editComponentHeight,  
+                    padding: '6px',
+                  }, 
+                }}
+              /></LocalizationProvider>}
 
             </Grid>
           </Grid>

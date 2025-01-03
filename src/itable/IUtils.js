@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+
 import IConst from './IConst'; 
 
 class IUtils {
@@ -210,10 +212,12 @@ class IUtils {
     return errorTextAll;
   }
 
-  static getCellValue = (row, field, isGetter, getter) => {
-    let text = row[field];
-    if (isGetter) text = eval(getter);
-    return text;
+  static getCellValue = (row, field, editType, getter) => {
+    let value = row[field];
+    //if (editType === IConst.editType_Date) value = dayjs(value);
+    if (editType === IConst.editType_Date) value = Date.parse(value);
+    if (editType === IConst.editType_Getter) value = eval(getter);
+    return value;
   };
 
   static getRowState(rowid, infoList)

@@ -14,13 +14,14 @@ import {
   TableRow,
   Grid,
   Tooltip,
+  Snackbar,
+  Alert,
 } from '@mui/material';
 
 
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import SaveIcon from '@mui/icons-material/Save';
 import UndoIcon from '@mui/icons-material/Undo';
-import ForwardIcon from '@mui/icons-material/Forward';
 
 import { useStyles } from './styles';
 import IConst from './IConst';
@@ -98,6 +99,9 @@ class ITable extends React.Component {
 
       //headerWidthList: this.setHeaderWidthList(),
       rowInfoList: this.setRowInfoList(),
+
+      openSnackbar: false,
+      textSnackbar: "",
     };
   }
 
@@ -162,6 +166,8 @@ class ITable extends React.Component {
       obj['height'] = this.props.settings.initialRowHeight;
       obj['state'] = IConst.rowStateUnchanged; // edited, deleted, inserted, 
       obj['selected'] = false; 
+      obj['editing'] = false; 
+      obj['saving'] = false; 
       newlist.push(obj);
     }
     return newlist;
@@ -198,18 +204,26 @@ class ITable extends React.Component {
   // ---------------------------------------------------------------------------------------
   // button clicks 
 
-  getRowIndex(rowid)
+  getDataRowIndex(rowid)
   {
     // get the index of the row 
-    const index = this.state.rowInfoList.findIndex(r => r[this.props.primaryKey] === rowid);
-    if (index === -1) alert("ERROR getRowIndex: index = -1");
+    const index = this.state.data.findIndex(r => r[this.props.primaryKey] === rowid);
+    if (index === -1) alert("ERROR getDataRowIndex: index = -1");
+    return index;
+  }
+
+  getInfoRowIndex(rowid)
+  {
+    // get the index of the row 
+    const index = this.state.rowInfoList.findIndex(r => r.id === rowid);
+    if (index === -1) alert("ERROR getInfoRowIndex: index = -1");
     return index;
   }
 
   handleDeleteRow(rowid)
   {
     // button DELETE for one row was clicked
-    const rowIndex = this.getRowIndex(rowid);
+    const rowIndex = this.getInfoRowIndex(rowid);
     if (rowIndex === -1) return;
 
     const oldState = this.state.rowInfoList[rowIndex].state;
@@ -251,7 +265,7 @@ class ITable extends React.Component {
   handleUndoRow(rowid)
   {
     // button UNDO for one row was clicked
-    const index = this.getRowIndex(rowid);
+    const index = this.getInfoRowIndex(rowid);
     if (index === -1) return;
     const oldState = this.state.rowInfoList[index].state;
 
@@ -389,19 +403,33 @@ class ITable extends React.Component {
     }
 
     // now we can save one row
-    const infoIndex = this.state.rowInfoList.findIndex(i => i.id === row[this.props.primaryKey]);
+    const rowIndex = this.getDataRowIndex(row[this.props.primaryKey]);
+    if (rowIndex === -1) return;
+    const newlist = [...this.state.data];
+    newlist[rowIndex] = row;
+
+    const infoIndex = this.getInfoRowIndex(row[this.props.primaryKey]);
     const state = this.state.rowInfoList[infoIndex].state;
-    this.props.handleSaveOneRowClick(row, state);
+    const newInfolist = [...this.state.rowInfoList];
+    newInfolist[infoIndex].editing = false;
+    newInfolist[infoIndex].saving = true;
+    
     this.setState({
+      data: newlist,
+      rowInfoList: newInfolist,
       savingInProgressOneRow: true,
       mainButtonsDisabled: true
     });
+
+    // save to DB now
+    this.props.handleSaveOneRowClick(row, state);
   }
 
   handleSaveAll()
   {
     // save all changed rows
     if (this.state.mainButtonsDisabled) return;
+
     const rowList = [];
     const stateList = this.state.rowInfoList.filter(i => i.state !== IConst.rowStateUnchanged);
     for (let r = 0; r < stateList.length; r++)
@@ -423,58 +451,73 @@ class ITable extends React.Component {
       return false;
     }
 
-    // no error found, thus we can save all rows now
-    this.props.handleSaveAllRowsClick(rowList, stateList);
+    const newInfo = [...this.state.rowInfoList];
+    for (let r = 0; r <= rowList.length; r++)
+    {
+      const index = this.state.rowInfoList.findIndex(i => i.id === rowList[this.props.primaryKey]);
+      if (index !== -1) 
+      {
+        newInfo[index].editing = false;
+        newInfo[index].saving = true;
+      }
+    }
+
     this.setState({
+      rowInfoList: newInfo,
+      // TODO : savingInProgressAll needed?
       savingInProgressAll: true,
       mainButtonsDisabled: true
     });
+
+
+    // no error found, thus we can save all rows now
+    this.props.handleSaveAllRowsClick(rowList, stateList);
   }
 
   showDataErrorMessage(errorText)
   {
-      // show a dalog with the error messages 
-      let newText = errorText;
+    // show a dalog with the error messages 
+    let newText = errorText;
 
-      /*
-      // TODO what do when to many lines in the error message?
-      const lines = errorText.split("\n");
-      if (lines.lenght > 25)
-      {
-        // if there are more than 25 error lines, 
-        // we show only 25, but we show that there are more
-        // furthermore, in this case we add a button "copy to clipboard"
-        newText = "";
-        for (let t = 0; t < 25; t++) newText += newText + lines[t] + "\n";
-        newText += newText + "...\n";
-        newText += newText + "...\n";
-        newText += newText + "[more than 25 error messages ]\n";
-      }
-
-      const buttons = lines.lenght > 25 
-        ? [ { caption: "Close", icon: IConst.imgIconOk, horizontalAlign: 'left', X: 1, Y: 1, },
-            { caption: "Copy", icon: IConst.imgIconCopy, horizontalAlign: 'left', X: 2, Y: 1, }, ]
-        : IConst.defaultButtonsOk; 
-      */
-
-      const buttons = [ 
-        { caption: "Close", icon: IConst.imgIconOk, horizontalAlign: 'left', X: 1, Y: 1, },
-        { caption: "Copy", icon: IConst.imgCopyButton, horizontalAlign: 'left', X: 2, Y: 1, }, 
-      ];
-
-      this.setState({
-        buttonDialogId: "DataError",
-        buttonDialogOpen: true,
-        buttonDialogTitle: "Error in data found",
-        buttonDialogQuestion: newText,
-        buttonDialogButtons: buttons,
-        buttonDialogListType: -1, // -1 : dont use pre-defined buttons
-        buttonDialogIconType: IConst.buttonDialogIconType_Stop,
-        buttonDialogHorizontalAlign: IConst.horizontalAlign_Left,
-        buttonDialogSizeType: IConst.buttonDialogSizeType_ParentPercentages,
-        buttonDialogButtonWidth: 120, // in pixel
-      });
+    /*
+    // TODO what do when to many lines in the error message?
+    const lines = errorText.split("\n");
+    if (lines.lenght > 25)
+    {
+      // if there are more than 25 error lines, 
+      // we show only 25, but we show that there are more
+      // furthermore, in this case we add a button "copy to clipboard"
+      newText = "";
+      for (let t = 0; t < 25; t++) newText += newText + lines[t] + "\n";
+      newText += newText + "...\n";
+      newText += newText + "...\n";
+      newText += newText + "[more than 25 error messages ]\n";
     }
+
+    const buttons = lines.lenght > 25 
+      ? [ { caption: "Close", icon: IConst.imgIconOk, horizontalAlign: 'left', X: 1, Y: 1, },
+          { caption: "Copy", icon: IConst.imgIconCopy, horizontalAlign: 'left', X: 2, Y: 1, }, ]
+      : IConst.defaultButtonsOk; 
+    */
+
+    const buttons = [ 
+      { caption: "Close", icon: IConst.imgIconOk, horizontalAlign: 'left', X: 1, Y: 1, },
+      { caption: "Copy", icon: IConst.imgCopyButton, horizontalAlign: 'left', X: 2, Y: 1, }, 
+    ];
+
+    this.setState({
+      buttonDialogId: "DataError",
+      buttonDialogOpen: true,
+      buttonDialogTitle: "Error in data found",
+      buttonDialogQuestion: newText,
+      buttonDialogButtons: buttons,
+      buttonDialogListType: -1, // -1 : dont use pre-defined buttons
+      buttonDialogIconType: IConst.buttonDialogIconType_Stop,
+      buttonDialogHorizontalAlign: IConst.horizontalAlign_Left,
+      buttonDialogSizeType: IConst.buttonDialogSizeType_ParentPercentages,
+      buttonDialogButtonWidth: 120, // in pixel
+    });
+  }
 
   UndoAllRows()
   {
@@ -515,7 +558,8 @@ class ITable extends React.Component {
       eType === IConst.editType_ButtonEdit ||
       eType === IConst.editType_ButtonSave ||
       eType === IConst.editType_ButtonUndo ||
-      eType === IConst.editType_ButtonDelete;
+      eType === IConst.editType_ButtonDelete ||
+      eType === IConst.editType_SpecialButton;
     return isNotExportable;
   }
 
@@ -529,7 +573,10 @@ class ITable extends React.Component {
     if (excelRows.length === 0)
     {
       // no rows found
-      alert("No rows seleted.");
+      this.setState({
+        openSnackbar: true,
+        textSnackbar: "No rows are selected.",
+      });
       return;
     }
 
@@ -547,7 +594,7 @@ class ITable extends React.Component {
     // now export all rows
     for (let r = 0; r < excelRows.length; r++)
     {
-      const rowIndex = this.getRowIndex(this.state.rowInfoList[r].id);
+      const rowIndex = this.getDataRowIndex(excelRows[r].id);
       for (let h = 0; h < this.props.headers.length; h++)
       {
         // we exclude not important columns
@@ -555,26 +602,81 @@ class ITable extends React.Component {
         const isNotExportable = this.getIsNotExportable(eType);
         if (!isNotExportable) 
         { 
-          const isDecimal = eType === IConst.editType_Decimal;
           const isPrimaryKey = eType === IConst.editType_PrimaryKey;
+          const isDecimal = eType === IConst.editType_Decimal;
+          const isDropdown = eType === IConst.editType_Dropdown;
+          const isChipMenu = eType === IConst.editType_Chip;
+          const isGetter = eType === IConst.editType_Getter;
           const isDate = eType === IConst.editType_Date;
           const datetimeformat = this.props.headers[h].datetimeFormat;
+
           let value = this.state.data[rowIndex][this.props.headers[h].dataFieldName];
           if (isDecimal) value = value.toFixed(this.props.headers[h].decimalCount);
           if (isPrimaryKey) value = this.state.data[rowIndex][this.props.primaryKey];
-          if (isDate) value = IConst.formatDateTime(value, datetimeformat, IConst.datetimeLocalization);
-          value = value.replace("\n", "|");
-          txt = txt + value + "\t";
+          if (isDate) value = IUtils.formatDateTime(value, datetimeformat, this.props.settings.localization);
+          const isString = typeof value === 'string' || value instanceof String;
+          if (value === null || value === undefined || !value) value = "";
+          if (isGetter) 
+          {
+            // "row" is used to evaluate the getter, don't delete it here
+            const row = this.state.data[rowIndex];
+            value = eval(this.props.headers[h].valueGetter);
+          }
+
+          try
+          {
+            if (isDropdown && !isString) {
+              const index = this.props.headers[h].dropdownSelection.findIndex(h => h.id === value);
+              value = this.props.headers[h].dropdownSelection[index].value;
+            }
+            if (isChipMenu && !isString) 
+            {
+              const index = this.props.headers[h].chipList.findIndex(h => h.id === value);
+              value = this.props.headers[h].chipList[index].label;
+            };
+          }
+          catch
+          {
+            value = "";
+          }
+
+          if (isString && value.includes('\n'))
+          {
+            // in case of several lines in one cell,
+            // we first have to change all existing "'s into ""'s
+            // and then put the whole text in "....."
+            value = value.replace('"', '""');
+            const lines = value.split('\n');
+            value = '"';
+            for (let l = 0; l < lines.length; l++) {
+              if (l > 0) value += '\n';
+              value += lines[l];
+            }
+            value += '"';
+          }
+          else if (isString && value.includes('\t'))
+          {
+            // in case of a TAB in one cell,
+            // we first  have to change all existing "'s into ""'s
+            // and then put the whole text in "....."
+            value = value.replace('"', '""');
+            value = '"' + value + '"';
+          }
+          txt += value + '\t';
         }
       }
-      txt = txt + "\n";
+      txt = txt + '\n';
     }
-
+  
     // now copy to clipboard
     navigator.clipboard.writeText(txt);
 
-    // TODO slack
-    //alert("Data was copied to clipboard.");
+    this.setState({
+      openSnackbar: true,
+      textSnackbar: excelRows.length === 1 ?
+        "1 row was copied to clipboard." :
+        excelRows.length + " rows are copied to clipboard.",
+    });
   }
 
   openDialogSorting()
@@ -582,15 +684,22 @@ class ITable extends React.Component {
     // TODO : open dialog manage sorting
   }
 
+  closeSnackbar()
+  {
+    this.setState({openSnackbar: false});
+  }
+
   // ---------------------------------------------------------------------------------------
   // clicks from button dialog
   
-  getMainButtonsEnabled()
+  /*
+  getxxxMainButtonsEnabled()
   {
     const newlist = this.state.rowInfoList.filter(r => r.state !== IConst.rowStateUnchanged);
     const disable = newlist.length === 0;
     return disable;
   }
+    */
 
   getCountChangedRows()
   {
@@ -610,39 +719,40 @@ class ITable extends React.Component {
   setMainButtonState()
   {
     // update the buttons SAVE ALL, UNDO ALL
-    const mainEnabled = this.getMainButtonsEnabled();
-    this.setState({mainButtonsDisabled: mainEnabled });
+    ///const mainEnabled = this.getxxMainButtonsEnabled();
+    const cntChangedRows = this.getCountChangedRows();
+    this.setState({
+      mainButtonsDisabled: cntChangedRows === 0,
+      countChangedRows: cntChangedRows
+    });
   }
 
   handleDataChange(newvalue, rowid, field)
   {
     // update new values to the data
-    const rowIndex = this.getRowIndex(rowid);
+    const rowIndex = this.getDataRowIndex(rowid);
     if (rowIndex === -1) return;
 
     // prepare data
-    const newlist = this.state.data;
+    const newlist = [...this.state.data];
     newlist[rowIndex][field] = newvalue;
 
     // prepare state
-    const oldState = this.state.rowInfoList[rowIndex].state;
+    const infoIndex = this.getDataRowIndex(rowid);
+
+    const oldState = this.state.rowInfoList[infoIndex].state;
     const newState = oldState === IConst.rowStateUnchanged ?
       IConst.rowStateEdited : oldState;
-    this.state.rowInfoList[rowIndex].state = newState;
+    this.state.rowInfoList[infoIndex].state = newState;
 
     // update the buttons SAVE ALL, UNDO ALL
-    const mainEnabled = this.getMainButtonsEnabled();
-
-    this.setState({
-      data: newlist,
-      mainButtonsDisabled: mainEnabled
-    });
+    this.setMainButtonState();
   }
 
   openModalDataDialog(row)
   {
     // open the new edit dialog
-    const rowIndex = this.getRowIndex(row[this.props.primaryKey]);
+    const rowIndex = this.getDataRowIndex(row[this.props.primaryKey]);
     this.setState({
       selectedRow: this.state.data[rowIndex],
       openDataModalDialog: true
@@ -679,14 +789,14 @@ class ITable extends React.Component {
 
   getRowHeight(rowid)
   {
-    const index = this.getRowIndex(rowid);
+    const index = this.getInfoRowIndex(rowid);
     if (index === -1) return this.props.settings.initialRowHeight;
     return this.state.rowInfoList[index].height;
   }
 
   getRowSelection(rowid)
   {
-    const index = this.getRowIndex(rowid);
+    const index = this.getInfoRowIndex(rowid);
     if (index === -1) return false;
     return this.state.rowInfoList[index].selected;
   }
@@ -696,7 +806,7 @@ class ITable extends React.Component {
 
   getIconSource(rowid)
   {
-    const index = this.getRowIndex(rowid);
+    const index = this.getInfoRowIndex(rowid);
     if (index === -1) return null;
     const selected = this.state.rowInfoList[index].selected;
     return selected ? IConst.imgChkboxChecked : IConst.imgChkboxUnchecked;
@@ -722,7 +832,7 @@ class ITable extends React.Component {
   handleSelectionClickRow(rowid)
   {
     // create a new list in order to be up to date
-    const rowIndex = this.getRowIndex(rowid);
+    const rowIndex = this.getInfoRowIndex(rowid);
     let newlist = [...this.state.rowInfoList];
     newlist[rowIndex].selected = !newlist[rowIndex].selected;
     const newSelected = newlist[rowIndex].selected;
@@ -751,7 +861,6 @@ class ITable extends React.Component {
     }
   }
 
-
   handleSpecialButtonClick(rowid, field)
   {
     if (!this.handleSaveAll()) 
@@ -762,9 +871,6 @@ class ITable extends React.Component {
     this.props.handleSpecialButtonClick(rowid, field);
   }
 
-
-
-
   // ---------------------------------------------------------------------------------------
   // modal dialog
 
@@ -773,31 +879,39 @@ class ITable extends React.Component {
     if (saveIt)
     {
       // copy the edited row into the data
-      const rowIndex = this.getRowIndex(newRow[this.props.primaryKey]);
-      const newlist = this.state.data;
+      const rowIndex = this.getInfoRowIndex(newRow[this.props.primaryKey]);
+      const newlist = [...this.state.data];
+      newlist[rowIndex] = newRow;
+      /*
+
       const keys = Object.keys(newRow);
       for (let f = 0; f < keys.length; f++)
       {
         const field = keys[f];
         newlist[rowIndex][field] = newRow[field];
       }
-      if (this.state.rowInfoList[rowIndex].state === IConst.rowStateUnchanged)
-        this.state.rowInfoList[rowIndex].state = IConst.rowStateEdited;
+        */
+
+      const infoIndex = this.getInfoRowIndex(newRow[this.props.primaryKey]);
+      const newinfo = [...this.state.rowInfoList];
+      if (newinfo[infoIndex].state === IConst.rowStateUnchanged)
+        newinfo[infoIndex].state = IConst.rowStateEdited;
 
       // update the buttons SAVE ALL, UNDO ALL
-      const mainEnabled = this.getMainButtonsEnabled();    
-
+      //const mainEnabled = this.getMainButtonsEnabled();    
+      const cntChangedRows = this.getCountChangedRows();
       this.setState({ 
         openDataModalDialog: false,
         data: newlist, 
-        mainButtonsDisabled: mainEnabled
+        rowInfoList: newinfo,
+        mainButtonsDisabled: cntChangedRows === 0,
+        countChangedRows: cntChangedRows
       });
     }
     else
     {
       // close the dialog
       this.setState({  openDataModalDialog: false, });
-
     }
   };
 
@@ -869,95 +983,6 @@ class ITable extends React.Component {
     }
   }
 
-
-  // ---------------------------------------------------------------------------------------
-  // cell editing procedures and functions
- 
-  handleTextfieldChange(e, rowid, fieldName)
-  {
-    // TODO delete
-    // change the data when a field was selected
-    const index = this.getRowIndex(rowid);
-    const newList = [...this.state.data];
-    this.state.data[index][fieldName] = e.target.value;
-    
-    // now also change the state of the row
-    const oldState = this.state.rowInfoList[index].state;
-    if (oldState === IConst.rowStateUnchanged) 
-      this.state.rowInfoList[index].state = IConst.rowStateEdited;
-    
-    // update the buttons SAVE ALL, UNDO ALL
-    const mainEnabled = this.getMainButtonsEnabled();    
-
-    this.setState({
-      data: newList, 
-      mainButtonsDisabled: mainEnabled
-    });
-  }
-
-  handleTextfieldNumberChange(e, rowid, fieldName)
-  {
-
-    // change the data when a field was selected
-    const index = this.getRowIndex(rowid);
-    const newList = this.state.data;
-
-    // now also change the state of the row
-    const oldState = this.state.rowInfoList[index].state;
-    if (oldState === IConst.rowStateUnchanged) 
-      this.state.rowInfoList[index].state = IConst.rowStateEdited;
-
-    // TODO parseInt ?
-    const number = parseFloat(e.target.value);
-    newList[index][fieldName] = number;
-
-    // update the buttons SAVE ALL, UNDO ALL
-    const mainEnabled = this.getMainButtonsEnabled();    
-
-    this.setState({
-      data: newList, 
-      mainButtonsDisabled: mainEnabled
-    });
-  }
-  
-  handleDatePickerChange(e, rowIndex, fieldName)
-  {
-    // TODO delete
-    const newlist = this.state.data;
-    newlist[rowIndex][fieldName] = e.target.date;
-
-    // update the buttons SAVE ALL, UNDO ALL
-    const mainEnabled = this.getMainButtonsEnabled();    
-
-    this.setState({ 
-      data: newlist, 
-      mainButtonsDisabled: mainEnabled
-    });
-  }
-
-  handleChipChange(chipid, rowid, fieldName)
-  {
-    alert("Not implemented yet (chip id = " + chipid + ")");
-  }
-
-  // ---------------------------------------------------------------------------------------
-  // common key events
-
-  handleCellEditKeyUp(e, rowId, fieldname)
-  {
-    // TODO : implement key strokes 
-    if (e.key === 'Enter' || e.keyCode === 13)
-    {
-
-      e.key = null;
-    }
-    else if (e.key === 'Escape')
-    {
-      
-      e.key = null;
-    }
-  }
-
   // ---------------------------------------------------------------------------------------
   // header menu events
 
@@ -983,7 +1008,6 @@ class ITable extends React.Component {
     }
     this.props.menuButtonClick(index);
   }
-
   
   render() 
   {
@@ -1005,8 +1029,6 @@ class ITable extends React.Component {
         let index = -1;
         let getter = "";
         let editType = "";
-        let isGetter = "";
-
 
         if (filterField === "")
         {
@@ -1019,44 +1041,52 @@ class ITable extends React.Component {
           {
             getter = this.state.headers[index].getter;
             editType = this.state.headers[index].editType;
-            isGetter = editType === IConst.editType_Getter;
           }
         }
   
         const filterTypeValue = 
           editType === IConst.editType_Integer ? parseInt(this.state.filters[f].filterValue) :
           editType === IConst.editType_Decimal ? parseFloat(this.state.filters[f].filterValue) :
-          // TODO
-          //editType === IConst.editType_Date ? getTime(this.state.filters[f].filterValue) :
+          editType === IConst.editType_Date ? Date.parse(this.state.filters[f].filterValue) :
           this.state.filters[f].filterValue;
+
+        const filterTypeSecondValue =
+          editType === IConst.editType_Integer ? parseInt(this.state.filters[f].filterSecondValue) :
+          editType === IConst.editType_Decimal ? parseFloat(this.state.filters[f].filterSecondValue) :
+          editType === IConst.editType_Date ? Date.parse(this.state.filters[f].filterSecondValue) :
+          this.state.filters[f].filterSecondValue;
   
         if (data.length > 0) 
         {
           data = data.filter((row) =>
             filterOperator === IConst.filterOperator_Contains ? 
-              IUtils.getCellValue(row, filterField, isGetter, getter).includes(filterTypeValue) :
+              IUtils.getCellValue(row, filterField, editType, getter).includes(filterTypeValue) :
             filterOperator === IConst.filterOperator_ContainsNot ? 
-              !IUtils.getCellValue(row, filterField, isGetter, getter).includes(filterTypeValue) :
+              !IUtils.getCellValue(row, filterField, editType, getter).includes(filterTypeValue) :
             filterOperator === IConst.filterOperator_Equals ? 
-              IUtils.getCellValue(row, filterField, isGetter, getter) === filterTypeValue :
+              IUtils.getCellValue(row, filterField, editType, getter) === filterTypeValue :
             filterOperator === IConst.filterOperator_EqualsNot ? 
-              !IUtils.getCellValue(row, filterField, isGetter, getter) !== filterTypeValue :
+              !IUtils.getCellValue(row, filterField, editType, getter) !== filterTypeValue :
             filterOperator === IConst.filterOperator_StartsWith ? 
-              IUtils.getCellValue(row, filterField, isGetter, getter).startsWith(filterTypeValue) :
+              IUtils.getCellValue(row, filterField, editType, getter).startsWith(filterTypeValue) :
             filterOperator === IConst.filterOperator_StartsWithNot ? 
-              !IUtils.getCellValue(row, filterField, isGetter, getter).startsWith(filterTypeValue) :
+              !IUtils.getCellValue(row, filterField, editType, getter).startsWith(filterTypeValue) :
             filterOperator === IConst.filterOperator_EndsWith ? 
-              IUtils.getCellValue(row, filterField, isGetter, getter).endsWith(filterTypeValue) :
+              IUtils.getCellValue(row, filterField, editType, getter).endsWith(filterTypeValue) :
             filterOperator === IConst.filterOperator_EndsWithNot ? 
-              !IUtils.getCellValue(row, filterField, isGetter, getter).endsWith(filterTypeValue) :
+              !IUtils.getCellValue(row, filterField, editType, getter).endsWith(filterTypeValue) :
             filterOperator === IConst.filterOperator_IsEmpty ? 
-              IUtils.getCellValue(row, filterField, isGetter, getter) === null :
+              IUtils.getCellValue(row, filterField, editType, getter) === null :
             filterOperator === IConst.filterOperator_IsEmptyNot ? 
-              IUtils.getCellValue(row, filterField, isGetter, getter) !== null :
+              IUtils.getCellValue(row, filterField, editType, getter) !== null :
             filterOperator === IConst.filterOperator_IsSmallerThan ? 
-              IUtils.getCellValue(row, filterField, isGetter, getter) < filterTypeValue :
+              IUtils.getCellValue(row, filterField, editType, getter) < filterTypeValue :
             filterOperator === IConst.filterOperator_IsBiggerThan ? 
-              IUtils.getCellValue(row, filterField, isGetter, getter) > filterTypeValue :
+              IUtils.getCellValue(row, filterField, editType, getter) > filterTypeValue :
+            filterOperator === IConst.filterOperator_IsBetween ? 
+              IUtils.getCellValue(row, filterField, editType, getter) >= filterTypeValue  &&
+              IUtils.getCellValue(row, filterField, editType, getter) <= filterTypeSecondValue :
+              
 
             // filtering states
             filterOperator === IConst.filterOperator_Edited ? 
@@ -1100,6 +1130,8 @@ class ITable extends React.Component {
     const mainChecked = this.state.mainChecked;
     const mainIndeterminated = this.state.mainIndeterminated;
     const mainButtonsDisabled = this.state.mainButtonsDisabled;
+    const cntChangedRows = this.state.countChangedRows;
+
     const sizeMainButton = this.props.settings.buttonSizeMain;
 
     return (
@@ -1172,10 +1204,10 @@ class ITable extends React.Component {
                     primaryKey={this.props.primaryKey}
                     row={row}
                     setMainButtonState={() => this.setMainButtonState()}
-                    handleUndoInsertedRows={(rowIndex) => this.handleRowEditButtons(rowIndex)}
+                    handleUndoInsertedRows={(rowid) => this.handleUndoRow(rowid)}
                     handleSelectionClickRow={(rowid) => this.handleSelectionClickRow(rowid)}
                     handleSpecialButtonClick={(rowid, field) => this.handleSpecialButtonClick(rowid, field)}
-                    handleDataChange={(newvalue, rowid, field) => this.handleDataChange(newvalue, rowid, field)}
+                    //handleDataChange={(newvalue, rowid, field) => this.handleDataChange(newvalue, rowid, field)}
                     handleSaveOneRow = {(row) =>  this.handleSaveOneRow(row)}
                     showDataErrorMessage = {(errorText) =>  this.showDataErrorMessage(errorText)}
                     openModalDataDialog={(row) => this.openModalDataDialog(row)}  
@@ -1245,7 +1277,7 @@ class ITable extends React.Component {
                 <SaveIcon sx={{ 
                   color: IConst.iconColorGreen, 
                   opacity: mainButtonsDisabled ? 0.2 : 1 }}/>
-              Save all ({this.state.countChangedRows})</IconButton></span></Tooltip>}
+              Save all ({cntChangedRows})</IconButton></span></Tooltip>}
 
               {/* undo all  */}
               {this.props.settings.hasButtonUndoAll &&
@@ -1258,7 +1290,7 @@ class ITable extends React.Component {
               <UndoIcon sx={{ 
                 color: IConst.iconColorRed,
                 opacity: mainButtonsDisabled ? 0.2 : 1 }}/>
-              Undo all ({this.state.countChangedRows})</IconButton></span></Tooltip>}
+              Undo all ({cntChangedRows})</IconButton></span></Tooltip>}
 
               {/* export for excel all rows */}    
               {this.props.settings.hasButtonExcelAll && 
@@ -1422,6 +1454,18 @@ class ITable extends React.Component {
       />}
       */}
 
+      <Snackbar 
+        open={this.state.openSnackbar} 
+        autoHideDuration={5000} 
+        onClose={()=>this.closeSnackbar()} 
+        anchorOrigin={{ vertical:"top", horizontal:"right" }}>
+        <Alert
+          onClose={()=>this.closeSnackbar()}
+          severity="success"
+          variant="filled"
+          sx={{ width: '100%' }}
+        >{this.state.textSnackbar}</Alert>
+      </Snackbar>
 
       </Paper>
     );

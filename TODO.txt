@@ -1,15 +1,10 @@
 DONE list
 =========
+- filtering dates now works
 
 
 QUESTION
 ========
-- multiple sorting needed?
-  sorting date is not working yet
-
-- multiple filtering on one field needed?
-  filtering between : from ... to? 
-  filtering is without the possibility of case sensitive
 
 - ChipMenuDialog: keep the icons as png?
   SpecialButtons: keep the icons as png?
@@ -20,23 +15,28 @@ QUESTION
   only saved rows ? => how?
   when will the component know, when saving is finished
   asynchroneous: is the user allowed to change the page?
+  what has to be blocked? all rows? button view? buttons next/back? button excel?
 
 - Grid: how to show the scrollbar automatically
 
 - how to debug
 
-- sorting Dates: see IUtilsSort.js => fixed:
-  return Date.parse(row[dataFieldName]);
+- when filtering, still 100 rows are shown on pagination
+  how to resolve? 
 
+- when rows are sorted, editing the row may change the sorting.
+  thus => the row may disapear. WHAT TO DO???
+  Solution row = [...state.row] => but now problems with save all?
+
+- do you want a modal dialog for editing one row?
+  if yes, some changes are needed.
 
 
 TODO list
 =========
 
-- EXCEL export excel with line break inside the cell?
-  now I replace "\n" => " | " : value = value.replace("\n", " | ");
-  put the text in parentesis
-  problem with export to excel for multilines
+
+
 
 ----------------------------------------------
 
@@ -45,8 +45,17 @@ Files done
 Done until IHeaderManage.js
 
 
-// 21.12.2024
-- test withou buttons BACK & NEXT
-- all dialogs the same color and borders
+
+
+
+
+
+
+
+
+
+
+
+
 
 

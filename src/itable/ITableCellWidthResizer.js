@@ -153,7 +153,6 @@ class ITableCellWidthResizer extends React.Component {
               setChangedHeaders={(newheaders) => this.props.setChangedHeaders(newheaders)}
               setChangedFilters={(newfilters) => this.props.setChangedFilters(newfilters)}
               setChangedSortings={(newsortings) => this.props.setChangedSortings(newsortings)}
-              setChangedSortings={(newsortings) => this.props.setChangedSortings(newsortings)}
               openDialogSorting={() => this.props.openDialogSorting()}
             ></ITableMenu>
           </div>}

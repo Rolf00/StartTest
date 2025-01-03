@@ -26,7 +26,8 @@ export default function IFieldDropDown (props) {
   {
     const newValue = e.target.value;
     // change the data now
-    props.handleDataChange(newValue, fieldname);  }
+    props.handleDataChange(newValue, fieldname);  
+  }
 
   if (editing)
   {
@@ -70,7 +71,8 @@ export default function IFieldDropDown (props) {
           const ddValue = item.value;
           return (
             <MenuItem 
-              key={itemIndex} value={ddId}
+              key={itemIndex} 
+              value={ddId}
             >{ddValue}</MenuItem>
           );
         })}
@@ -85,7 +87,8 @@ export default function IFieldDropDown (props) {
     let showtext = "";
     try {
       // Code that might throw an error
-      showtext = props.header.dropdownSelection[value].value;
+      const index = props.header.dropdownSelection.findIndex(h => h.id === value)
+      showtext = props.header.dropdownSelection[index].value;
     } 
     catch {}
     

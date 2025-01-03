@@ -28,6 +28,7 @@ export default function IFieldRowEditButton (props) {
   const isDeleted = props.rowstate === IConst.rowStateDeleted;
   
   const editing = props.editing;
+  const saving = props.saving;
 
   let disabled = true;
   if (!props.savingInProgressAll)
@@ -53,6 +54,7 @@ export default function IFieldRowEditButton (props) {
       disabled = isDeleted && rowState !== IConst.rowStateInserted;
     }    
   }
+  if (props.saving) disabled = true;
 
   const imgWidth = props.settings.buttonSizeOnRows;
   const btnHoverWidth = props.settings.buttonSizeOnRowsHover;

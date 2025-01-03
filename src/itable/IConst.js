@@ -213,6 +213,7 @@ class IConst {
   static filterOperator_IsEmptyNot = "10";
   static filterOperator_IsSmallerThan= "11";
   static filterOperator_IsBiggerThan = "12";
+  static filterOperator_IsBetween = "13";
   // TODO : what is meant with any of
   //static filterOperator_IsAnyOf = "13";
 
