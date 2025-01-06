@@ -5,7 +5,12 @@ import Tooltip from '@mui/material/Tooltip';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 
+import CheckBoxOutlineBlankRoundedIcon from '@mui/icons-material/CheckBoxOutlineBlankRounded';
+import CheckBoxRoundedIcon from '@mui/icons-material/CheckBoxRounded';
+
+
 import IConst from './IConst';
+import { iconButtonStyleGreen } from './IStyles';
 
 export default function IFieldSelection (props) {
 
@@ -30,8 +35,8 @@ export default function IFieldSelection (props) {
     <IconButton
       onClick={() => props.handleSelectionClickRow(rowid)}
       style={{ width: btnHoverWidth, height: btnHoverWidth, }}>
-      {value && <CheckBoxIcon sx={{ color: IConst.iconColorGreen}}/>}
-      {!value && <CheckBoxOutlineBlankIcon sx={{ color: IConst.iconColorGreen}}/>}
+      {value && <CheckBoxRoundedIcon style={iconButtonStyleGreen}/>}
+      {!value && <CheckBoxOutlineBlankRoundedIcon style={iconButtonStyleGreen}/>}
     </IconButton>
     </Tooltip>
     </div>

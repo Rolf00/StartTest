@@ -1,27 +1,12 @@
-import imgChkboxChecked from './imgCheckboxChecked48.png'; 
-import imgChkboxUnchecked from './imgCheckboxUnchecked48.png'; 
-import imgChkboxIndeterminate from './imgCheckboxIndeterminate48.png'; 
-import imgEditButton from './imgEdit48.png'; 
-import imgEditEditDialogButton from './imgEditDialog48.png'; 
-import imgEditStop from './imgStop48.png'; 
-import imgDeleteButton from './imgDelete48.png'; 
-import imgSaveButton from './imgSave48.png'; 
-import imgUndoButton from './imgUndo48.png'; 
-import imgAddButton from './imgAdd48.png'; 
-import imgExcelButton from './imgExcel48.png'; 
-import imgColumsButton from './imgColums48.png'; 
-import imgCopyButton from './imgCopyButton48.png'; 
+import DoneRoundedIcon from '@mui/icons-material/DoneRounded';
+import RemoveCircleRoundedIcon from '@mui/icons-material/RemoveCircleRounded';
+import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 
-import imgIconOk from './imgYes48.png'; 
-import imgIconYes from './imgYes48.png'; 
-import imgIconNo from './imgNo48.png'; 
-import imgIconCancel from './imgCancel48.png'; 
-
-import imgDialogInfo from './imgInfo96.png'; 
-import imgDialogQuestion from './imgQuestion96.png'; 
-import imgDialogStop from './imgStop96.png'; 
-import imgDialogWarning from './imgWarning96.png'; 
-
+import { 
+  iconButtonStyleBlue, 
+  iconButtonStyleGreen, 
+  iconButtonStyleRed,
+  iconButtonStyleOrange } from './IStyles';
 
 class IConst {
 
@@ -49,23 +34,6 @@ class IConst {
   static errorColor = "#FF0000";
   static errorColorBackground = "#FFCCCC";
 
-  // icons selection / checkbox
-  static imgChkboxChecked = imgChkboxChecked; 
-  static imgChkboxUnchecked = imgChkboxUnchecked; 
-  static imgChkboxIndeterminate = imgChkboxIndeterminate; 
-
-  // icons selection / checkbox / data functions on row
-  static imgEditButton = imgEditButton; 
-  static imgEditEditDialogButton = imgEditEditDialogButton; 
-  static imgEditStop = imgEditStop; 
-  static imgDeleteButton = imgDeleteButton; 
-  static imgSaveButton = imgSaveButton; 
-  static imgUndoButton = imgUndoButton; 
-  static imgAddButton = imgAddButton; 
-  static imgExcelButton = imgExcelButton; 
-  static imgColumsButton = imgColumsButton;
-  static imgCopyButton = imgCopyButton;
-
   // alignments
   static horizontalAlign_Left = "left";
   static horizontalAlign_Center = "center";
@@ -73,18 +41,6 @@ class IConst {
   static verticalAlign_Top = "top";
   static verticalAlign_Middle = "middle";
   static verticalAlign_Bottom = "bottom";
-
-  // icons button dialog
-  static imgIconOk = imgIconOk; 
-  static imgIconYes = imgIconYes; 
-  static imgIconNo = imgIconNo; 
-  static imgIconCancel = imgIconCancel; 
-
-  // big icon dialog
-  static imgDialogBigIconInfo = imgDialogInfo; 
-  static imgDialogBigIconQuestion = imgDialogQuestion; 
-  static imgDialogBigIconStop = imgDialogStop; 
-  static imgDialogBigIconWarning = imgDialogWarning; 
 
   // types for button dialog 
   static buttonDialogTypeOk = 0;
@@ -99,16 +55,16 @@ class IConst {
 
   // default buttons for button dialog 
   static defaultButtonsOk = [
-    { caption: "Close", icon: imgIconOk, horizontalAlign: 'left', X: 1, Y: 1, }
+    { caption: "Close", icon: DoneRoundedIcon, iconStyle: iconButtonStyleGreen, horizontalAlign: 'left', X: 1, Y: 1, }
   ];
   static defaultButtonsYesNo = [
-    { caption: "Yes", icon: imgIconYes, horizontalAlign: 'left', X: 1, Y: 1, },
-    { caption: "No", icon: imgIconNo, horizontalAlign: 'right', X: 2, Y: 1, }
+    { caption: "Yes", icon: DoneRoundedIcon, iconStyle: iconButtonStyleGreen, horizontalAlign: 'left', X: 1, Y: 1, },
+    { caption: "No", icon: RemoveCircleRoundedIcon, iconStyle: iconButtonStyleRed, horizontalAlign: 'right', X: 2, Y: 1, }
   ];
   static defaultButtonsYesNoCancel = [
-    { caption: "Yes", icon: imgIconYes, horizontalAlign: 'left', X: 1, Y: 1, },
-    { caption: "No", icon: imgIconNo, horizontalAlign: 'left', X: 2, Y: 1, },
-    { caption: "Cancel", icon: imgIconCancel, horizontalAlign: 'left', X: 3, Y: 1, }
+    { caption: "Yes", icon: DoneRoundedIcon, iconStyle: iconButtonStyleGreen, horizontalAlign: 'left', X: 1, Y: 1, },
+    { caption: "No", icon: RemoveCircleRoundedIcon, iconStyle: iconButtonStyleRed, horizontalAlign: 'left', X: 2, Y: 1, },
+    { caption: "Cancel", icon: CloseRoundedIcon, iconStyle: iconButtonStyleRed, horizontalAlign: 'left', X: 3, Y: 1, }
   ];
 
   // calucalted from the elnght of all buttons horizontally aligned
@@ -149,6 +105,7 @@ class IConst {
   static editType_Date = 'date';
   static editType_Chip = 'chip';
   static editType_SpecialButton = 'button';
+  static editType_StateButton = 'statebutton';
   static editType_Getter = 'getter';
   // only buttons
   static editType_ButtonEditRow = 'btnEditRow';
@@ -198,7 +155,6 @@ class IConst {
   static datetimeCheck_After = 2; // date not after today
   static datetimeCheck_BeforeAnother = 3; // date not after field "xyz"
   static datetimeCheck_AfterAnother = 4; // date not before field "xyz"
-
 
   // filtering
   static filterOperator_Contains = "1";

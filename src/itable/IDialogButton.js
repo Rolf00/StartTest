@@ -12,8 +12,17 @@ import Grid from "@mui/material/Grid";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 
+import InfoRoundedIcon from '@mui/icons-material/InfoRounded';
+import HelpRoundedIcon from '@mui/icons-material/HelpRounded';
+import WarningRoundedIcon from '@mui/icons-material/WarningRounded';
+import ErrorRoundedIcon from '@mui/icons-material/ErrorRounded';
+
 import IConst from './IConst';
 import { useStyles } from './styles';
+import { 
+  iconDialogStyleBlue, 
+  iconDialogStyleRed,
+  } from './IStyles';
 
 
 const StyleDialogBackdrop = { style: { 
@@ -89,10 +98,15 @@ class IDialogButton extends React.Component {
 
     const questionLines = question.split("\n");
 
-    const mainIcon = 
-      this.props.buttonDialogIconType === IConst.buttonDialogIconType_Info ? IConst.imgDialogBigIconInfo :
-      this.props.buttonDialogIconType === IConst.buttonDialogIconType_Question ? IConst.imgDialogBigIconQuestion :
-      this.props.buttonDialogIconType === IConst.buttonDialogIconType_Stop ?  IConst.imgDialogBigIconStop : null;
+    const MainIcon = 
+      this.props.buttonDialogIconType === IConst.buttonDialogIconType_Info ? InfoRoundedIcon :
+      this.props.buttonDialogIconType === IConst.buttonDialogIconType_Question ? HelpRoundedIcon :
+      this.props.buttonDialogIconType === IConst.buttonDialogIconType_Stop ?  ErrorRoundedIcon : null;
+
+    const mainIconStyle = 
+      this.props.buttonDialogIconType === IConst.buttonDialogIconType_Info ? iconDialogStyleBlue :
+      this.props.buttonDialogIconType === IConst.buttonDialogIconType_Question ? iconDialogStyleBlue :
+      this.props.buttonDialogIconType === IConst.buttonDialogIconType_Stop ?  iconDialogStyleRed : null;
 
     const buttonWidth = this.props.buttonDialogButtonWidth;
 
@@ -187,9 +201,7 @@ class IDialogButton extends React.Component {
             display: 'flex',
             alignItems: 'center'          
           }}> 
-          <img 
-            src={mainIcon}
-            style={{ width: imageWidth, height: imageWidth, }}/>
+          <MainIcon style={mainIconStyle}/>
         </Grid>
 
         <Grid item direction="column" spacing={2} align="center">
@@ -236,7 +248,8 @@ class IDialogButton extends React.Component {
                   const button = buttons[btnIndex];
                   const caption = button.caption;
                   const align = button.horizontalAlign;
-                  const icon = button.icon;
+                  const ButtonIcon = button.icon;
+                  const iconStyle = button.iconStyle;
                   return (
                     <TableCell
                       key={`buttonDialog-row${rowIndex}-column${colIndex}`}
@@ -252,8 +265,7 @@ class IDialogButton extends React.Component {
                           //justifyContent: align === "right" ? "flex-end" : "flex-start",
                           justifyContent: "flex-start",
                         }}>
-                        <img src={icon}
-                          style={{ width: iconSize, height: iconSize}}/>
+                        <ButtonIcon style={iconStyle}/>
                         {caption}
                       </IconButton>
                     </TableCell>

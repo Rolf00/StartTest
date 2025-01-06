@@ -19,13 +19,19 @@ import {
 } from '@mui/material';
 
 
-import AddBoxIcon from '@mui/icons-material/AddBox';
-import SaveIcon from '@mui/icons-material/Save';
-import UndoIcon from '@mui/icons-material/Undo';
+import SaveRoundedIcon from '@mui/icons-material/SaveRounded';
+import UndoRoundedIcon from '@mui/icons-material/UndoRounded';
+import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
+import ContentCopyRoundedIcon from '@mui/icons-material/ContentCopyRounded';
 
 import { useStyles } from './styles';
 import IConst from './IConst';
 import IUtils from './IUtils';
+import { 
+  iconButtonStyleBlue, 
+  iconButtonStyleGreen, 
+  iconButtonStyleRed,
+  iconButtonStyleOrange } from './IStyles';
 import { getSortRows } from './IUtilsSort';
 import { getSortFunc } from './IUtilsSort';
 import ITableHeader from './ITableHeader';
@@ -34,6 +40,7 @@ import ITableRow from './ITableRow';
 import IDialogButton from './IDialogButton';
 import IDialogSorting from './IDialogSorting';
 import IDialogData_First from './IDialogData_First';
+
 
 
 const availableDialogs = {
@@ -53,8 +60,13 @@ class ITable extends React.Component {
       headers, 
       primaryKey,
       data,
-      dialogName } = this.props;
-  
+      dialogName,
+    holder } = this.props;
+      if(holder) {
+        holder.saveSelected = rows => {
+
+        } 
+      }
     this.state = {
       headers: headers,
       data: this.getDataList(),
@@ -871,18 +883,28 @@ class ITable extends React.Component {
     this.props.handleSpecialButtonClick(rowid, field);
   }
 
+  handleStateButtonClick(rowid, field)
+  {
+    if (!this.handleSaveAll()) 
+    {
+      // TODO asynchroneous ???
+      //return;
+    }
+    this.props.handleStateButtonClick(rowid, field);
+  }
+
   // ---------------------------------------------------------------------------------------
   // modal dialog
 
   handleSubmitModalDialog = (newRow, saveIt) => 
   {
+
     if (saveIt)
     {
       // copy the edited row into the data
       const rowIndex = this.getInfoRowIndex(newRow[this.props.primaryKey]);
       const newlist = [...this.state.data];
-      newlist[rowIndex] = newRow;
-      /*
+      //newlist[rowIndex] = newRow;
 
       const keys = Object.keys(newRow);
       for (let f = 0; f < keys.length; f++)
@@ -890,15 +912,16 @@ class ITable extends React.Component {
         const field = keys[f];
         newlist[rowIndex][field] = newRow[field];
       }
-        */
 
       const infoIndex = this.getInfoRowIndex(newRow[this.props.primaryKey]);
       const newinfo = [...this.state.rowInfoList];
       if (newinfo[infoIndex].state === IConst.rowStateUnchanged)
         newinfo[infoIndex].state = IConst.rowStateEdited;
 
+      console.log("newlist[rowIndex]", newlist[rowIndex]);    
+      //console.log("newRow", newRow);    
+
       // update the buttons SAVE ALL, UNDO ALL
-      //const mainEnabled = this.getMainButtonsEnabled();    
       const cntChangedRows = this.getCountChangedRows();
       this.setState({ 
         openDataModalDialog: false,
@@ -1009,6 +1032,7 @@ class ITable extends React.Component {
     this.props.menuButtonClick(index);
   }
   
+
   render() 
   {
     const { classes } = this.props;
@@ -1207,6 +1231,7 @@ class ITable extends React.Component {
                     handleUndoInsertedRows={(rowid) => this.handleUndoRow(rowid)}
                     handleSelectionClickRow={(rowid) => this.handleSelectionClickRow(rowid)}
                     handleSpecialButtonClick={(rowid, field) => this.handleSpecialButtonClick(rowid, field)}
+                    handleStateButtonClick={(rowid, field) => this.handleStateButtonClick(rowid, field)}
                     //handleDataChange={(newvalue, rowid, field) => this.handleDataChange(newvalue, rowid, field)}
                     handleSaveOneRow = {(row) =>  this.handleSaveOneRow(row)}
                     showDataErrorMessage = {(errorText) =>  this.showDataErrorMessage(errorText)}
@@ -1244,15 +1269,15 @@ class ITable extends React.Component {
 
               {this.props.settings.menuButtonList && 
                 this.props.settings.menuButtonList.map((button, index) => {
-                const iconSize = this.props.settings.buttonSizeMain;
+                const ButtonIcon = button.icon;
                 if (button.positionStart === true)
                 return (
                   <IconButton
                     key={`menuButtonList-button${index}`}
                     className={classes.mainButtons}
                     disabled={this.state.savingInProgressAll}
-                    onClick={(index) => this.menuButtonClick(index)}>
-                    {button.icon && <img src={button.icon} style={{ width: iconSize, height:iconSize }} />}
+                    onClick={() => this.menuButtonClick(button.id)}>
+                    {button.icon && <ButtonIcon style={iconButtonStyleBlue} />}
                     {button.caption}
                   </IconButton>
                 );
@@ -1264,7 +1289,7 @@ class ITable extends React.Component {
               <IconButton
                 className={classes.mainButtons}
                 onClick={e => this.handleNewRow()}>
-              <AddBoxIcon sx={{ color: IConst.iconColorDarkYellow, }}/>
+              <AddCircleRoundedIcon style={iconButtonStyleOrange}/>
               New row</IconButton></Tooltip>}
 
               {/* save all */}
@@ -1274,22 +1299,21 @@ class ITable extends React.Component {
                 className={classes.mainButtons}
                 disabled={mainButtonsDisabled}
                 onClick={e => this.handleSaveAll(e)}>
-                <SaveIcon sx={{ 
-                  color: IConst.iconColorGreen, 
-                  opacity: mainButtonsDisabled ? 0.2 : 1 }}/>
+                <SaveRoundedIcon 
+                  style={iconButtonStyleGreen}
+                  sx={{ opacity: mainButtonsDisabled ? 0.2 : 1 }}/>
               Save all ({cntChangedRows})</IconButton></span></Tooltip>}
+
+                            
 
               {/* undo all  */}
               {this.props.settings.hasButtonUndoAll &&
-              
               <Tooltip title="Ctrl-U" arrow><span>
               <IconButton
                 className={classes.mainButtons}
                 disabled={mainButtonsDisabled}
                 onClick={e => this.handleUndoAll(e)}>
-              <UndoIcon sx={{ 
-                color: IConst.iconColorRed,
-                opacity: mainButtonsDisabled ? 0.2 : 1 }}/>
+              <UndoRoundedIcon style={iconButtonStyleRed} sx={{ opacity: mainButtonsDisabled ? 0.2 : 1 }}/>
               Undo all ({cntChangedRows})</IconButton></span></Tooltip>}
 
               {/* export for excel all rows */}    
@@ -1298,7 +1322,11 @@ class ITable extends React.Component {
               <IconButton
                 className={classes.mainButtons}
                 onClick={e => this.handleCopyForExcel(true)}>
+              <ContentCopyRoundedIcon style={iconButtonStyleGreen}/>
               Copy all rows</IconButton></Tooltip>}
+
+
+              
 
               {/* export for excel only selected rows */}
               {this.props.settings.hasButtonExcelSelected &&
@@ -1306,6 +1334,7 @@ class ITable extends React.Component {
               <IconButton
                 className={classes.mainButtons}
                 onClick={e => this.handleCopyForExcel(false)}>
+              <ContentCopyRoundedIcon style={iconButtonStyleGreen}/>
               Copy selected rows</IconButton></Tooltip>}
 
               {/* manage the sortings of rows */}
@@ -1318,15 +1347,15 @@ class ITable extends React.Component {
 
               {this.props.settings.menuButtonList &&
                 this.props.settings.menuButtonList.map((button, index) => {
-                const iconSize = this.props.settings.buttonSizeMain;
+                const ButtonIcon = button.icon;
                 if (button.positionStart === false)
                 return (
                   <IconButton
                     key={`menuButtonList-button${index}`}
                     className={classes.mainButtons}
                     disabled={this.state.savingInProgressAll}
-                    onClick={(index) => this.menuButtonClick(index)}>
-                    {button.icon && <img src={button.icon} style={{ width: iconSize, height:iconSize }} />}
+                    onClick={() => this.menuButtonClick(button.id)}>
+                    {button.icon && <ButtonIcon style={iconButtonStyleBlue} />}
                     {button.caption}
                   </IconButton>
                 );

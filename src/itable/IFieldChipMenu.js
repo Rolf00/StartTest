@@ -105,10 +105,12 @@ export default function IChipMenu (props)
   const chipLabel = (chipItem) ? chipItem.label : "";
   const chipColor = (chipItem) ? chipItem.color : null;
   const chipColorHover = (chipItem) ? chipItem.colorHover : null;
-  const chipIcon = (chipItem) ? chipItem.icon : null;
+  //const chipIcon = (chipItem) ? chipItem.icon : null;
   const chipClickable = props.header.isEditable;
   const chipWidth = (chipItem) ? props.header.chipWidth : 0;
   const chipIconWidth = (chipItem) ? props.header.chipIconWidth : 0;
+  const ChipIcon = (chipItem) ? chipItem.icon : null;
+  const chipIconStyle = (chipItem) ? chipItem.iconStyle : null;
 
   const [isHovered, setIsHovered] = useState(false);
 
@@ -129,7 +131,7 @@ export default function IChipMenu (props)
         <Chip 
           label={chipLabel}
           //avatar={<Avatar alt="" src={<AdjustIcon/>} />}
-          avatar={<AdjustIcon/>}
+          avatar={<ChipIcon style={chipIconStyle}/>}
           clickable={chipClickable}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}      
@@ -203,8 +205,7 @@ export default function IChipMenu (props)
       >
         <Chip 
           label={chipLabel}
-          //avatar={<Avatar alt="" src={chipIcon} />}
-          avatar={<AdjustIcon/>}
+          avatar={<ChipIcon style={chipIconStyle}/>}
           style={{
             minWidth: chipWidth,
           }}

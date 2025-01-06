@@ -17,28 +17,30 @@ import {
   Tooltip
 } from '@mui/material';
 
-
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
 
-
+import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
+import StopCircleRoundedIcon from '@mui/icons-material/StopCircleRounded';
+import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
+import StraightRoundedIcon from '@mui/icons-material/StraightRounded';
+import HeightRoundedIcon from '@mui/icons-material/HeightRounded';
+import VisibilityRoundedIcon from '@mui/icons-material/VisibilityRounded';
+import VisibilityOffRoundedIcon from '@mui/icons-material/VisibilityOffRounded';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
-import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
-import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
-import CloseIcon from '@mui/icons-material/Close';
-import AddIcon from '@mui/icons-material/Add';
-import CancelIcon from '@mui/icons-material/Cancel';
-import SwapVertIcon from '@mui/icons-material/SwapVert';     
 
 
 import IConst from './IConst';
 import { getNewSortingList } from './IUtilsSort';
+import { 
+  iconButtonStyleGrey, 
+  iconButtonStyleGrey_Rotate180, 
+  iconButtonStyleRed, 
+  iconButtonStyleGreen } from './IStyles';
+
 
 export default function ITableMenu (props) 
 {
@@ -165,9 +167,6 @@ export default function ITableMenu (props)
   {
     setAnchorEl(event.currentTarget);
     event.currentTarget.focus();
-
-console.log("props.headers[props.headerIndex].dataFieldName", props.headers[props.headerIndex].dataFieldName);
-
   }
 
   const handleClose = () =>
@@ -322,8 +321,8 @@ console.log("props.headers[props.headerIndex].dataFieldName", props.headers[prop
   {
     // unhide all columns
     openCloseManageColumns(null);
-    for (let h = 0; h < props.headers.length; h++) props.headers[h].isVisible = true;
     const newList = [...props.headers];
+    for (let h = 0; h < newList.length; h++) newList[h].isVisible = true;
     props.setChangedHeaders(newList);
   }
 
@@ -331,10 +330,11 @@ console.log("props.headers[props.headerIndex].dataFieldName", props.headers[prop
   {
     // unhide just one column
     openCloseManageColumns(null);
+    handleClose();
     const index = props.headers.findIndex(h => h.id === headerId);
     if (index === -1) return;
-    props.headers[index].isVisible = true;
     const newList = [...props.headers];
+    newList[index].isVisible = true;
     props.setChangedHeaders(newList);
   }
 
@@ -410,7 +410,7 @@ console.log("props.headers[props.headerIndex].dataFieldName", props.headers[prop
         <MenuItem key='ITableMenu_Item1' 
           disabled={actualSorting === IConst.sortingASC}
           onClick={() => sortColumn(IConst.sortingASC)}>
-          <ListItemIcon><ArrowUpwardIcon /></ListItemIcon>
+          <ListItemIcon><StraightRoundedIcon style={iconButtonStyleGrey} /></ListItemIcon>
           <ListItemText>Sort ascending</ListItemText>
         </MenuItem>}
 
@@ -418,7 +418,7 @@ console.log("props.headers[props.headerIndex].dataFieldName", props.headers[prop
         <MenuItem key='ITableMenu_Item2' 
           disabled={actualSorting === IConst.sortingDESC}
           onClick={() => sortColumn(IConst.sortingDESC)}>
-          <ListItemIcon><ArrowDownwardIcon /></ListItemIcon>
+          <ListItemIcon><StraightRoundedIcon style={iconButtonStyleGrey_Rotate180} /></ListItemIcon>
           <ListItemText>Sort descending</ListItemText>
         </MenuItem>}
 
@@ -426,7 +426,7 @@ console.log("props.headers[props.headerIndex].dataFieldName", props.headers[prop
         <MenuItem key='ITableMenu_Item3' 
           disabled={actualSorting === ''}
           onClick={() => sortColumn('')}>
-          <ListItemIcon><SwapVertIcon /></ListItemIcon>
+          <ListItemIcon><HeightRoundedIcon style={iconButtonStyleGrey} /></ListItemIcon>
           <ListItemText>Remove sorting</ListItemText>
         </MenuItem>}
 
@@ -506,14 +506,14 @@ console.log("props.headers[props.headerIndex].dataFieldName", props.headers[prop
 
         <MenuItem key='ITableMenu_Item9' 
           onClick={() => hideColumn()}>
-          <ListItemIcon><VisibilityOffOutlinedIcon /></ListItemIcon>
+          <ListItemIcon><VisibilityOffRoundedIcon style={iconButtonStyleGrey}/></ListItemIcon>
           <ListItemText>Hide this column</ListItemText>
         </MenuItem>
 
         <MenuItem key='ITableMenu_Item10' 
           disabled={noHidedColumnExists}
           onClick={() => unhideAllColumns()}>
-          <ListItemIcon><VisibilityOutlinedIcon /></ListItemIcon>
+          <ListItemIcon><VisibilityRoundedIcon style={iconButtonStyleGrey}/></ListItemIcon>
           <ListItemText>Unhide all columns ({countHidedColumns})</ListItemText>
         </MenuItem>
 
@@ -547,7 +547,7 @@ console.log("props.headers[props.headerIndex].dataFieldName", props.headers[prop
               <MenuItem
                 key={`ITableMenu_ItemUnhide_${index}`}
                 onClick={() => unhideOneColumn(header.id)}>
-                <ListItemIcon><VisibilityOutlinedIcon /></ListItemIcon>
+                <ListItemIcon><VisibilityRoundedIcon style={iconButtonStyleGrey}/></ListItemIcon>
                 <ListItemText>Unhide '{header.headerTitle}'</ListItemText>
               </MenuItem>
             );
@@ -576,7 +576,7 @@ console.log("props.headers[props.headerIndex].dataFieldName", props.headers[prop
               <Tooltip title="Delete this filter">
               <IconButton
                 onClick={() => removeRowFilter()}
-              ><CloseIcon/></IconButton>
+              ><CloseRoundedIcon style={iconButtonStyleRed}/></IconButton>
               </Tooltip>
             </Grid>
           </Grid>
@@ -671,7 +671,7 @@ console.log("props.headers[props.headerIndex].dataFieldName", props.headers[prop
             </Grid>
             <Grid item style={filterEdit}>
 
-              {isTextfield || isNumber &&
+              {(isTextfield || isNumber) &&
               <TextField 
                 value={selfilterValue}
                 type={isNumber ? "number" : "text" }
@@ -746,7 +746,7 @@ console.log("props.headers[props.headerIndex].dataFieldName", props.headers[prop
             </Grid>
             <Grid item style={filterEdit}>
 
-              {isNumber &&
+              {(isTextfield || isNumber) &&
               <TextField 
                 value={selfilterSecondValue}
                 disabled={!hasTwoEditFields}
@@ -792,7 +792,7 @@ console.log("props.headers[props.headerIndex].dataFieldName", props.headers[prop
               <Tooltip title="Add this filter">
               <IconButton
                 onClick={() => addFilterClick()}
-              ><AddIcon/></IconButton>
+              ><AddCircleRoundedIcon style={iconButtonStyleGreen}/></IconButton>
               </Tooltip>
             </Grid>
           </Grid>
@@ -803,7 +803,7 @@ console.log("props.headers[props.headerIndex].dataFieldName", props.headers[prop
               <Tooltip title="Cancel editing">
               <IconButton
                 onClick={() => cancelFilter()}
-              ><CancelIcon/></IconButton>
+              ><StopCircleRoundedIcon style={iconButtonStyleRed}/></IconButton>
               </Tooltip>
             </Grid>
           </Grid>

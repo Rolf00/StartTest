@@ -1,30 +1,25 @@
 import * as React from 'react';
 import { Alert, Grid, Snackbar } from '@mui/material';
 
-// => icons für chip erstellen
-// #FF7F00 orange
-// #FF0000 red
-// #FF00FF purple
-// #0000FF blue
-// #00FFFF turqoise
-// #00FF00 green
-// #FFFF00 yellow
-// #BFBFBF LightGrey
-import imgChipStatusLightGrey from './CircleLightGrey.png'; 
-import imgChipStatusYellow from './CircleYellow.png'; 
-import imgChipStatusOrange from './CircleOrange.png'; 
-import imgChipStatusRed from './CircleRed.png'; 
-import imgChipStatusPurple from './CirclePurple.png'; 
-import imgChipStatusBlue from './CircleBlue.png'; 
-import imgChipStatusTurqoise from './CircleTurqoise.png'; 
-import imgChipStatusGreen from './CircleGreen.png'; 
-
-import imgPerson48 from './imgPerson48.png';
-import imgIconOk from './itable/imgYes48.png'; 
-import imgDialogStop from './itable/imgStop96.png'; 
+import AdjustRoundedIcon from '@mui/icons-material/AdjustRounded';
+import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
+import ArrowCircleRightRoundedIcon from '@mui/icons-material/ArrowCircleRightRounded';
+import ArrowCircleLeftRoundedIcon from '@mui/icons-material/ArrowCircleLeftRounded';
+import DoneRoundedIcon from '@mui/icons-material/DoneRounded';
+import EditRoundedIcon from '@mui/icons-material/EditRounded';
 
 import IConst from './itable/IConst';
 import ITable from './itable/ITable';
+import { 
+  iconButtonStyleYellow,
+  iconButtonStyleBlue, 
+  iconButtonStyleGreen, 
+  iconButtonStyleRed,
+  iconButtonStyleOrange,
+  iconButtonStylePurple,
+  iconButtonStyleTurqoise,
+  iconButtonStyleGrey } from './itable/IStyles';
+
 
 // columns for Waldo
 const headersWaldo = [
@@ -282,14 +277,14 @@ const headersWaldo = [
     maxWidth: 320,
     editType: 'chip',
     chipList: [
-      { id: 1, label: 'open',    color: '#F3F3F3', colorHover: '#F5F5F5', icon: imgChipStatusLightGrey, },
-      { id: 2, label: 'new',     color: '#FFFFBB', colorHover: '#FFFF99', icon: imgChipStatusYellow, },
-      { id: 3, label: 'invited', color: '#FFE1BF', colorHover: '#FFDFC1', icon: imgChipStatusOrange, },
-      { id: 4, label: 'surgery', color: '#FFBBFF', colorHover: '#99BB99', icon: imgChipStatusPurple, },
-      { id: 5, label: 'visited', color: '#BBFFFF', colorHover: '#99FFFF', icon: imgChipStatusTurqoise, },
-      { id: 6, label: 'invest.', color: '#BBBBFF', colorHover: '#9999FF', icon: imgChipStatusBlue, },
-      { id: 7, label: 'all ok',  color: '#BBFFBB', colorHover: '#99FF99', icon: imgChipStatusGreen, },
-      { id: 8, label: 'danger',  color: '#FFBBBB', colorHover: '#FF9999', icon: imgChipStatusRed, },
+      { id: 1, label: 'open',    color: '#F3F3F3', colorHover: '#F5F5F5', icon: AdjustRoundedIcon, iconStyle: iconButtonStyleGrey,},
+      { id: 2, label: 'new',     color: '#FFFFBB', colorHover: '#FFFF99', icon: AdjustRoundedIcon, iconStyle: iconButtonStyleYellow,},
+      { id: 3, label: 'invited', color: '#FFE1BF', colorHover: '#FFDFC1', icon: AdjustRoundedIcon, iconStyle: iconButtonStyleOrange,},
+      { id: 4, label: 'surgery', color: '#FFBBFF', colorHover: '#99BB99', icon: AdjustRoundedIcon, iconStyle: iconButtonStylePurple,},
+      { id: 5, label: 'visited', color: '#BBFFFF', colorHover: '#99FFFF', icon: AdjustRoundedIcon, iconStyle: iconButtonStyleTurqoise,},
+      { id: 6, label: 'invest.', color: '#BBBBFF', colorHover: '#9999FF', icon: AdjustRoundedIcon, iconStyle: iconButtonStyleBlue,},
+      { id: 7, label: 'all ok',  color: '#BBFFBB', colorHover: '#99FF99', icon: AdjustRoundedIcon, iconStyle: iconButtonStyleGreen,},
+      { id: 8, label: 'danger',  color: '#FFBBBB', colorHover: '#FF9999', icon: AdjustRoundedIcon, iconStyle: iconButtonStyleRed,},
     ],
     chipWidth: 100,
     chipIconWidth: 32,
@@ -351,9 +346,10 @@ const headersWaldo = [
     editType: 'button',
     button: { 
       caption: "View",  
-      icon: imgPerson48, 
-      iconWidth: 25,
+      icon: PersonRoundedIcon,
+      iconStyle: iconButtonStyleBlue,
       buttonHeight: 30,
+      buttonRadius: 15,
       buttonBackgroundColor: "#EEEEFF", 
       buttonBackgroundHover: "#CCCCFF", 
     },
@@ -363,6 +359,31 @@ const headersWaldo = [
   },
   {
     id: 17,
+    headerTitle: "St.Btn.",
+    isResizable: true,
+    isEditable: true,
+    isRequired: true,
+    isVisible: true,
+    isSortable: true,
+    width: 120,
+    minWidth: 100,
+    maxWidth: 320,
+    editType: IConst.editType_StateButton,
+    buttonHeight: 30,
+    buttonRadius: 15,
+    buttonList: [
+      { id: 1, caption: 'empty',     color: '#F3F3F3', colorHover: '#F5F5F5', icon: AdjustRoundedIcon, iconStyle: iconButtonStyleGrey, },
+      { id: 2, caption: 'new',       color: '#FFFFBB', colorHover: '#FFFF88', icon: AdjustRoundedIcon, iconStyle: iconButtonStyleOrange, },
+      { id: 3, caption: 'partial',   color: '#FFBBBB', colorHover: '#FF8888', icon: EditRoundedIcon, iconStyle: iconButtonStyleRed, },
+      { id: 4, caption: 'completed', color: '#BBFFBB', colorHover: '#88FF88', icon: DoneRoundedIcon, iconStyle: iconButtonStyleGreen, },
+    ],
+    dataFieldName: 'statebutton',
+    horizontalAlign: 'center',
+    hasHeaderMenu: false,
+  },
+
+  {
+    id: 18,
     databaseField: "dropdown",
     headerTitle: "Dropdown",
     isResizable: true,
@@ -393,7 +414,7 @@ const headersWaldo = [
     hasHeaderMenu: true,
   }, 
   {
-    id: 18,
+    id: 19,
     databaseField: "",
     headerTitle: "Edit",
     isResizable: false,
@@ -417,7 +438,7 @@ const headersWaldo = [
     hasHeaderMenu: false,
   },
   {
-    id: 19,
+    id: 20,
     databaseField: "",
     headerTitle: "Dlg.",
     isResizable: false,
@@ -441,7 +462,7 @@ const headersWaldo = [
     hasHeaderMenu: false,
   },
   {
-    id: 20,
+    id: 21,
     databaseField: "",
     headerTitle: "Save",
     isResizable: false,
@@ -465,7 +486,7 @@ const headersWaldo = [
     hasHeaderMenu: false,
   },
   {
-    id: 21,
+    id: 22,
     databaseField: "",
     headerTitle: "Undo",
     isResizable: false,
@@ -489,7 +510,7 @@ const headersWaldo = [
     hasHeaderMenu: false,
   },
   {
-    id: 22,
+    id: 23,
     databaseField: "",
     headerTitle: "Del.",
     isResizable: false,
@@ -513,7 +534,7 @@ const headersWaldo = [
     hasHeaderMenu: false,
   },
   {
-    id: 23,
+    id: 24,
     databaseField: "",
     headerTitle: "Getter",
     isResizable: true,
@@ -533,7 +554,7 @@ const headersWaldo = [
     valueGetter: "`${row.lastName} ${row.firstName}`",
   },
   { 
-    id: 24,
+    id: 25,
     headerTitle: " Date From",
     helperText: "not after 'Date To'",
     isResizable: true,
@@ -553,7 +574,7 @@ const headersWaldo = [
     hasHeaderMenu: true,
   },
   { 
-  id: 25,
+  id: 26,
     headerTitle: "Date To",
     helperText: "not before 'Date From'",
     isResizable: true,
@@ -611,6 +632,7 @@ for (let i = 0; i < 100; i++) {
     lastUpdate: randomUpdate, //.toISOString(),  // Date format: YYYY-MM-DDTHH:MM:SS.SSSZ
     lastUpdate2: randomUpdate,
     chipstate: i < 9 ? i : null,
+    statebutton: i < 5 ? i : null,
     dropdownvalue: i <= 6 ? i : null,
     datefrom: new Date(Date.now() + (i * 24 * 3600 * 1000)),
     dateto: new Date(Date.now() + ((i + 3) * 24* 3600 * 1000)),
@@ -624,6 +646,9 @@ patients[2].address = patients[2].address + "\nNew Line address 2";
 
 const App = ()=> {
 
+  const holder = {
+    saveSelected: null,
+  }
   const settings = 
   {
     // when TRUE, each row can be edited without clicking EDIT 
@@ -659,18 +684,22 @@ const App = ()=> {
     localization: IConst.datetimeLocalization_deCH,
 
     // menu buttons
-    /*
     menuButtonList: [
-      { id:1, caption: "Back", hint: "go to previous page", icon: imgDialogStop, positionStart: true },
-      { id:2, caption: "Next", hint: "go to next page", icon: imgIconOk, positionStart: false },
+      { id:1, caption: "Back", hint: "go to previous page", icon: ArrowCircleLeftRoundedIcon,  positionStart: true },
+      { id:2, caption: "Next", hint: "go to next page",     icon: ArrowCircleRightRoundedIcon, positionStart: false },
     ],
-    */
   };
   
   // open slack
   const [open,setOpen] = React.useState(false);
 
   function handleSpecialButtonClick(rowid, fieldname)
+  {
+    alert("Button was clicked (rowid, fieldname) = (" + rowid + ", " + fieldname + ")");
+    // TODO 
+  }
+  
+  function handleStateButtonClick(rowid, fieldname)
   {
     alert("Button was clicked (rowid, fieldname) = (" + rowid + ", " + fieldname + ")");
     // TODO 
@@ -684,16 +713,18 @@ const App = ()=> {
   function handleSaveAllRowsClick(rows, states)
   {
     setOpen(true);
-    return true;
+    if(holder.saveSelected)
+        holder.saveSelected();
   }
 
-  function menuButtonClick(index)
+  function menuButtonClick(buttonId)
   {
-    if (index === 1)
+    if (buttonId === 1)
     {
       // button with id = 1 was clicked
       // see settings.menuButtonList
     }
+    alert("Button id "+  buttonId + " was clicked.");
   }
 
   
@@ -710,10 +741,12 @@ const App = ()=> {
         <ITable 
           settings={settings}
           headers={headersWaldo} 
+          holder={holder}
           primaryKey="id"
           data={patients}  
           dialogName="IDialogData_First"
           handleSpecialButtonClick={(rowid, fieldname) => handleSpecialButtonClick(rowid, fieldname)}
+          handleStateButtonClick={(rowid, fieldname) => handleStateButtonClick(rowid, fieldname)}
           handleSaveOneRowClick={(row, state) => handleSaveOneRowClick(row, state)}
           handleSaveAllRowsClick={(rows, states) => handleSaveAllRowsClick(rows, states)}
           menuButtonClick={(index) => menuButtonClick(index)}

@@ -1,22 +1,25 @@
 import React, { useState } from 'react';
 import IconButton from '@mui/material/IconButton';
 
-
-export default function IFieldSpecialButton (props) {
-
-  // Component for buttons placed on each row.
-  // Their onClick event will be directed back to the parent of the ITable component. 
-
+export default function IFieldStateButton (props) 
+{
+  
   const rowid = props.rowid;
   const dataFieldName = props.header.dataFieldName;
-  const disabled = !props.header.isEditable;
-  const caption = props.header.button.caption;
-  const ButtonIcon = props.header.button.icon;
-  const iconStyle = props.header.button.iconStyle;
-  const buttonHeight = props.header.button.buttonHeight;
-  const buttonRadius = props.header.button.buttonRadius;
-  const buttonBackgroundColor = props.header.button.buttonBackgroundColor;
-  const buttonBackgroundHover = props.header.button.buttonBackgroundHover;
+  // TODO : disabled depneing on role?
+  //const disabled = !props.header.isEditable;
+  const disabled = false;
+  const buttonHeight = props.header.buttonHeight;
+  const buttonRadius = props.header.buttonRadius;
+
+  const value = props.value;
+  const index = props.header.buttonList.findIndex(b => b.id === value);
+  const button = index === -1 ? null : props.header.buttonList[index];
+  const caption = button === null ? "" : button.caption;
+  const ButtonIcon = button === null ? null : button.icon;
+  const iconStyle = button === null ? "" : button.iconStyle;
+  const buttonBackgroundColor = button === null ? "" : button.color;
+  const buttonBackgroundHover = button === null ? "" : button.colorHover;
 
   return (
     <div
@@ -30,8 +33,8 @@ export default function IFieldSpecialButton (props) {
         alignItems: props.verticalAlign,
       }}
     >
-    <IconButton
-      onClick={() => props.handleSpecialButtonClick(rowid, dataFieldName)}
+    {index > -1 && <IconButton
+      onClick={() => props.handleStateButtonClick(rowid, dataFieldName)}
       style={{
         fontSize: 12,
         width: '100%', 
@@ -43,6 +46,8 @@ export default function IFieldSpecialButton (props) {
         borderStyle: 'solid',
       }}
       sx={{
+        display: 'flex', 
+        justifyContent: 'flex-start',
         borderColor: buttonBackgroundHover,
         backgroundColor: buttonBackgroundColor,
         '&:Hover': {
@@ -52,7 +57,7 @@ export default function IFieldSpecialButton (props) {
         }
       }}>
       <ButtonIcon style={iconStyle}/>
-      {caption}</IconButton>
+      {caption}</IconButton>}
     </div>
   );
 }

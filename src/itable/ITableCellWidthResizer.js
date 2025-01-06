@@ -4,19 +4,15 @@ import { IconButton, TableCell } from "@mui/material";
 import { withStyles } from 'tss-react/mui';
 import PropTypes from 'prop-types';
 
-import SwapVertIcon from '@mui/icons-material/SwapVert';     
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
-
+import StraightRoundedIcon from '@mui/icons-material/StraightRounded';
+import HeightRoundedIcon from '@mui/icons-material/HeightRounded';
 
 import IConst from './IConst';
 import ITableMenu from './ITableMenu';
 import { useStyles } from './styles';
-
+import { iconButtonStyleGrey, iconButtonStyleGrey_Rotate180 } from './IStyles';
 import { getNewSortingList } from './IUtilsSort';
 
-// class for header cells, where the width of rhe 
 
 class ITableCellWidthResizer extends React.Component {
   constructor(props) {
@@ -169,9 +165,9 @@ class ITableCellWidthResizer extends React.Component {
           <IconButton 
             sx={{ width: '23px', height: '40px', borderRadius: '3px' }}
             onClick={() => this.changeSortingClick()}>
-            {sorting === IConst.sortingASC && <ArrowUpwardIcon/>}
-            {sorting === IConst.sortingDESC && <ArrowDownwardIcon/>}
-            {sorting === '' && <SwapVertIcon/>}
+            {sorting === IConst.sortingASC && <StraightRoundedIcon style={iconButtonStyleGrey}/>}
+            {sorting === IConst.sortingDESC && <StraightRoundedIcon style={iconButtonStyleGrey_Rotate180}/>}
+            {sorting === '' && <HeightRoundedIcon style={iconButtonStyleGrey}/>}
           </IconButton>
           </div>}
 
@@ -196,9 +192,9 @@ class ITableCellWidthResizer extends React.Component {
           <IconButton 
             sx={{ width: '23px', height: '40px', borderRadius: '3px' }}
             onClick={() => this.changeSortingClick()}>
-            {sorting === IConst.sortingASC && <ArrowUpwardIcon/>}
-            {sorting === IConst.sortingDESC && <ArrowDownwardIcon/>}
-            {sorting === '' && <SwapVertIcon/>}
+            {sorting === IConst.sortingASC && <StraightRoundedIcon style={iconButtonStyleGrey}/>}
+            {sorting === IConst.sortingDESC && <StraightRoundedIcon style={iconButtonStyleGrey_Rotate180}/>}
+            {sorting === '' && <HeightRoundedIcon style={iconButtonStyleGrey}/>}
           </IconButton>
           </div>}
 

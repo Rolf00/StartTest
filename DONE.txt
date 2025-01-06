@@ -2,37 +2,24 @@
   ----------------------
   DONE
 
-- button dialog like confirm
-
-- modal dialog for editing
-
-- save one row / save all rows with checks of values and error message
-
-- save data before special button click
-  after editing, the user should not leave whithout saving
-
 - date from...to: solution made
   now a check is implemented
-  dates from...to with correct checks are now possible, see example
+  dates from...to with correct checks are 
+  now possible, see example
 
 - sorting done with many columns
-  fixed bug sorting of dates in your code: not parseINT, but Date.parse
-  now it works. please check it.
-
-- resizing the column width is much faster now
 
 - hiding and managing columns
   hide one column
-  header menu: unhide in a submenu
 
 - header menu : filtering with multiple columns
   at the moment: just one operator per column 
   header menu filtering states edited, deleted, inserted
-  but maybe a dialog is needed. prepared, bot only working in sandbox
+  but maybe a dialog is needed. 
+  prepared, bot only working in sandbox
 
 - EXCEL export now works also with several lines in one cell
   and alos with TAB in one cell.
-  also with getter, dropdown list, chipmenu text, different date formats
   not completly tested because no EXCEL on PC
 
 - filtering data
@@ -40,8 +27,10 @@
   dropdown : filter by key
   new filter bigger than, smaller than, between 2 values
 
+- all images now from MUI Icons
 
-
+- new component for showing states on buttons
+  with different icons. as discussed yesterday
 
 
 

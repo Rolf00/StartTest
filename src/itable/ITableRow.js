@@ -1,10 +1,10 @@
 import React from 'react';
 import { 
   TableRow, 
-  Tooltip, } from '@mui/material';
+  } from '@mui/material';
 
 import { withStyles } from 'tss-react/mui';
-import PropTypes, { func } from 'prop-types';
+import PropTypes from 'prop-types';
   
 import IConst from './IConst';
 import IUtils from './IUtils';
@@ -17,6 +17,7 @@ import IFieldChipMenu from './IFieldChipMenu';
 import IFieldCheckbox from './IFieldCheckbox';
 import IFieldDate from './IFieldDate';
 import IFieldSpecialButton from './IFieldSpecialButton';
+import IFieldStateButton from './IFieldStateButton';
 import IFieldRowEditButton from './IFieldRowEditButton';
 import { useStyles } from './styles';
 
@@ -41,27 +42,30 @@ class ITableRow  extends React.Component {
       rowHeight: rowInfoList[rowInfoIndex].height,
       isHeightResizing: false,
       resizingInAction: false,
+      //rowInfoList: {...this.props.rowInfoList},
       row: {...this.props.row}
     }
-
   }
 
   componentDidMount() { }
 
-  componentDidUpdate() {
+  componentDidUpdate() 
+  {
     const {row} = this.props;
-    if (row[this.props.primaryKey] !== this.state.row[this.props.primaryKey])
+    //const {rowInfoList} = this.props;
+    //const index = this.props.rowInfoList.findIndex(i => i.id === row[this.props.primaryKey]);
+    //const state =  index === -1 ? IConst.rowStateUnchanged : this.props.rowInfoList[index].state;
+
+    //console.log("state", state);
+    //console.log("state", state);
+
+    if (row[this.props.primaryKey] !== this.state.row[this.props.primaryKey]
+    )
     {
-      //const rowid = row[this.props.primaryKey];
-      //const infoIndex = this.props.rowInfoIndex.findIndex(i => i.id === rowid)
-      //const newediting = infoIndex === -1 ? false : this.props.rowInfoList[infoIndex].ed
       this.setState({
         row: {...this.props.row},
-        //rowEditing: newediting,
-      })
+      });
     }
-
-    console.log("componentDidUpdate row[this.props.primaryKey] ", row[this.props.primaryKey] );
   }
   
   componentWillUnmount() { }
@@ -72,6 +76,7 @@ class ITableRow  extends React.Component {
     const newRow = this.state.row;
     newRow[field] = value;
     this.setNewRowState_Edit();
+
     // update main buttons SAVE and UNDO in ITable
     this.props.setMainButtonState();
   }
@@ -128,8 +133,7 @@ class ITableRow  extends React.Component {
 
   handleEditModalDialog()
   {
-    // TODO modal dialog
-    //alert("Edit in a dialog is not implemented yet.")
+    // modal dialog
     this.props.openModalDataDialog(this.state.row);
   }
 
@@ -240,7 +244,6 @@ class ITableRow  extends React.Component {
     const isRowDeleted = rowState === IConst.rowStateDeleted;
     const isRowInserted = rowState === IConst.rowStateInserted;
     const isRowChanged = rowState === IConst.rowStateEdited || isRowDeleted || isRowInserted;
-
     const rowBackgroundColor =
       isRowSelected && isRowDeleted ? IConst.rowColorSelDeleted :
       isRowSelected && isRowChanged ? IConst.rowColorSelChanged :
@@ -252,7 +255,6 @@ class ITableRow  extends React.Component {
 
     return (
       <TableRow
-        
         height={rowHeight}
         style={{
           height: rowHeight,
@@ -277,6 +279,7 @@ class ITableRow  extends React.Component {
         const isDate = header.editType === IConst.editType_Date;
         const isChip = header.editType === IConst.editType_Chip;
         const isSpecialButton = header.editType === IConst.editType_SpecialButton;
+        const isStateButton = header.editType === IConst.editType_StateButton;
         const isGetter = header.editType === IConst.editType_Getter;
         const isRowEditButton = 
           header.editType === IConst.editType_ButtonEditRow ||
@@ -285,13 +288,11 @@ class ITableRow  extends React.Component {
           header.editType === IConst.editType_ButtonUndo ||
           header.editType === IConst.editType_ButtonDelete;
 
-        // TODO :
-        const btnHoverWidth = this.props.settings.buttonSizeOnRows + 8; 
-
         // checking about typos
         const typeFound = (
           isSelectionIcon || isTextfield || isNumber || isDropdown || 
-          isCheckbox || isDate || isChip || isSpecialButton || isGetter || isRowEditButton
+          isCheckbox || isDate || isChip || isSpecialButton || isStateButton || 
+          isGetter || isRowEditButton
         );
 
         const field = header.dataFieldName;
@@ -305,10 +306,7 @@ class ITableRow  extends React.Component {
           this.props.settings.alwaysActivateEditing || 
           isCurrentEditing;
         const saving = this.props.rowInfoList[this.props.rowInfoIndex].saving;
-        
-        // only show this column when it's defined as visible
         const visible = header.isVisible;
-
         const verticalAlign = IUtils.getVerticalAlign(this.props.settings.rowsVerticalAlign);
         const horizontalAlign = IUtils.getHorizontalAlign(header.horizontalAlign);
 
@@ -427,6 +425,16 @@ class ITableRow  extends React.Component {
                 handleSpecialButtonClick = {() => this.props.handleSpecialButtonClick(rowid, header.dataFieldName)}
               />}
 
+              {isStateButton &&
+              <IFieldStateButton
+                horizontalAlign={horizontalAlign}
+                verticalAlign={verticalAlign}
+                header = {header}
+                rowid={rowid}
+                value={value}
+                handleStateButtonClick={() => this.props.handleStateButtonClick(rowid, header.dataFieldName)}
+              />}
+
               {isGetter && 
               <IFieldText
                 editing={editing}
@@ -437,7 +445,6 @@ class ITableRow  extends React.Component {
                 singleHorizontalAlign={header.horizontalAlign}
                 header={header}
                 value={value}
-                //handleDataChange= {e => this.handleDataChange(e, field)}
               />}
 
 
