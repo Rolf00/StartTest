@@ -1,5 +1,5 @@
   16.12.2024 - 20.12.2024
-  ----------------------
+  -----------------------
   DONE
 
 - date from...to: solution made
@@ -32,5 +32,15 @@
 - new component for showing states on buttons
   with different icons. as discussed yesterday
 
+
+  07.01.2025 - 13.01.2025
+  -----------------------
+- count of filtered rows is shown now
+
+- holder tested with faked response
+
+- some bug fixes repaired: UNDO, dialog, 
+
+- TODO: edit dialog
 
 

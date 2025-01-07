@@ -20,12 +20,13 @@ import {
 } from '@mui/material';
 
 
-import imgSaveButton from './imgSave48.png'; 
-import imgUndoButton from './imgUndo48.png'; 
+import DoneRoundedIcon from '@mui/icons-material/DoneRounded';
+import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 
 import IConst from './IConst'; 
 import IUtils from './IUtils'; 
 import { useStyles } from './styles';
+import { iconButtonStyleGreen, iconButtonStyleRed } from './IStyles';
 
 const StyleDialogBackdrop = { style: { 
   backgroundColor: 'rgba(0, 0, 0, 0.2)'  
@@ -472,24 +473,19 @@ class IDialogData_First extends React.Component {
           <IconButton
             className={classes.mainButtons}
             disabled={this.state.mainDisabled}
-            style={{ justifyContent: "flex-start", flex: 1 }}
+            style={{ 
+              justifyContent: "flex-start", flex: 1,
+              opacity: (!this.state.mainDisabled ? 1 : 0.2)  }}
             onClick={() => this.closeDialog(true)} >
-              
-          <img 
-            src={imgSaveButton}
-            style={{ width: imgSize, height: imgSize,
-              opacity: (!this.state.mainDisabled ? 1 : 0.2) 
-            }} 
-          />Save changes</IconButton>
+          <DoneRoundedIcon style={iconButtonStyleGreen}/>Save changes
+          </IconButton>
 
           <IconButton
             className={classes.mainButtons}
-            style={{ justifyContent: "flex-end",  }}
+            style={{ justifyContent: "flex-end", }}
             onClick={() => this.closeDialog(false)} >
-          <img 
-            src={imgUndoButton}
-            style={{ width: imgSize, height: imgSize, }} 
-          />Cancel</IconButton>
+          <CloseRoundedIcon style={iconButtonStyleRed}/>Cancel
+          </IconButton>
           </div>
         </DialogActions>
       </Dialog>

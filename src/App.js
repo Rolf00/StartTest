@@ -277,9 +277,9 @@ const headersWaldo = [
     maxWidth: 320,
     editType: 'chip',
     chipList: [
-      { id: 1, label: 'open',    color: '#F3F3F3', colorHover: '#F5F5F5', icon: AdjustRoundedIcon, iconStyle: iconButtonStyleGrey,},
-      { id: 2, label: 'new',     color: '#FFFFBB', colorHover: '#FFFF99', icon: AdjustRoundedIcon, iconStyle: iconButtonStyleYellow,},
-      { id: 3, label: 'invited', color: '#FFE1BF', colorHover: '#FFDFC1', icon: AdjustRoundedIcon, iconStyle: iconButtonStyleOrange,},
+      { id: 1, label: '',    color: '#F3F3F3', colorHover: '#F5F5F5', icon: AdjustRoundedIcon, iconStyle: iconButtonStyleGrey,},
+      { id: 2, label: '',     color: '#FFFFBB', colorHover: '#FFFF99', icon: AdjustRoundedIcon, iconStyle: iconButtonStyleYellow,},
+      { id: 3, label: '', color: '#FFE1BF', colorHover: '#FFDFC1', icon: AdjustRoundedIcon, iconStyle: iconButtonStyleOrange,},
       { id: 4, label: 'surgery', color: '#FFBBFF', colorHover: '#99BB99', icon: AdjustRoundedIcon, iconStyle: iconButtonStylePurple,},
       { id: 5, label: 'visited', color: '#BBFFFF', colorHover: '#99FFFF', icon: AdjustRoundedIcon, iconStyle: iconButtonStyleTurqoise,},
       { id: 6, label: 'invest.', color: '#BBBBFF', colorHover: '#9999FF', icon: AdjustRoundedIcon, iconStyle: iconButtonStyleBlue,},
@@ -369,12 +369,12 @@ const headersWaldo = [
     minWidth: 100,
     maxWidth: 320,
     editType: IConst.editType_StateButton,
-    buttonHeight: 30,
+    buttonHeight: 32,
     buttonRadius: 15,
     buttonList: [
-      { id: 1, caption: 'empty',     color: '#F3F3F3', colorHover: '#F5F5F5', icon: AdjustRoundedIcon, iconStyle: iconButtonStyleGrey, },
-      { id: 2, caption: 'new',       color: '#FFFFBB', colorHover: '#FFFF88', icon: AdjustRoundedIcon, iconStyle: iconButtonStyleOrange, },
-      { id: 3, caption: 'partial',   color: '#FFBBBB', colorHover: '#FF8888', icon: EditRoundedIcon, iconStyle: iconButtonStyleRed, },
+      { id: 1, caption: '',     color: '#F3F3F3', colorHover: '#F5F5F5', icon: AdjustRoundedIcon, iconStyle: iconButtonStyleGrey, },
+      { id: 2, caption: '',       color: '#FFFFBB', colorHover: '#FFFF88', icon: AdjustRoundedIcon, iconStyle: iconButtonStyleOrange, },
+      { id: 3, caption: '',   color: '#FFBBBB', colorHover: '#FF8888', icon: EditRoundedIcon, iconStyle: iconButtonStyleRed, },
       { id: 4, caption: 'completed', color: '#BBFFBB', colorHover: '#88FF88', icon: DoneRoundedIcon, iconStyle: iconButtonStyleGreen, },
     ],
     dataFieldName: 'statebutton',
@@ -649,6 +649,9 @@ const App = ()=> {
   const holder = {
     saveSelected: null,
   }
+
+  const primaryKey = "id";
+
   const settings = 
   {
     // when TRUE, each row can be edited without clicking EDIT 
@@ -708,13 +711,64 @@ const App = ()=> {
   function handleSaveOneRowClick(row, state)
   {
     setOpen(true);
+
+    // TODO 
+    // code for testing response to DB savings
+    // can be deleted later
+    const savedRows = [];
+    savedRows.push(row);
+    const states = [];
+    states.push(state);
+    const oldIds = [];
+    const newIds = [];
+    const results = [];
+    let newMaxId = 100001;
+
+    oldIds.push(row[primaryKey]);
+    let newId = row[primaryKey];
+    if (state === IConst.rowStateInserted)
+    {
+      newId = newMaxId;
+      newMaxId = newMaxId + 1;
+    }
+    newIds.push(newId);
+    results.push(true);
+
+    //if (holder.saveSelected) 
+      holder.saveSelected(savedRows, oldIds, newIds, states, results);
+
   }
 
   function handleSaveAllRowsClick(rows, states)
   {
     setOpen(true);
-    if(holder.saveSelected)
-        holder.saveSelected();
+
+    // TODO 
+    // code for testing response to DB savings
+    // can be deleted later
+    const savedRows = [...rows];
+    const oldIds = [];
+    const newIds = [];
+    const results = [];
+    let newMaxId = 100001;
+
+    for (let r = 0; r < savedRows.length; r++)
+    {
+      oldIds.push(rows[r][primaryKey]);
+      let newId = rows[r][primaryKey];
+      if (states[r] === IConst.rowStateInserted)
+      {
+        newId = newMaxId;
+          newMaxId = newMaxId + 1;
+      }
+      newIds.push(newId);
+      results.push(true);
+    }
+    //if (holder.saveSelected) 
+      holder.saveSelected(savedRows, oldIds, newIds, states, results);
+  
+    //if(holder.saveSelected)
+    //    holder.saveSelected();
   }
 
   function menuButtonClick(buttonId)
@@ -742,7 +796,7 @@ const App = ()=> {
           settings={settings}
           headers={headersWaldo} 
           holder={holder}
-          primaryKey="id"
+          primaryKey={primaryKey}
           data={patients}  
           dialogName="IDialogData_First"
           handleSpecialButtonClick={(rowid, fieldname) => handleSpecialButtonClick(rowid, fieldname)}

@@ -61,12 +61,82 @@ class ITable extends React.Component {
       primaryKey,
       data,
       dialogName,
-    holder } = this.props;
-      if(holder) {
-        holder.saveSelected = rows => {
+      holder } = this.props;
 
-        } 
-      }
+    if (holder) {
+      holder.saveSelected = (rows, oldIds, newIds, oldStates, results)  => {
+
+        let newData = [...this.state.data];
+        let newInfo = [...this.state.rowInfoList];
+
+        for (let r = 0; r < rows.length; r++)
+        {
+          const oldRowId = oldIds[r];
+          const newRowId = newIds[r];
+          const oldState = oldStates[r];
+          const ok = results[r]; 
+
+          const dataIndex = newData.findIndex(r => r[props.primaryKey] === oldRowId);
+          const infoIndex = newInfo.findIndex(i => i.id === oldRowId);
+
+          if (dataIndex !== -1 && infoIndex !== -1)
+          {
+            if (ok && oldState === IConst.rowStateEdited)
+            {
+              // edited rows
+              // copy data (new values, old values)
+              IUtils.copyOneRow(rows[r], newData[dataIndex]);
+              newInfo[infoIndex].state = IConst.rowStateUnchanged;
+              newInfo[infoIndex].saving = false;
+            }
+            else if (ok && oldState === IConst.rowStateDeleted)
+            {
+              // deleted rows
+              newData = newData.filter(d => d[props.primaryKey] !== oldRowId);
+              newInfo = newInfo.filter(d => d.id !== oldRowId);
+            }
+            else if (ok && oldState === IConst.rowStateInserted)
+            {
+              // inserted rows
+              // copy data (new values, old values)
+              IUtils.copyRow(rows[r], newData[dataIndex]);
+              newData[props.primaryKey] = newRowId;
+              newInfo[infoIndex].id = newRowId;
+              newInfo[infoIndex].state = IConst.rowStateUnchanged;
+              newInfo[infoIndex].saving = false;
+            }
+            else if ((!ok) && oldState === IConst.rowStateEdited)
+            {
+              // an error occured while saving to DB, 
+              // thus we overwite already edited data (new values, old values)
+              IUtils.copyRow(this.props.data[r], newData[dataIndex]);
+              newInfo[infoIndex].state = IConst.rowStateUnchanged;
+              newInfo[infoIndex].saving = false;
+            }
+            else if ((!ok) && oldState === IConst.rowStateDeleted)
+            {
+              // an error occured while saving to DB, 
+              // thus we just set the state to unchanged
+              newInfo[infoIndex].state = IConst.rowStateUnchanged;
+              newInfo[infoIndex].saving = false;
+            }
+            else if ((!ok) && oldState === IConst.rowStateInserted)
+            {
+              // an error occured while saving to DB, 
+              // thus we just undo/delete the  already insreted rows
+              newData = newData.filter(d => d[props.primaryKey] !== oldRowId);
+              newInfo = newInfo.filter(d => d.id !== oldRowId);
+            }
+          }
+        }
+
+        this.setState({
+          rowInfoList: newInfo,
+          data: newData,
+        });
+      } 
+    }
+
     this.state = {
       headers: headers,
       data: this.getDataList(),
@@ -128,7 +198,7 @@ class ITable extends React.Component {
 
   getDataList()
   {
-    // in order to be able to an UNDO ocj data changes,
+    // in order to be able to UNDO data changes,
     // we need to have an backup of the initial data
     let newlist = [];
     for (let i = 0; i < this.props.data.length; i++)
@@ -232,6 +302,7 @@ class ITable extends React.Component {
     return index;
   }
 
+  /*
   handleDeleteRow(rowid)
   {
     // button DELETE for one row was clicked
@@ -250,7 +321,6 @@ class ITable extends React.Component {
     {
       this.state.rowInfoList[rowIndex].state = IConst.rowStateDeleted;
       // update the buttons SAVE ALL, UNDO ALL
-      const mainEnabled = this.getMainButtonsEnabled();    
       const cntChangedRows = this.getCountChangedRows();
       this.setState({ 
         mainButtonsDisabled: mainEnabled,
@@ -258,6 +328,7 @@ class ITable extends React.Component {
       });
     }
   }
+    */
 
   handleUndoInsertedRows(rowIndex)
   {
@@ -265,17 +336,21 @@ class ITable extends React.Component {
     const newlist = this.state.data;
     newlist.splice(rowIndex, 1);
     // update the buttons SAVE ALL, UNDO ALL
-    const mainEnabled = this.getMainButtonsEnabled();    
     const cntChangedRows = this.getCountChangedRows();
     this.setState({ 
       data: newlist,
-      mainButtonsDisabled: mainEnabled,
+      mainButtonsDisabled: cntChangedRows === 0,
       countChangedRows: cntChangedRows
     });
   }
 
+  /*
   handleUndoRow(rowid)
   {
+
+    xxxx
+
+
     // button UNDO for one row was clicked
     const index = this.getInfoRowIndex(rowid);
     if (index === -1) return;
@@ -297,11 +372,10 @@ class ITable extends React.Component {
       }
 
       // update the buttons SAVE ALL, UNDO ALL
-      const mainEnabled = this.getMainButtonsEnabled();
       const cntChangedRows = this.getCountChangedRows();
       this.setState({ 
         data: newlist,
-        mainButtonsDisabled: mainEnabled,
+        mainButtonsDisabled: cntChangedRows === 0,
         countChangedRows: cntChangedRows
       });
     }
@@ -315,11 +389,10 @@ class ITable extends React.Component {
       this.state.rowInfoList = newStatelist;
 
       // update the buttons SAVE ALL, UNDO ALL
-      const mainEnabled = this.getMainButtonsEnabled();
       const cntChangedRows = this.getCountChangedRows();
       this.setState({ 
         data: newlist,
-        mainButtonsDisabled: mainEnabled,
+        mainButtonsDisabled: cntChangedRows === 0,
         countChangedRows: cntChangedRows
       });
     }
@@ -333,15 +406,17 @@ class ITable extends React.Component {
       newlist[index] = this.props.data[index];
 
       // update the buttons SAVE ALL, UNDO ALL
-      const mainEnabled = this.getMainButtonsEnabled();
       const cntChangedRows = this.getCountChangedRows();
       this.setState({ 
         data: newlist,
-        mainButtonsDisabled: mainEnabled,
+        mainButtonsDisabled: cntChangedRows === 0,
         countChangedRows: cntChangedRows
       });
     }
   }
+    */
+
+
 
   handleNewRow()
   {
@@ -372,8 +447,10 @@ class ITable extends React.Component {
     let obj = {};
     obj['id'] = minid;
     obj['height'] = this.props.settings.initialRowHeight;
-    obj['state'] = IConst.rowStateInserted; // edited, deleted, inserted, 
-    obj['selected'] = false; // edited, deleted, inserted, 
+    obj['state'] = IConst.rowStateInserted; 
+    obj['selected'] = false; 
+    obj['editing'] = false; 
+    obj['saving'] = false; 
     newInfoList.push(obj);
 
     // now add the filter "inserted rows"
@@ -533,11 +610,40 @@ class ITable extends React.Component {
 
   UndoAllRows()
   {
-    // new undo all rows
-    const undoList = this.state.rowInfoList.filter(r => r.state !== IConst.rowStateUnchanged);
-    for (let r = 0; r < undoList.length; r++)
+    // undo all rows
+    let newData = [...this.props.data];
+    let newInfo = [...this.state.rowInfoList];
+
+    let undoList = this.state.rowInfoList.filter(r => 
+      r.state !== IConst.rowStateUnchanged && r.saving === false);
+
+    for (let r = undoList.length - 1; r >= 0; r--)
     {
-      this.handleUndoRow(undoList[r].id);
+      const index = newInfo.findIndex(i => i.id === undoList[r].id);
+      if (undoList[r].state === IConst.rowStateInserted)
+      {
+        // row was inserted, thus we need to delete it
+        newInfo = newInfo.filter(l => l.id !== undoList[r]);
+      }
+      else
+      {
+        // row was edited or deleted, so we copy the old values
+        //const rowId = undoList[r][this.props.primaryKey];
+        //const rowIndex = newData.findIndex(n => n[this.props.primaryKey] === rowId);
+        //IUtils.copyOneRow(this.props.data[rowIndex], newData[rowIndex]);
+        newInfo[index].state = IConst.rowStateUnchanged;
+        newInfo[index].editing = false;
+        newInfo[index].forceUpdate = true;
+      }
+
+      const cntChangedRows = this.getCountChangedRows();
+
+      this.setState({
+        rowInfoList: newInfo,
+        data: newData,
+        mainButtonsDisabled: cntChangedRows === 0,
+        countChangedRows: cntChangedRows
+      });
     }
   }
  
@@ -719,6 +825,7 @@ class ITable extends React.Component {
     return newlist.length;
   }
 
+  /*
   setRowStateIndex(rowIndex, newstate)
   {
     // now set the correct state of the row
@@ -727,18 +834,73 @@ class ITable extends React.Component {
       IConst.rowStateEdited : newstate;
     this.state.rowInfoList[rowIndex].state = changeState;
   }
+    */
 
-  setMainButtonState()
+  rowUpdate(info, row)
   {
-    // update the buttons SAVE ALL, UNDO ALL
-    ///const mainEnabled = this.getxxMainButtonsEnabled();
+    // copy the new row and its state 
+    // and update the buttons SAVE ALL, UNDO ALL
+
+    let newInfo = [...this.state.rowInfoList];
+    let newData = [...this.state.data];
+    
+    // all other rows we can update with row
+    const rowId = row[this.props.primaryKey];
+    const rowIndex = this.state.data.findIndex(r => r[this.props.primaryKey] === rowId);
+    const infoIndex = this.state.rowInfoList.findIndex(i => i.id === rowId);
+    newInfo[infoIndex].state = info.state;
+    newInfo[infoIndex].forceUpdate = true;
+    IUtils.copyOneRow(row, newData[rowIndex]);
+
     const cntChangedRows = this.getCountChangedRows();
     this.setState({
+      rowInfoList: newInfo,
+      data: newData,
       mainButtonsDisabled: cntChangedRows === 0,
       countChangedRows: cntChangedRows
     });
   }
 
+  rowUndo(info, row)
+  {
+    // copy the new row and its state 
+    // and update the buttons SAVE ALL, UNDO ALL
+
+    const rowId = row[this.props.primaryKey];
+
+    let newInfo = [...this.state.rowInfoList];
+    let newData = [...this.state.data];
+    
+    if (info.state === IConst.rowStateInserted)
+    {
+      // rows NULL has to be deleted
+      const rowId = info.id;
+      newData = newData.filter(d => d[this.props.primaryKey] !== rowId);
+      newInfo = newInfo.filter(d => d.id !== rowId);
+    }
+    else
+    {
+      // all other rows we can update with row
+      const rowIndex = this.state.data.findIndex(r => r[this.props.primaryKey] === rowId);
+      const infoIndex = this.state.rowInfoList.findIndex(i => i.id === rowId);
+      newInfo[infoIndex].state = IConst.rowStateUnchanged;
+      newInfo[infoIndex].editing = false;
+      newInfo[infoIndex].forceUpdate = true;
+      IUtils.copyOneRow(this.props.data[rowIndex], newData[rowIndex]);
+    }
+
+    const cntChangedRows = this.getCountChangedRows();
+    this.setState({
+      rowInfoList: newInfo,
+      data: newData,
+      mainButtonsDisabled: cntChangedRows === 0,
+      countChangedRows: cntChangedRows
+    });
+
+
+  }
+
+  /*
   handleDataChange(newvalue, rowid, field)
   {
     // update new values to the data
@@ -758,8 +920,9 @@ class ITable extends React.Component {
     this.state.rowInfoList[infoIndex].state = newState;
 
     // update the buttons SAVE ALL, UNDO ALL
-    this.setMainButtonState();
+    this.setMainBdduttonState();
   }
+    */
 
   openModalDataDialog(row)
   {
@@ -902,31 +1065,24 @@ class ITable extends React.Component {
     if (saveIt)
     {
       // copy the edited row into the data
-      const rowIndex = this.getInfoRowIndex(newRow[this.props.primaryKey]);
-      const newlist = [...this.state.data];
-      //newlist[rowIndex] = newRow;
+      const rowid = newRow[this.props.primaryKey];
+      const infoIndex = this.getInfoRowIndex(rowid);
+      const rowIndex = this.state.data.findIndex(r => r[this.props.primaryKey] === rowid);
 
-      const keys = Object.keys(newRow);
-      for (let f = 0; f < keys.length; f++)
-      {
-        const field = keys[f];
-        newlist[rowIndex][field] = newRow[field];
-      }
+      let newData = [...this.state.data];
+      IUtils.copyOneRow(newRow, newData[rowIndex]);
 
-      const infoIndex = this.getInfoRowIndex(newRow[this.props.primaryKey]);
-      const newinfo = [...this.state.rowInfoList];
-      if (newinfo[infoIndex].state === IConst.rowStateUnchanged)
-        newinfo[infoIndex].state = IConst.rowStateEdited;
-
-      console.log("newlist[rowIndex]", newlist[rowIndex]);    
-      //console.log("newRow", newRow);    
+      let newInfo = [...this.state.rowInfoList];
+      if (newInfo[infoIndex].state === IConst.rowStateUnchanged)
+        newInfo[infoIndex].state = IConst.rowStateEdited;
+      newInfo[infoIndex].forceUpdate = true; 
 
       // update the buttons SAVE ALL, UNDO ALL
       const cntChangedRows = this.getCountChangedRows();
       this.setState({ 
         openDataModalDialog: false,
-        data: newlist, 
-        rowInfoList: newinfo,
+        data: newData, 
+        rowInfoList: newInfo,
         mainButtonsDisabled: cntChangedRows === 0,
         countChangedRows: cntChangedRows
       });
@@ -1127,6 +1283,8 @@ class ITable extends React.Component {
       }
     }
 
+     
+
     // sorting
     /*
     const indexSort = this.state.headers.findIndex(h => h.defaultSorting != '');
@@ -1149,13 +1307,13 @@ class ITable extends React.Component {
       );
     }
 
+    const filteredRowsCount = data.length;
     data = data.slice(page * limit, page * limit + limit);
 
     const mainChecked = this.state.mainChecked;
     const mainIndeterminated = this.state.mainIndeterminated;
     const mainButtonsDisabled = this.state.mainButtonsDisabled;
     const cntChangedRows = this.state.countChangedRows;
-
     const sizeMainButton = this.props.settings.buttonSizeMain;
 
     return (
@@ -1227,12 +1385,12 @@ class ITable extends React.Component {
                     oldRow={row}
                     primaryKey={this.props.primaryKey}
                     row={row}
-                    setMainButtonState={() => this.setMainButtonState()}
-                    handleUndoInsertedRows={(rowid) => this.handleUndoRow(rowid)}
+                    rowUpdate={(info, row) => this.rowUpdate(info, row)}
+                    rowUndo={(info, row) => this.rowUndo(info, row)}
+                    //handleUndoInsertedRows={(rowid) => this.handleUndoRow(rowid)}
                     handleSelectionClickRow={(rowid) => this.handleSelectionClickRow(rowid)}
                     handleSpecialButtonClick={(rowid, field) => this.handleSpecialButtonClick(rowid, field)}
                     handleStateButtonClick={(rowid, field) => this.handleStateButtonClick(rowid, field)}
-                    //handleDataChange={(newvalue, rowid, field) => this.handleDataChange(newvalue, rowid, field)}
                     handleSaveOneRow = {(row) =>  this.handleSaveOneRow(row)}
                     showDataErrorMessage = {(errorText) =>  this.showDataErrorMessage(errorText)}
                     openModalDataDialog={(row) => this.openModalDataDialog(row)}  
@@ -1364,10 +1522,10 @@ class ITable extends React.Component {
 
           </Grid>
 
-          <Grid item style={{ display: 'flex', alignItems: 'center'}}>
+          <Grid item style={{ display: 'flex', alignItems: 'flex-start'}}>
             <TablePagination
               component="div"
-              count={this.state.data.length}
+              count={filteredRowsCount}
               labelDisplayedRows={({ from, to, count }) => `${from} - ${to} of ${count}` }
               labelRowsPerPage="Rows:" // Shorter label
               onPageChange={(event, page) => {

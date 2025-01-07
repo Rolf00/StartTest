@@ -6,53 +6,21 @@ DONE list
 QUESTION
 ========
 
-- sorting with a dialog needed?
+- "order by" with a dialog needed?
 
 ///////////////////////////////////////////////////////////////
-- saving rows: what will the component receive after saving?
-  all rows ? => all editing must be blocked
-  only saved rows ? => how?
-  when will the component know, when saving is finished
-  asynchroneous: is the user allowed to change the page?
-  what has to be blocked? all rows? button view? buttons next/back? button excel?
-
-- Grid: how to show the scrollbar automatically
-
-- when filtering, still 100 rows are shown on pagination
-  how to resolve? 
-  show filtered count
-
-- when rows are sorted, editing the row may change the sorting.
-  thus => the row may disapear. WHAT TO DO???
-  Solution row = [...state.row] => but now problems with save all?
-ok
-
-- do you want a modal dialog for editing one row?
-  if yes, some changes are needed.
-ok
-
-- Chipmenu: colored icons?
-YES
 
 - Warnings eliminated, still one remaining
 
-- Survey:
-  Page 2: Patient => Click to change TAB or edit status?
-  Page 2: Doctor  => Click to change TAB or edit status?
-  Page 2: Admin.  => Click to change TAB or edit status?
+- Survey: please check data
 
-  Page 3: Data example?
+- make a component for editing questions?
 
-  Page 4: no Table? Only Fields?
-
-  Which field on which pages are editable?
+- 
 
 
 TODO list
 =========
-
-- Edit dialog doesn't exist.
-
 
 
 ----------------------------------------------
@@ -66,6 +34,4 @@ Done until IHeaderManage.js
 /// 2025.01.06
 
 check id DataDialog can be started by only defined in App.js
-
-
 

@@ -36,8 +36,8 @@ export default function IFieldStateButton (props)
     {index > -1 && <IconButton
       onClick={() => props.handleStateButtonClick(rowid, dataFieldName)}
       style={{
-        fontSize: 12,
-        width: '100%', 
+        fontSize: '14px',
+        width: caption === "" ? buttonHeight : '100%', 
         height: buttonHeight,
         borderRadius: buttonRadius,
         margin: '2px',
@@ -46,8 +46,8 @@ export default function IFieldStateButton (props)
         borderStyle: 'solid',
       }}
       sx={{
-        display: 'flex', 
-        justifyContent: 'flex-start',
+        display: caption === "" ? '' : 'flex', 
+        justifyContent: caption === "" ? '' : 'flex-start',
         borderColor: buttonBackgroundHover,
         backgroundColor: buttonBackgroundColor,
         '&:Hover': {

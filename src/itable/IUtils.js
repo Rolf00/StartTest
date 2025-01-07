@@ -227,6 +227,18 @@ class IUtils {
      return infoList[index].state;
   }  
 
+  static copyOneRow(fromRow, toRow)
+  {
+    let oldRow = {...fromRow};
+    const keys = Object.keys(oldRow);
+    for (let f = 0; f < keys.length; f++)
+    {
+      const field = keys[f];
+      toRow[field] = oldRow[field];
+    }
+  }  
+
+
 }
 
 export default IUtils;

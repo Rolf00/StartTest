@@ -130,24 +130,23 @@ export default function IChipMenu (props)
       >
         <Chip 
           label={chipLabel}
-          //avatar={<Avatar alt="" src={<AdjustIcon/>} />}
           avatar={<ChipIcon style={chipIconStyle}/>}
           clickable={chipClickable}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}      
           onClick={(e) => handleClick(e, chipClickable)}
           style={{
-            minWidth: chipWidth,
-            margin: '0px auto',
+            width: '100%',
+            margin: "0px",
+            padding: "0px",
             backgroundColor: isHovered ? chipColorHover : chipColor,
             borderWidth: '1px',
             borderStyle: 'solid',
             borderColor: isHovered ? 'black' : chipColor,
           }}
           sx={{
+            fontSize: '14px',
             color: 'black', 
-            width: chipIconWidth, 
-            height: chipIconWidth,
             justifyContent: 'left',
           }}
         >
@@ -159,13 +158,6 @@ export default function IChipMenu (props)
           anchorEl={anchorEl}
           open={open}
           onClose={() => handleClose()}
-          slotProps={{
-            paper: {
-              style: {
-                //width: '20ch',
-              },
-            },
-          }}
         >
           {props.header.chipList.map((chip, index) => {
             const chipId = chip.id;
@@ -179,6 +171,7 @@ export default function IChipMenu (props)
                   backgroundColor: color,
                   margin: '3px 5px',
                   borderRadius: '10px',
+                  height: 32,
                 }}
               >
               {title}
@@ -207,13 +200,18 @@ export default function IChipMenu (props)
           label={chipLabel}
           avatar={<ChipIcon style={chipIconStyle}/>}
           style={{
-            minWidth: chipWidth,
+            width: '100%',
+            margin: "0px",
+            padding: "0px",
+            backgroundColor: chipColor,
+            borderWidth: '1px',
+            borderStyle: 'solid',
+            borderColor: chipColorHover,
           }}
           sx={{
+            fontSize: '14px',
             backgroundColor: chipColor, 
             color: 'black', 
-            width: chipIconWidth, 
-            height: chipIconWidth,
             justifyContent: 'left',
           }}
         />
