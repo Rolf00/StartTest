@@ -5,7 +5,7 @@ export default function IFieldReadOnly (props) {
     <div 
       style={{ 
         padding: '5px 0px', 
-        width: props.width, 
+        width: '100%',
         height: '100%',
         display: 'flex',
         flexGrow: 1,

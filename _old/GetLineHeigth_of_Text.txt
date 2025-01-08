@@ -1,0 +1,46 @@
+import React, { useState } from "react";
+
+function LineHeightCalculator() {
+  const [lineHeight, setLineHeight] = useState(0);
+
+  const getLineHeight = (
+    fontSize = "16px",
+    lineHeight = "normal",
+    fontFamily = "Arial, sans-serif"
+  ) => {
+    // Create a temporary div element to measure the text line height
+    const tempDiv = document.createElement("div");
+    document.body.appendChild(tempDiv);
+
+    // Apply styles to the temporary div
+    tempDiv.style.fontSize = fontSize;
+    tempDiv.style.lineHeight = lineHeight;
+    tempDiv.style.fontFamily = fontFamily;
+    tempDiv.style.position = "absolute"; // Positioning offscreen for accurate measurement
+    tempDiv.style.visibility = "hidden"; // Hide the element
+    tempDiv.textContent = "Hello, World!"; // A single line of text
+
+    // Measure the height using getBoundingClientRect()
+    const rect = tempDiv.getBoundingClientRect();
+    const lineHeightPx = rect.height; // The height of the single line of text
+
+    // Remove the temporary div after measurement
+    document.body.removeChild(tempDiv);
+
+    return lineHeightPx;
+  };
+
+  const handleButtonClick = () => {
+    const lineHeightPx = getLineHeight("50px", "normal", "Arial");
+    setLineHeight(lineHeightPx);
+  };
+
+  return (
+    <div>
+      <button onClick={handleButtonClick}>Get Line Height</button>
+      <p>Line height: {lineHeight.toFixed(2)}px</p>
+    </div>
+  );
+}
+
+export default LineHeightCalculator;

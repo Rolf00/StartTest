@@ -3,11 +3,9 @@ import IconButton from '@mui/material/IconButton';
 
 export default function IFieldStateButton (props) 
 {
-  
+
   const rowid = props.rowid;
   const dataFieldName = props.header.dataFieldName;
-  // TODO : disabled depneing on role?
-  //const disabled = !props.header.isEditable;
   const disabled = false;
   const buttonHeight = props.header.buttonHeight;
   const buttonRadius = props.header.buttonRadius;

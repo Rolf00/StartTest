@@ -1,12 +1,9 @@
 import React from "react";
 import { TableCell } from "@mui/material";
 import { withStyles } from 'tss-react/mui';
+import PropTypes from 'prop-types';
 
-import PropTypes, { func } from 'prop-types';
 import { useStyles } from './styles';
-
-import IConst from './IConst';
-
 
 class ITableCellHeightResizer extends React.Component {
   constructor(props) {

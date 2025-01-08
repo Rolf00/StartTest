@@ -1,0 +1,42 @@
+import React, { useEffect, useRef, useState } from "react";
+
+function TextHeightExample() {
+  const containerRef = useRef(null);
+  const [textHeight, setTextHeight] = useState(0);
+
+  const calc = () => {
+    const rect = containerRef.current.getBoundingClientRect();
+    setTextHeight(rect.height);
+  };
+
+  useEffect(() => {
+    // Calculate the height of the container after rendering using getBoundingClientRect
+    if (containerRef.current) {
+      const rect = containerRef.current.getBoundingClientRect();
+      setTextHeight(rect.height);
+    }
+  }, []);
+
+  return (
+    <div>
+      <button onClick={calc}>calculate</button>
+      <div
+        ref={containerRef}
+        style={{
+          width: "300px", // Set the container width
+          backgroundColor: "lightblue",
+          padding: "10px",
+          overflow: "hidden",
+        }}
+      >
+        This is a long text tdsf d sdatö$fösd$df dskfl dklö dfköl dfk ldf kldsöf
+        will wrap based on the width of the container. The height of this
+        container will change depen sdjkl sdj sldkfj sdlfkjd fjk jslkf
+        jsdkflskdj fjsdkfl sk fjksl dfjding on how much the text wraps.
+      </div>
+      <p>Text height: {textHeight}px</p>
+    </div>
+  );
+}
+
+export default TextHeightExample;

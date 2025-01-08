@@ -1,0 +1,17 @@
+import React from 'react';
+import { Grid } from '@mui/material';
+
+export default function MUIGridLayout() {
+  return (
+    <Grid container sx={{ height: 100 }}>
+      {/* First Grid Item: 40px */}
+      <Grid item sx={{ width: '40px', backgroundColor: 'red' }}></Grid>
+
+      {/* Second Grid Item: takes remaining space */}
+      <Grid item sx={{ flexGrow: 1, backgroundColor: 'green' }}></Grid>
+
+      {/* Third Grid Item: 5px */}
+      <Grid item sx={{ width: '5px', backgroundColor: 'blue' }}></Grid>
+    </Grid>
+  );
+}

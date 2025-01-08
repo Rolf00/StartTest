@@ -1,0 +1,46 @@
+import React from "react";
+import { Grid } from "@mui/material";
+
+export default function MUIGridLayout() {
+  return (
+    <Grid container direction="column" sx={{ height: "100px" }}>
+      {/* Upper Grid Item: Takes the remaining space */}
+      <Grid item sx={{ flexGrow: 1, backgroundColor: "lightblue" }}></Grid>
+
+      {/* Lower Grid Item: Fixed height of 5px */}
+      <Grid item sx={{ height: "5px", backgroundColor: "lightcoral" }}></Grid>
+    </Grid>
+  );
+}
+
+
+////////////////////////////////
+
+
+import React from "react";
+import { Stack } from "@mui/material";
+
+export default function MUIStackLayout() {
+  return (
+    <Stack direction="column" sx={{ height: "180px" }}>
+      {/* Upper Stack Item: Takes the remaining space and centers the text vertically, aligns horizontally to the left */}
+      <div
+        style={{
+          flexGrow: 1,
+          backgroundColor: "lightblue",
+          display: "flex", // Enable Flexbox on the div
+          alignItems: "center", // Vertically center the text
+          justifyContent: "flex-start", // Align the text to the left horizontally
+          paddingLeft: "10px", // Optional: Adds some space from the left edge
+        }}
+      >
+        <span style={{ fontSize: "20px", color: "black" }}>
+          Left Aligned Text
+        </span>
+      </div>
+
+      {/* Lower Stack Item: Fixed height of 5px */}
+      <div style={{ height: "5px", backgroundColor: "lightcoral" }}></div>
+    </Stack>
+  );
+}

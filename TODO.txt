@@ -1,37 +1,24 @@
-DONE list
-=========
-- filtering dates now works
-
 
 QUESTION
 ========
 
 - "order by" with a dialog needed?
-
-///////////////////////////////////////////////////////////////
-
-- Warnings eliminated, still one remaining
-
 - Survey: please check data
-
+- Warnings eliminated, still one remaining
 - make a component for editing questions?
 
-- 
 
 
 TODO list
 =========
 
+- rowInfoList creation in one function
+- check id DataDialog can be started by only defined in App.js
+- ChipMenu: fix space between icon and text
+- place excel export into another file IExport.js
 
-----------------------------------------------
+table style
 
-Files done
-==========
-Done until IHeaderManage.js
-
-
-//////////////////////////////////////////////////////////////////////////////
-/// 2025.01.06
-
-check id DataDialog can be started by only defined in App.js
-
+.css-ham9mw-MuiTableContainer-root-ITable-table_container {
+    /* width: 100%; */
+    overflow-x: auto;

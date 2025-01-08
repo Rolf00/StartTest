@@ -93,7 +93,7 @@ class IConst {
   static sortingDESC = 'desc';
 
   // edit types
-  static editType_PrimaryKey = 'primaryKey';
+  //static editType_PrimaryKey = 'primaryKey';
   static editType_SelectionIcon = 'selectionIcon';
   static editType_NoEdit = 'none';
   static editType_Textfield = 'textfield';
@@ -171,7 +171,7 @@ class IConst {
   static filterOperator_IsBiggerThan = "12";
   static filterOperator_IsBetween = "13";
   // TODO : what is meant with any of
-  //static filterOperator_IsAnyOf = "13";
+  //static filterOperator_IsAnyOf = "14";
 
   // fitering states
   static filterOperator_Edited = "E";

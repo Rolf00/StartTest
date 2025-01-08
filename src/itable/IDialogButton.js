@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 import PropTypes, { func } from 'prop-types';
 import { withStyles } from 'tss-react/mui';
 import 'react-resizable/css/styles.css';
@@ -14,7 +14,6 @@ import DialogContent from "@mui/material/DialogContent";
 
 import InfoRoundedIcon from '@mui/icons-material/InfoRounded';
 import HelpRoundedIcon from '@mui/icons-material/HelpRounded';
-import WarningRoundedIcon from '@mui/icons-material/WarningRounded';
 import ErrorRoundedIcon from '@mui/icons-material/ErrorRounded';
 
 import IConst from './IConst';

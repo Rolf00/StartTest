@@ -1,0 +1,122 @@
+import React, { useState } from 'react';
+import { Button, Menu, MenuItem, Paper } from '@mui/material';
+
+const HoverMenu = () => {
+  // State to control the visibility of the main submenu and the subsubmenu
+  const [mainMenuAnchor, setMainMenuAnchor] = useState(null);
+  const [subMenuAnchor, setSubMenuAnchor] = useState(null);
+  const [subSubMenuAnchor, setSubSubMenuAnchor] = useState(null);
+
+  // Handle opening the main menu
+  const handleMainMenuOpen = (event) => {
+    setMainMenuAnchor(event.currentTarget);
+  };
+
+  const handleMainMenuClose = () => {
+    setMainMenuAnchor(null);
+  };
+
+  // Handle opening the sub-menu (on hover over last item of the main menu)
+  const handleSubMenuOpen = (event) => {
+    setSubMenuAnchor(event.currentTarget);
+  };
+
+  const handleSubMenuClose = () => {
+    setSubMenuAnchor(null);
+  };
+
+  // Handle opening the subsubmenu (on hover over the last item of the submenu)
+  const handleSubSubMenuOpen = (event) => {
+    setSubSubMenuAnchor(event.currentTarget);
+  };
+
+  const handleSubSubMenuClose = () => {
+    setSubSubMenuAnchor(null);
+  };
+
+  return (
+    <div>
+      {/* Main Button */}
+      <Button 
+        onMouseEnter={handleMainMenuOpen} 
+        onMouseLeave={handleMainMenuClose}
+>
+        Hover Over Me
+      </Button>
+
+      {/* Main Submenu */}
+      <Menu
+        anchorEl={mainMenuAnchor}
+        open={Boolean(mainMenuAnchor)}
+        onClose={handleMainMenuClose}
+        MenuListProps={{
+          onMouseLeave: handleMainMenuClose, // Close menu when mouse leaves the submenu
+        }}
+      >
+        <MenuItem>Item 1</MenuItem>
+        <MenuItem>Item 2</MenuItem>
+        <MenuItem>Item 3</MenuItem>
+        <MenuItem>Item 4</MenuItem>
+
+        {/* Last item with submenu */}
+        <MenuItem
+          onMouseEnter={handleSubMenuOpen}
+          onMouseLeave={handleSubMenuClose}
+        >
+          Item 5 (Hover for Submenu)
+        </MenuItem>
+      </Menu>
+
+      {/* Submenu (Appears when hovering over Item 5) */}
+      <Menu
+        anchorEl={subMenuAnchor}
+        open={Boolean(subMenuAnchor)}
+        onClose={handleSubMenuClose}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'left',
+        }}
+        MenuListProps={{
+          onMouseLeave: handleSubMenuClose, // Close submenu when mouse leaves
+        }}
+      >
+        <MenuItem>Submenu Item 1</MenuItem>
+        <MenuItem>Submenu Item 2</MenuItem>
+        <MenuItem
+          onMouseEnter={handleSubSubMenuOpen}
+          onMouseLeave={handleSubSubMenuClose}
+        >
+          Submenu Item 3 (Hover for Subsubmenu)
+        </MenuItem>
+      </Menu>
+
+      {/* Subsubmenu (Appears when hovering over Item 3 of Submenu) */}
+      <Menu
+        anchorEl={subSubMenuAnchor}
+        open={Boolean(subSubMenuAnchor)}
+        onClose={handleSubSubMenuClose}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'left',
+        }}
+        MenuListProps={{
+          onMouseLeave: handleSubSubMenuClose, // Close subsubmenu when mouse leaves
+        }}
+      >
+        <MenuItem>Subsubmenu Item 1</MenuItem>
+        <MenuItem>Subsubmenu Item 2</MenuItem>
+        <MenuItem>Subsubmenu Item 3</MenuItem>
+      </Menu>
+    </div>
+  );
+};
+
+export default HoverMenu;

@@ -1,0 +1,101 @@
+import React from "react";
+
+import Paper from "@mui/material/Paper";
+import Tablex from "@mui/material/Table";
+import TableRow from "@mui/material/TableRow";
+import TableCell from "@mui/material/TableCell";
+import IconButton from "@mui/material/IconButton";
+import Box from "@mui/material/Box";
+
+function Table() {
+  // Data for 2 rows and 3 columns
+  const rows = [
+    ["Row 1, Column 1", "Row 1, Column 2", "Row 1, Column 3"],
+    ["Row 2, Column 1", "Row 2, Column 2", "Row 2, Column 3"],
+  ];
+
+  const buttons = [
+    { caption: "Yes", icon: null, horizontalAlign: "left", X: 1, Y: 1 },
+    { caption: "close", icon: null, horizontalAlign: "right", X: 3, Y: 2 },
+    { caption: "No", icon: null, horizontalAlign: "left", X: 2, Y: 1 },
+    { caption: "maybe", icon: null, horizontalAlign: "left", X: 1, Y: 2 },
+    { caption: "Cancel", icon: null, horizontalAlign: "left", X: 3, Y: 1 },
+  ];
+
+  const colCount = Math.max(...buttons.map((item) => item.X));
+  const rowCount = Math.max(...buttons.map((item) => item.Y));
+
+  const col = [];
+  for (let c = 0; c < colCount; c++) col.push(c);
+
+  const row = [];
+  for (let r = 0; r < rowCount; r++) row.push(r);
+
+  const handleClick = (index) => {
+    alert("Clicked = " + index);
+  };
+
+
+  const buttonWidth = 100;
+  const spaceWidth = 10;
+  const entireWidth = (colCount * buttonWidth) + ((colCount + 1) * spaceWidth);
+
+  return (
+    <Box>
+      <Tablex style={{ width: entireWidth}}>
+        {row.map((rowIndex) => (
+          <TableRow key={rowIndex}>
+            {col.map((colIndex) => {
+              const btnIndex = buttons.findIndex(
+                (b) => b.X === colIndex + 1 && b.Y === rowIndex + 1
+              );
+              if (btnIndex === -1) {
+                return (
+                  <TableCell
+                    key={rowIndex + 10 * colIndex}
+                    style={{ border: "0px", padding: "0px", margin: "0px" }}
+                  ></TableCell>
+                );
+              } else {
+                const button = buttons[btnIndex];
+                const caption = button.caption;
+                const align = button.horizontalAlign;
+                return (
+                  <TableCell
+                    key={rowIndex + 10 * colIndex}
+                    style={{ border: "0px", padding: "5px 5px", margin: "0px" }}
+                  >
+                    <IconButton
+                      size="small"
+                      onClick={() => handleClick(btnIndex)}
+                      style={{
+                        width: "120px",
+                        height: "40px",
+                        borderRadius: "4px",
+                        display: "flex",
+                        justifyContent:
+                          align === "right" ? "flex-end" : "flex-start",
+                      }}
+                      sx={{
+                        border: "1px solid #aaaaaa",
+                        backgroundColor: "#eeeeee",
+                        "&:Hover": {
+                          border: "1px solid #555555",
+                          backgroundColor: "#ddddff",
+                        },
+                      }}
+                    >
+                      {caption}
+                    </IconButton>
+                  </TableCell>
+                );
+              }
+            })}
+          </TableRow>
+        ))}
+      </Tablex>
+    </Box>
+  );
+}
+
+export default Table;

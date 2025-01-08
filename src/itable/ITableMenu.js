@@ -32,7 +32,6 @@ import VisibilityOffRoundedIcon from '@mui/icons-material/VisibilityOffRounded';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 
-
 import IConst from './IConst';
 import { getNewSortingList } from './IUtilsSort';
 import { 
@@ -41,10 +40,8 @@ import {
   iconButtonStyleRed, 
   iconButtonStyleGreen } from './IStyles';
 
-
 export default function ITableMenu (props) 
 {
-
   const filterTopButton =
   {
     padding: "4px 4px 2px 4px",
@@ -96,19 +93,10 @@ export default function ITableMenu (props)
   const [selfilterSecondValue, setFilterSecondValue] = React.useState("");
 
   // prepare the datepicker
-  /*
-  const oldJSDate = props.value;
-  const jsdt = oldJSDate === null || oldJSDate === "" ? new Date() : new Date(
-    oldJSDate.getFullYear(), 
-    oldJSDate.getMonth(), 
-    oldJSDate.getDate());
-    */
   const jsdt = new Date();
   const pickerDate = dayjs(jsdt);
   const [selfilterDateValue, setFilterDateValue] = React.useState(pickerDate);
   const [selfilterDateSecondValue, setFilterDateSecondValue] = React.useState(pickerDate);
-
-  
 
   const openCloseFiltering = (e) =>
   {
@@ -160,7 +148,6 @@ export default function ITableMenu (props)
     setFilterDateSecondValue(pickerDate);
   }
   
-
   const [openSnack,setOpenSnack] = React.useState(false);
         
   const handleClick = (event) =>

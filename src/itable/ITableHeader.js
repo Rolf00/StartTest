@@ -1,6 +1,5 @@
 import React from 'react';
-import PropTypes, { func } from 'prop-types';
-//import { useStyles } from './styles';
+import PropTypes from 'prop-types';
 import { withStyles } from 'tss-react/mui';
 import {
   TableHead,
@@ -9,14 +8,9 @@ import {
   Tooltip
 } from '@mui/material';
 
-import CheckBoxIcon from '@mui/icons-material/CheckBox';
-import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
-import IndeterminateCheckBoxIcon from '@mui/icons-material/IndeterminateCheckBox';
-
 import CheckBoxOutlineBlankRoundedIcon from '@mui/icons-material/CheckBoxOutlineBlankRounded';
 import CheckBoxRoundedIcon from '@mui/icons-material/CheckBoxRounded';
 import IndeterminateCheckBoxRoundedIcon from '@mui/icons-material/IndeterminateCheckBoxRounded';
-
 
 import IConst from './IConst';
 import IUtils from './IUtils';
@@ -76,29 +70,14 @@ class ITableHeader extends React.Component {
               header.editType === IConst.editType_ButtonDelete;
 
             const hasHeaderMenu = header.hasHeaderMenu;
-            //const headerTitle = 
-            //  isSelectionHeader || isButtonHeader ? "" : header.headerTitle;
             const headerTitle = header.headerTitle;
-
             const isResizable = header.isResizable;
             const headerMinWidth = header.minWidth;
-            //const headerHorizontalAlign = header.horizontalAlign;
-            //const headerVerticalAlign = settings.rowsVerticalAlign;
             const newheaderWidth = 
               isSelectionHeader || isButtonHeader  ? header.width + 8 : header.width;
-
             const btnHoverWidth = settings.buttonSizeOnRowsHover;
-
             const headerRowHeight = settings.initialHeaderHeight;
-            const imgWidth = settings.buttonSizeOnRows;
-
-            const mainCheckIcon = 
-              this.state.mainIndeterminated ? IConst.imgChkboxIndeterminate :
-              this.state.mainChecked ? IConst.imgChkboxChecked : IConst.imgChkboxUnchecked;
-
-            // only show this column when it's defined as visible
             const visible = header.isVisible;
-
             const horizontalAlign = IUtils.getHorizontalAlign(header.horizontalAlign);
             const verticalAlign = IUtils.getVerticalAlign(settings.rowsVerticalAlign);
 
@@ -176,25 +155,7 @@ class ITableHeader extends React.Component {
             }
           })}
         </TableRow>
-
-        {/* 
-
-        <div style={{ 
-          display: 'block', position: 'absolute', 
-          width: '320px', zIndex: 1, 
-          background: 'white', color: 'black',
-          display: 'flex', alignItems: 'flex-start', flexDirection: 'column'}}>
-        <div style={{ padding: '10px' }}>Search value in data</div>
-        <div style={{ display: 'flex', flexDirection: 'row' }}>
-        <TextField label={"filder rows"}></TextField>
-        <IconButton style={{ padding: '5px 15px', borderRadius: '6px'}}>Search</IconButton>
-        </div>
-        </div>
-        */}
-
       </TableHead>     
-      
-      
     );
   }
 }

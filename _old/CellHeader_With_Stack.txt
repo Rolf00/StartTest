@@ -1,0 +1,30 @@
+import React from 'react';
+import { Stack } from '@mui/material';
+
+export default function MUIStackLayout() {
+  return (
+    <Stack
+      direction="row"
+      sx={{ height: 100, display: 'flex', alignItems: 'center' }} // Center vertically
+    >
+      {/* First Stack Item: 40px */}
+      <div style={{ width: '40px', backgroundColor: 'red' }}></div>
+
+      {/* Second Stack Item: fills remaining space */}
+      <div
+        style={{
+          flexGrow: 1,
+          backgroundColor: 'green',
+          display: 'flex',
+          alignItems: 'center', // Center content vertically in the second item
+          justifyContent: 'center', // Optionally, center horizontally as well
+        }}
+      >
+        <span style={{ color: 'white' }}>Centered Text</span>
+      </div>
+
+      {/* Third Stack Item: 5px */}
+      <div style={{ width: '5px', backgroundColor: 'blue' }}></div>
+    </Stack>
+  );
+}

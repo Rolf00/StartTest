@@ -1,0 +1,130 @@
+import React, { useState } from "react";
+import {
+  List,
+  ListItem,
+  ListItemText,
+  Checkbox,
+  Paper,
+  Typography,
+  Box
+} from "@mui/material";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { styled } from "@mui/system";
+
+const StyledPaper = styled(Paper)(({ theme }) => ({
+  maxWidth: 600,
+  margin: "20px auto",
+  padding: theme.spacing(2),
+  backgroundColor: "#ffffff"
+}));
+
+const StyledListItem = styled(ListItem)(({ theme }) => ({
+  marginBottom: theme.spacing(1),
+  borderRadius: theme.shape.borderRadius,
+  "&:hover": {
+    backgroundColor: "#f5f5f5"
+  }
+}));
+
+const DraggableCheckboxList = () => {
+  const [items, setItems] = useState([
+    {
+      id: "1",
+      primary: "Complete Project Documentation",
+      secondary: "Update all technical specifications and user guides",
+      checked: false
+    },
+    {
+      id: "2",
+      primary: "Review Team Performance",
+      secondary: "Conduct quarterly performance evaluations for team members",
+      checked: false
+    },
+    {
+      id: "3",
+      primary: "Client Meeting Preparation",
+      secondary: "Prepare presentation and demo materials for upcoming client meeting",
+      checked: true
+    },
+    {
+      id: "4",
+      primary: "System Maintenance",
+      secondary: "Perform routine system checks and updates",
+      checked: false
+    }
+  ]);
+
+  const handleToggle = (id) => {
+    setItems(prevItems =>
+      prevItems.map(item =>
+        item.id === id ? { ...item, checked: !item.checked } : item
+      )
+    );
+  };
+
+  const handleDragEnd = (result) => {
+    if (!result.destination) return;
+
+    const newItems = Array.from(items);
+    const [reorderedItem] = newItems.splice(result.source.index, 1);
+    newItems.splice(result.destination.index, 0, reorderedItem);
+
+    setItems(newItems);
+  };
+
+  return (
+    <StyledPaper elevation={3}>
+      <Typography variant="h5" gutterBottom align="center">
+        Task Checklist
+      </Typography>
+      <DragDropContext onDragEnd={handleDragEnd}>
+        <Droppable droppableId="checklist">
+          {(provided) => (
+            <List {...provided.droppableProps} ref={provided.innerRef}>
+              {items.map((item, index) => (
+                <Draggable key={item.id} draggableId={item.id} index={index}>
+                  {(provided, snapshot) => (
+                    <StyledListItem
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                      style={{
+                        ...provided.draggableProps.style,
+                        backgroundColor: snapshot.isDragging ? "#e3f2fd" : "inherit"
+                      }}
+                    >
+                      <Box display="flex" alignItems="center" width="100%">
+                        <Checkbox
+                          edge="start"
+                          checked={item.checked}
+                          onChange={() => handleToggle(item.id)}
+                          inputProps={{ "aria-labelledby": `checkbox-list-label-${item.id}` }}
+                        />
+                        <ListItemText
+                          primary={
+                            <Typography
+                              variant="subtitle1"
+                              style={{
+                                textDecoration: item.checked ? "line-through" : "none"
+                              }}
+                            >
+                              {item.primary}
+                            </Typography>
+                          }
+                          secondary={item.secondary}
+                        />
+                      </Box>
+                    </StyledListItem>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </List>
+          )}
+        </Droppable>
+      </DragDropContext>
+    </StyledPaper>
+  );
+};
+
+export default DraggableCheckboxList;

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-
 import { IconButton, TableCell } from "@mui/material";
 import { withStyles } from 'tss-react/mui';
 import PropTypes from 'prop-types';
@@ -100,17 +99,10 @@ class ITableCellWidthResizer extends React.Component {
 
   render() 
   {
-
     const isSortable = this.props.headers[this.props.headerIndex].isSortable;
-    /*
-    const isSortedAscending = this.props.headers[this.props.headerIndex].defaultSorting ?
-      this.props.headers[this.props.headerIndex].defaultSorting === IConst.sortingASC : false;
-      */
-
     const field = this.props.headers[this.props.headerIndex].dataFieldName;
     const index =  this.props.sortings.findIndex(s => s.orderByField === field);
     const sorting = index === -1 ? "" : this.props.sortings[index].order;
-
     const hasHeaderMenu = this.props.headers[this.props.headerIndex].hasHeaderMenu;
 
     return (

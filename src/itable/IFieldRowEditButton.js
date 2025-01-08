@@ -72,7 +72,7 @@ export default function IFieldRowEditButton (props) {
     <div
       style={{
         padding: '5px 0px', 
-        width: props.width, 
+        width: '100%',
         height: '100%',
         display: 'flex',
         flexGrow: 1,
@@ -83,10 +83,7 @@ export default function IFieldRowEditButton (props) {
       <IconButton
         onClick={() => props.handleRowEditButtonClick(dataFieldName)}
         disabled={disabled}
-        style={{ 
-          width: btnHoverWidth, 
-          height: btnHoverWidth,
-        }}
+        style={{ width: btnHoverWidth, height: btnHoverWidth, }}
       >
       {props.header.editType === IConst.editType_ButtonEditRow && !editing &&
       <Tooltip title={title} arrow>

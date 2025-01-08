@@ -1,6 +1,10 @@
 import * as React from 'react';
 import IconButton from '@mui/material/IconButton';
-import IConst from './IConst';
+
+import CheckBoxOutlineBlankRoundedIcon from '@mui/icons-material/CheckBoxOutlineBlankRounded';
+import CheckBoxRoundedIcon from '@mui/icons-material/CheckBoxRounded';
+
+import { iconButtonStyleGreen } from './IStyles';
 
 export default function IFieldCheckbox (props) {
 
@@ -9,9 +13,8 @@ export default function IFieldCheckbox (props) {
   const value = props.value;
   const fieldname = props.header.dataFieldName
   const disabled = !props.header.isEditable;
-  const imgWidth = props.settings.buttonSizeOnRows;
-  const btnHoverWidth = imgWidth + 18;
-  const iconCheckbox = value ? IConst.imgChkboxChecked : IConst.imgChkboxUnchecked;
+  const btnHoverWidth = props.settings.buttonSizeOnRows;
+  const CheckboxIcon = value ? CheckBoxRoundedIcon : CheckBoxOutlineBlankRoundedIcon;
 
   const handleChange = (e) =>
   {
@@ -23,26 +26,10 @@ export default function IFieldCheckbox (props) {
   if (editing)
   {
     return (
-      <IconButton
-        disabled={disabled}
-        onClick={e => handleChange(e)}
-        style={{ width: btnHoverWidth, height: btnHoverWidth }} >
-        <img 
-          src={iconCheckbox}
-          alt="img"
-          style={{ width: imgWidth, height: imgWidth, padding: '0px', }} 
-        />
-      </IconButton>
-    );
-  }
-  else
-  {
-    return (
-
-      <div 
-        style={{ 
+      <div
+        style={{
           padding: '5px 0px', 
-          width: btnHoverWidth, 
+          width: '100%',
           height: '100%',
           display: 'flex',
           flexGrow: 1,
@@ -50,11 +37,30 @@ export default function IFieldCheckbox (props) {
           alignItems: props.horizontalAlign,
         }}
       >
-        <img 
-          src={iconCheckbox}
-          alt="img"
-          style={{ width: imgWidth, height: imgWidth, padding: '0px', }} 
-        />
+        <IconButton
+          disabled={disabled}
+          onClick={e => handleChange(e)}
+          style={{ width: btnHoverWidth, height: btnHoverWidth }} >
+          <CheckboxIcon style={iconButtonStyleGreen} />
+        </IconButton>
+      </div>
+    );
+  }
+  else
+  {
+    return (
+      <div 
+        style={{ 
+          padding: '5px 0px', 
+          width: '100%', 
+          height: '100%',
+          display: 'flex',
+          flexGrow: 1,
+          justifyContent: props.verticalAlign, 
+          alignItems: props.horizontalAlign,
+        }}
+      >
+        <CheckboxIcon style={iconButtonStyleGreen} />
       </div>
     );
   }

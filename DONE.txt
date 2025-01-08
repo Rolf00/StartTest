@@ -41,6 +41,6 @@
 
 - some bug fixes repaired: UNDO, dialog, 
 
-- TODO: edit dialog
+
 
 

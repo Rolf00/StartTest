@@ -32,7 +32,7 @@ export default function IFieldText (props) {
       <div 
       style={{ 
         padding: '5px 0px', 
-        width:  '100%', // props.width, 
+        width:  '100%', 
         height: '100%',
         display: 'flex',
         flexGrow: 1,
@@ -41,7 +41,6 @@ export default function IFieldText (props) {
       }}
       >    
       <TextField
-        //id="outlined"
         disabled={disabled}
         value={value}
         helperText={helperText} 
