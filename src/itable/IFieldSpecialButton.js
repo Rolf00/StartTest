@@ -35,9 +35,10 @@ export default function IFieldSpecialButton (props) {
       style={{
         fontSize: 12,
         width: '100%', 
-        height: buttonHeight,
+        minHeight: buttonHeight,
         borderRadius: buttonRadius,
-        margin: '2px',
+        margin: '0px 2px 3px 2px',
+        padding: '2px',
         disabled: disabled,
         borderWidth: '1px',
         borderStyle: 'solid',

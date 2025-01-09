@@ -12,7 +12,6 @@ QUESTION
 TODO list
 =========
 
-- rowInfoList creation in one function
 - check id DataDialog can be started by only defined in App.js
 - ChipMenu: fix space between icon and text
 - place excel export into another file IExport.js
@@ -22,3 +21,17 @@ table style
 .css-ham9mw-MuiTableContainer-root-ITable-table_container {
     /* width: 100%; */
     overflow-x: auto;
+
+
+- enable png file for status
+
+- filter: change icon
+
+- TABLES
+  * editors (name. role)
+  * survey ()
+  * quetions 
+  * answers
+
+- state button : border color 
+

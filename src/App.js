@@ -8,6 +8,7 @@ import ArrowCircleLeftRoundedIcon from '@mui/icons-material/ArrowCircleLeftRound
 import DoneRoundedIcon from '@mui/icons-material/DoneRounded';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 
+
 import IConst from './itable/IConst';
 import ITable from './itable/ITable';
 import { 
@@ -19,6 +20,8 @@ import {
   iconButtonStylePurple,
   iconButtonStyleTurqoise,
   iconButtonStyleGrey } from './itable/IStyles';
+
+import imgCircleRed from './CircleRed.png';
 
 
 // columns for Waldo
@@ -283,7 +286,7 @@ const headersWaldo = [
       { id: 5, label: 'visited', color: '#BBFFFF', colorHover: '#99FFFF', icon: AdjustRoundedIcon, iconStyle: iconButtonStyleTurqoise,},
       { id: 6, label: 'invest.', color: '#BBBBFF', colorHover: '#9999FF', icon: AdjustRoundedIcon, iconStyle: iconButtonStyleBlue,},
       { id: 7, label: 'all ok',  color: '#BBFFBB', colorHover: '#99FF99', icon: AdjustRoundedIcon, iconStyle: iconButtonStyleGreen,},
-      { id: 8, label: 'danger',  color: '#FFBBBB', colorHover: '#FF9999', icon: AdjustRoundedIcon, iconStyle: iconButtonStyleRed,},
+      { id: 8, label: '',  color: 'transparent', colorHover: 'transparent', image: imgCircleRed, iconStyle: iconButtonStyleRed,},
     ],
     chipWidth: 100,
     chipIconWidth: 32,
@@ -344,11 +347,11 @@ const headersWaldo = [
     maxWidth: 320,
     editType: IConst.editType_SpecialButton,
     button: { 
-      caption: "View",  
+      caption: "View this person",  
       icon: PersonRoundedIcon,
       iconStyle: iconButtonStyleBlue,
-      buttonHeight: 30,
-      buttonRadius: 15,
+      buttonHeight: 21,
+      buttonRadius: 8,
       buttonBackgroundColor: "#EEEEFF", 
       buttonBackgroundHover: "#CCCCFF", 
     },
@@ -368,12 +371,12 @@ const headersWaldo = [
     minWidth: 100,
     maxWidth: 320,
     editType: IConst.editType_StateButton,
-    buttonHeight: 32,
-    buttonRadius: 15,
+    buttonHeight: 21,
+    buttonRadius: 8,
     buttonList: [
-      { id: 1, caption: '',     color: '#F3F3F3', colorHover: '#F5F5F5', icon: AdjustRoundedIcon, iconStyle: iconButtonStyleGrey, },
-      { id: 2, caption: '',       color: '#FFFFBB', colorHover: '#FFFF88', icon: AdjustRoundedIcon, iconStyle: iconButtonStyleOrange, },
-      { id: 3, caption: '',   color: '#FFBBBB', colorHover: '#FF8888', icon: EditRoundedIcon, iconStyle: iconButtonStyleRed, },
+      { id: 1, caption: 'jk asdjk dsa',     color: '#F3F3F3', colorHover: '#F5F5F5', icon: AdjustRoundedIcon, iconStyle: iconButtonStyleGrey, },
+      { id: 2, caption: 'asdlk asld',       color: '#FFFFBB', colorHover: '#FFFF88', icon: AdjustRoundedIcon, iconStyle: iconButtonStyleOrange, },
+      { id: 3, caption: '',   color: 'transparent', colorHover: 'transparent', image: imgCircleRed, iconStyle: iconButtonStyleRed, },
       { id: 4, caption: 'completed', color: '#BBFFBB', colorHover: '#88FF88', icon: DoneRoundedIcon, iconStyle: iconButtonStyleGreen, },
     ],
     dataFieldName: 'statebutton',
@@ -574,7 +577,7 @@ const headersWaldo = [
   },
   { 
   id: 26,
-    headerTitle: "Date To",
+    headerTitle: "Date To to test",
     helperText: "not before 'Date From'",
     isResizable: true,
     isEditable: true,
@@ -674,7 +677,7 @@ const App = ()=> {
 
     // header content 
     headerVerticalAlign: IConst.verticalAlign_Middle,
-    initialHeaderHeight: 55,
+    initialHeaderHeight: 85,
     initialRowHeight: 27,
     initialRowHeightReadonly: 27,
 
@@ -697,6 +700,7 @@ const App = ()=> {
     hasButtonExcelAll: true,
     hasButtonExcelSelected: true,
     hasButtonManageSorting: true,
+    hasButtonDeleteAllFilters: true,
 
     // localization
     localization: IConst.datetimeLocalization_deCH,

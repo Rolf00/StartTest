@@ -30,19 +30,16 @@ class ITableRow  extends React.Component {
     const {
       settings,
       headers,
-      rowInfoList,
-      rowInfoIndex,
+      rowInfo,
       primaryKey,
       oldRow,
       row
     } = this.props;
 
     this.state = { 
-      rowEditing: rowInfoList[rowInfoIndex].editing,
-      rowHeight: rowInfoList[rowInfoIndex].height,
+      rowInfo: rowInfo,
       isHeightResizing: false,
       resizingInAction: false,
-      rowInfoList: {...this.props.rowInfoList},
       row: {...this.props.row},
     }
   }
@@ -53,26 +50,29 @@ class ITableRow  extends React.Component {
   componentDidUpdate() 
   {
     const {row} = this.props;
-    const {rowInfoList} = this.props;
+    const {rowInfo} = this.props;
 
     if (row[this.props.primaryKey] !== this.state.row[this.props.primaryKey])
     {
       // we have to update, when a new ID was sent 
       this.setState({
-        //rowInfoList: this.props.rowInfoList,
-        //row: this.props.row,
-        rowInfoList,
+        rowInfo,
         row,
       });
     }
-    else if (rowInfoList[this.props.rowInfoIndex].forceUpdate)
+    else if (rowInfo.forceUpdate)
     {
       // we have to force an update, when the new id is the same as the old id
-      rowInfoList[this.props.rowInfoIndex].forceUpdate = false;
+      rowInfo.forceUpdate = false;
       this.setState({
-        //rowInfoList: this.props.rowInfoList,
-        //row: this.props.row,
-        rowInfoList,
+        rowInfo,
+        row,
+      });
+    }
+    else if (rowInfo !== this.state.rowInfo)
+    {
+      this.setState({
+        rowInfo,
         row,
       });
     }
@@ -87,19 +87,19 @@ class ITableRow  extends React.Component {
     const newRow = {...this.state.row};
     newRow[field] = value;
 
-    const newInfo = {...this.state.rowInfoList};
-    if (newInfo[this.props.rowInfoIndex].state === IConst.rowStateUnchanged) 
-      newInfo[this.props.rowInfoIndex].state = IConst.rowStateEdited;
+    const newInfo = this.state.rowInfo;
+    if (newInfo.state === IConst.rowStateUnchanged)
+      newInfo.state = IConst.rowStateEdited;
 
     this.setState({
-      rowInfoList: newInfo,
+      rowInfo: newInfo,
       row: newRow});
   }
   
   handleMouseDownRowNS(e)
   {
     // resizing row height
-    let oldRowHeight = this.state.rowInfoList[this.props.rowInfoIndex].height;
+    let oldRowHeight = this.state.rowInfo.height;
     let mouseStart = e.clientY;
 
     const element = e.target;
@@ -109,8 +109,9 @@ class ITableRow  extends React.Component {
 
     const onMouseMoveRowNS = (e) => {
       const newheight = e.clientY - mouseStart + oldRowHeight;
-      this.state.rowInfoList[this.props.rowInfoIndex].height = newheight;
-      this.setState({rowHeight: newheight});
+      const newInfo = this.state.rowInfo;
+      newInfo.height = newheight;
+      this.setState({rowInfo: newInfo});
     }
 
     const onMouseUpRowNS = (e) => {
@@ -146,17 +147,19 @@ class ITableRow  extends React.Component {
 
   handleRowEditButtonClick(action)
   {
+    //const infoIndex = this.getRowInfoListIndex();
+
     if (action === IConst.editType_ButtonEditRow)
     {
       // button EDIT for one row was clicked
-      const newEditing = !this.state.rowEditing;
-      this.state.rowInfoList[this.props.rowInfoIndex].editing = newEditing;
-      this.setState({rowEditing: newEditing});
-      if (!newEditing)
+      const newInfo =  this.state.rowInfo;
+      newInfo.editing = !newInfo.editing;
+      this.setState({rowInfo: newInfo});
+
+      if (!newInfo.editing)
       {
         // editing was stopped, thus we update the main data 
-        this.props.rowUpdate(
-          this.state.rowInfoList[this.props.rowInfoIndex], this.state.row);
+        this.props.rowUpdate(newInfo, this.state.row);
       }
     }
     if (action === IConst.editType_ButtonEdit)
@@ -167,8 +170,9 @@ class ITableRow  extends React.Component {
     else if (action === IConst.editType_ButtonSave)
     {
       // now we can save one row
-      this.state.rowInfoList[this.props.rowInfoIndex].editing = false;
-      this.setState({rowEditing: false});
+      const newInfo =  this.state.rowInfo;
+      newInfo.editing = false;
+      this.setState({rowInfo: newInfo});
       this.props.handleSaveOneRow(this.state.row);
     }
     else if (action === IConst.editType_ButtonUndo)
@@ -179,48 +183,38 @@ class ITableRow  extends React.Component {
     else if (action === IConst.editType_ButtonDelete)
     {
       // button DELETE for one row was clicked
-      this.state.rowInfoList[this.props.rowInfoIndex].editing = false;
-      this.state.rowInfoList[this.props.rowInfoIndex].state = IConst.rowStateDeleted;
-      this.setState({rowEditing: false});
-
-      // editing was stopped, thus we update the main data 
-      this.props.rowUpdate(
-        this.state.rowInfoList[this.props.rowInfoIndex], this.state.row);
+      const newInfo =  this.state.rowInfo;
+      newInfo.editing = false;
+      newInfo.state = IConst.rowStateDeleted;;
+      this.setState({rowInfo: newInfo});
+      this.props.rowUpdate(newInfo, this.state.row);
     }
   }
 
   handleUndoRow()
   {
     // we undo edited and deleted rows
-    this.state.rowInfoList[this.props.rowInfoIndex].editing = false;
-    this.setState({rowEditing: false});
-    this.props.rowUndo(
-      this.state.rowInfoList[this.props.rowInfoIndex], 
-      this.state.row);
+    const newInfo =  this.state.rowInfo;
+    newInfo.editing = false;
+    this.setState({rowInfo: newInfo});
+    this.props.rowUndo(newInfo, this.state.row);
   }
 
 
   render()
   {
-    const {row} = this.state;
-    const {rowInfoList} = this.state;
-
-    console.log("rowInfoList", rowInfoList);
-    console.log("this.props.rowInfoIndex]", this.props.rowInfoIndex);
-
+    const {row, rowInfo} = this.state;
     const rowid = row[this.props.primaryKey];
 
-
-    //console.log("his.state.rowInfoList", this.state.rowInfoList);
-
     // main row selection 
-    const isRowSelected = rowInfoList[this.props.rowInfoIndex].selected;
+    const isRowSelected = rowInfo.selected;
     
     // get row height
-    const rowHeight = rowInfoList[this.props.rowInfoIndex].height;
+    const rowHeight = rowInfo.height;
 
     // to get the background color for the row depending on its state
-    const rowState = rowInfoList[this.props.rowInfoIndex].state;
+    const rowState = rowInfo.state;
+
     const isRowDeleted = rowState === IConst.rowStateDeleted;
     const isRowInserted = rowState === IConst.rowStateInserted;
     const isRowChanged = rowState === IConst.rowStateEdited || isRowDeleted || isRowInserted;
@@ -280,11 +274,12 @@ class ITableRow  extends React.Component {
 
         // enable / disbable the editing of one row
         // if "this.props.settings.alwaysActivateEditing" is TRUE, editing is always enabled
-        const isCurrentEditing = rowInfoList[this.props.rowInfoIndex].editing;
+        const isCurrentEditing = rowInfo.editing;
+
         const editing = 
           this.props.settings.alwaysActivateEditing || 
           isCurrentEditing;
-        const saving = rowInfoList[this.props.rowInfoIndex].saving;
+        const saving = rowInfo.saving;
         const visible = header.isVisible;
         const verticalAlign = IUtils.getVerticalAlign(this.props.settings.rowsVerticalAlign);
         const horizontalAlign = IUtils.getHorizontalAlign(header.horizontalAlign);
@@ -296,7 +291,6 @@ class ITableRow  extends React.Component {
             <ITableCellHeightResizer
               key={`TableRow-row${rowid}.header${headerIndex}`}
               height={rowHeight}
-              setHeight={(height) => this.setState({rowHeight: height})}
               isHeightResizing={this.state.isHeightResizing}
               resizerBackgroundColor={this.props.settings.resizerBackgroundColor}
               horizontalAlign={horizontalAlign}

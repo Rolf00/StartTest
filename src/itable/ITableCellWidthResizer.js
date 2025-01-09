@@ -115,7 +115,6 @@ class ITableCellWidthResizer extends React.Component {
         <div 
           style={{
             display: 'flex',
-            width: '100%',
             height: this.props.settings.initialHeaderHeight,
             padding: '0px',
             borderBottomColor: '#BBBBBB',
@@ -123,10 +122,11 @@ class ITableCellWidthResizer extends React.Component {
             borderBottomWidth: '1px',
             padding: '0px',
           }}>
+
           {hasHeaderMenu && this.props.headerHorizontalAlign === IConst.horizontalAlign_Right &&
           <div style={{
             display: 'flex',
-            justifyContent: 'flex_end', 
+            justifyContent: 'center', 
             alignItems: this.props.verticalAlign, 
             textAlign: 'left',
             width: '25px',
@@ -152,6 +152,7 @@ class ITableCellWidthResizer extends React.Component {
             alignItems: this.props.verticalAlign, 
             textAlign: 'left',
             width: '25px',
+            //height: '100%',
             padding: '0px',
           }}>   
           <IconButton 
@@ -167,7 +168,7 @@ class ITableCellWidthResizer extends React.Component {
             display: 'flex',
             justifyContent: this.props.horizontalAlign, 
             alignItems: this.props.verticalAlign, 
-            textAlign: 'left',
+            height: '100%',
             flex: 1,
             padding: '5px',
           }}>{this.props.children}</div>
@@ -179,6 +180,7 @@ class ITableCellWidthResizer extends React.Component {
             alignItems: this.props.verticalAlign, 
             textAlign: 'left',
             width: '25px',
+            height: '100%',
             padding: '0px',
           }}>   
           <IconButton 
@@ -197,6 +199,7 @@ class ITableCellWidthResizer extends React.Component {
             alignItems: this.props.verticalAlign, 
             textAlign: 'left',
             width: '25px',
+            height: '100%',
             padding: '0px',
           }}>
             <ITableMenu

@@ -244,14 +244,16 @@ class ITable extends React.Component {
     let newlist = [];
     for (let i = 0; i < this.props.data.length; i++)
     {
-      let obj = {};
-      obj['id'] = this.props.data[i][this.props.primaryKey];
-      obj['height'] = this.props.settings.initialRowHeight;
-      obj['state'] = IConst.rowStateUnchanged; // edited, deleted, inserted, 
-      obj['selected'] = false; 
-      obj['editing'] = false; 
-      obj['saving'] = false; 
-      newlist.push(obj);
+      const oneInfo =
+      {
+        id: this.props.data[i][this.props.primaryKey],
+        height: this.props.settings.initialRowHeight,
+        state: IConst.rowStateUnchanged,
+        selected: false,
+        editing: false,
+        saving: false, 
+      }
+      newlist.push(oneInfo);
     }
     return newlist;
   }
@@ -322,11 +324,10 @@ class ITable extends React.Component {
     // first get a new id
     const min = Math.min(...this.state.rowInfoList.map(item => item.id));
     const minid = min >= 0 ? -1: min - 1;
-
+    
+    // now we fill all default values
     let objRow = {};
     objRow[this.props.primaryKey] = minid;
-    // now we fill all default values
-
     for (let h = 0; h < this.state.headers.length; h++)
     {
       if (this.state.headers[h].dataFieldName !== "" && 
@@ -341,19 +342,20 @@ class ITable extends React.Component {
     const newRows = [...this.state.data, objRow];
 
     // first add the new row to rowInfoList
-    const newInfoList = [...this.state.rowInfoList];
-    let obj = {};
-    obj['id'] = minid;
-    obj['height'] = this.props.settings.initialRowHeight;
-    obj['state'] = IConst.rowStateInserted; 
-    obj['selected'] = false; 
-    obj['editing'] = false; 
-    obj['saving'] = false; 
-    obj['forcingUpdate'] = true; 
-    newInfoList.push(obj);
+    const oneInfo =
+    {
+      id: minid,
+      height: this.props.settings.initialRowHeight,
+      state: IConst.rowStateInserted,
+      selected: false,
+      editing: true,
+      saving: false, 
+      forcingUpdate: true,
+    }
+    const newInfoList = [...this.state.rowInfoList, oneInfo];
 
     // now add the filter "inserted rows"
-    // if not, the new row might be not found in the dataset 
+    // if not, the new row might not be found in the dataset 
     let newfilters = this.state.filters.length === 0 ? [] : [...this.state.filters];
     const index = newfilters.findIndex(f => f.filterFieldname === "");
     if (index === -1)  
@@ -369,12 +371,10 @@ class ITable extends React.Component {
       newfilters[index].filterOperator = IConst.filterOperator_Inserted;
     }
 
-    console.log("newInfoList", newInfoList);
-
-    const cntChangedRows = this.getCountChangedRows();
-
     // now add the new row to data
+    const cntChangedRows = this.getCountChangedRows();
     this.setState({
+      page: 0,
       rowInfoList: newInfoList,
       data: newRows,
       filters: newfilters,
@@ -421,7 +421,7 @@ class ITable extends React.Component {
   handleSaveAll()
   {
     // save all changed rows
-    if (this.state.mainButtonsDisabled) return;
+    if (this.state.mainButtonsDisabled) return true;
 
     const rowList = [];
     const stateList = this.state.rowInfoList.filter(i => i.state !== IConst.rowStateUnchanged);
@@ -514,30 +514,30 @@ class ITable extends React.Component {
   UndoAllRows()
   {
     // undo all rows
-    let newData = [...this.props.data];
-    let newInfo = [...this.state.rowInfoList];
-
+    let newData = this.props.data;
+    let newInfo = this.state.rowInfoList;
     let undoList = this.state.rowInfoList.filter(r => 
       r.state !== IConst.rowStateUnchanged && r.saving === false);
 
     for (let r = undoList.length - 1; r >= 0; r--)
     {
-      const index = newInfo.findIndex(i => i.id === undoList[r].id);
+      const rowid = undoList[r][this.props.primaryKey];
       if (undoList[r].state === IConst.rowStateInserted)
       {
         // row was inserted, thus we need to delete it
-        newInfo = newInfo.filter(l => l.id !== undoList[r]);
+        newInfo = newInfo.filter(l => l.id !== rowid);
+        newData = newData.filter(l => l[this.props.primaryKey] !== rowid);
       }
       else
       {
         // row was edited or deleted, so we copy the old values
+        const index = newInfo.findIndex(i => i.id === undoList[r].id);
         newInfo[index].state = IConst.rowStateUnchanged;
         newInfo[index].editing = false;
         newInfo[index].forceUpdate = true;
       }
 
-      const cntChangedRows = this.getCountChangedRows();
-
+      const cntChangedRows = newInfo.filter(i => i.state !== IConst.rowStateUnchanged).length;
       this.setState({
         rowInfoList: newInfo,
         data: newData,
@@ -696,6 +696,12 @@ class ITable extends React.Component {
     alert("Dialog sorting is not implemented yet.");
   }
 
+  deleteAllFilters()
+  {
+    const newfilters = [];
+    this.setState({filters: newfilters});
+  }
+
   closeSnackbar()
   {
     this.setState({openSnackbar: false});
@@ -743,7 +749,8 @@ class ITable extends React.Component {
 
     let newInfo = [...this.state.rowInfoList];
     let newData = [...this.state.data];
-    
+
+
     if (info.state === IConst.rowStateInserted)
     {
       // rows NULL has to be deleted
@@ -1182,8 +1189,8 @@ class ITable extends React.Component {
                     savingInProgressAll={this.state.savingInProgressAll}
                     settings={this.props.settings}
                     headers={this.props.headers}
-                    rowInfoList={this.state.rowInfoList}
-                    rowInfoIndex={rowInfoIndex}
+                    rowInfo={this.state.rowInfoList[rowInfoIndex]}
+                    //rowInfoIndex={rowInfoIndex}
                     oldRow={row}
                     primaryKey={this.props.primaryKey}
                     row={row}
@@ -1299,6 +1306,14 @@ class ITable extends React.Component {
                 onClick={e => this.openDialogSorting(false)}>
               Manage sorting ...</IconButton></Tooltip>}
 
+              {/* delete all filters */}
+              {this.props.settings.hasButtonDeleteAllFilters &&
+              <Tooltip arrow>
+              <IconButton
+                className={classes.mainButtons}
+                onClick={() => this.deleteAllFilters()}>
+              Delete all filters</IconButton></Tooltip>}
+
               {this.props.settings.menuButtonList &&
                 this.props.settings.menuButtonList.map((button, index) => {
                 const ButtonIcon = button.icon;
@@ -1408,7 +1423,6 @@ class ITable extends React.Component {
           buttonDialogIconType = {this.state.buttonDialogIconType}
           buttonDialogHorizontalAlign = {this.state.buttonDialogHorizontalAlign}
           buttonDialogSizeType = {this.state.buttonDialogSizeType}
-          buttonDialogButtonWidth={this.state.buttonDialogButtonWidth}
           handleDialogButtons={(index) => this.handleDialogButtons(index, this.state.buttonDialogId)}
         />}
 
