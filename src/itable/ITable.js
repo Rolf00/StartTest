@@ -23,6 +23,7 @@ import SaveRoundedIcon from '@mui/icons-material/SaveRounded';
 import UndoRoundedIcon from '@mui/icons-material/UndoRounded';
 import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
 import ContentCopyRoundedIcon from '@mui/icons-material/ContentCopyRounded';
+import DoneRoundedIcon from '@mui/icons-material/DoneRounded';
 
 import { useStyles } from './styles';
 import IConst from './IConst';
@@ -33,14 +34,15 @@ import ITableHeader from './ITableHeader';
 import ITableRow from './ITableRow'; 
 
 import IDialogButton from './IDialogButton';
-import IDialogSorting from './IDialogSorting';
+//import IDialogSorting from './IDialogSorting';
 import IDialogData_First from './IDialogData_First';
 
 import { 
   iconButtonStyleBlue, 
   iconButtonStyleGreen, 
   iconButtonStyleRed,
-  iconButtonStyleOrange } from './IStyles';
+  iconButtonStyleOrange,
+  iconButtonStyleGrey } from './IStyles';
 
 
 const availableDialogs = {
@@ -180,7 +182,6 @@ class ITable extends React.Component {
       // filtering
       filters: [],
 
-      //headerWidthList: this.setHeaderWidthList(),
       rowInfoList: this.setRowInfoList(),
 
       openSnackbar: false,
@@ -271,8 +272,8 @@ class ITable extends React.Component {
       if (this.state.headers[h].isSortable === null) this.state.headers[h].isSortable = false;
       if (!this.state.headers[h].defaultSorting) this.state.headers[h].defaultSorting = "";
       if (!this.state.headers[h].width) this.state.headers[h].width = 160;
-      if (!this.state.headers[h].minWidth) this.state.headers[h].minWidth = 80;
-      if (!this.state.headers[h].maxWidth) this.state.headers[h].maxWidth = 320;
+      if (!this.state.headers[h].minWidth) this.state.headers[h].minWidth = this.state.headers[h].width;
+      if (!this.state.headers[h].maxWidth) this.state.headers[h].maxWidth = this.state.headers[h].width;
       if (!this.state.headers[h].textMaxLength) this.state.headers[h].textMaxLength = 255;
       if (!this.state.headers[h].numberMinValue) this.state.headers[h].numberMinValue = 0;
       if (!this.state.headers[h].numberMaxValue) this.state.headers[h].numberMaxValue = 100;
@@ -493,8 +494,8 @@ class ITable extends React.Component {
     */
 
     const buttons = [ 
-      { caption: "Close", icon: IConst.imgIconOk, horizontalAlign: 'left', X: 1, Y: 1, },
-      { caption: "Copy", icon: IConst.imgCopyButton, horizontalAlign: 'left', X: 2, Y: 1, }, 
+      { caption: "Close", icon: DoneRoundedIcon, iconStyle: iconButtonStyleGrey, horizontalAlign: 'left', X: 1, Y: 1, },
+      { caption: "Copy",  icon: ContentCopyRoundedIcon, iconStyle: iconButtonStyleGrey, horizontalAlign: 'left', X: 2, Y: 1, }, 
     ];
 
     this.setState({
@@ -776,8 +777,6 @@ class ITable extends React.Component {
       mainButtonsDisabled: cntChangedRows === 0,
       countChangedRows: cntChangedRows
     });
-
-
   }
 
   openModalDataDialog(row)
@@ -1090,7 +1089,11 @@ class ITable extends React.Component {
               IUtils.getCellValue(row, filterField, editType, getter) !== null :
             filterOperator === IConst.filterOperator_IsSmallerThan ? 
               IUtils.getCellValue(row, filterField, editType, getter) < filterTypeValue :
+            filterOperator === IConst.filterOperator_IsSmallerOrEqualThan ? 
+              IUtils.getCellValue(row, filterField, editType, getter) <= filterTypeValue :
             filterOperator === IConst.filterOperator_IsBiggerThan ? 
+              IUtils.getCellValue(row, filterField, editType, getter) > filterTypeValue :
+            filterOperator === IConst.filterOperator_IsBiggerOrEqualThan ? 
               IUtils.getCellValue(row, filterField, editType, getter) > filterTypeValue :
             filterOperator === IConst.filterOperator_IsBetween ? 
               IUtils.getCellValue(row, filterField, editType, getter) >= filterTypeValue  &&
@@ -1131,9 +1134,13 @@ class ITable extends React.Component {
     const sizeMainButton = this.props.settings.buttonSizeMain;
 
     return (
-      <Paper 
-        className={classes.paper}
-        style={{ overflowX: 'auto' }}
+      <div 
+        style={{
+          overflowX: 'none'
+
+        }}
+        //className={classes.paper}
+        //style={{ overflowX: 'auto' }}
         >
         <TableContainer
           tabIndex={0}
@@ -1190,7 +1197,6 @@ class ITable extends React.Component {
                     settings={this.props.settings}
                     headers={this.props.headers}
                     rowInfo={this.state.rowInfoList[rowInfoIndex]}
-                    //rowInfoIndex={rowInfoIndex}
                     oldRow={row}
                     primaryKey={this.props.primaryKey}
                     row={row}
@@ -1442,10 +1448,10 @@ class ITable extends React.Component {
       {/* 
       {true && // openSortingDialog
       <IDialogSorting
-        open={true}
-        headers={this.state.headers}
-        sortings={this.state.sortings}
-        setChangesSortings={(newlist) => this.setChangesSortings(newlist)}
+        openSortingDialog={this.state.openDialog}
+        headers={headers}
+        sortings={sortings}
+        setChangedSortings={(newlist) => this.setChangedSortings(newlist)}
       />}
       */}
 
@@ -1462,7 +1468,7 @@ class ITable extends React.Component {
         >{this.state.textSnackbar}</Alert>
       </Snackbar>
 
-      </Paper>
+      </div>
     );
   }
 }

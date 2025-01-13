@@ -1,20 +1,29 @@
+DONE
+====
+
+
 
 QUESTION
 ========
 
-- "order by" with a dialog needed?
-- Survey: please check data
-- Warnings eliminated, still one remaining
-- make a component for editing questions?
+- sections: is a whole section editable only by one role or by different roles?
 
+- state verified? what is the meaning?
 
 
 TODO list
 =========
 
 - check id DataDialog can be started by only defined in App.js
+
 - ChipMenu: fix space between icon and text
+
 - place excel export into another file IExport.js
+
+- "order by" with a dialog needed?
+- Dialog Sorting but not tested yet. => RootRef is not working
+
+
 
 table style
 
@@ -25,7 +34,6 @@ table style
 
 - enable png file for status
 
-- filter: change icon
 
 - TABLES
   * editors (name. role)
@@ -34,4 +42,60 @@ table style
   * answers
 
 - state button : border color 
+
+
+
+
+// start app: npm run start-pc
+
+
+export function dataPage3 (patientId, roleId, surveyId)  {
+
+  let title = "Page3: ";
+  const pat = dataPatients.filter(p => p.id === patientId);
+  title = title + pat[0].lastname + " " + pat[0].firstname + ", ";
+  const rol = dataRoles.filter(p => p.id === roleId);
+  title = title + "role " + rol[0].name + ", ";;
+  const srv = dataSurveys.filter(p => p.id === surveyId);
+  title = title + "survey " + srv[0].name;
+
+  
+  return data;
+} 
+
+
+
+
+  const StatusIcon = ({ status }) => {
+    const statusClass = {
+      incomplete: "status-incomplete",
+      unverified: "status-unverified",
+      complete: "status-complete",
+    }[status];
+    return <span className={`status-icon ${statusClass}`} />;
+  };
+
+
+/////////////////////////////////////////////////////////////////////// 
+// SURVEY Page 1 : 
+
+  const statusIncomplete = 0;
+  const statusUnverified = 1;
+  const statusComplete   = 2;
+
+  const IconStatusList = [
+    "status-incomplete",
+    "status-unverified",
+    "status-complete"
+  ];
+
+  const StatusIcon = ({ status }) => {
+    const statusClass = IconStatusList[status];
+    return <span className={`status-icon ${statusClass}`} />;
+  };
+
+      data[p][questionIndex] = index === -1 ?
+        <StatusIcon status={statusIncomplete} /> : 
+        <StatusIcon status={statusComplete} />;
+
 

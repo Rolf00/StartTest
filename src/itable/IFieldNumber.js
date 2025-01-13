@@ -41,7 +41,7 @@ export default function IFieldNumber (props) {
       <div 
       style={{ 
         padding: '5px 0px', 
-        width: '100%', 
+        width: '100%',
         height: '100%',
         display: 'flex',
         flexGrow: 1,
@@ -56,9 +56,7 @@ export default function IFieldNumber (props) {
         type="number"
         value={value}
         helperText={helperText} 
-        style={{ 
-          width: width, 
-        }}
+        //style={{  width: width, }}
         sx={{ 
           '& .MuiInputBase-root': {
             backgroundColor: background,
@@ -89,7 +87,6 @@ export default function IFieldNumber (props) {
     const showtext = isInteger ? value : value.toFixed(props.header.decimalCount);
     return (
       <IFieldReadOnly
-        width='100%'
         verticalAlign={props.verticalAlign} 
         horizontalAlign={props.horizontalAlign}
         value={showtext}

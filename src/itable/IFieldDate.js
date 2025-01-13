@@ -77,7 +77,7 @@ export default function IFieldDate (props) {
       <div 
         style={{ 
           padding: '5px 0px', 
-          width:  '100%', 
+          width: '100%',
           height: '100%',
           display: 'flex',
           flexGrow: 1,
@@ -121,7 +121,6 @@ export default function IFieldDate (props) {
     const dateText = IUtils.formatDateTime(value, props.header.datetimeFormat, props.localization);
     return (
       <IFieldReadOnly
-        width={props.header.width}
         verticalAlign={props.verticalAlign} 
         horizontalAlign={props.horizontalAlign}
         value={dateText}

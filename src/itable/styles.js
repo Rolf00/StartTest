@@ -21,12 +21,11 @@ export const useStyles = () => ({
     //borderRadius: '8px',
   },
   table: {
-    //width: '100%',
+    width: '100%',
     borderCollapse: 'collapse',
     borderSpacing: '0px',
     minWidth: '450px',
-    //border: '1px solid black',
-    //borderRadius: '8px',
+    tableLayout: "fixed",
   },
   table_head: {
     backgroundColor: 'rgb(243, 244, 246)',
@@ -51,7 +50,7 @@ export const useStyles = () => ({
       '"__Plus_Jakarta_Sans_a182b8", "__Plus_Jakarta_Sans_Fallback_a182b8", Helvetica, Arial, sans-serif',
     //verticalAlign: 'inherit',
     //textAlign: 'left',
-    height: '100%',
+    //height: '100%',
     padding: '0px',
     //border: '1px solid black',
   },
@@ -72,6 +71,7 @@ export const useStyles = () => ({
     borderColor: 'rgb(229, 231, 235) currentcolor currentcolor',
     borderImage: 'none',
     color: 'rgb(107, 114, 128)',
+
   },
   table_row: {},
   table_row_cell: {
@@ -212,12 +212,12 @@ export const useStyles = () => ({
     fontSize: 16,
     fontWeight: 'bold',
     borderRadius: '10px',
-    height: '45px',
+    height: '40px',
     margin: '6px',
-    backgroundColor: '#EEEEFF',
-    border: '1px solid #CCCCFF',
+    backgroundColor: '#EEEEEE',
+    border: '1px solid #CCCCCC',
     "&:hover": {
-      backgroundColor: '#CCCCFF',
+      backgroundColor: '#FFFFFF',
       border: '1px solid black',
     },
   },

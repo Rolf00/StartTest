@@ -37,9 +37,18 @@
   -----------------------
 - count of filtered rows is shown now
 
+- Icon changed when filters are active
+
 - holder tested with faked response
 
-- some bug fixes repaired: UNDO, dialog, 
+- Icon changed when filterung
+
+- Filter smaller and equal
+
+- Filter bigger and equal
+
+- resizing window now keeps the column widths: TableLayout = fixed.
+
 
 
 

@@ -13,7 +13,7 @@ export default function IFieldSpecialButton (props) {
   const caption = props.header.button.caption;
   const ButtonIcon = props.header.button.icon;
   const iconStyle = props.header.button.iconStyle;
-  const buttonHeight = props.header.button.buttonHeight;
+  //const buttonHeight = props.header.button.buttonHeight;
   const buttonRadius = props.header.button.buttonRadius;
   const buttonBackgroundColor = props.header.button.buttonBackgroundColor;
   const buttonBackgroundHover = props.header.button.buttonBackgroundHover;
@@ -33,13 +33,10 @@ export default function IFieldSpecialButton (props) {
     <IconButton
       onClick={() => props.handleSpecialButtonClick(rowid, dataFieldName)}
       style={{
-        fontSize: 12,
-        width: '100%', 
-        minHeight: buttonHeight,
-        borderRadius: buttonRadius,
-        margin: '0px 2px 3px 2px',
-        padding: '2px',
+        fontSize: '14px',
+        padding: '2px 6px 2px 2px',
         disabled: disabled,
+        borderRadius: buttonRadius,
         borderWidth: '1px',
         borderStyle: 'solid',
       }}

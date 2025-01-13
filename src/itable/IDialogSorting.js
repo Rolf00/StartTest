@@ -1,33 +1,52 @@
-import React, { Component, RootRef } from "react";
-
+import React, { Component, } from "react";
+//import { makeStyles } from "@mui/styles";
+import ReactDOM from "react-dom";
 import {
   List,
   ListItem,
+  //ListItemText,
+  //ListItemIcon,
   IconButton,
   Dialog,
   DialogContent,
+  ListItemSecondaryAction,
   Grid,
+  //Table,
+  //TableRow,
+  //TableCell,
   Typography,
 } from "@mui/material";
 
-//import RootRef from "@material-ui/core/RootRef";
-//import RootRef from "@mui/material/RootRef";
-
-// MUI API says:
-//import RootRef from '@material-ui/core/RootRef';
-//import { RootRef } from '@material-ui/core';
+//import { RootRef } from "@material-ui/";
+import { RootRef } from "@mui/material/RootRef";
 
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
+//import InboxIcon from "@material-ui/icons/Inbox";
+//import EditIcon from "@material-ui/icons/Edit";
+import VisibilityRoundedIcon from '@mui/icons-material/VisibilityRounded';
+import VisibilityOffRoundedIcon from '@mui/icons-material/VisibilityOffRounded';
+import StraightRoundedIcon from '@mui/icons-material/StraightRounded';
+import HeightRoundedIcon from '@mui/icons-material/HeightRounded';
+import DoneRoundedIcon from '@mui/icons-material/DoneRounded';
+import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 
-import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
-import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
-import SwapVertOutlinedIcon from "@mui/icons-material/SwapVertOutlined";
-import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
-import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
-import DoneIcon from '@mui/icons-material/Done';
-import CloseIcon from '@mui/icons-material/Close';
+/*
+import SwapVertOutlinedIcon from "@material-ui/icons/SwapVertOutlined";
+import CloseOutlinedIcon from "@material-ui/icons/CloseOutlined";
+import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
+import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
+import DoneIcon from '@material-ui/icons/Done';
+import CancelIcon from '@material-ui/icons/Cancel';
+import CloseIcon from '@material-ui/icons/Close';
+*/
 
+import IConst from './IConst';
+import { 
+  iconButtonStyleGrey, 
+  iconButtonStyleGrey_Rotate180,
+  iconButtonStyleGreen,
+  iconButtonStyleRed } from './IStyles';
 
 const StyleDialogBackdrop = { style: { 
   backgroundColor: 'rgba(0, 0, 0, 0.2)'  
@@ -68,6 +87,24 @@ const StyleButtons = {
     border: '1px solid black',
   },
 };
+
+/*
+const useStyles = makeStyles({
+  buttons: {
+    fontSize: '16px',
+    fontWeight: 'bold',
+    borderRadius: '6px',
+    height: '45px',
+    margin: '6px',
+    backgroundColor: '#EEEEFF',
+    border: '1px solid #CCCCFF',
+    '&:hover': {
+      backgroundColor: '#CCCCFF',
+      border: '1px solid black',
+    },
+  },
+});
+*/
 
 const DialogHeader = {
   fontSize: "12px",
@@ -117,6 +154,29 @@ const buttonLeft = {
   fontWeight: "bold",
 };
 
+// a little function to help us with reordering the result
+const reorder = (list, startIndex, endIndex) => {
+  const result = list;
+  const [removed] = result.splice(startIndex, 1);
+  result.splice(endIndex, 0, removed);
+
+  return result;
+};
+
+const getItemStyle = (isDragging, draggableStyle, isSelected) => ({
+  // styles we need to apply on draggables
+  ...draggableStyle,
+  //  ...(isDragging && {background: "rgb(235,235,235)", }),
+  background: isDragging ? "#ddddff" : isSelected ? "#ddffdd" : "#dddddd",
+  padding: "0px",
+  margin: "2px 2px",
+  borderRadius: '6px',
+});
+
+const getListStyle = (isDraggingOver) => ({
+  //background: isDraggingOver ? "white" : "lightblue",
+  //background: "lightblue",
+});
 
 class IDialogSorting extends Component {
   constructor(props) {
@@ -125,46 +185,17 @@ class IDialogSorting extends Component {
     const { sortings, headers } = this.props;
 
     this.state = {
-      //openSortingDialog: this.props.openSortingDialog,
+      openSortingDialog: this.props.openSortingDialog,
       items: this.getItems(this.props.sortings, this.props.headers),
     };
 
     this.onDragEnd = this.onDragEnd.bind(this);
-
   }
-
-  // a little function to help us with reordering the result
-  reorder = (list, startIndex, endIndex) => {
-    const result = list;
-    const [removed] = result.splice(startIndex, 1);
-    result.splice(endIndex, 0, removed);
-  
-    return result;
-  };
-    
-  getItemStyle = (isDragging, draggableStyle, isSelected) => ({
-    // styles we need to apply on draggables
-    ...draggableStyle,
-    //  ...(isDragging && {
-    //background: "rgb(235,235,235)",
-    //}),
-    background: isDragging ? "#ddddff" : isSelected ? "#ddffdd" : "#dddddd",
-    padding: "0px",
-    margin: "3px 0px",
-    borderRadius: '6px',
-  });
-  
-  getListStyle = (isDraggingOver) => ({
-    //background: isDraggingOver ? "white" : "lightblue",
-    //background: "lightblue",
-  });
 
   getItems = (sortings, headers) => {
     const newitems = [];
     for (let s = 0; s < sortings.length; s++) {
-      const index = headers.findIndex(
-        (h) => h.dataFieldName === sortings[s].orderByField
-      );
+      const index = headers.findIndex(h => h.dataFieldName === sortings[s].orderByField);
       const oneSort = {
         id: `SortItem-${s}`,
         order: sortings[s].order,
@@ -195,17 +226,14 @@ class IDialogSorting extends Component {
         keyIndex++;
       }
     }
-
     return newitems;
   };
 
   onDragEnd(result) {
     // dropped outside the list
-    if (!result.destination) {
-      return;
-    }
+    if (!result.destination) { return; }
 
-    const items = this.reorder(
+    const items = reorder(
       this.state.items,
       result.source.index,
       result.destination.index
@@ -232,11 +260,8 @@ class IDialogSorting extends Component {
   clickOrder(index) {
     const newlist = [...this.state.items];
     newlist[index].order =
-      newlist[index].order === "asc"
-        ? (newlist[index].order = "desc")
-        : newlist[index].order === "desc"
-        ? (newlist[index].order = "")
-        : "asc";
+      newlist[index].order === IConst.sortingASC ? (newlist[index].order = IConst.sortinDESC) : 
+      newlist[index].order === IConst.sortingDESC ? (newlist[index].order = "") : IConst.sortingASC;
     this.setState({ items: newlist });
   }
 
@@ -253,6 +278,9 @@ class IDialogSorting extends Component {
       this.saveChanges();
       event.key = null;
     }
+    /*
+    // TODO:
+    // here we could add code to use the dialog only with keyboard
     else if (event.key === "ArrowUp")
     {
       let index = this.state.items.findIndex(i => i.selected);
@@ -277,6 +305,7 @@ class IDialogSorting extends Component {
       this.setState({items: newlist});
       event.key = null;
     }
+    */
   }
 
   saveChanges() 
@@ -293,7 +322,6 @@ class IDialogSorting extends Component {
         newlist.push(oneSort);
       }
     }
-
     this.props.setChangesSortings(newlist);
   }
 
@@ -306,16 +334,14 @@ class IDialogSorting extends Component {
   
   // Normally you would want to split things out into separate components.
   // But in this example everything is just done in one place for simplicity
-  render() 
-  {
+  render() {
     return (
       <Dialog 
-        open={true} 
+        open={this.state.openSortingDialog} 
         onKeyUp={(e) => this.keyDown(e)}
         BackdropProps={StyleDialogBackdrop}
         PaperProps={StyleDialogPaper}>
         <DialogContent style={StyleDialogContent}>
-
           <Typography style={StyleDialogTitle}>Sorting of rows</Typography>
           <Typography style={StyleDialogInfo}>
             Define the sort order by drag and drop and click on order button to
@@ -336,16 +362,11 @@ class IDialogSorting extends Component {
               <Typography style={DialogHeader}>By</Typography>
             </Grid>
           </Grid>
-
-        
-
           <DragDropContext onDragEnd={this.onDragEnd}>
-              
             <Droppable droppableId="droppable">
-
               {(provided, snapshot) => (
                 <RootRef rootRef={provided.innerRef}>
-                  <List style={this.getListStyle(snapshot.isDraggingOver)}>
+                  <List style={getListStyle(snapshot.isDraggingOver)}>
                     {this.state.items.map((item, index) => (
                       <Draggable
                         key={item.id}
@@ -360,42 +381,35 @@ class IDialogSorting extends Component {
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
                             onClick={() => this.clickSelection(index)}
-                            style={this.getItemStyle(
+                            style={getItemStyle(
                               snapshot.isDragging,
                               provided.draggableProps.style,
                               item.selected
                             )}
                           >
                             <Grid container style={{ padding: "0px" }}>
-                              <Grid item style={this.column1}>
+                              <Grid item style={column1}>
                                 <IconButton
-                                  style={this.buttonRow}
-                                  onClick={() => this.clickVisibility(index)}
-                                >
-                                  {item.isVisible && <VisibilityOutlinedIcon />}
-                                  {!item.isVisible && (
-                                    <VisibilityOffOutlinedIcon />
-                                  )}
+                                  style={buttonRow}
+                                  onClick={() => this.clickVisibility(index)}>
+                                  {item.isVisible && <VisibilityRoundedIcon />}
+                                  {(!item.isVisible) && <VisibilityOffRoundedIcon />}
                                 </IconButton>
                               </Grid>
-                              <Grid item style={this.column2}>
+                              <Grid item style={column2}>
                                 <Typography>{item.title}</Typography>
                               </Grid>
-                              <Grid item style={this.column3}>
+                              <Grid item style={column3}>
                                 <IconButton
-                                  style={this.buttonRow}
+                                  style={buttonRow}
                                   onClick={() => this.clickOrder(index)}
                                 >
-                                  {item.order === "asc" && <ArrowUpwardIcon />}
-                                  {item.order === "desc" && (
-                                    <ArrowDownwardIcon />
-                                  )}
-                                  {item.order === "" && (
-                                    <SwapVertOutlinedIcon />
-                                  )}
+                                  {item.order === IConst.sortingASC && <StraightRoundedIcon style={iconButtonStyleGrey}/>}
+                                  {item.order === IConst.sortingDESC && <StraightRoundedIcon style={iconButtonStyleGrey_Rotate180}/>}
+                                  {item.order === "" && <HeightRoundedIcon />}
                                 </IconButton>
                               </Grid>
-                              <Grid item style={this.column4}>
+                              <Grid item style={column4}>
                                 <Typography>
                                   {item.order === "asc"
                                     ? "ascending"
@@ -414,25 +428,34 @@ class IDialogSorting extends Component {
                 </RootRef>
               )}
             </Droppable>
-
           </DragDropContext>
+
+          {/* 
+          <Grid container>
+            <Grid item style={buttonLeft}>
+              <IconButton style={button}>Move up</IconButton>
+            </Grid>
+            <Grid item>
+              <IconButton style={button}>Move down</IconButton>
+            </Grid>
+          </Grid>
+          */}
 
           <Grid container>
             <Grid item style={buttonLeft}>
               <IconButton style={StyleButtons}
                 onClick={() => this.saveChanges()} >
-                <DoneIcon style={{ color: "#00AA00"}} />
+                <DoneRoundedIcon style={iconButtonStyleGreen} />
                 Accept</IconButton>
             </Grid>
             <Grid item>
               <IconButton 
                 style={StyleButtons}
                 onClick={() => this.cancelChanges()}>
-                <CloseIcon style={{ color: "#AA0000"}}/>
+                <CloseRoundedIcon style={iconButtonStyleRed}/>
                 Cancel</IconButton>
             </Grid>
           </Grid>
-          
         </DialogContent>
       </Dialog>
     );

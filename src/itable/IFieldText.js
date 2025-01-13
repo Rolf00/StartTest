@@ -32,7 +32,7 @@ export default function IFieldText (props) {
       <div 
       style={{ 
         padding: '5px 0px', 
-        width:  '100%', 
+        width: '100%',
         height: '100%',
         display: 'flex',
         flexGrow: 1,
@@ -46,8 +46,8 @@ export default function IFieldText (props) {
         helperText={helperText} 
         multiline={multiline}
         style={{ 
+          width: '100%',
           textAlign: horizontalAlign, 
-          width: '100%', 
         }}
         sx={{ 
           '& .MuiInputBase-root': {
@@ -74,7 +74,6 @@ export default function IFieldText (props) {
     {
       return (
         <IFieldReadOnly
-          width={'100%'}
           verticalAlign={props.verticalAlign} 
           horizontalAlign={props.horizontalAlign}
           value={value}
@@ -85,8 +84,8 @@ export default function IFieldText (props) {
     {
       return(
         <div style={{ 
+          width: '100%',
           padding: '5px 0px', 
-          width: '100%', 
           display: 'flex',
           flexGrow: 1,
           justifyContent: props.horizontalAlign, 
@@ -95,8 +94,8 @@ export default function IFieldText (props) {
         {lines.map((line) => {
           return(
             <div style={{ 
+              width: '100%',
               padding: '0px', 
-              width: '100%', 
               textAlign: props.singleHorizontalAlign,
             }}>{line}</div>
           );

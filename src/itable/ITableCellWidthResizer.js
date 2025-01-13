@@ -150,13 +150,12 @@ class ITableCellWidthResizer extends React.Component {
             display: 'flex',
             justifyContent: 'flex_end', 
             alignItems: this.props.verticalAlign, 
-            textAlign: 'left',
             width: '25px',
-            //height: '100%',
+            height: '100%',
             padding: '0px',
           }}>   
           <IconButton 
-            sx={{ width: '23px', height: '40px', borderRadius: '3px' }}
+            sx={{ width: '25px', height: '40px', borderRadius: '3px' }}
             onClick={() => this.changeSortingClick()}>
             {sorting === IConst.sortingASC && <StraightRoundedIcon style={iconButtonStyleGrey}/>}
             {sorting === IConst.sortingDESC && <StraightRoundedIcon style={iconButtonStyleGrey_Rotate180}/>}
@@ -178,13 +177,12 @@ class ITableCellWidthResizer extends React.Component {
             display: 'flex',
             justifyContent: 'flex_start', 
             alignItems: this.props.verticalAlign, 
-            textAlign: 'left',
             width: '25px',
-            height: '100%',
+            //height: '100%',
             padding: '0px',
           }}>   
           <IconButton 
-            sx={{ width: '23px', height: '40px', borderRadius: '3px' }}
+            sx={{ width: '25px', height: '40px', borderRadius: '3px' }}
             onClick={() => this.changeSortingClick()}>
             {sorting === IConst.sortingASC && <StraightRoundedIcon style={iconButtonStyleGrey}/>}
             {sorting === IConst.sortingDESC && <StraightRoundedIcon style={iconButtonStyleGrey_Rotate180}/>}

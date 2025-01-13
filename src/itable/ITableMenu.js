@@ -31,6 +31,7 @@ import VisibilityRoundedIcon from '@mui/icons-material/VisibilityRounded';
 import VisibilityOffRoundedIcon from '@mui/icons-material/VisibilityOffRounded';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
+import FilterAltRoundedIcon from '@mui/icons-material/FilterAltRounded';
 
 import IConst from './IConst';
 import { getNewSortingList } from './IUtilsSort';
@@ -362,6 +363,10 @@ export default function ITableMenu (props)
   const countFilters = props.filters.length;
   const countHidedColumns = props.headers.filter(h => h.isVisible === false).length;
 
+  const onefilter = props.filters.filter(f => f.filterFieldname === props.headers[props.headerIndex].dataFieldName)
+  const hasFilter = onefilter ? onefilter.length > 0 : false;
+  const MoreMenuButton = hasFilter ? FilterAltRoundedIcon : MoreVertIcon;
+  
   return (
     <div>
       <IconButton
@@ -370,10 +375,10 @@ export default function ITableMenu (props)
         aria-controls={open ? 'long-menu' : undefined}
         aria-expanded={open ? 'true' : undefined}
         aria-haspopup="true"
-        sx={{ width: '23px', height: '40px', borderRadius: '3px' }}
+        sx={{ width: '25px', height: '40px', borderRadius: '3px' }}
         onClick={(e) => handleClick(e)}
       >
-        <MoreVertIcon />
+        <MoreMenuButton />
       </IconButton>
       <Menu
         id="long-menu"
@@ -633,20 +638,30 @@ export default function ITableMenu (props)
                   value={IConst.filterOperator_IsEmptyNot}
                 >is not empty</MenuItem>
 
-                <MenuItem key="filterOp11" 
+<MenuItem key="filterOp11" 
                   value={IConst.filterOperator_IsSmallerThan}
                   disabled={isTextfield}
                 >is smaller than</MenuItem>
 
                 <MenuItem key="filterOp12" 
+                  value={IConst.filterOperator_IsSmallerOrEqualThan}
+                  disabled={isTextfield}
+                >is smaller or equal than</MenuItem>
+
+                <MenuItem key="filterOp13" 
                   value={IConst.filterOperator_IsBiggerThan}
                   disabled={isTextfield}
                 >is bigger than</MenuItem>
 
-                <MenuItem key="filterOp13" 
+                <MenuItem key="filterOp14" 
+                  value={IConst.filterOperator_IsBiggerOrEqualThan}
+                  disabled={isTextfield}
+                >is bigger or equal than</MenuItem>
+
+                <MenuItem key="filterOp15" 
                   value={IConst.filterOperator_IsBetween} 
                   disabled={isTextfield}
-                >is between</MenuItem>
+                >is between (or equal)</MenuItem>
 
               </Select>
             </Grid>

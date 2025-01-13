@@ -38,6 +38,7 @@ export default function IChipMenu (props)
   let chipIndex = props.header.chipList.findIndex(c => c.id === props.value);
   if (chipIndex === -1) chipIndex = props.header.chipList.findIndex(c => c.default);
   chipItem = (chipIndex === -1) ? props.header.chipList[0] : props.header.chipList[chipIndex];
+  const chipWidth = props.header.chipWidth;
   const chipLabel = (chipItem) ? chipItem.label : "";
   const chipColor = (chipItem) ? chipItem.color : null;
   const chipColorHover = (chipItem) ? chipItem.colorHover : null;
@@ -54,7 +55,7 @@ export default function IChipMenu (props)
       <div 
         style={{
           padding: '5px 0px', 
-          width: props.width, 
+          width: '100%',
           height: '100%',
           display: 'flex',
           flexGrow: 1,
@@ -70,18 +71,18 @@ export default function IChipMenu (props)
           onMouseLeave={() => setIsHovered(false)}      
           onClick={(e) => handleClick(e, chipClickable)}
           style={{
-            width: '100%',
-            margin: "0px",
-            padding: "0px",
+            width: chipWidth,
             backgroundColor: isHovered ? chipColorHover : chipColor,
             borderWidth: '1px',
             borderStyle: 'solid',
             borderColor: isHovered ? 'black' : chipColor,
           }}
           sx={{
+            display: 'flex',
+            justifyContent: 'flex-start',
             fontSize: '14px',
+            backgroundColor: chipColor, 
             color: 'black', 
-            justifyContent: 'left',
           }}
         >
         </Chip>
@@ -132,19 +133,18 @@ export default function IChipMenu (props)
           label={chipLabel}
           avatar={ image ? <Avatar src={image}/> : <ChipIcon style={chipIconStyle} />}
           style={{
-            width: '100%',
-            margin: "0px",
-            padding: "0px",
+            width: chipWidth,
             backgroundColor: chipColor,
             borderWidth: '1px',
             borderStyle: 'solid',
             borderColor: chipColorHover,
           }}
           sx={{
+            display: 'flex',
+            justifyContent: 'flex-start',
             fontSize: '14px',
             backgroundColor: chipColor, 
             color: 'black', 
-            justifyContent: 'left',
           }}
         />
       </div>

@@ -18,7 +18,7 @@ export default function IFieldSelection (props) {
     <div 
     style={{ 
       padding: '5px 0px', 
-      width: '100%', 
+      width: '100%',
       height: '100%',
       display: 'flex',
       flexGrow: 1,
