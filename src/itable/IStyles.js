@@ -58,7 +58,7 @@ export const  iconButtonStyleTurqoise = {
 export const  iconButtonStyleGrey = {
   width: '28px',
   height: '28px',
-  color: '#666666',
+  color: '#999999',
   marginLeft: '4px',
   marginRight: '4px',
 }
@@ -66,7 +66,7 @@ export const  iconButtonStyleGrey = {
 export const  iconButtonStyleGrey_Rotate180 = {
   width: '28px',
   height: '28px',
-  color: '#666666',
+  color: '#999999',
   transform: 'rotate(180deg)',
   marginLeft: '4px',
   marginRight: '4px',

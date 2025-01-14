@@ -1,4 +1,4 @@
-import React, { Component, forwardRef } from "react";
+import React, { Component, } from "react";
 //import { makeStyles } from "@mui/styles";
 import ReactDOM from "react-dom";
 import {
@@ -18,7 +18,7 @@ import {
 } from "@mui/material";
 
 //import { RootRef } from "@material-ui/";
-//import { RootRef } from "@mui/material/RootRef";
+import { RootRef } from "@mui/material/RootRef";
 
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
@@ -30,6 +30,16 @@ import StraightRoundedIcon from '@mui/icons-material/StraightRounded';
 import HeightRoundedIcon from '@mui/icons-material/HeightRounded';
 import DoneRoundedIcon from '@mui/icons-material/DoneRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
+
+/*
+import SwapVertOutlinedIcon from "@material-ui/icons/SwapVertOutlined";
+import CloseOutlinedIcon from "@material-ui/icons/CloseOutlined";
+import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
+import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
+import DoneIcon from '@material-ui/icons/Done';
+import CancelIcon from '@material-ui/icons/Cancel';
+import CloseIcon from '@material-ui/icons/Close';
+*/
 
 import IConst from './IConst';
 import { 
@@ -168,30 +178,6 @@ const getListStyle = (isDraggingOver) => ({
   //background: "lightblue",
 });
 
-const ListItemWithRef = forwardRef((props, ref) => {
-  return (
-    <ListItem
-      ref={ref} // Forwarded ref
-      ContainerComponent="Grid"
-      ContainerProps={{ ref }} // Forwarded ref for the ContainerProps
-      {...props}
-    >
-      {props.children}
-    </ListItem>
-  );
-});
-
-// Forwarding ref to List component
-const ListWithRef = forwardRef((props, ref) => {
-  return (
-    <List
-      ref={ref} // Forwarded ref
-      {...props}
-    />
-  );
-});
-
-
 class IDialogSorting extends Component {
   constructor(props) {
     super(props);
@@ -199,7 +185,7 @@ class IDialogSorting extends Component {
     const { sortings, headers } = this.props;
 
     this.state = {
-      //openSortingDialog: this.props.openSortingDialog,
+      openSortingDialog: this.props.openSortingDialog,
       items: this.getItems(this.props.sortings, this.props.headers),
     };
 
@@ -336,22 +322,22 @@ class IDialogSorting extends Component {
         newlist.push(oneSort);
       }
     }
-    this.props.setChangedSortings(newlist);
+    this.props.setChangesSortings(newlist);
   }
 
   cancelChanges () 
   {
     // close the dialog without saving
-    this.props.setChangedSortings(null);
+    this.props.setChangesSortings(null);
   }
-  
+ 
   
   // Normally you would want to split things out into separate components.
   // But in this example everything is just done in one place for simplicity
   render() {
     return (
       <Dialog 
-        open={true} 
+        open={this.state.openSortingDialog} 
         onKeyUp={(e) => this.keyDown(e)}
         BackdropProps={StyleDialogBackdrop}
         PaperProps={StyleDialogPaper}>
@@ -379,15 +365,16 @@ class IDialogSorting extends Component {
           <DragDropContext onDragEnd={this.onDragEnd}>
             <Droppable droppableId="droppable">
               {(provided, snapshot) => (
-                  <ListWithRef 
-                    ref={provided.innerRef} // Directly assign provided.innerRef to List
-                    style={getListStyle(snapshot.isDraggingOver)}
-                    {...provided.droppableProps} // Ensure droppableProps are passed to List
-                  >
+                <RootRef rootRef={provided.innerRef}>
+                  <List style={getListStyle(snapshot.isDraggingOver)}>
                     {this.state.items.map((item, index) => (
-                      <Draggable key={item.id} draggableId={item.id} index={index}>
+                      <Draggable
+                        key={item.id}
+                        draggableId={item.id}
+                        index={index}
+                      >
                         {(provided, snapshot) => (
-                          <ListItemWithRef
+                          <ListItem
                             ref={provided.innerRef}
                             ContainerComponent="Grid"
                             ContainerProps={{ ref: provided.innerRef }}
@@ -432,12 +419,13 @@ class IDialogSorting extends Component {
                                 </Typography>
                               </Grid>
                             </Grid>
-                          </ListItemWithRef>
+                          </ListItem>
                         )}
                       </Draggable>
                     ))}
                     {provided.placeholder}
-                  </ListWithRef>
+                  </List>
+                </RootRef>
               )}
             </Droppable>
           </DragDropContext>

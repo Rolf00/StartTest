@@ -34,7 +34,7 @@ import ITableHeader from './ITableHeader';
 import ITableRow from './ITableRow'; 
 
 import IDialogButton from './IDialogButton';
-//import IDialogSorting from './IDialogSorting';
+import IDialogSorting from './IDialogSorting';
 import IDialogData_First from './IDialogData_First';
 
 import { 
@@ -144,6 +144,7 @@ class ITable extends React.Component {
       headers: headers,
       data: this.getDataList(),
       sortings: this.getSortingList(),
+      openSortingDialog: false,
       page: 0,
       limit: 10,
 
@@ -281,7 +282,7 @@ class ITable extends React.Component {
       if (!this.state.headers[h].editType) this.state.headers[h].editType = "error";
       if (!this.state.headers[h].defaultValue) this.state.headers[h].defaultValue = "";
       if (!this.state.headers[h].dataFieldName) this.state.headers[h].dataFieldName = "";
-      if (!this.state.headers[h].horizontalAlign) this.state.headers[h].horizontalAlign = "left";
+      if (!this.state.headers[h].horizontalAlign) this.state.headers[h].horizontalAlign = IConst.horizontalAlign_Left;
       if (!this.state.headers[h].dropdownSelection) this.state.headers[h].dropdownSelection = [];
       if (this.state.headers[h].hasHeaderMenu === null) this.state.headers[h].hasHeaderMenu = false;
     }
@@ -691,10 +692,10 @@ class ITable extends React.Component {
     });
   }
 
-  openDialogSorting()
+  handleOpenDialogSorting()
   {
-    // TODO : open dialog manage sorting
-    alert("Dialog sorting is not implemented yet.");
+    // open dialog manage sorting
+    this.setState({openDialogSorting: true});
   }
 
   deleteAllFilters()
@@ -1180,7 +1181,7 @@ class ITable extends React.Component {
               setChangedHeaders={(newheaders) => this.setChangedHeaders(newheaders)}
               setChangedFilters={(newfilters) => this.setChangedFilters(newfilters)}
               setChangedSortings={(newsortings) => this.setChangedSortings(newsortings)}
-              openDialogSorting={() => this.openDialogSorting()}
+              handleOpenDialogSorting={() => this.handleOpenDialogSorting()}
             />
             <TableBody 
               className={classes.table_body_row}
@@ -1242,6 +1243,7 @@ class ITable extends React.Component {
               {this.props.settings.menuButtonList && 
                 this.props.settings.menuButtonList.map((button, index) => {
                 const ButtonIcon = button.icon;
+                const buttonStyle = button.style;
                 if (button.positionStart === true)
                 return (
                   <IconButton
@@ -1249,7 +1251,7 @@ class ITable extends React.Component {
                     className={classes.mainButtons}
                     disabled={this.state.savingInProgressAll}
                     onClick={() => this.menuButtonClick(button.id)}>
-                    {button.icon && <ButtonIcon style={iconButtonStyleBlue} />}
+                    {button.icon && <ButtonIcon style={buttonStyle} />}
                     {button.caption}
                   </IconButton>
                 );
@@ -1309,7 +1311,7 @@ class ITable extends React.Component {
               <Tooltip title="Ctrl-Shift-M" arrow>
               <IconButton
                 className={classes.mainButtons}
-                onClick={e => this.openDialogSorting(false)}>
+                onClick={() => this.handleOpenDialogSorting(true)}>
               Manage sorting ...</IconButton></Tooltip>}
 
               {/* delete all filters */}
@@ -1323,6 +1325,7 @@ class ITable extends React.Component {
               {this.props.settings.menuButtonList &&
                 this.props.settings.menuButtonList.map((button, index) => {
                 const ButtonIcon = button.icon;
+                const buttonStyle = button.style;
                 if (button.positionStart === false)
                 return (
                   <IconButton
@@ -1330,7 +1333,7 @@ class ITable extends React.Component {
                     className={classes.mainButtons}
                     disabled={this.state.savingInProgressAll}
                     onClick={() => this.menuButtonClick(button.id)}>
-                    {button.icon && <ButtonIcon style={iconButtonStyleBlue} />}
+                    {button.icon && <ButtonIcon style={buttonStyle} />}
                     {button.caption}
                   </IconButton>
                 );
@@ -1418,7 +1421,7 @@ class ITable extends React.Component {
         </Grid>
 
         {/* button dialog */}
-        {this.state.buttonDialogId && this.state.buttonDialogOpen &&
+        {this.state.buttonDialogId && 
         <IDialogButton
           buttonDialogId={this.buttonDialogId}
           buttonDialogOpen={this.state.buttonDialogOpen}
@@ -1434,39 +1437,36 @@ class ITable extends React.Component {
 
         {/* main edit dialog */}
         {this.props.dialogName === 'IDialogData_First' &&  this.state.openDataModalDialog &&
-          <EditDialog
-            open={this.state.openDataModalDialog}
-            settings={this.props.settings}
-            headers={this.props.headers}
-            row={this.state.selectedRow}
-            primaryKey={this.props.primaryKey}
-            handleSubmitModalDialog={(row, saveIt) => this.handleSubmitModalDialog(row, saveIt)}
-            showDataErrorMessage={(errorText) => this.showDataErrorMessage(errorText)}>
-          </EditDialog>
-        }
+        <EditDialog
+          open={this.state.openDataModalDialog}
+          settings={this.props.settings}
+          headers={this.props.headers}
+          row={this.state.selectedRow}
+          primaryKey={this.props.primaryKey}
+          handleSubmitModalDialog={(row, saveIt) => this.handleSubmitModalDialog(row, saveIt)}
+          showDataErrorMessage={(errorText) => this.showDataErrorMessage(errorText)}>
+        </EditDialog>}
 
-      {/* 
-      {true && // openSortingDialog
-      <IDialogSorting
-        openSortingDialog={this.state.openDialog}
-        headers={headers}
-        sortings={sortings}
-        setChangedSortings={(newlist) => this.setChangedSortings(newlist)}
-      />}
-      */}
+        {false && // this.state.openSortingDialog && 
+        <IDialogSorting
+          openSortingDialog={this.state.openSortingDialog}
+          headers={this.state.headers}
+          sortings={this.state.sortings}
+          setChangedSortings={(newlist) => this.setChangedSortings(newlist)}
+        />}
 
-      <Snackbar 
-        open={this.state.openSnackbar} 
-        autoHideDuration={5000} 
-        onClose={()=>this.closeSnackbar()} 
-        anchorOrigin={{ vertical:"top", horizontal:"right" }}>
-        <Alert
-          onClose={()=>this.closeSnackbar()}
-          severity="success"
-          variant="filled"
-          sx={{ width: '100%' }}
-        >{this.state.textSnackbar}</Alert>
-      </Snackbar>
+        <Snackbar 
+          open={this.state.openSnackbar} 
+          autoHideDuration={5000} 
+          onClose={()=>this.closeSnackbar()} 
+          anchorOrigin={{ vertical:"top", horizontal:"right" }}>
+          <Alert
+            onClose={()=>this.closeSnackbar()}
+            severity="success"
+            variant="filled"
+            sx={{ width: '100%' }}
+          >{this.state.textSnackbar}</Alert>
+        </Snackbar>
 
       </div>
     );

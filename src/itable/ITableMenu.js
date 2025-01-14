@@ -183,7 +183,7 @@ export default function ITableMenu (props)
   const manageSortings = () =>
   {
     handleClose();
-    props.openDialogSorting();
+    props.handleOpenDialogSorting();
   }
 
   const addFilter = (newField, newOperator, newValue, newSecondValue) =>

@@ -707,8 +707,8 @@ const App = ()=> {
 
     // menu buttons
     menuButtonList: [
-      { id:1, caption: "Back", hint: "go to previous page", icon: ArrowCircleLeftRoundedIcon,  positionStart: true },
-      { id:2, caption: "Next", hint: "go to next page",     icon: ArrowCircleRightRoundedIcon, positionStart: false },
+      { id:1, caption: "Back", hint: "go to previous page", icon: ArrowCircleLeftRoundedIcon,  style:iconButtonStyleGrey, positionStart: true },
+      { id:2, caption: "Next", hint: "go to next page",     icon: ArrowCircleRightRoundedIcon, style:iconButtonStyleGrey, positionStart: false },
     ],
   };
   

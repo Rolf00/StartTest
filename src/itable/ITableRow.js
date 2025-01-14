@@ -395,7 +395,7 @@ class ITableRow  extends React.Component {
                 verticalAlign={verticalAlign}
                 header = {header}
                 rowid={rowid}
-                handleSpecialButtonClick = {() => this.props.handleSpecialButtonClick(rowid, header.dataFieldName)}
+                handleSpecialButtonClick = {() => this.props.handleSpecialButtonClick(rowid, field)}
               />}
 
               {isStateButton &&
@@ -405,7 +405,7 @@ class ITableRow  extends React.Component {
                 header = {header}
                 rowid={rowid}
                 value={value}
-                handleStateButtonClick={() => this.props.handleStateButtonClick(rowid, header.dataFieldName)}
+                handleStateButtonClick={() => this.props.handleStateButtonClick(rowid, field)}
               />}
 
               {isGetter && 

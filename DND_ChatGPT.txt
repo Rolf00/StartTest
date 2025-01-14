@@ -1,0 +1,113 @@
+pm install react-beautiful-dnd @mui/material @emotion/react @emotion/styled
+
+
+import React, { useState } from "react";
+import { Droppable, Draggable } from "react-beautiful-dnd";
+import { List, ListItem, Typography, Paper, Grid, IconButton } from "@mui/material";
+import { DragIndicator } from "@mui/icons-material";
+
+// Helper functions for styles
+const getListStyle = (isDraggingOver) => ({
+  background: isDraggingOver ? "#e0f7fa" : "#ffffff", // Color change when dragging over
+  padding: 8,
+  borderRadius: 4,
+  minHeight: 200,
+});
+
+const getItemStyle = (isDragging, draggableStyle) => ({
+  ...draggableStyle,
+  background: isDragging ? "#e0f2f1" : "#ffffff", // Change background when dragging
+  borderRadius: 4,
+  marginBottom: 8, // Space between items
+});
+
+const DragAndDropList = () => {
+  // Sample list data
+  const [items, setItems] = useState([
+    { id: "1", content: "Item 1" },
+    { id: "2", content: "Item 2" },
+    { id: "3", content: "Item 3" },
+    { id: "4", content: "Item 4" },
+    { id: "5", content: "Item 5" },
+  ]);
+
+  // On drag end function to update state
+  const onDragEnd = (result) => {
+    const { destination, source } = result;
+    if (!destination) return; // If dropped outside the droppable area
+
+    // Reordering the items in the state based on the drag result
+    const reorderedItems = Array.from(items);
+    const [removed] = reorderedItems.splice(source.index, 1);
+    reorderedItems.splice(destination.index, 0, removed);
+    setItems(reorderedItems);
+  };
+
+  return (
+    <div style={{ margin: "50px" }}>
+      <Paper elevation={3} style={{ padding: "16px" }}>
+        <Typography variant="h6" gutterBottom>
+          Drag and Drop List
+        </Typography>
+        <Droppable droppableId="droppable">
+          {(provided, snapshot) => (
+            <List
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+              style={getListStyle(snapshot.isDraggingOver)}
+            >
+              {items.map((item, index) => (
+                <Draggable key={item.id} draggableId={item.id} index={index}>
+                  {(provided, snapshot) => (
+                    <ListItem
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                      style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}
+                    >
+                      <Grid container alignItems="center">
+                        <Grid item>
+                          <IconButton {...provided.dragHandleProps}>
+                            <DragIndicator />
+                          </IconButton>
+                        </Grid>
+                        <Grid item xs>
+                          <Typography>{item.content}</Typography>
+                        </Grid>
+                      </Grid>
+                    </ListItem>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </List>
+          )}
+        </Droppable>
+      </Paper>
+    </div>
+  );
+};
+
+export default DragAndDropList;
+
+
+////////////////////////////////////////////////////////////////
+
+import React from 'react';
+import { DragDropContext } from 'react-beautiful-dnd';
+import DragAndDropList from './DragAndDropList'; // import the DragAndDropList component
+
+const App = () => {
+  const onDragEnd = (result) => {
+    // handle drag end logic here if needed
+  };
+
+  return (
+    <DragDropContext onDragEnd={onDragEnd}>
+      <DragAndDropList />
+    </DragDropContext>
+  );
+};
+
+
+

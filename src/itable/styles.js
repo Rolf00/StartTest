@@ -157,7 +157,7 @@ export const useStyles = () => ({
     justifyContent: 'bottom',
     width: '100%',
     height: '5px',
-    paddingBottom: '3px',
+    //paddingBottom: '3px',
     //backgroundColor: 'transparent',
     //borderBottomColor: '#BBBBBB',
     //borderBottomStyle: 'solid',

@@ -107,7 +107,7 @@ class IUtils {
       if (!value && header.isRequired) hasErrorResult = true;
       if (value === undefined && header.isRequired) hasErrorResult = true;
       if (value === "" && header.isRequired) hasErrorResult = true;
-      if (value.length > header.textMaxLength) hasErrorResult = true;
+      if (value && value.length > header.textMaxLength) hasErrorResult = true;
     }
 
     // number fields

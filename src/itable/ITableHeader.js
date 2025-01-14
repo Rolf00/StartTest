@@ -100,7 +100,7 @@ class ITableHeader extends React.Component {
                   setChangedHeaders={(newheaders) => this.props.setChangedHeaders(newheaders)}
                   setChangedFilters={(newfilters) => this.props.setChangedFilters(newfilters)}
                   setChangedSortings={(newsortings) => this.props.setChangedSortings(newsortings)}
-                  openDialogSorting={() => this.props.openDialogSorting()}
+                  handleOpenDialogSorting={() => this.props.handleOpenDialogSorting()}
                   SortColumn={(sortAscending) => this.props.SortColumn(headerIndex, sortAscending)}
                   >
                   {isSelectionHeader &&
