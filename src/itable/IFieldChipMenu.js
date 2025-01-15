@@ -45,7 +45,7 @@ export default function IChipMenu (props)
   const chipClickable = props.header.isEditable;
   const ChipIcon = (chipItem) ? chipItem.icon ? chipItem.icon : null : null;
   const image = (chipItem) ? chipItem.image ? chipItem.image : null : null;
-  const chipIconStyle = (chipItem) ? chipItem.iconStyle : null;
+  const chipIconStyle = (chipItem) ? chipItem.style : null;
 
   const [isHovered, setIsHovered] = useState(false);
 

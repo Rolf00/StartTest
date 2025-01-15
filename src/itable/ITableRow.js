@@ -1,7 +1,5 @@
 import React from 'react';
-import { 
-  TableRow, 
-  } from '@mui/material';
+import { TableRow, } from '@mui/material';
 
 import { withStyles } from 'tss-react/mui';
 import PropTypes from 'prop-types';
@@ -275,10 +273,16 @@ class ITableRow  extends React.Component {
         // enable / disbable the editing of one row
         // if "this.props.settings.alwaysActivateEditing" is TRUE, editing is always enabled
         const isCurrentEditing = rowInfo.editing;
+        let editing = false;
+        if (this.props.settings.neverActivateEditingWhenDisabled && !header.isEditable)
+        {
+          editing = false;
+        }
+        else 
+        {
+          editing = this.props.settings.alwaysActivateEditing || isCurrentEditing;
+        }
 
-        const editing = 
-          this.props.settings.alwaysActivateEditing || 
-          isCurrentEditing;
         const saving = rowInfo.saving;
         const visible = header.isVisible;
         const verticalAlign = IUtils.getVerticalAlign(this.props.settings.rowsVerticalAlign);
@@ -448,5 +452,4 @@ class ITableRow  extends React.Component {
 ITableRow.propTypes = { classes: PropTypes.object, };
 
 export default withStyles(ITableRow, useStyles);
-
 

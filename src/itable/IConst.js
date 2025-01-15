@@ -38,6 +38,7 @@ class IConst {
   static horizontalAlign_Left = "left";
   static horizontalAlign_Center = "center";
   static horizontalAlign_Right = "right";
+  
   static verticalAlign_Top = "top";
   static verticalAlign_Middle = "middle";
   static verticalAlign_Bottom = "bottom";
@@ -55,16 +56,16 @@ class IConst {
 
   // default buttons for button dialog 
   static defaultButtonsOk = [
-    { caption: "Close", icon: DoneRoundedIcon, iconStyle: iconButtonStyleGreen, horizontalAlign: this.horizontalAlign_Left, X: 1, Y: 1, }
+    { caption: "Close", icon: DoneRoundedIcon, style: iconButtonStyleGreen, horizontalAlign: this.horizontalAlign_Left, X: 1, Y: 1, }
   ];
   static defaultButtonsYesNo = [
-    { caption: "Yes", icon: DoneRoundedIcon, iconStyle: iconButtonStyleGreen, horizontalAlign: this.horizontalAlign_Left, X: 1, Y: 1, },
-    { caption: "No", icon: RemoveCircleRoundedIcon, iconStyle: iconButtonStyleRed, horizontalAlign: this.horizontalAlign_Right, X: 2, Y: 1, }
+    { caption: "Yes", icon: DoneRoundedIcon, style: iconButtonStyleGreen, horizontalAlign: this.horizontalAlign_Left, X: 1, Y: 1, },
+    { caption: "No", icon: RemoveCircleRoundedIcon, style: iconButtonStyleRed, horizontalAlign: this.horizontalAlign_Right, X: 2, Y: 1, }
   ];
   static defaultButtonsYesNoCancel = [
-    { caption: "Yes", icon: DoneRoundedIcon, iconStyle: iconButtonStyleGreen, horizontalAlign: this.horizontalAlign_Left, X: 1, Y: 1, },
-    { caption: "No", icon: RemoveCircleRoundedIcon, iconStyle: iconButtonStyleRed, horizontalAlign: this.horizontalAlign_Left, X: 2, Y: 1, },
-    { caption: "Cancel", icon: CloseRoundedIcon, iconStyle: iconButtonStyleRed, horizontalAlign: this.horizontalAlign_Left, X: 3, Y: 1, }
+    { caption: "Yes", icon: DoneRoundedIcon, style: iconButtonStyleGreen, horizontalAlign: this.horizontalAlign_Left, X: 1, Y: 1, },
+    { caption: "No", icon: RemoveCircleRoundedIcon, style: iconButtonStyleRed, horizontalAlign: this.horizontalAlign_Left, X: 2, Y: 1, },
+    { caption: "Cancel", icon: CloseRoundedIcon, style: iconButtonStyleRed, horizontalAlign: this.horizontalAlign_Left, X: 3, Y: 1, }
   ];
 
   // calucalted from the elnght of all buttons horizontally aligned

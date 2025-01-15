@@ -9,6 +9,7 @@ export default function IFieldStateButton (props)
   const dataFieldName = props.header.dataFieldName;
   const disabled = false;
   const buttonWidth = props.header.buttonWidth;
+  const buttonHeight = props.header.buttonHeight;
   const buttonRadius = props.header.buttonRadius;
   const iconSize = props.header.iconSize;
   const value = props.value;
@@ -30,28 +31,10 @@ export default function IFieldStateButton (props)
   const html = isHtml ? button.html : null;
 
   const caption = button === null ? "" : button.caption;
-  //const ButtonIcon = button === null ? null : button.icon ? button.icon : null;
-  //const image = index === -1 ? null : button.image ? button.image : null;
-  //const iconStyle = button === null ? "" : button.iconStyle;
   const buttonBackgroundColor = button === null || imgSource ? "" : button.color;
   const buttonBackgroundHover = button === null || imgSource ? "" : button.colorHover;
   const hasCaption = caption !== "";
-  const canClick = props.header.isEditable;
-
-
-/*
-  const hasButtonList = (props.header.buttonList && props.header.buttonList.length > 0);
-  const index = hasButtonList ? props.header.buttonList.findIndex(b => b.id === value) : -1;
-  const button = index === -1 ? null : props.header.buttonList[index];
-  const caption = button === null ? "" : button.caption;
-  const ButtonIcon = button === null ? null : button.icon ? button.icon : null;
-  const image = index === -1 ? null : button.image ? button.image : null;
-  const iconStyle = button === null ? "" : button.iconStyle;
-  const buttonBackgroundColor = button === null || image ? "" : button.color;
-  const buttonBackgroundHover = button === null || image ? "" : button.colorHover;
-  const hasCaption = caption !== "";
-  const hasClickButton = (hasButtonList || hasCaption || value);
-  */
+  const canClick = props.header.isEditable && (isMuiIcon || isImage || isHtml || hasCaption);
 
   return (
     <div
@@ -69,13 +52,13 @@ export default function IFieldStateButton (props)
       onClick={() => props.handleStateButtonClick(rowid, dataFieldName)}
       style={{
         fontSize: '14px',
-        padding: '2px 6px 2px 2px',
+        padding: '2px',
         disabled: disabled,
         borderRadius: hasCaption && (!isHtml) ? buttonRadius : '',
         borderWidth: hasCaption && (!isHtml)  ?  '1px' : '0px',
         borderStyle: hasCaption && (!isHtml)  ? 'solid' : '',
-        width: hasCaption ? buttonWidth : isImage ? iconSize : '', 
-        height: hasCaption ? '' : isImage ? iconSize : '', 
+        width: buttonWidth, //hasCaption ? buttonWidth : isImage || isMuiIcon ? iconSize : '', 
+        height: buttonHeight, //hasCaption ? '' : isImage || isMuiIcon ? iconSize : '', 
       }}
       sx={{
         display: 'flex', 
@@ -97,7 +80,7 @@ export default function IFieldStateButton (props)
       {(!canClick) && <div
       style={{
         fontSize: '14px',
-        padding: '2px 6px 2px 2px',
+        padding: '2px',
         disabled: disabled,
         borderRadius: hasCaption && (!isHtml) ? buttonRadius : '',
         borderWidth: hasCaption && (!isHtml)  ?  '1px' : '0px',

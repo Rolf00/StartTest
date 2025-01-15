@@ -5,7 +5,6 @@ import 'react-resizable/css/styles.css';
 
 import {
   IconButton,
-  Paper,
   Table,
   TableBody,
   TableCell,
@@ -102,7 +101,7 @@ class ITable extends React.Component {
             {
               // inserted rows
               // copy data (new values, old values)
-              IUtils.copyRow(rows[r], newData[dataIndex]);
+              IUtils.copyOneRow(rows[r], newData[dataIndex]);
               newData[props.primaryKey] = newRowId;
               newInfo[infoIndex].id = newRowId;
               newInfo[infoIndex].state = IConst.rowStateUnchanged;
@@ -112,7 +111,7 @@ class ITable extends React.Component {
             {
               // an error occured while saving to DB, 
               // thus we overwite already edited data (new values, old values)
-              IUtils.copyRow(this.props.data[r], newData[dataIndex]);
+              IUtils.copyOneRow(this.props.data[r], newData[dataIndex]);
               newInfo[infoIndex].state = IConst.rowStateUnchanged;
               newInfo[infoIndex].saving = false;
             }
@@ -487,16 +486,19 @@ class ITable extends React.Component {
       newText += newText + "...\n";
       newText += newText + "[more than 25 error messages ]\n";
     }
-
-    const buttons = lines.lenght > 25 
-      ? [ { caption: "Close", icon: IConst.imgIconOk, horizontalAlign: 'left', X: 1, Y: 1, },
-          { caption: "Copy", icon: IConst.imgIconCopy, horizontalAlign: 'left', X: 2, Y: 1, }, ]
-      : IConst.defaultButtonsOk; 
     */
 
     const buttons = [ 
-      { caption: "Close", icon: DoneRoundedIcon, iconStyle: iconButtonStyleGrey, horizontalAlign: 'left', X: 1, Y: 1, },
-      { caption: "Copy",  icon: ContentCopyRoundedIcon, iconStyle: iconButtonStyleGrey, horizontalAlign: 'left', X: 2, Y: 1, }, 
+      { caption: "Close", 
+        icon: DoneRoundedIcon, 
+        style: iconButtonStyleGrey, 
+        horizontalAlign: IConst.horizontalAlign_Left, 
+        X: 1, Y: 1, },
+      { caption: "Copy",  
+        icon: ContentCopyRoundedIcon, 
+        style: iconButtonStyleGrey, 
+        horizontalAlign: IConst.horizontalAlign_Left, 
+        X: 2, Y: 1, }, 
     ];
 
     this.setState({
@@ -1135,21 +1137,13 @@ class ITable extends React.Component {
     const sizeMainButton = this.props.settings.buttonSizeMain;
 
     return (
-      <div 
-        style={{
-          overflowX: 'none'
-
-        }}
-        //className={classes.paper}
-        //style={{ overflowX: 'auto' }}
-        >
+      <div style={{ overflowX: 'none' }} >
         <TableContainer
           tabIndex={0}
+          className={classes.itable_container}
           onKeyUp={this.handleTableMainKeyUp}
-          
-          className={classes.table_container}
           style={{
-            height: 650, // Set the max height to allow scrolling after 5 items
+            //height: 650, // Set the max height to allow scrolling after 5 items
             overflowY: 'auto', // Enables vertical scrolling
             //overflowX: 'auto',
             '&::WebkitScrollbar': {
@@ -1168,9 +1162,9 @@ class ITable extends React.Component {
             },
           }}>
 
-          <Table className={classes.table} stickyHeader>
+          <Table className={classes.itable} stickyHeader>
             <ITableHeader
-              className={classes.table_head_row}
+              //className={classes.table_head_row}
               settings={this.props.settings}
               headers={this.state.headers}
               filters={this.state.filters}
@@ -1184,7 +1178,7 @@ class ITable extends React.Component {
               handleOpenDialogSorting={() => this.handleOpenDialogSorting()}
             />
             <TableBody 
-              className={classes.table_body_row}
+              className={classes.itable_body_row}
               >
               {data.map((row, rowIndex) => {
                 // we use the old values for undoing changes
@@ -1213,7 +1207,7 @@ class ITable extends React.Component {
                 );
               })}
 
-              <TableRow className={classes.table_body_row}>
+              <TableRow className={classes.itable_body_row}>
                 <TableCell
                   colSpan={4}
                   style={{
@@ -1232,13 +1226,12 @@ class ITable extends React.Component {
           </Table>
         </TableContainer>
 
-
         <Grid container sx={{ 
-          border: '1px solid black', 
-          borderRadius: '8px',
+          //border: '1px solid black', 
+          //borderRadius: '8px',
           margin: '6px 0px', 
-          backgroundColor: 'rgb(243, 244, 246)' }}>
-          <Grid item style={{ flex: 1}}> 
+          backgroundColor: 'rgb(231, 231, 231)' }}>
+          <Grid item style={{ flex: 1, }}> 
 
               {this.props.settings.menuButtonList && 
                 this.props.settings.menuButtonList.map((button, index) => {

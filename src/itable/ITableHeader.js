@@ -56,8 +56,8 @@ class ITableHeader extends React.Component {
 
     return (
 
-      <TableHead className={classes.table_head}>
-        <TableRow className={classes.table_head_row}>
+      <TableHead className={classes.itable_head}>
+        <TableRow className={classes.itable_head_row}>
           {this.props.headers.map((header, headerIndex) => {
 
             const isSelectionHeader = 

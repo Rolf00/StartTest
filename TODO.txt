@@ -1,5 +1,6 @@
 DONE
 ====
+- 4 pages ready to use
 
 
 
@@ -36,11 +37,9 @@ TODO list
 - "order by" with a dialog needed?
 - Dialog Sorting but not tested yet. => RootRef is not working
 
-- check: IUtils. copyRow / copyOneRow
-
 - replace all "left", center aso.
 
-- remove : block all when saving
+- remove : block all when saving: savingInProgressAll
 
 - new editType : checkboxList
 

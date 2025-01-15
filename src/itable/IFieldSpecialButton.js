@@ -12,7 +12,7 @@ export default function IFieldSpecialButton (props) {
   const disabled = !props.header.isEditable;
   const caption = props.header.button.caption;
   const ButtonIcon = props.header.button.icon;
-  const iconStyle = props.header.button.iconStyle;
+  const iconStyle = props.header.button.style;
   //const buttonHeight = props.header.button.buttonHeight;
   const buttonRadius = props.header.button.buttonRadius;
   const buttonBackgroundColor = props.header.button.buttonBackgroundColor;

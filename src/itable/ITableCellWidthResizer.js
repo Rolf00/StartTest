@@ -107,7 +107,7 @@ class ITableCellWidthResizer extends React.Component {
 
     return (
       <TableCell 
-        className={this.props.classes.table_head_cell} 
+        className={this.props.classes.itable_head_cell} 
         key={`tablecell-header${this.props.headerIndex}`}
         width={this.state.headerWidth}
         >
@@ -128,9 +128,7 @@ class ITableCellWidthResizer extends React.Component {
             display: 'flex',
             justifyContent: 'center', 
             alignItems: this.props.verticalAlign, 
-            textAlign: 'left',
             width: '25px',
-            padding: '0px',
           }}>
             <ITableMenu
               settings={this.props.settings}
@@ -151,8 +149,6 @@ class ITableCellWidthResizer extends React.Component {
             justifyContent: 'flex_end', 
             alignItems: this.props.verticalAlign, 
             width: '25px',
-            height: '100%',
-            padding: '0px',
           }}>   
           <IconButton 
             sx={{ width: '25px', height: '40px', borderRadius: '3px' }}
@@ -169,7 +165,7 @@ class ITableCellWidthResizer extends React.Component {
             alignItems: this.props.verticalAlign, 
             height: '100%',
             flex: 1,
-            padding: '5px',
+            padding: '0px 5px',
           }}>{this.props.children}</div>
 
           {isSortable && this.props.headerHorizontalAlign !== IConst.horizontalAlign_Right &&
@@ -178,8 +174,6 @@ class ITableCellWidthResizer extends React.Component {
             justifyContent: 'flex_start', 
             alignItems: this.props.verticalAlign, 
             width: '25px',
-            //height: '100%',
-            padding: '0px',
           }}>   
           <IconButton 
             sx={{ width: '25px', height: '40px', borderRadius: '3px' }}
@@ -195,10 +189,7 @@ class ITableCellWidthResizer extends React.Component {
             display: 'flex',
             justifyContent: 'flex-start', 
             alignItems: this.props.verticalAlign, 
-            textAlign: 'left',
             width: '25px',
-            height: '100%',
-            padding: '0px',
           }}>
             <ITableMenu
               settings={this.props.settings}

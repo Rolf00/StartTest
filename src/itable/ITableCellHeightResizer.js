@@ -31,7 +31,7 @@ class ITableCellHeightResizer extends React.Component {
 
     return (
       <TableCell
-        className={classes.table_row_cell}
+        className={classes.itable_row_cell}
         style={{ height: height, }}
       >
         <div className={classes.resizerNS_Top} >

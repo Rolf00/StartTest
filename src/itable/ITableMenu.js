@@ -526,7 +526,7 @@ export default function ITableMenu (props)
         onClose={handleClose}
         anchorOrigin={{
           vertical: 'top',
-          horizontal: 'right',
+          horizontal: IConst.horizontalAlign_Right,
         }}
         transformOrigin={{
           vertical: 'top',

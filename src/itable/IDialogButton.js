@@ -248,7 +248,7 @@ class IDialogButton extends React.Component {
                   const caption = button.caption;
                   const align = button.horizontalAlign;
                   const ButtonIcon = button.icon;
-                  const iconStyle = button.iconStyle;
+                  const iconStyle = button.style;
                   return (
                     <TableCell
                       key={`buttonDialog-row${rowIndex}-column${colIndex}`}
