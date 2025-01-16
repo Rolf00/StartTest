@@ -1,45 +1,41 @@
 DONE
 ====
 - 4 pages ready to use
-
+- new with linking to correct data
 
 
 QUESTION
 ========
 
-- sections: is a whole section editable only by one role or by different roles?
-
 - can one section be in different surveys? 
+> YES
 
-- state verified? what is the meaning?
+- make a component checkboxList?
+> LATER
 
-- when editing: can we click on state?
-  I would prefer to block that.
 
-- answer unverified?
+// styling:
 
-- while saving: what has to be blocked?
+https://www.bing.com/search?pglt=43&q=tsc+withstyle+mui&cvid=c822cec99f9944e3870203c2cd0317da&gs_lcrp=EgRlZGdlKgYIABBFGDkyBggAEEUYOdIBCTExMTY3ajBqMagCALACAA&FORM=ANNTA1&PC=U531&ntref=1
+https://www.bing.com/search?q=tss-react%2Fmui&cvid=955e4cb5f6964ea8b0e491987f636f38&gs_lcrp=EgRlZGdlKgYIABBFGDsyBggAEEUYOzIGCAEQABhAMgYIAhBFGDrSAQg0NjA2ajBqNKgCCLACAQ&FORM=ANAB01&PC=U531&ntref=1
+https://www.tss-react.dev/#
+https://github.com/garronej/tss-react
+https://www.bing.com/search?pglt=43&q=tss-react%2Fmui&cvid=15d280736a614fada75cb62b92c16ea9&gs_lcrp=EgRlZGdlKgkIABBFGDsY-QcyCQgAEEUYOxj5BzIGCAEQRRg5MgYIAhAAGEAyBggDEAAYQDIGCAQQABhAMgYIBRBFGEEyBggGEEUYPDIGCAcQRRg8MgYICBBFGDzSAQgxNjk0ajBqMagCALACAA&FORM=ANNTA1&PC=U531&ntref=1
+https://www.npmjs.com/package/tss-react
 
-- all icons grey?
-
-- mak a component checkboxList
 
 
 TODO list
 =========
 
-- check id DataDialog can be started by only defined in App.js
+- unverified means => not all is answered => change that.
+
+- check if the DataDialog can be started when only defined in App.js
 
 - ChipMenu: fix space between icon and text
 
-- place excel export into another file IExport.js
-
 - "order by" with a dialog needed?
 - Dialog Sorting but not tested yet. => RootRef is not working
-
-- replace all "left", center aso.
-
-- remove : block all when saving: savingInProgressAll
 
 - new editType : checkboxList
 
@@ -47,3 +43,8 @@ TODO list
 
 
 //////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+

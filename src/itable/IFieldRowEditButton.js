@@ -33,29 +33,26 @@ export default function IFieldRowEditButton (props) {
   const saving = props.saving;
 
   let disabled = true;
-  if (!props.savingInProgressAll)
+  if (editType === IConst.editType_ButtonEditRow)
   {
-    if (editType === IConst.editType_ButtonEditRow)
-    {
-      disabled = false;
-    }
-    else if (editType === IConst.editType_ButtonEdit)
-    {
-      disabled = false;
-    }
-    else if (editType === IConst.editType_ButtonSave)
-    {
-      disabled = !isChanged;
-    }    
-    else if (editType === IConst.editType_ButtonUndo)
-    {
-      disabled = !isChanged
-    }    
-    else if (editType === IConst.editType_ButtonDelete)
-    {
-      disabled = isDeleted && rowState !== IConst.rowStateInserted;
-    }    
+    disabled = false;
   }
+  else if (editType === IConst.editType_ButtonEdit)
+  {
+    disabled = false;
+  }
+  else if (editType === IConst.editType_ButtonSave)
+  {
+    disabled = !isChanged;
+  }    
+  else if (editType === IConst.editType_ButtonUndo)
+  {
+    disabled = !isChanged
+  }    
+  else if (editType === IConst.editType_ButtonDelete)
+  {
+    disabled = isDeleted && rowState !== IConst.rowStateInserted;
+  }    
   if (saving) disabled = true;
 
   const btnHoverWidth = props.settings.buttonSizeOnRowsHover;

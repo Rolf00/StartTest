@@ -8,7 +8,7 @@ import { iconButtonStyleGreen } from './IStyles';
 
 export default function IFieldCheckbox (props) {
 
-  const editing = (props.editing && !props.savingInProgressAll);
+  const editing = props.editing;
   const rowid = props.rowid;
   const value = props.value;
   const fieldname = props.header.dataFieldName

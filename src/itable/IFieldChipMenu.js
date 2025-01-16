@@ -33,7 +33,7 @@ export default function IChipMenu (props)
     props.handleDataChange(id);
   }
   
-  const editing = (props.editing && !props.savingInProgressAll);
+  const editing = props.editing;
   let chipItem = null;
   let chipIndex = props.header.chipList.findIndex(c => c.id === props.value);
   if (chipIndex === -1) chipIndex = props.header.chipList.findIndex(c => c.default);

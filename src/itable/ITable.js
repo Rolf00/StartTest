@@ -171,8 +171,6 @@ class ITable extends React.Component {
       // enabling / disabling buttons SAVE ALL and UNDO ALL
       mainButtonsDisabled: true,
       countChangedRows: 0,
-      savingInProgressOneRow: false,
-      savingInProgressAll: false,
 
       rowHeight: 200,
       colwidth: 120,
@@ -411,7 +409,6 @@ class ITable extends React.Component {
     this.setState({
       data: newlist,
       rowInfoList: newInfolist,
-      savingInProgressOneRow: true,
       mainButtonsDisabled: true
     });
 
@@ -458,7 +455,6 @@ class ITable extends React.Component {
 
     this.setState({
       rowInfoList: newInfo,
-      savingInProgressAll: true,
       mainButtonsDisabled: true
     });
 
@@ -1188,7 +1184,6 @@ class ITable extends React.Component {
                 return(
                   <ITableRow
                     key={`itablerow-row${rowIndex}`}
-                    savingInProgressAll={this.state.savingInProgressAll}
                     settings={this.props.settings}
                     headers={this.props.headers}
                     rowInfo={this.state.rowInfoList[rowInfoIndex]}
@@ -1242,7 +1237,6 @@ class ITable extends React.Component {
                   <IconButton
                     key={`menuButtonList-button${index}`}
                     className={classes.mainButtons}
-                    disabled={this.state.savingInProgressAll}
                     onClick={() => this.menuButtonClick(button.id)}>
                     {button.icon && <ButtonIcon style={buttonStyle} />}
                     {button.caption}
@@ -1324,7 +1318,6 @@ class ITable extends React.Component {
                   <IconButton
                     key={`menuButtonList-button${index}`}
                     className={classes.mainButtons}
-                    disabled={this.state.savingInProgressAll}
                     onClick={() => this.menuButtonClick(button.id)}>
                     {button.icon && <ButtonIcon style={buttonStyle} />}
                     {button.caption}
