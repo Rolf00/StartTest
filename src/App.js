@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useRef } from 'react';
 import { Alert, Grid, Snackbar } from '@mui/material';
 
 import AdjustRoundedIcon from '@mui/icons-material/AdjustRounded';
@@ -11,6 +11,7 @@ import EditRoundedIcon from '@mui/icons-material/EditRounded';
 
 import IConst from './itable/IConst';
 import ITable from './itable/ITable';
+import IDialogData_First from './IDialogData_First';
 import { 
   iconButtonStyleYellow,
   iconButtonStyleBlue, 
@@ -22,6 +23,8 @@ import {
   iconButtonStyleGrey } from './itable/IStyles';
 
 import imgCircleRed from './CircleRed.png';
+import { purple } from '@mui/material/colors';
+
 
 
 // columns for Waldo
@@ -613,13 +616,24 @@ const headersWaldo = [
   ];
 
 headersWaldo[4].isVisible = false;
+headersWaldo[5].isVisible = false;
 headersWaldo[6].isVisible = false;
 headersWaldo[7].isVisible = false;
 headersWaldo[8].isVisible = false;
 headersWaldo[9].isVisible = false;
-headersWaldo[11].isVisible = false;
+//headersWaldo[10].isVisible = false;
+//headersWaldo[11].isVisible = false;
 headersWaldo[12].isVisible = false;
+headersWaldo[13].isVisible = false;
+headersWaldo[14].isVisible = false;
 headersWaldo[15].isVisible = false;
+
+headersWaldo[16].isVisible = false;
+headersWaldo[17].isVisible = false;
+headersWaldo[18].isVisible = false;
+//headersWaldo[19].isVisible = false;
+//headersWaldo[20].isVisible = false;
+
 
 // data Waldo
 const patients = [];
@@ -663,10 +677,6 @@ patients[2].address = patients[2].address + "\nNew Line address 2";
 
 
 const App = ()=> {
-
-  const holder = {
-    saveSelected: null,
-  }
 
   const primaryKey = "id";
 
@@ -737,26 +747,25 @@ const App = ()=> {
     // can be deleted later
     const savedRows = [];
     savedRows.push(row);
-    const states = [];
-    states.push(state);
-    const oldIds = [];
-    const newIds = [];
-    const results = [];
-    let newMaxId = 100001;
 
-    oldIds.push(row[primaryKey]);
+    let newMaxId = 100001;
     let newId = row[primaryKey];
     if (state === IConst.rowStateInserted)
     {
       newId = newMaxId;
       newMaxId = newMaxId + 1;
     }
-    newIds.push(newId);
-    results.push(true);
 
-    //if (holder.saveSelected) 
-      holder.saveSelected(savedRows, oldIds, newIds, states, results);
-
+    const oneParam = {
+      oldId: row[primaryKey],
+      newId: newId,
+      state: state,
+      newstate: IConst.rowStateUnchanged,
+      success: true
+    }
+    const newparams = [oneParam];
+    newparams.push(oneParam);
+    callChildFunction(savedRows, newparams);
   }
 
   function handleSaveAllRowsClick(rows, states)
@@ -767,28 +776,27 @@ const App = ()=> {
     // code for testing response to DB savings
     // can be deleted later
     const savedRows = [...rows];
-    const oldIds = [];
-    const newIds = [];
-    const results = [];
-    let newMaxId = 100001;
+    const newparams = [];
 
+    let newMaxId = 100001;
     for (let r = 0; r < savedRows.length; r++)
     {
-      oldIds.push(rows[r][primaryKey]);
       let newId = rows[r][primaryKey];
       if (states[r] === IConst.rowStateInserted)
       {
         newId = newMaxId;
-          newMaxId = newMaxId + 1;
+        newMaxId = newMaxId + 1;
       }
-      newIds.push(newId);
-      results.push(true);
+      const oneParam = {
+        oldId: rows[r][primaryKey],
+        newId: newId,
+        state: states[r],
+        newstate: IConst.rowStateUnchanged,
+        success: true
+      }
+      newparams.push(oneParam);
     }
-    //if (holder.saveSelected) 
-      holder.saveSelected(savedRows, oldIds, newIds, states, results);
-  
-    //if(holder.saveSelected)
-    //    holder.saveSelected();
+    callChildFunction(savedRows, newparams);
   }
 
   function menuButtonClick(buttonId)
@@ -801,7 +809,45 @@ const App = ()=> {
     alert("Button id "+  buttonId + " was clicked.");
   }
 
-  
+  const [selectedRow, setselectedRow] = React.useState(null);
+  const [openDataModalDialog, setopenDataModalDialog] = React.useState(false);
+  function editRowModalDialog(row)
+  {
+    // open the new edit dialog
+    const rowIndex = patients.findIndex(p => p[primaryKey] === row[primaryKey]);
+    setselectedRow(row);
+    setopenDataModalDialog(true);
+  }
+
+  function handleSubmitModalDialog(row, saveIt)
+  {
+    setopenDataModalDialog(false);
+    if (!saveIt) return;
+    // save changed 
+    const savedRows = [row];
+    const oneParam = {
+      oldId: row[primaryKey],
+      newId: row[primaryKey],
+      state: IConst.rowStateEdited,
+      newstate: IConst.rowStateEdited,
+      success: true
+    }
+    const newparams = [];
+    newparams.push(oneParam);
+    callChildFunction(savedRows, newparams);
+  }
+
+  // Create a ref to interact with the child component
+  const childRef = React.createRef();
+
+  // Function to call the child component's method and pass the parameters
+  const callChildFunction = (savedRows, newparams) => {
+    // Access the child component's method using the ref
+    if (childRef.current) {
+      childRef.current.updateRowsFromParent(savedRows, newparams);
+    }
+  };  
+
   return(
     <>
     <Grid container
@@ -813,9 +859,9 @@ const App = ()=> {
       >
         <div style={{ paddingTop: 30, fontSize: 24, fontWeight: 'bold'}}>Table component 'ITable'</div>
         <ITable 
+          ref={childRef}
           settings={settings}
           headers={headersWaldo} 
-          holder={holder}
           primaryKey={primaryKey}
           data={patients}  
           dialogName="IDialogData_First"
@@ -824,9 +870,22 @@ const App = ()=> {
           handleSaveOneRowClick={(row, state) => handleSaveOneRowClick(row, state)}
           handleSaveAllRowsClick={(rows, states) => handleSaveAllRowsClick(rows, states)}
           menuButtonClick={(index) => menuButtonClick(index)}
+          editRowModalDialog={(row) => editRowModalDialog(row)}
         />
       </Grid>
     </Grid>
+
+    {/* main edit dialog */}
+    {openDataModalDialog &&
+    <IDialogData_First
+      open={openDataModalDialog}
+      settings={settings}
+      headers={headersWaldo}
+      row={selectedRow}
+      primaryKey={primaryKey}
+      handleSubmitModalDialog={(row, saveIt) => handleSubmitModalDialog(row, saveIt)}
+      >
+    </IDialogData_First>}
 
     <Snackbar 
       open={open} 

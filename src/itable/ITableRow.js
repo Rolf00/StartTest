@@ -163,7 +163,8 @@ class ITableRow  extends React.Component {
     if (action === IConst.editType_ButtonEdit)
     {
       // here we open a modal dialog
-      this.handleEditModalDialog(this.state.row);
+      this.props.editRowModalDialog(this.state.row);
+
     }
     else if (action === IConst.editType_ButtonSave)
     {
@@ -194,7 +195,6 @@ class ITableRow  extends React.Component {
     // we undo edited and deleted rows
     const newInfo =  this.state.rowInfo;
     newInfo.editing = false;
-    this.setState({rowInfo: newInfo});
     this.props.rowUndo(newInfo, this.state.row);
   }
 
@@ -215,14 +215,15 @@ class ITableRow  extends React.Component {
 
     const isRowDeleted = rowState === IConst.rowStateDeleted;
     const isRowInserted = rowState === IConst.rowStateInserted;
-    const isRowChanged = rowState === IConst.rowStateEdited || isRowDeleted || isRowInserted;
+    const isRowEdited = rowState === IConst.rowStateEdited;
+
     const rowBackgroundColor =
       isRowSelected && isRowDeleted ? IConst.rowColorSelDeleted :
-      isRowSelected && isRowChanged ? IConst.rowColorSelChanged :
+      isRowSelected && isRowEdited ? IConst.rowColorSelChanged :
       isRowSelected && isRowInserted ? IConst.rowColorSelInserted :
       isRowSelected ? IConst.rowColorSelected :
       isRowDeleted ? IConst.rowColorDeleted :
-      isRowChanged ? IConst.rowColorChanged :
+      isRowEdited ? IConst.rowColorChanged :
       isRowInserted ? IConst.rowColorInserted : "#FFFFFF";
 
     return (

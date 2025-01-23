@@ -52,10 +52,44 @@
 - sorting dialog is not working
 
 
-  14.01.2025 - 20.01.2025
+  14.01.2025 - 24.01.2025
   -----------------------
+  DONE:
+
 - Pages 1, 2, 3 for survey project done
-- Page 4 as example
+  Page 4 as example
+  but changing the TABS is not done yet
+
+- the modal Dialog now outside the comnponent
+  thus, for each usage of the component 
+  a separate dialog dan be defined
+  and is implemented in the parent.
+
+- refactoring the "holder" function (it didnt work)
+  now i made it with reference to the child
+
+- testing function new row: 
+  set state filter, remove state filter
+
+- correct data with patient id 1
+  role 1 and survey 1 and section 1
+  without editing / deleting / inserting
+
+
+  TODO:
+- changing the tabs / 
+  parameters to pass values
+
+- the sorting Dialog is not working 
+  in React version 6.x, only with version 4.x
+
+- some styles and colors better
+  outside the component
+
+
+  
+
+
 
 
 

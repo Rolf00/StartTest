@@ -17,15 +17,15 @@ class IConst {
   static iconColorDarkYellow = "#CCCC00";
 
   // colors for row backgrounds unselected
-  static rowColorDeleted = "#FFEEEE";
-  static rowColorChanged = "#EEFFEE";
-  static rowColorInserted = "#FFFFEE";
+  static rowColorDeleted = "#FFDDDD";
+  static rowColorChanged = "#DDFFDD";
+  static rowColorInserted = "#FFFFDD";
 
   // colors for row backgrounds selected
   static rowColorSelected = "#EEEEFF";
-  static rowColorSelDeleted = "#FFCCCC";
-  static rowColorSelChanged = "#CCFFCC";
-  static rowColorSelInserted = "#FFFFCC";
+  static rowColorSelDeleted = "#FFBBBB";
+  static rowColorSelChanged = "#BBFFBB";
+  static rowColorSelInserted = "#FFFFBB";
 
   // background color resizer
   static colorResizerBackground = "#8888FF";

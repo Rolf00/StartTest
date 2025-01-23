@@ -1,14 +1,12 @@
 DONE
 ====
-- 4 pages ready to use
-- new with linking to correct data
+
+
 
 
 QUESTION
 ========
-
-- can one section be in different surveys? 
-> YES
+// start app: npm run start-pc
 
 - make a component checkboxList?
 > LATER
@@ -24,27 +22,14 @@ https://www.bing.com/search?pglt=43&q=tss-react%2Fmui&cvid=15d280736a614fada75cb
 https://www.npmjs.com/package/tss-react
 
 
-
 TODO list
 =========
 
-- unverified means => not all is answered => change that.
+- new row => remove negative ID
+  remove filter "inserted"
 
-- check if the DataDialog can be started when only defined in App.js
+- Dialog Sorting not working in React version 6.x, only 4.x
 
-- ChipMenu: fix space between icon and text
-
-- "order by" with a dialog needed?
-- Dialog Sorting but not tested yet. => RootRef is not working
-
-- new editType : checkboxList
-
-// start app: npm run start-pc
-
+- check ButtonDialog with many buttons
 
 //////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-

@@ -110,6 +110,8 @@ class ITableCellWidthResizer extends React.Component {
         className={this.props.classes.itable_head_cell} 
         key={`tablecell-header${this.props.headerIndex}`}
         width={this.state.headerWidth}
+        minwidth={this.props.headers[this.props.headerIndex].minWidth}
+        maxwidth={this.props.headers[this.props.headerIndex].maxWidth}
         >
 
         <div 

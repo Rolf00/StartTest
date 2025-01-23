@@ -23,10 +23,10 @@ import {
 import DoneRoundedIcon from '@mui/icons-material/DoneRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 
-import IConst from './IConst'; 
-import IUtils from './IUtils'; 
-import { useStyles } from './styles';
-import { iconButtonStyleGreen, iconButtonStyleRed } from './IStyles';
+import IConst from './itable/IConst'; 
+import IUtils from './itable/IUtils'; 
+import { useStyles } from './itable/styles';
+import { iconButtonStyleGreen, iconButtonStyleRed } from './itable/IStyles';
 
 const StyleDialogBackdrop = { style: { 
   backgroundColor: 'rgba(0, 0, 0, 0.2)'  

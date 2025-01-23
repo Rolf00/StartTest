@@ -107,7 +107,7 @@ class IDialogButton extends React.Component {
       this.props.buttonDialogIconType === IConst.buttonDialogIconType_Question ? iconDialogStyleBlue :
       this.props.buttonDialogIconType === IConst.buttonDialogIconType_Stop ?  iconDialogStyleRed : null;
 
-    const buttonWidth = this.props.buttonDialogButtonWidth;
+    const buttonWidth = this.props.buttonDialogButtonWidth ? this.props.buttonDialogButtonWidth : 120;
 
     const colCount = Math.max(...buttons.map((item) => item.X));
     const rowCount = Math.max(...buttons.map((item) => item.Y));
@@ -181,14 +181,12 @@ class IDialogButton extends React.Component {
     // TODO
     // <Typography ref={containerRef}
 
-
-
     return(
       <Dialog 
-        maxWidth={entireMaxWidth}
-        minWidth={entireMinWidth}
-        maxHeight={entireMaxHeight}
-        minHeight={entireMinHeight}
+        maxwidth={entireMaxWidth}
+        minwidth={entireMinWidth}
+        maxheight={entireMaxHeight}
+        minheight={entireMinHeight}
         open={open} 
         BackdropProps={StyleDialogBackdrop}         
         PaperProps={StyleDialogPaper}>
@@ -203,7 +201,7 @@ class IDialogButton extends React.Component {
           <MainIcon style={mainIconStyle}/>
         </Grid>
 
-        <Grid item direction="column" spacing={2} align="center">
+        <Grid direction="column" align="center">
 
         <Grid item>
           <Typography 
