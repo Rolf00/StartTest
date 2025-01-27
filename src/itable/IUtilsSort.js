@@ -34,7 +34,6 @@ export const descGrid = (a, b, orderBy, headers) =>
 
 export const isDateTime = (type, field) =>
 {
-  // TODO : we dont need the field here
   return type === IConst.editType_Date;
 }
 
@@ -50,7 +49,6 @@ export const getCellValue = (header, row, sort = false) =>
       if (isDateTime(editType, dataFieldName)) 
       {
         try { 
-          // TODO is this ok?
           //return parseInt(row[dataFieldName]);
           return Date.parse(row[dataFieldName]);
         } 

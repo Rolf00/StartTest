@@ -25,11 +25,4 @@ https://www.npmjs.com/package/tss-react
 TODO list
 =========
 
-- new row => remove negative ID
-  remove filter "inserted"
-
-- Dialog Sorting not working in React version 6.x, only 4.x
-
-- check ButtonDialog with many buttons
-
 //////////////////////////////////////////////////////////////////////////////////////////

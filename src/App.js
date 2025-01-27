@@ -629,7 +629,7 @@ headersWaldo[14].isVisible = false;
 headersWaldo[15].isVisible = false;
 
 headersWaldo[16].isVisible = false;
-headersWaldo[17].isVisible = false;
+//headersWaldo[17].isVisible = false;
 headersWaldo[18].isVisible = false;
 //headersWaldo[19].isVisible = false;
 //headersWaldo[20].isVisible = false;
@@ -728,13 +728,13 @@ const App = ()=> {
 
   function handleSpecialButtonClick(rowid, fieldname)
   {
-    alert("Button was clicked (rowid, fieldname) = (" + rowid + ", " + fieldname + ")");
+    alert("SpecialButton was clicked (rowid, fieldname) = (" + rowid + ", " + fieldname + ")");
     // TODO 
   }
   
   function handleStateButtonClick(rowid, fieldname)
   {
-    alert("Button was clicked (rowid, fieldname) = (" + rowid + ", " + fieldname + ")");
+    alert("StateButton was clicked (rowid, fieldname) = (" + rowid + ", " + fieldname + ")");
     // TODO 
   }
 

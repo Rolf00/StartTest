@@ -134,8 +134,6 @@ class IUtils {
 
   static hasErrorDate(value, header, row)  
   {
-    // TODO do correct checks for dates
-
     // field is not editable, thus we dont check anyting 
     if (!header.isEditable) return false;
     if ((!value) && header.required) return true;
@@ -163,7 +161,7 @@ class IUtils {
       const otherValue = row[header.datetimeCheckField];
       if (value < otherValue) return true;
     }
-
+    
     // no errors found
     return false;
   }
@@ -237,8 +235,6 @@ class IUtils {
       toRow[field] = oldRow[field];
     }
   }  
-
-
 }
 
 export default IUtils;

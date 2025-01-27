@@ -1,29 +1,17 @@
 import React, { Component, forwardRef } from "react";
-//import { makeStyles } from "@mui/styles";
 import ReactDOM from "react-dom";
 import {
   List,
   ListItem,
-  //ListItemText,
-  //ListItemIcon,
   IconButton,
   Dialog,
   DialogContent,
-  ListItemSecondaryAction,
   Grid,
-  //Table,
-  //TableRow,
-  //TableCell,
   Typography,
 } from "@mui/material";
 
-//import { RootRef } from "@material-ui/";
-//import { RootRef } from "@mui/material/RootRef";
-
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
-//import InboxIcon from "@material-ui/icons/Inbox";
-//import EditIcon from "@material-ui/icons/Edit";
 import VisibilityRoundedIcon from '@mui/icons-material/VisibilityRounded';
 import VisibilityOffRoundedIcon from '@mui/icons-material/VisibilityOffRounded';
 import StraightRoundedIcon from '@mui/icons-material/StraightRounded';
@@ -48,7 +36,7 @@ const StyleDialogPaper = { style: {
 }};
 
 const StyleDialogContent = {
-  width: "360px",
+  width: "420px",
   border: '3px solid #444444', // Set border color
   borderRadius: '20px',  
   backgroundColor: 'white',
@@ -60,7 +48,7 @@ const StyleDialogTitle = {
 };
 
 const StyleDialogInfo = {
-  fontSize: "12px",
+  fontSize: "14px",
   paddingBottom: "10px",
 };
 
@@ -77,24 +65,6 @@ const StyleButtons = {
     border: '1px solid black',
   },
 };
-
-/*
-const useStyles = makeStyles({
-  buttons: {
-    fontSize: '16px',
-    fontWeight: 'bold',
-    borderRadius: '6px',
-    height: '45px',
-    margin: '6px',
-    backgroundColor: '#EEEEFF',
-    border: '1px solid #CCCCFF',
-    '&:hover': {
-      backgroundColor: '#CCCCFF',
-      border: '1px solid black',
-    },
-  },
-});
-*/
 
 const DialogHeader = {
   fontSize: "12px",
@@ -157,7 +127,8 @@ const getItemStyle = (isDragging, draggableStyle, isSelected) => ({
   // styles we need to apply on draggables
   ...draggableStyle,
   //  ...(isDragging && {background: "rgb(235,235,235)", }),
-  background: isDragging ? "#ddddff" : isSelected ? "#ddffdd" : "#dddddd",
+  //background: isDragging ? "#ddddff" : isSelected ? "#ddffdd" : "#dddddd",
+  background: isDragging ? "#ddffdd" : "#eeeeee",
   padding: "0px",
   margin: "2px 2px",
   borderRadius: '6px',
@@ -199,7 +170,6 @@ class IDialogSorting extends Component {
     const { sortings, headers } = this.props;
 
     this.state = {
-      //openSortingDialog: this.props.openSortingDialog,
       items: this.getItems(this.props.sortings, this.props.headers),
     };
 
@@ -274,14 +244,12 @@ class IDialogSorting extends Component {
   clickOrder(index) {
     const newlist = [...this.state.items];
     newlist[index].order =
-      newlist[index].order === IConst.sortingASC ? (newlist[index].order = IConst.sortinDESC) : 
+      newlist[index].order === IConst.sortingASC ? (newlist[index].order = IConst.sortingDESC) : 
       newlist[index].order === IConst.sortingDESC ? (newlist[index].order = "") : IConst.sortingASC;
     this.setState({ items: newlist });
   }
 
   keyDown(event) {
-    // TODO
-    //alert("keyUp");
     if (event.key === "Escape")
     {
       this.cancelChanges();
@@ -325,27 +293,17 @@ class IDialogSorting extends Component {
   saveChanges() 
   {
     // close the dialog with saving
-    const newlist = [];
-    for (let i = 0; i < this.state.items.length; i++)
-    {
-      if (this.state.items[i].order !== "")
-      {
-        const oneSort = { 
-          order: this.state.items[i].order, 
-          orderByField: this.state.items[i].orderByField };
-        newlist.push(oneSort);
-      }
-    }
-    this.props.setChangedSortings(newlist);
+    this.props.setChangedSortings(this.state.items, "dialog");
   }
 
   cancelChanges () 
   {
     // close the dialog without saving
-    this.props.setChangedSortings(null);
+    this.props.setChangedSortings(null, "");
   }
   
   
+
   // Normally you would want to split things out into separate components.
   // But in this example everything is just done in one place for simplicity
   render() {
@@ -355,13 +313,17 @@ class IDialogSorting extends Component {
         onKeyUp={(e) => this.keyDown(e)}
         BackdropProps={StyleDialogBackdrop}
         PaperProps={StyleDialogPaper}>
+
+
         <DialogContent style={StyleDialogContent}>
+
           <Typography style={StyleDialogTitle}>Sorting of rows</Typography>
           <Typography style={StyleDialogInfo}>
-            Define the sort order by drag and drop and click on order button to
-            change ASC and DESC. Set the order to 'no order', if for
+            Define the sort order by dragging and droping and click the order button to
+            change the sorting 'ascending' - 'descending' - 'no order'. Set the order to 'no order', if for
             this column no sorting is needed.
           </Typography>
+
           <Grid container>
             <Grid item style={column1}>
               <Typography style={DialogHeader}>Visible</Typography>
@@ -405,8 +367,8 @@ class IDialogSorting extends Component {
                                 <IconButton
                                   style={buttonRow}
                                   onClick={() => this.clickVisibility(index)}>
-                                  {item.isVisible && <VisibilityRoundedIcon />}
-                                  {(!item.isVisible) && <VisibilityOffRoundedIcon />}
+                                  {item.isVisible && <VisibilityRoundedIcon style={iconButtonStyleGrey}/>}
+                                  {(!item.isVisible) && <VisibilityOffRoundedIcon style={iconButtonStyleGrey} />}
                                 </IconButton>
                               </Grid>
                               <Grid item style={column2}>
@@ -419,7 +381,7 @@ class IDialogSorting extends Component {
                                 >
                                   {item.order === IConst.sortingASC && <StraightRoundedIcon style={iconButtonStyleGrey}/>}
                                   {item.order === IConst.sortingDESC && <StraightRoundedIcon style={iconButtonStyleGrey_Rotate180}/>}
-                                  {item.order === "" && <HeightRoundedIcon />}
+                                  {item.order === "" && <HeightRoundedIcon style={iconButtonStyleGrey} />}
                                 </IconButton>
                               </Grid>
                               <Grid item style={column4}>
@@ -441,17 +403,6 @@ class IDialogSorting extends Component {
               )}
             </Droppable>
           </DragDropContext>
-
-          {/* 
-          <Grid container>
-            <Grid item style={buttonLeft}>
-              <IconButton style={button}>Move up</IconButton>
-            </Grid>
-            <Grid item>
-              <IconButton style={button}>Move down</IconButton>
-            </Grid>
-          </Grid>
-          */}
 
           <Grid container>
             <Grid item style={buttonLeft}>

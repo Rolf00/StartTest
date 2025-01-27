@@ -170,14 +170,14 @@ export default function ITableMenu (props)
 
     const field = props.headers[props.headerIndex].dataFieldName;
     const newSortingList = getNewSortingList(props.sortings, sortAscending, field);
-    props.setChangedSortings(newSortingList);
+    props.setChangedSortings(newSortingList, "menu");
   }
 
   const removeAllSorting = () =>
   {
     // remove all sortings
     const newList = [];
-    props.setChangedSortings(newList);
+    props.setChangedSortings(newList, "menu");
   }
 
   const manageSortings = () =>
@@ -638,7 +638,7 @@ export default function ITableMenu (props)
                   value={IConst.filterOperator_IsEmptyNot}
                 >is not empty</MenuItem>
 
-<MenuItem key="filterOp11" 
+                <MenuItem key="filterOp11" 
                   value={IConst.filterOperator_IsSmallerThan}
                   disabled={isTextfield}
                 >is smaller than</MenuItem>

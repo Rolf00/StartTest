@@ -44,7 +44,7 @@ class ITableCellWidthResizer extends React.Component {
       order === IConst.sortingDESC ? '' : IConst.sortingASC;
 
     const newSortingList = getNewSortingList(this.props.sortings, neworder, field)
-    this.props.setChangedSortings(newSortingList);
+    this.props.setChangedSortings(newSortingList, "menu");
   }
 
   handleMouseDownRowEW = (e) => 
@@ -140,7 +140,7 @@ class ITableCellWidthResizer extends React.Component {
               sortings={this.props.sortings}
               setChangedHeaders={(newheaders) => this.props.setChangedHeaders(newheaders)}
               setChangedFilters={(newfilters) => this.props.setChangedFilters(newfilters)}
-              setChangedSortings={(newsortings) => this.props.setChangedSortings(newsortings)}
+              setChangedSortings={(newsortings, origin) => this.props.setChangedSortings(newsortings, origin)}
               openDialogSorting={() => this.props.openDialogSorting()}
             ></ITableMenu>
           </div>}
@@ -201,7 +201,7 @@ class ITableCellWidthResizer extends React.Component {
               sortings={this.props.sortings}
               setChangedHeaders={(newheaders) => this.props.setChangedHeaders(newheaders)}
               setChangedFilters={(newfilters) => this.props.setChangedFilters(newfilters)}
-              setChangedSortings={(newsortings) => this.props.setChangedSortings(newsortings)}
+              setChangedSortings={(newsortings, origin) => this.props.setChangedSortings(newsortings, origin)}
               handleOpenDialogSorting={() => this.props.handleOpenDialogSorting()}
               ></ITableMenu>
           </div>}

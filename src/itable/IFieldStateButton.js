@@ -34,6 +34,7 @@ export default function IFieldStateButton (props)
   const buttonBackgroundColor = button === null || imgSource ? "" : button.color;
   const buttonBackgroundHover = button === null || imgSource ? "" : button.colorHover;
   const hasCaption = caption !== "";
+  const hasOnlyCaption = hasCaption && (!isMuiIcon) && (!isImage) && (!isHtml);
   const canClick = props.header.isEditable && (isMuiIcon || isImage || isHtml || hasCaption);
 
   return (
@@ -55,14 +56,16 @@ export default function IFieldStateButton (props)
         padding: '2px',
         disabled: disabled,
         borderRadius: hasCaption && (!isHtml) ? buttonRadius : '',
-        borderWidth: hasCaption && (!isHtml)  ?  '1px' : '0px',
-        borderStyle: hasCaption && (!isHtml)  ? 'solid' : '',
-        width: buttonWidth, //hasCaption ? buttonWidth : isImage || isMuiIcon ? iconSize : '', 
-        height: buttonHeight, //hasCaption ? '' : isImage || isMuiIcon ? iconSize : '', 
+        borderWidth: hasCaption && (!isHtml) && (!hasOnlyCaption) ?  '1px' : '0px',
+        borderStyle: hasCaption && (!isHtml) && (!hasOnlyCaption) ? 'solid' : '',
+        width: hasOnlyCaption ? '100%' : hasCaption ? buttonWidth : isImage || isMuiIcon ? iconSize : '', 
+        height: buttonHeight, 
+        textAlign: hasOnlyCaption ? 'center' : '',
       }}
       sx={{
         display: 'flex', 
-        justifyContent: hasCaption ? 'flex-start' : 'center',
+        justifyContent: hasCaption ? 'flex-start' : hasOnlyCaption ? 'center' : 'center',
+        justifyContent: 'center',
         borderColor: hasCaption && (!isHtml) ? buttonBackgroundHover : '',
         backgroundColor: hasCaption && (!isHtml) ? buttonBackgroundColor : '',
         '&:Hover': {
@@ -83,14 +86,15 @@ export default function IFieldStateButton (props)
         padding: '2px',
         disabled: disabled,
         borderRadius: hasCaption && (!isHtml) ? buttonRadius : '',
-        borderWidth: hasCaption && (!isHtml)  ?  '1px' : '0px',
-        borderStyle: hasCaption && (!isHtml)  ? 'solid' : '',
-        width: hasCaption ? buttonWidth : isImage ? iconSize : '', 
+        borderWidth: hasCaption && (!isHtml) && (!hasOnlyCaption) ?  '1px' : '0px',
+        borderStyle: hasCaption && (!isHtml) && (!hasOnlyCaption) ? 'solid' : '',
+        width: hasOnlyCaption ? '100%' : hasCaption ? buttonWidth : isImage || isMuiIcon ? iconSize : '', 
         height: hasCaption ? '' : isImage ? iconSize : '', 
+        textAlign: hasOnlyCaption ? 'center' : '',
       }}
       sx={{
         display: 'flex', 
-        justifyContent: hasCaption ? 'flex-start' : 'center',
+        justifyContent: hasCaption ? 'flex-start' : hasOnlyCaption ? 'center' : 'center',
         borderColor: hasCaption && (!isHtml) ? buttonBackgroundHover : '',
         backgroundColor: hasCaption && (!isHtml) ? buttonBackgroundColor : '',
       }}>

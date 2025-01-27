@@ -60,7 +60,7 @@ class ITable extends React.Component {
       headers: headers,
       data: this.getDataList(),
       sortings: this.getSortingList(),
-      openSortingDialog: false,
+      openDialogSorting: false,
       page: 0,
       limit: 10,
 
@@ -79,9 +79,8 @@ class ITable extends React.Component {
       buttonDialogHorizontalAlign: '',
       buttonDialogSizeType: 0,
       buttonDialogWidth: 120,
-  
+
       // props for edit dialog
-      openDataModalDialog: false,
       selectedRow: null,
       isHoveredOrResizing: false,
 
@@ -103,6 +102,10 @@ class ITable extends React.Component {
       textSnackbar: "",
     };
   }
+
+  specialButtonIndex = 0;
+  specialButtonRowId = 0;
+  specialButtonField = "";
   
   componentDidMount() 
   {
@@ -323,7 +326,8 @@ class ITable extends React.Component {
   handleSaveAll()
   {
     // save all changed rows
-    if (this.state.mainButtonsDisabled) return true;
+    const listedited = this.state.rowInfoList.filter(d => d.state !== IConst.rowStateUnchanged);
+    if (this.state.mainButtonsDisabled && listedited.length === 0) return true;
 
     const rowList = [];
     const stateList = this.state.rowInfoList.filter(i => i.state !== IConst.rowStateUnchanged);
@@ -365,28 +369,13 @@ class ITable extends React.Component {
 
     // no error found, thus we can save all rows now
     this.props.handleSaveAllRowsClick(rowList, stateList);
+    return true;
   }
 
   showDataErrorMessage(errorText)
   {
     // show a dalog with the error messages 
     let newText = errorText;
-
-    /*
-    // TODO what do when to many lines in the error message?
-    const lines = errorText.split("\n");
-    if (lines.lenght > 25)
-    {
-      // if there are more than 25 error lines, 
-      // we show only 25, but we show that there are more
-      // furthermore, in this case we add a button "copy to clipboard"
-      newText = "";
-      for (let t = 0; t < 25; t++) newText += newText + lines[t] + "\n";
-      newText += newText + "...\n";
-      newText += newText + "...\n";
-      newText += newText + "[more than 25 error messages ]\n";
-    }
-    */
 
     const buttons = [ 
       { caption: "Close", 
@@ -684,14 +673,7 @@ class ITable extends React.Component {
 
   openModalDataDialog(row)
   {
-    // open the new edit dialog
-    /*
-    const rowIndex = this.getDataRowIndex(row[this.props.primaryKey]);
-    this.setState({
-      selectedRow: this.state.data[rowIndex],
-      openDataModalDialog: true
-    });
-    */
+    // open the new edit dialog (outside ITable)
     this.props.editRowModalDialog(row);
   }
 
@@ -713,6 +695,27 @@ class ITable extends React.Component {
         // button 'NO' was pressed
         // nothing to do here
       }
+      return;
+    }
+    else if (
+      dialogID === "MenuButton" || 
+      dialogID === "SpecialButton" || 
+      dialogID === "StateButton")
+    {
+      // do you want to save?
+      if (buttonIndex === 2) return; // cancel was clicked
+      else if (buttonIndex === 0) {
+        // YES was clicked => we check if the data is ok
+        // if not, we dont proceed
+        if (!this.handleSaveAll()) return;     
+      }
+      // else : NO was clicked => nothing to do here
+      if (dialogID === "MenuButton")  
+        this.props.menuButtonClick(this.specialButtonIndex);
+      else if (dialogID === "SpecialButton")  
+        this.props.handleSpecialButtonClick(this.specialButtonRowId, this.specialButtonField);
+      else if (dialogID === "StateButton")  
+        this.props.handleStateButtonClick(this.specialButtonRowId, this.specialButtonField);
       return;
     }
   }  
@@ -781,74 +784,77 @@ class ITable extends React.Component {
 
   handleSpecialButtonClick(rowid, field)
   {
-    if (!this.handleSaveAll()) return;
-    this.props.handleSpecialButtonClick(rowid, field);
+    const listedited = this.state.rowInfoList.filter(d => d.state !== IConst.rowStateUnchanged);
+    if (listedited.length > 0 || (!this.state.mainButtonsDisabled))
+    {
+      // do you want to save?
+      this.specialButtonRowId = rowid;
+      this.specialButtonField = field;
+      this.checkForChangedData("SpecialButton");
+    }
+    else
+    {
+      this.props.handleSpecialButtonClick(rowid, field);
+    }
   }
 
   handleStateButtonClick(rowid, field)
   {
-    if (!this.handleSaveAll()) return;
-    this.props.handleStateButtonClick(rowid, field);
-  }
-
-  // ---------------------------------------------------------------------------------------
-  // modal dialog
-
-  handleSubmitModalDialog = (newRow, saveIt) => 
-  {
-
-    if (saveIt)
+    const listedited = this.state.rowInfoList.filter(d => d.state !== IConst.rowStateUnchanged);
+    if (listedited.length > 0 || (!this.state.mainButtonsDisabled))
     {
-      // copy the edited row into the data
-      const rowid = newRow[this.props.primaryKey];
-      const infoIndex = this.getInfoRowIndex(rowid);
-      const rowIndex = this.state.data.findIndex(r => r[this.props.primaryKey] === rowid);
-
-      let newData = [...this.state.data];
-      IUtils.copyOneRow(newRow, newData[rowIndex]);
-
-      let newInfo = [...this.state.rowInfoList];
-      if (newInfo[infoIndex].state === IConst.rowStateUnchanged)
-        newInfo[infoIndex].state = IConst.rowStateEdited;
-      newInfo[infoIndex].forceUpdate = true; 
-
-      // update the buttons SAVE ALL, UNDO ALL
-      const newlist = newInfo.filter(r => r.state !== IConst.rowStateUnchanged);
-      const cntChangedRows = newlist.length;
-        this.setState({ 
-        openDataModalDialog: false,
-        data: newData, 
-        rowInfoList: newInfo,
-        mainButtonsDisabled: cntChangedRows === 0,
-        countChangedRows: cntChangedRows
-      });
+      // do you want to save?
+      this.specialButtonRowId = rowid;
+      this.specialButtonField = field;
+      this.checkForChangedData("StateButton");
     }
     else
     {
-      // close the dialog
-      this.setState({  openDataModalDialog: false, });
+      this.props.handleStateButtonClick(rowid, field);
     }
-  };
+  }
 
-  setChangedSortings(newSorting) 
+  setChangedSortings(newSorting, origin) 
   {
     if (newSorting === null)
     {
       // cancel was pressed
-      this.setState({openSortingDialog: false});
+      this.setState({openDialogSorting: false});
     }
-    else
+    else if (origin === "dialog")
     {
       // here we render the new sorting of rows
+      const newlist = [];
+      const newheaders = [...this.state.headers];
+      for (let i = 0; i < newSorting.length; i++)
+      {
+        if (newSorting[i].order !== "")
+        {
+          const oneSort = { 
+            order: newSorting[i].order, 
+            orderByField: newSorting[i].orderByField };
+          newlist.push(oneSort);
+        }
+        
+        // now also change the visibility of columns
+        const headerIndex = newSorting[i].headerId;
+        newheaders[headerIndex].isVisible = newSorting[i].isVisible;
+      }
+
       this.setState({
-        openSortingDialog: false,
+        openDialogSorting: false,
+        sortings: newlist,
+        headers: newheaders,
+      });
+    }
+    else if (origin === "menu")
+    {
+      this.setState({
+        openDialogSorting: false,
         sortings: newSorting,
       });
     }
   }
-
-  // ---------------------------------------------------------------------------------------
-  // copy selection
 
   handleTableMainKeyUp = (e) => 
   {
@@ -913,15 +919,35 @@ class ITable extends React.Component {
     this.setState({filters: newFilters});
   }
 
+  checkForChangedData(dialogID)
+  {
+    // button dialog: Do you want to save?
+    this.setState({
+      buttonDialogId: dialogID,
+      buttonDialogOpen: true,
+      buttonDialogTitle: "Changes found",
+      buttonDialogQuestion: "Do you want to save your changes?",
+      buttonDialogListType: IConst.buttonDialogTypeYesNoCancel,
+      buttonDialogIconType: IConst.buttonDialogIconType_Question,
+      buttonDialogHorizontalAlign: 'center',
+      buttonDialogSizeType: IConst.buttonDialogSizeType_ButtonWidths,
+      buttonDialogWidth: 120,
+    });
+  }
+
   menuButtonClick(index)
   {
-    if (!this.state.mainButtonsDisabled)
+    const listedited = this.state.rowInfoList.filter(d => d.state !== IConst.rowStateUnchanged);
+    if (listedited.length > 0 || (!this.state.mainButtonsDisabled))
     {
-      // TODO asynchroneous solution?
-      //if (!this.handleSaveAll()) return;     
-      this.handleSaveAll();     
+      // do you want to save?
+      this.specialButtonIndex = index;
+      this.checkForChangedData("MenuButton");
     }
-    this.props.menuButtonClick(index);
+    else
+    {
+      this.props.menuButtonClick(index);
+    }
   }
 
   updateRowsFromParent = (rows, newparams) => 
@@ -1159,7 +1185,7 @@ class ITable extends React.Component {
               handleCheckboxClickHeader={(e)=>this.handleCheckboxClickHeader(e)}
               setChangedHeaders={(newheaders) => this.setChangedHeaders(newheaders)}
               setChangedFilters={(newfilters) => this.setChangedFilters(newfilters)}
-              setChangedSortings={(newsortings) => this.setChangedSortings(newsortings)}
+              setChangedSortings={(newsortings, origin) => this.setChangedSortings(newsortings, origin)}
               handleOpenDialogSorting={() => this.handleOpenDialogSorting()}
             />
             <TableBody 
@@ -1410,12 +1436,12 @@ class ITable extends React.Component {
           handleDialogButtons={(index) => this.handleDialogButtons(index, this.state.buttonDialogId)}
         />}
 
-        {false && // TODO: this.state.openSortingDialog && 
+        {this.state.openDialogSorting && 
         <IDialogSorting
-          openSortingDialog={this.state.openSortingDialog}
+          openDialogSorting={this.state.openDialogSorting}
           headers={this.state.headers}
           sortings={this.state.sortings}
-          setChangedSortings={(newlist) => this.setChangedSortings(newlist)}
+          setChangedSortings={(newlist, origin) => this.setChangedSortings(newlist, origin)}
         />}
 
         <Snackbar 
@@ -1430,7 +1456,6 @@ class ITable extends React.Component {
             sx={{ width: '100%' }}
           >{this.state.textSnackbar}</Alert>
         </Snackbar>
-
       </div>
     );
   }

@@ -64,21 +64,6 @@ class IDialogButton extends React.Component {
     this.props.handleDialogButtons(index, this.props.id);
   }
 
-  calculateText(measureHeight)
-  {
-    /*
-    const rect = containerRef.current.getBoundingClientRect();
-    if (measureHeight)
-    {
-      return rect.height;
-    }
-    else
-    {
-      return rect.width;
-    }
-    */
-  }
-
   render ()
   {
     const { classes } = this.props;
@@ -115,7 +100,6 @@ class IDialogButton extends React.Component {
     for (let c = 0; c < colCount; c++) col.push(c);
     const row = [];
     for (let r = 0; r < rowCount; r++) row.push(r);
-
     
     const spaceWidth = 10;
     const imageWidth = 96;
@@ -198,7 +182,7 @@ class IDialogButton extends React.Component {
             display: 'flex',
             alignItems: 'center'          
           }}> 
-          <MainIcon style={mainIconStyle}/>
+          {MainIcon && <MainIcon style={mainIconStyle}/>}
         </Grid>
 
         <Grid direction="column" align="center">
@@ -258,8 +242,6 @@ class IDialogButton extends React.Component {
                         style={{
                           width: buttonWidth,
                           display: "flex",
-                          // TODO ButtoDialog align buttons
-                          //justifyContent: align === "right" ? "flex-end" : "flex-start",
                           justifyContent: "flex-start",
                         }}>
                         <ButtonIcon style={iconStyle}/>

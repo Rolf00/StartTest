@@ -92,14 +92,13 @@ class ITableHeader extends React.Component {
                   sortings={this.props.sortings}
                   notResizable={!isResizable}
                   width={newheaderWidth}
-                  //minWidth={headerMinWidth}
                   horizontalAlign={horizontalAlign}
                   verticalAlign={verticalAlign}
                   height= {headerRowHeight}
                   hasHeaderMenu={hasHeaderMenu}
                   setChangedHeaders={(newheaders) => this.props.setChangedHeaders(newheaders)}
                   setChangedFilters={(newfilters) => this.props.setChangedFilters(newfilters)}
-                  setChangedSortings={(newsortings) => this.props.setChangedSortings(newsortings)}
+                  setChangedSortings={(newsortings, origin) => this.props.setChangedSortings(newsortings, origin)}
                   handleOpenDialogSorting={() => this.props.handleOpenDialogSorting()}
                   SortColumn={(sortAscending) => this.props.SortColumn(headerIndex, sortAscending)}
                   >

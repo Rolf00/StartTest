@@ -60,10 +60,10 @@
   Page 4 as example
   but changing the TABS is not done yet
 
-- the modal Dialog now outside the comnponent
+- the modal Dialog now outside the component
   thus, for each usage of the component 
-  a separate dialog dan be defined
-  and is implemented in the parent.
+  a separate dialog can be defined
+  and implemented in the parent.
 
 - refactoring the "holder" function (it didnt work)
   now i made it with reference to the child
@@ -75,13 +75,17 @@
   role 1 and survey 1 and section 1
   without editing / deleting / inserting
 
+- before passing button clicks to the parent
+  now I check for changed data
+  with a dialog YES, NO, CANCEL
+
+- the sorting Dialog is working 
+  but I had to remove <React.StrictMode>
+
 
   TODO:
 - changing the tabs / 
   parameters to pass values
-
-- the sorting Dialog is not working 
-  in React version 6.x, only with version 4.x
 
 - some styles and colors better
   outside the component
