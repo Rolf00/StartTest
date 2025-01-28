@@ -2,37 +2,8 @@ import DoneRoundedIcon from '@mui/icons-material/DoneRounded';
 import RemoveCircleRoundedIcon from '@mui/icons-material/RemoveCircleRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 
-import { 
-  iconButtonStyleBlue, 
-  iconButtonStyleGreen, 
-  iconButtonStyleRed,
-  iconButtonStyleOrange } from './IStyles';
 
 class IConst {
-
-  // colors for icons
-  static iconColorRed = "#AA0000";
-  static iconColorGreen = "#00AA00";
-  static iconColorBlue = "#0000AA";
-  static iconColorDarkYellow = "#CCCC00";
-
-  // colors for row backgrounds unselected
-  static rowColorDeleted = "#FFDDDD";
-  static rowColorChanged = "#DDFFDD";
-  static rowColorInserted = "#FFFFDD";
-
-  // colors for row backgrounds selected
-  static rowColorSelected = "#EEEEFF";
-  static rowColorSelDeleted = "#FFBBBB";
-  static rowColorSelChanged = "#BBFFBB";
-  static rowColorSelInserted = "#FFFFBB";
-
-  // background color resizer
-  static colorResizerBackground = "#8888FF";
-
-  // error colors
-  static errorColor = "#FF0000";
-  static errorColorBackground = "#FFCCCC";
 
   // alignments
   static horizontalAlign_Left = "left";
@@ -56,16 +27,16 @@ class IConst {
 
   // default buttons for button dialog 
   static defaultButtonsOk = [
-    { caption: "Close", icon: DoneRoundedIcon, style: iconButtonStyleGreen, horizontalAlign: this.horizontalAlign_Left, X: 1, Y: 1, }
+    { caption: "Close", icon: DoneRoundedIcon, style:"iconButtonStyleGreen", horizontalAlign: this.horizontalAlign_Left, X: 1, Y: 1, }
   ];
   static defaultButtonsYesNo = [
-    { caption: "Yes", icon: DoneRoundedIcon, style: iconButtonStyleGreen, horizontalAlign: this.horizontalAlign_Left, X: 1, Y: 1, },
-    { caption: "No", icon: RemoveCircleRoundedIcon, style: iconButtonStyleRed, horizontalAlign: this.horizontalAlign_Right, X: 2, Y: 1, }
+    { caption: "Yes", icon: DoneRoundedIcon,         style: "iconButtonStyleGreen", horizontalAlign: this.horizontalAlign_Left,  X: 1, Y: 1, },
+    { caption: "No",  icon: RemoveCircleRoundedIcon, style: "iconButtonStyleRed",   horizontalAlign: this.horizontalAlign_Right, X: 2, Y: 1, }
   ];
   static defaultButtonsYesNoCancel = [
-    { caption: "Yes", icon: DoneRoundedIcon, style: iconButtonStyleGreen, horizontalAlign: this.horizontalAlign_Left, X: 1, Y: 1, },
-    { caption: "No", icon: RemoveCircleRoundedIcon, style: iconButtonStyleRed, horizontalAlign: this.horizontalAlign_Left, X: 2, Y: 1, },
-    { caption: "Cancel", icon: CloseRoundedIcon, style: iconButtonStyleRed, horizontalAlign: this.horizontalAlign_Left, X: 3, Y: 1, }
+    { caption: "Yes",    icon: DoneRoundedIcon,         style: "iconButtonStyleGreen", horizontalAlign: this.horizontalAlign_Left, X: 1, Y: 1, },
+    { caption: "No",     icon: RemoveCircleRoundedIcon, style: "iconButtonStyleRed",   horizontalAlign: this.horizontalAlign_Left, X: 2, Y: 1, },
+    { caption: "Cancel", icon: CloseRoundedIcon,        style: "iconButtonStyleRed",   horizontalAlign: this.horizontalAlign_Left, X: 3, Y: 1, }
   ];
 
   // calucalted from the elnght of all buttons horizontally aligned

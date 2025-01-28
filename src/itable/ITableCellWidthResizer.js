@@ -6,10 +6,10 @@ import PropTypes from 'prop-types';
 import StraightRoundedIcon from '@mui/icons-material/StraightRounded';
 import HeightRoundedIcon from '@mui/icons-material/HeightRounded';
 
+import { useStyles } from '../AppStyles';
+
 import IConst from './IConst';
 import ITableMenu from './ITableMenu';
-import { useStyles } from './styles';
-import { iconButtonStyleGrey, iconButtonStyleGrey_Rotate180 } from './IStyles';
 import { getNewSortingList } from './IUtilsSort';
 
 
@@ -55,7 +55,7 @@ class ITableCellWidthResizer extends React.Component {
     const cellWidth = this.props.headers[this.props.headerIndex].width;
     const element = e.target;
 
-    element.style.backgroundColor = IConst.colorResizerBackground;
+    element.style.backgroundColor = this.props.settings.resizerBackgroundColor;
 
     const onMouseMoveRowEW = (e) => 
     {
@@ -99,6 +99,7 @@ class ITableCellWidthResizer extends React.Component {
 
   render() 
   {
+    const { classes } = this.props;
     const isSortable = this.props.headers[this.props.headerIndex].isSortable;
     const field = this.props.headers[this.props.headerIndex].dataFieldName;
     const index =  this.props.sortings.findIndex(s => s.orderByField === field);
@@ -107,23 +108,24 @@ class ITableCellWidthResizer extends React.Component {
 
     return (
       <TableCell 
-        className={this.props.classes.itable_head_cell} 
+        className={classes.itable_head_cell} 
         key={`tablecell-header${this.props.headerIndex}`}
         width={this.state.headerWidth}
         minwidth={this.props.headers[this.props.headerIndex].minWidth}
         maxwidth={this.props.headers[this.props.headerIndex].maxWidth}
-        >
+      >
 
         <div 
+          //className={classes.itable_head_cellwidthresizer} 
           style={{
             display: 'flex',
             height: this.props.settings.initialHeaderHeight,
             padding: '0px',
             borderBottomColor: '#BBBBBB',
-            borderBottomStyle: 'none',
-            borderBottomWidth: '1px',
-            padding: '0px',
-          }}>
+            borderBottomStyle: 'solid',
+            borderBottomWidth: '1px'
+          }}
+        >
 
           {hasHeaderMenu && this.props.headerHorizontalAlign === IConst.horizontalAlign_Right &&
           <div style={{
@@ -133,6 +135,7 @@ class ITableCellWidthResizer extends React.Component {
             width: '25px',
           }}>
             <ITableMenu
+              classes={classes}
               settings={this.props.settings}
               headers={this.props.headers}
               headerIndex={this.props.headerIndex}
@@ -155,9 +158,9 @@ class ITableCellWidthResizer extends React.Component {
           <IconButton 
             sx={{ width: '25px', height: '40px', borderRadius: '3px' }}
             onClick={() => this.changeSortingClick()}>
-            {sorting === IConst.sortingASC && <StraightRoundedIcon style={iconButtonStyleGrey}/>}
-            {sorting === IConst.sortingDESC && <StraightRoundedIcon style={iconButtonStyleGrey_Rotate180}/>}
-            {sorting === '' && <HeightRoundedIcon style={iconButtonStyleGrey}/>}
+            {sorting === IConst.sortingASC && <StraightRoundedIcon className={classes.iconButtonStyleGrey}/>}
+            {sorting === IConst.sortingDESC && <StraightRoundedIcon className={classes.iconButtonStyleGrey_Rotate180}/>}
+            {sorting === '' && <HeightRoundedIcon className={classes.iconButtonStyleGrey}/>}
           </IconButton>
           </div>}
 
@@ -180,9 +183,9 @@ class ITableCellWidthResizer extends React.Component {
           <IconButton 
             sx={{ width: '25px', height: '40px', borderRadius: '3px' }}
             onClick={() => this.changeSortingClick()}>
-            {sorting === IConst.sortingASC && <StraightRoundedIcon style={iconButtonStyleGrey}/>}
-            {sorting === IConst.sortingDESC && <StraightRoundedIcon style={iconButtonStyleGrey_Rotate180}/>}
-            {sorting === '' && <HeightRoundedIcon style={iconButtonStyleGrey}/>}
+            {sorting === IConst.sortingASC && <StraightRoundedIcon className={classes.iconButtonStyleGrey}/>}
+            {sorting === IConst.sortingDESC && <StraightRoundedIcon className={classes.conButtonStyleGrey_Rotate180}/>}
+            {sorting === '' && <HeightRoundedIcon className={classes.iconButtonStyleGrey}/>}
           </IconButton>
           </div>}
 
@@ -194,6 +197,7 @@ class ITableCellWidthResizer extends React.Component {
             width: '25px',
           }}>
             <ITableMenu
+              classes={classes}
               settings={this.props.settings}
               headers={this.props.headers}
               headerIndex={this.props.headerIndex}
@@ -208,7 +212,7 @@ class ITableCellWidthResizer extends React.Component {
 
           {(!this.props.notResizable) &&
           <div 
-            className={this.props.classes.resizerEW}
+            className={classes.resizerEW}
             onMouseDown={(e) => this.handleMouseDownRowEW(e, this.props.headerIndex)} 
             >&nbsp;</div>}
 

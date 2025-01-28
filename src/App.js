@@ -8,23 +8,9 @@ import ArrowCircleLeftRoundedIcon from '@mui/icons-material/ArrowCircleLeftRound
 import DoneRoundedIcon from '@mui/icons-material/DoneRounded';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 
-
 import IConst from './itable/IConst';
 import ITable from './itable/ITable';
 import IDialogData_First from './IDialogData_First';
-import { 
-  iconButtonStyleYellow,
-  iconButtonStyleBlue, 
-  iconButtonStyleGreen, 
-  iconButtonStyleRed,
-  iconButtonStyleOrange,
-  iconButtonStylePurple,
-  iconButtonStyleTurqoise,
-  iconButtonStyleGrey } from './itable/IStyles';
-
-import imgCircleRed from './CircleRed.png';
-import { purple } from '@mui/material/colors';
-
 
 
 // columns for Waldo
@@ -282,14 +268,13 @@ const headersWaldo = [
     maxWidth: 320,
     editType: IConst.editType_Chip,
     chipList: [
-      { id: 1, label: '',    color: '#F3F3F3', colorHover: '#F5F5F5', icon: AdjustRoundedIcon, style: iconButtonStyleGrey,},
-      { id: 2, label: '',     color: '#FFFFBB', colorHover: '#FFFF99', icon: AdjustRoundedIcon, style: iconButtonStyleYellow,},
-      { id: 3, label: '', color: '#FFE1BF', colorHover: '#FFDFC1', icon: AdjustRoundedIcon, style: iconButtonStyleOrange,},
-      { id: 4, label: 'surgeryyyyy', color: '#FFBBFF', colorHover: '#99BB99', icon: AdjustRoundedIcon, style: iconButtonStylePurple,},
-      { id: 5, label: 'visited', color: '#BBFFFF', colorHover: '#99FFFF', icon: AdjustRoundedIcon, style: iconButtonStyleTurqoise,},
-      { id: 6, label: 'invest.', color: '#BBBBFF', colorHover: '#9999FF', icon: AdjustRoundedIcon, style: iconButtonStyleBlue,},
-      { id: 7, label: 'all ok',  color: '#BBFFBB', colorHover: '#99FF99', icon: AdjustRoundedIcon, style: iconButtonStyleGreen,},
-      { id: 8, label: '',  color: 'transparent', colorHover: 'transparent', image: imgCircleRed, style: iconButtonStyleRed,},
+      { id: 1, label: '', color: '#F3F3F3', colorHover: '#F5F5F5', icon: AdjustRoundedIcon, style: "iconButtonStyleGrey",},
+      { id: 2, label: '', color: '#FFFFBB', colorHover: '#FFFF99', icon: AdjustRoundedIcon, style: "iconButtonStyleYellow",},
+      { id: 3, label: '', color: '#FFE1BF', colorHover: '#FFDFC1', icon: AdjustRoundedIcon, style: "iconButtonStyleOrange",},
+      { id: 4, label: 'surgery', color: '#FFBBFF', colorHover: '#99BB99', icon: AdjustRoundedIcon, style: "iconButtonStylePurple",},
+      { id: 5, label: 'visited', color: '#BBFFFF', colorHover: '#99FFFF', icon: AdjustRoundedIcon, style: "iconButtonStyleTurqoise",},
+      { id: 6, label: 'invest.', color: '#BBBBFF', colorHover: '#9999FF', icon: AdjustRoundedIcon, style: "iconButtonStyleBlue",},
+      { id: 7, label: 'all ok',  color: '#BBFFBB', colorHover: '#99FF99', icon: AdjustRoundedIcon, style: "iconButtonStyleGreen",},
     ],
     chipWidth: 150,
     chipIconWidth: 32,
@@ -340,7 +325,7 @@ const headersWaldo = [
     databaseField: "",
     headerTitle: "Patient",
     isResizable: true,
-    isEditable: false,
+    isEditable: true,
     isRequired: true,
     isVisible: true,
     isSortable: false,
@@ -352,10 +337,27 @@ const headersWaldo = [
     button: { 
       caption: "View",  
       icon: PersonRoundedIcon,
-      style: iconButtonStyleBlue,
-      buttonRadius: 8,
-      buttonBackgroundColor: "#EEEEFF", 
-      buttonBackgroundHover: "#CCCCFF", 
+      iconStyle: {
+        width: '28px',
+        height: '28px',
+        color: '#6666BB',
+        marginLeft: '4px',
+        marginRight: '4px',
+      },
+      style: {
+        fontSize: '14px',
+        padding: '2px 6px 2px 2px',
+        borderRadius: '4px',
+        borderWidth: '1px',
+        borderStyle: 'solid',
+        buttonRadius: 16,
+      },
+      color: '#3333FF',
+      borderColor: '#6666FF',
+      backgroundColor: '#EEEEFF',
+      hoverColor: 'black',
+      hoverBorderColor: 'black',
+      hoverBackgroundColor: '#CCCCFF',
     },
     dataFieldName: 'viewPatient',
     horizontalAlign: 'center',
@@ -377,10 +379,10 @@ const headersWaldo = [
     buttonRadius: 8,
     iconSize: 25,
     buttonList: [
-      { id: 1, caption: 'jk asdjk dsa',     color: '#F3F3F3', colorHover: '#F5F5F5', icon: AdjustRoundedIcon, style: iconButtonStyleGrey, },
-      { id: 2, caption: 'asdlk',       color: '#FFFFBB', colorHover: '#FFFF88', icon: AdjustRoundedIcon, style: iconButtonStyleOrange, },
-      { id: 3, caption: '',   color: 'transparent', colorHover: 'transparent', image: imgCircleRed, style: iconButtonStyleRed, },
-      { id: 4, caption: 'completed', color: '#BBFFBB', colorHover: '#88FF88', icon: DoneRoundedIcon, style: iconButtonStyleGreen, },
+      { id: 1, caption: 'jk asdjk dsa',     color: '#F3F3F3', colorHover: '#F5F5F5', icon: AdjustRoundedIcon, style: "iconButtonStyleGrey", },
+      { id: 2, caption: 'asdlk',       color: '#FFFFBB', colorHover: '#FFFF88', icon: AdjustRoundedIcon, style: "iconButtonStyleOrange", },
+      { id: 3, caption: '',   color: 'transparent', colorHover: 'transparent', icon: DoneRoundedIcon, style: "iconButtonStyleRed", },
+      { id: 4, caption: 'completed', color: '#BBFFBB', colorHover: '#88FF88', icon: DoneRoundedIcon, style: "iconButtonStyleGreen", },
     ],
     dataFieldName: 'statebutton',
     horizontalAlign: 'center',
@@ -615,6 +617,8 @@ const headersWaldo = [
     },
   ];
 
+  /*
+  
 headersWaldo[4].isVisible = false;
 headersWaldo[5].isVisible = false;
 headersWaldo[6].isVisible = false;
@@ -628,11 +632,12 @@ headersWaldo[13].isVisible = false;
 headersWaldo[14].isVisible = false;
 headersWaldo[15].isVisible = false;
 
-headersWaldo[16].isVisible = false;
+//headersWaldo[16].isVisible = false;
 //headersWaldo[17].isVisible = false;
-headersWaldo[18].isVisible = false;
+//headersWaldo[18].isVisible = false;
 //headersWaldo[19].isVisible = false;
 //headersWaldo[20].isVisible = false;
+*/
 
 
 // data Waldo
@@ -698,6 +703,21 @@ const App = ()=> {
     resizerBackgroundColor: '#8888FF',
     iconImageSize: 30,
 
+    // colors for row backgrounds unselected
+    rowColorDeleted: "#FFDDDD",
+    rowColorChanged: "#DDFFDD",
+    rowColorInserted: "#FFFFDD",
+
+    // colors for row backgrounds selected
+    rowColorSelected: "#EEEEFF",
+    rowColorSelDeleted: "#FFBBBB",
+    rowColorSelChanged: "#BBFFBB",
+    rowColorSelInserted: "#FFFFBB",
+
+    // error colors
+    errorColor: "#FF0000",
+    errorColorBackground: "#FFCCCC",
+
     // dialog
     dialogName: 'InselDialog_MainData',
 
@@ -718,8 +738,10 @@ const App = ()=> {
 
     // menu buttons
     menuButtonList: [
-      { id:1, caption: "Back", hint: "go to previous page", icon: ArrowCircleLeftRoundedIcon,  style:iconButtonStyleGrey, positionStart: true },
-      { id:2, caption: "Next", hint: "go to next page",     icon: ArrowCircleRightRoundedIcon, style:iconButtonStyleGrey, positionStart: false },
+      { id:1, caption: "Back", hint: "go to previous page", 
+        icon: ArrowCircleLeftRoundedIcon,  style:"iconButtonStyleGrey", positionStart: true },
+      { id:2, caption: "Next", hint: "go to next page",     
+        icon: ArrowCircleRightRoundedIcon, style:"iconButtonStyleGrey", positionStart: false },
     ],
   };
   

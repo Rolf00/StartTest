@@ -3,6 +3,8 @@ import { TableRow, } from '@mui/material';
 
 import { withStyles } from 'tss-react/mui';
 import PropTypes from 'prop-types';
+
+import { useStyles } from '../AppStyles';
   
 import IConst from './IConst';
 import IUtils from './IUtils';
@@ -17,7 +19,6 @@ import IFieldDate from './IFieldDate';
 import IFieldSpecialButton from './IFieldSpecialButton';
 import IFieldStateButton from './IFieldStateButton';
 import IFieldRowEditButton from './IFieldRowEditButton';
-import { useStyles } from './styles';
 
   
 class ITableRow  extends React.Component {
@@ -101,7 +102,7 @@ class ITableRow  extends React.Component {
     let mouseStart = e.clientY;
 
     const element = e.target;
-    element.style.backgroundColor = IConst.colorResizerBackground;
+    element.style.backgroundColor = this.props.settings.resizerBackgroundColor;
     this.setState({isHeightResizing: true});
     this.state.resizingInAction = true;
 
@@ -198,9 +199,9 @@ class ITableRow  extends React.Component {
     this.props.rowUndo(newInfo, this.state.row);
   }
 
-
   render()
   {
+    const { classes } = this.props;
     const {row, rowInfo} = this.state;
     const rowid = row[this.props.primaryKey];
 
@@ -218,13 +219,13 @@ class ITableRow  extends React.Component {
     const isRowEdited = rowState === IConst.rowStateEdited;
 
     const rowBackgroundColor =
-      isRowSelected && isRowDeleted ? IConst.rowColorSelDeleted :
-      isRowSelected && isRowEdited ? IConst.rowColorSelChanged :
-      isRowSelected && isRowInserted ? IConst.rowColorSelInserted :
-      isRowSelected ? IConst.rowColorSelected :
-      isRowDeleted ? IConst.rowColorDeleted :
-      isRowEdited ? IConst.rowColorChanged :
-      isRowInserted ? IConst.rowColorInserted : "#FFFFFF";
+      isRowSelected && isRowDeleted ? this.props.settings.rowColorSelDeleted :
+      isRowSelected && isRowEdited ? this.props.settings.rowColorSelChanged :
+      isRowSelected && isRowInserted ? this.props.settings.rowColorSelInserted :
+      isRowSelected ? this.props.settings.rowColorSelected :
+      isRowDeleted ? this.props.settings.rowColorDeleted :
+      isRowEdited ? this.props.settings.rowColorChanged :
+      isRowInserted ? this.props.settings.rowColorInserted : "#FFFFFF";
 
     return (
       <TableRow
@@ -246,6 +247,7 @@ class ITableRow  extends React.Component {
         const isNumber = 
           header.editType === IConst.editType_Integer ||
           header.editType === IConst.editType_Decimal;
+
         const isDropdown = header.editType === IConst.editType_Dropdown;
         const isCheckbox = header.editType === IConst.editType_Checkbox;
         const isDate = header.editType === IConst.editType_Date;
@@ -253,6 +255,7 @@ class ITableRow  extends React.Component {
         const isSpecialButton = header.editType === IConst.editType_SpecialButton;
         const isStateButton = header.editType === IConst.editType_StateButton;
         const isGetter = header.editType === IConst.editType_Getter;
+
         const isRowEditButton = 
           header.editType === IConst.editType_ButtonEditRow ||
           header.editType === IConst.editType_ButtonEdit ||
@@ -295,6 +298,7 @@ class ITableRow  extends React.Component {
           return (
             <ITableCellHeightResizer
               key={`TableRow-row${rowid}.header${headerIndex}`}
+              className={classes.itable_row_cell}
               height={rowHeight}
               isHeightResizing={this.state.isHeightResizing}
               resizerBackgroundColor={this.props.settings.resizerBackgroundColor}
@@ -308,6 +312,7 @@ class ITableRow  extends React.Component {
 
               {isSelectionIcon &&
               <IFieldSelection
+                classes={classes}
                 horizontalAlign={horizontalAlign}
                 verticalAlign={verticalAlign}
                 settings={this.props.settings}
@@ -318,6 +323,7 @@ class ITableRow  extends React.Component {
 
               {isTextfield && 
               <IFieldText
+                classes={classes}
                 editing={editing}
                 horizontalAlign={horizontalAlign}
                 verticalAlign={verticalAlign}
@@ -330,6 +336,7 @@ class ITableRow  extends React.Component {
 
               {isNumber &&
               <IFieldNumber
+                classes={classes}
                 editing={editing}
                 horizontalAlign={horizontalAlign}
                 verticalAlign={verticalAlign}
@@ -342,6 +349,7 @@ class ITableRow  extends React.Component {
 
               {isDropdown &&
               <IFieldDropDown
+                classes={classes}
                 editing={editing}
                 horizontalAlign={horizontalAlign}
                 verticalAlign={verticalAlign}
@@ -354,6 +362,7 @@ class ITableRow  extends React.Component {
 
               {isCheckbox &&
               <IFieldCheckbox
+                classes={classes}
                 editing={editing}
                 horizontalAlign={horizontalAlign}
                 verticalAlign={verticalAlign}
@@ -366,6 +375,7 @@ class ITableRow  extends React.Component {
 
               {isDate &&
               <IFieldDate
+                classes={classes}
                 editing={editing}
                 horizontalAlign={horizontalAlign}
                 verticalAlign={verticalAlign}
@@ -380,6 +390,7 @@ class ITableRow  extends React.Component {
 
               {isChip &&
               <IFieldChipMenu
+                classes={classes}
                 editing={editing}
                 horizontalAlign={horizontalAlign}
                 verticalAlign={verticalAlign}
@@ -390,6 +401,7 @@ class ITableRow  extends React.Component {
 
               {isSpecialButton &&
               <IFieldSpecialButton
+                classes={classes}
                 horizontalAlign={horizontalAlign}
                 verticalAlign={verticalAlign}
                 header = {header}
@@ -399,6 +411,7 @@ class ITableRow  extends React.Component {
 
               {isStateButton &&
               <IFieldStateButton
+                classes={classes}
                 horizontalAlign={horizontalAlign}
                 verticalAlign={verticalAlign}
                 header = {header}
@@ -409,6 +422,7 @@ class ITableRow  extends React.Component {
 
               {isGetter && 
               <IFieldText
+                classes={classes}
                 editing={editing}
                 horizontalAlign={horizontalAlign}
                 verticalAlign={verticalAlign}
@@ -420,6 +434,7 @@ class ITableRow  extends React.Component {
 
               {isRowEditButton &&
               <IFieldRowEditButton
+                classes={classes}
                 editing={editing}
                 saving={saving}
                 horizontalAlign={horizontalAlign}

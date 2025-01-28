@@ -1,5 +1,6 @@
 import React, { Component, forwardRef } from "react";
-import ReactDOM from "react-dom";
+import PropTypes, { func } from 'prop-types';
+import { withStyles } from 'tss-react/mui';
 import {
   List,
   ListItem,
@@ -19,26 +20,23 @@ import HeightRoundedIcon from '@mui/icons-material/HeightRounded';
 import DoneRoundedIcon from '@mui/icons-material/DoneRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 
-import IConst from './IConst';
-import { 
-  iconButtonStyleGrey, 
-  iconButtonStyleGrey_Rotate180,
-  iconButtonStyleGreen,
-  iconButtonStyleRed } from './IStyles';
+import { useStyles } from '../AppStyles.js';
 
-const StyleDialogBackdrop = { style: { 
+import IConst from './IConst';
+
+const StyleDialogBackdrop = { style: {
   backgroundColor: 'rgba(0, 0, 0, 0.2)'  
 }};
 
 const StyleDialogPaper = { style: { 
-  borderRadius: '20px',
+  borderRadius: '10px',
   backgroundColor: 'transparent', 
 }};
 
 const StyleDialogContent = {
   width: "420px",
   border: '3px solid #444444', // Set border color
-  borderRadius: '20px',  
+  borderRadius: '10px',  
   backgroundColor: 'white',
 };
 
@@ -50,20 +48,6 @@ const StyleDialogTitle = {
 const StyleDialogInfo = {
   fontSize: "14px",
   paddingBottom: "10px",
-};
-
-const StyleButtons = {
-  fontSize: '16px',
-  fontWeight: 'bold',
-  borderRadius: '6px',
-  height: '45px',
-  margin: '6px',
-  backgroundColor: '#EEEEFF',
-  border: '1px solid #CCCCFF',
-  '&:hover': {
-    backgroundColor: '#CCCCFF',
-    border: '1px solid black',
-  },
 };
 
 const DialogHeader = {
@@ -307,12 +291,17 @@ class IDialogSorting extends Component {
   // Normally you would want to split things out into separate components.
   // But in this example everything is just done in one place for simplicity
   render() {
+
+    const { classes } = this.props;
+
     return (
       <Dialog 
         open={true} 
+        //className={classes.idialog}
         onKeyUp={(e) => this.keyDown(e)}
         BackdropProps={StyleDialogBackdrop}
-        PaperProps={StyleDialogPaper}>
+        PaperProps={StyleDialogPaper}
+      >
 
 
         <DialogContent style={StyleDialogContent}>
@@ -367,8 +356,10 @@ class IDialogSorting extends Component {
                                 <IconButton
                                   style={buttonRow}
                                   onClick={() => this.clickVisibility(index)}>
-                                  {item.isVisible && <VisibilityRoundedIcon style={iconButtonStyleGrey}/>}
-                                  {(!item.isVisible) && <VisibilityOffRoundedIcon style={iconButtonStyleGrey} />}
+                                  {item.isVisible && 
+                                    <VisibilityRoundedIcon className={classes.iconButtonStyleGrey}/>}
+                                  {(!item.isVisible) && 
+                                    <VisibilityOffRoundedIcon className={classes.iconButtonStyleGrey} />}
                                 </IconButton>
                               </Grid>
                               <Grid item style={column2}>
@@ -379,9 +370,12 @@ class IDialogSorting extends Component {
                                   style={buttonRow}
                                   onClick={() => this.clickOrder(index)}
                                 >
-                                  {item.order === IConst.sortingASC && <StraightRoundedIcon style={iconButtonStyleGrey}/>}
-                                  {item.order === IConst.sortingDESC && <StraightRoundedIcon style={iconButtonStyleGrey_Rotate180}/>}
-                                  {item.order === "" && <HeightRoundedIcon style={iconButtonStyleGrey} />}
+                                  {item.order === IConst.sortingASC && 
+                                    <StraightRoundedIcon className={classes.iconButtonStyleGrey}/>}
+                                  {item.order === IConst.sortingDESC && 
+                                    <StraightRoundedIcon className={classes.iconButtonStyleGrey_Rotate180}/>}
+                                  {item.order === "" && 
+                                    <HeightRoundedIcon className={classes.iconButtonStyleGrey} />}
                                 </IconButton>
                               </Grid>
                               <Grid item style={column4}>
@@ -406,16 +400,16 @@ class IDialogSorting extends Component {
 
           <Grid container>
             <Grid item style={buttonLeft}>
-              <IconButton style={StyleButtons}
+              <IconButton className={classes.mainButtons}
                 onClick={() => this.saveChanges()} >
-                <DoneRoundedIcon style={iconButtonStyleGreen} />
+                <DoneRoundedIcon className={classes.iconButtonStyleGreen} />
                 Accept</IconButton>
             </Grid>
             <Grid item>
               <IconButton 
-                style={StyleButtons}
+                className={classes.mainButtons}
                 onClick={() => this.cancelChanges()}>
-                <CloseRoundedIcon style={iconButtonStyleRed}/>
+                <CloseRoundedIcon className={classes.iconButtonStyleRed}/>
                 Cancel</IconButton>
             </Grid>
           </Grid>
@@ -425,4 +419,7 @@ class IDialogSorting extends Component {
   }
 }
 
-export default IDialogSorting;
+IDialogSorting.propTypes = { classes: PropTypes.object, };
+
+export default withStyles(IDialogSorting, useStyles);
+

@@ -74,7 +74,7 @@ export default function IFieldStateButton (props)
           backgroundColor: hasCaption && (!isHtml) ? buttonBackgroundHover : '',
         }
       }}>
-        {isMuiIcon && <ButtonIcon style={iconStyle}/>}
+        {isMuiIcon && <ButtonIcon className={props.classes[iconStyle]}/>}
         {isImage && <Avatar src={imgSource} style={{ width: iconSize, height: iconSize }} />}
         {isHtml && html}
         {hasCaption && caption} 
@@ -98,7 +98,7 @@ export default function IFieldStateButton (props)
         borderColor: hasCaption && (!isHtml) ? buttonBackgroundHover : '',
         backgroundColor: hasCaption && (!isHtml) ? buttonBackgroundColor : '',
       }}>
-        {isMuiIcon && <ButtonIcon style={iconStyle}/>}
+        {isMuiIcon && <ButtonIcon className={props.classes[iconStyle]}/>}
         {isImage && <Avatar src={imgSource} style={{ width: iconSize, height: iconSize }} />}
         {isHtml && html}
         {hasCaption && caption} 

@@ -12,11 +12,11 @@ import CheckBoxOutlineBlankRoundedIcon from '@mui/icons-material/CheckBoxOutline
 import CheckBoxRoundedIcon from '@mui/icons-material/CheckBoxRounded';
 import IndeterminateCheckBoxRoundedIcon from '@mui/icons-material/IndeterminateCheckBoxRounded';
 
+import { useStyles } from '../AppStyles';
+
 import IConst from './IConst';
 import IUtils from './IUtils';
 import ITableCellWidthResizer from './ITableCellWidthResizer';
-import { useStyles } from './styles';
-import { iconButtonStyleGreen } from './IStyles';
 
 
 class ITableHeader extends React.Component {
@@ -121,13 +121,13 @@ class ITableHeader extends React.Component {
                     onClick={(e) => this.props.handleCheckboxClickHeader(e)}>
 
                     {(!this.state.mainIndeterminated) && (this.state.mainChecked) &&
-                    <CheckBoxRoundedIcon style={iconButtonStyleGreen}/>}
+                    <CheckBoxRoundedIcon className={classes.iconButtonStyleGreen}/>}
 
                     {(!this.state.mainIndeterminated) && (!this.state.mainChecked) &&
-                    <CheckBoxOutlineBlankRoundedIcon style={iconButtonStyleGreen}/>}
+                    <CheckBoxOutlineBlankRoundedIcon className={classes.iconButtonStyleGreen}/>}
 
                     {this.state.mainIndeterminated && 
-                    <IndeterminateCheckBoxRoundedIcon style={iconButtonStyleGreen}/>}
+                    <IndeterminateCheckBoxRoundedIcon className={classes.iconButtonStyleGreen}/>}
 
                   </IconButton>
                   </Tooltip>

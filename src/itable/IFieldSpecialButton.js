@@ -12,11 +12,15 @@ export default function IFieldSpecialButton (props) {
   const disabled = !props.header.isEditable;
   const caption = props.header.button.caption;
   const ButtonIcon = props.header.button.icon;
-  const iconStyle = props.header.button.style;
-  //const buttonHeight = props.header.button.buttonHeight;
-  const buttonRadius = props.header.button.buttonRadius;
-  const buttonBackgroundColor = props.header.button.buttonBackgroundColor;
-  const buttonBackgroundHover = props.header.button.buttonBackgroundHover;
+
+  const iconStyle = props.header.button.iconStyle;
+  const style = props.header.button.style;
+  const color = props.header.button.color;
+  const borderColor = props.header.button.borderColor;
+  const backgroundColor = props.header.button.backgroundColor;
+  const hoverColor = props.header.button.hoverColor;
+  const hoverBorderColor = props.header.button.hoverBorderColor;
+  const hoverBackgroundColor = props.header.button.hoverBackgroundColor;
 
   return (
     <div
@@ -32,23 +36,19 @@ export default function IFieldSpecialButton (props) {
     >
     <IconButton
       onClick={() => props.handleSpecialButtonClick(rowid, dataFieldName)}
-      style={{
-        fontSize: '14px',
-        padding: '2px 6px 2px 2px',
-        disabled: disabled,
-        borderRadius: buttonRadius,
-        borderWidth: '1px',
-        borderStyle: 'solid',
-      }}
+      style={style}
+      disabled={disabled}
       sx={{
-        borderColor: buttonBackgroundHover,
-        backgroundColor: buttonBackgroundColor,
+        color: color,
+        borderColor: borderColor,
+        backgroundColor: backgroundColor,
         '&:Hover': {
-          color: 'black',
-          borderColor: 'black',
-          backgroundColor: buttonBackgroundHover,
+          color: hoverColor,
+          borderColor: hoverBorderColor,
+          backgroundColor: hoverBackgroundColor,
         }
-      }}>
+      }}
+      >
       <ButtonIcon style={iconStyle}/>
       {caption}</IconButton>
     </div>

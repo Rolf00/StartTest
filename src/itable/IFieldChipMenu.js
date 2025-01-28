@@ -131,7 +131,7 @@ export default function IChipMenu (props)
       >
         <Chip 
           label={chipLabel}
-          avatar={ image ? <Avatar src={image}/> : <ChipIcon style={chipIconStyle} />}
+          avatar={ image ? <Avatar src={image}/> : <ChipIcon className={props.classes.chipIconStyle} />}
           style={{
             width: chipWidth,
             backgroundColor: chipColor,

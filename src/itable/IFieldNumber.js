@@ -16,8 +16,8 @@ export default function IFieldNumber (props) {
   const width = props.header.width;
 
   const hasError = IUtils.hasError(value, props.header);
-  const color = hasError ? IConst.errorColor : 'black';
-  const background = hasError ? IConst.errorColorBackground : 'transparent';
+  const color = hasError ? this.props.settings.errorColor : 'black';
+  const background = hasError ? this.props.settings.errorColorBackground : 'transparent';
   const helperText = hasError ? props.header.helperText : '';
 
   const handleChange = (e) =>
@@ -56,7 +56,6 @@ export default function IFieldNumber (props) {
         type="number"
         value={value}
         helperText={helperText} 
-        //style={{  width: width, }}
         sx={{ 
           '& .MuiInputBase-root': {
             backgroundColor: background,

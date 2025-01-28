@@ -24,7 +24,8 @@ import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
 import ContentCopyRoundedIcon from '@mui/icons-material/ContentCopyRounded';
 import DoneRoundedIcon from '@mui/icons-material/DoneRounded';
 
-import { useStyles } from './styles';
+import { useStyles } from '../AppStyles.js';
+
 import IConst from './IConst';
 import IUtils from './IUtils';
 import { getSortRows } from './IUtilsSort';
@@ -34,13 +35,6 @@ import ITableRow from './ITableRow';
 
 import IDialogButton from './IDialogButton';
 import IDialogSorting from './IDialogSorting';
-
-import { 
-  iconButtonStyleBlue, 
-  iconButtonStyleGreen, 
-  iconButtonStyleRed,
-  iconButtonStyleOrange,
-  iconButtonStyleGrey } from './IStyles';
 
   
 class ITable extends React.Component {
@@ -380,12 +374,12 @@ class ITable extends React.Component {
     const buttons = [ 
       { caption: "Close", 
         icon: DoneRoundedIcon, 
-        style: iconButtonStyleGrey, 
+        style: "iconButtonStyleGrey", 
         horizontalAlign: IConst.horizontalAlign_Left, 
         X: 1, Y: 1, },
       { caption: "Copy",  
         icon: ContentCopyRoundedIcon, 
-        style: iconButtonStyleGrey, 
+        style: "iconButtonStyleGrey", 
         horizontalAlign: IConst.horizontalAlign_Left, 
         X: 2, Y: 1, }, 
     ];
@@ -1175,7 +1169,7 @@ class ITable extends React.Component {
 
           <Table className={classes.itable} stickyHeader>
             <ITableHeader
-              //className={classes.table_head_row}
+              className={classes.itable_head_row}
               settings={this.props.settings}
               headers={this.state.headers}
               filters={this.state.filters}
@@ -1188,9 +1182,7 @@ class ITable extends React.Component {
               setChangedSortings={(newsortings, origin) => this.setChangedSortings(newsortings, origin)}
               handleOpenDialogSorting={() => this.handleOpenDialogSorting()}
             />
-            <TableBody 
-              className={classes.itable_body_row}
-              >
+            <TableBody className={classes.itable_body_row}>
               {data.map((row, rowIndex) => {
                 // we use the old values for undoing changes
                 const rowid = row[this.props.primaryKey];
@@ -1199,6 +1191,7 @@ class ITable extends React.Component {
                 return(
                   <ITableRow
                     key={`itablerow-row${rowIndex}`}
+                    className={classes.itable_row_cell}
                     settings={this.props.settings}
                     headers={this.props.headers}
                     rowInfo={this.state.rowInfoList[rowInfoIndex]}
@@ -1217,30 +1210,13 @@ class ITable extends React.Component {
                 );
               })}
 
-              <TableRow className={classes.itable_body_row}>
-                <TableCell
-                  colSpan={4}
-                  style={{
-                    padding: 0,
-                    margin: 0,
-                    borderBottom: '1px solid rgb(229, 234, 239)',
-                    borderWidth: '1px medium medium',
-                    borderStyle: 'dashed none none',
-                    borderColor: 'rgb(229, 231, 235) currentcolor currentcolor',
-                    borderImage: 'none',
-                    color: 'rgb(107, 114, 128)',
-                  }}
-                />
-              </TableRow>
             </TableBody>
           </Table>
         </TableContainer>
 
-        <Grid container sx={{ 
-          //border: '1px solid black', 
-          //borderRadius: '8px',
-          margin: '6px 0px', 
-          backgroundColor: 'rgb(231, 231, 231)' }}>
+        <Grid 
+          className={classes.itable_footerrow}
+          container>
           <Grid item style={{ flex: 1, }}> 
 
               {this.props.settings.menuButtonList && 
@@ -1253,7 +1229,7 @@ class ITable extends React.Component {
                     key={`menuButtonList-button${index}`}
                     className={classes.mainButtons}
                     onClick={() => this.menuButtonClick(button.id)}>
-                    {button.icon && <ButtonIcon style={buttonStyle} />}
+                    {button.icon && <ButtonIcon className={classes[buttonStyle]} />}
                     {button.caption}
                   </IconButton>
                 );
@@ -1265,7 +1241,7 @@ class ITable extends React.Component {
               <IconButton
                 className={classes.mainButtons}
                 onClick={e => this.handleNewRow()}>
-              <AddCircleRoundedIcon style={iconButtonStyleOrange}/>
+              <AddCircleRoundedIcon className={classes.iconMainButtonNewRow}/>
               New row</IconButton></Tooltip>}
 
               {/* save all */}
@@ -1276,7 +1252,7 @@ class ITable extends React.Component {
                 disabled={mainButtonsDisabled}
                 onClick={e => this.handleSaveAll(e)}>
                 <SaveRoundedIcon 
-                  style={iconButtonStyleGreen}
+                  className={classes.iconButtonStyleSaveAll}
                   sx={{ opacity: mainButtonsDisabled ? 0.2 : 1 }}/>
               Save all ({cntChangedRows})</IconButton></span></Tooltip>}
 
@@ -1287,7 +1263,9 @@ class ITable extends React.Component {
                 className={classes.mainButtons}
                 disabled={mainButtonsDisabled}
                 onClick={e => this.handleUndoAll(e)}>
-              <UndoRoundedIcon style={iconButtonStyleRed} sx={{ opacity: mainButtonsDisabled ? 0.2 : 1 }}/>
+              <UndoRoundedIcon 
+                className={classes.iconButtonStyleUndoAll} 
+                sx={{ opacity: mainButtonsDisabled ? 0.2 : 1 }}/>
               Undo all ({cntChangedRows})</IconButton></span></Tooltip>}
 
               {/* export for excel all rows */}    
@@ -1296,7 +1274,7 @@ class ITable extends React.Component {
               <IconButton
                 className={classes.mainButtons}
                 onClick={e => this.handleCopyForExcel(true)}>
-              <ContentCopyRoundedIcon style={iconButtonStyleGreen}/>
+              <ContentCopyRoundedIcon className={classes.iconButtonStyleExcelExport}/>
               Copy all rows</IconButton></Tooltip>}
 
               {/* export for excel only selected rows */}
@@ -1305,7 +1283,7 @@ class ITable extends React.Component {
               <IconButton
                 className={classes.mainButtons}
                 onClick={e => this.handleCopyForExcel(false)}>
-              <ContentCopyRoundedIcon style={iconButtonStyleGreen}/>
+              <ContentCopyRoundedIcon className={classes.iconButtonStyleExcelExport}/>
               Copy selected rows</IconButton></Tooltip>}
 
               {/* manage the sortings of rows */}
@@ -1334,7 +1312,7 @@ class ITable extends React.Component {
                     key={`menuButtonList-button${index}`}
                     className={classes.mainButtons}
                     onClick={() => this.menuButtonClick(button.id)}>
-                    {button.icon && <ButtonIcon style={buttonStyle} />}
+                    {button.icon && <ButtonIcon className={classes[buttonStyle]}/>}
                     {button.caption}
                   </IconButton>
                 );

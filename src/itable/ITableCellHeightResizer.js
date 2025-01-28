@@ -3,7 +3,7 @@ import { TableCell } from "@mui/material";
 import { withStyles } from 'tss-react/mui';
 import PropTypes from 'prop-types';
 
-import { useStyles } from './styles';
+import { useStyles } from '../AppStyles';
 
 class ITableCellHeightResizer extends React.Component {
   constructor(props) {

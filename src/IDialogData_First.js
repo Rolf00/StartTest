@@ -23,10 +23,11 @@ import {
 import DoneRoundedIcon from '@mui/icons-material/DoneRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 
+import { useStyles } from './AppStyles';
+
 import IConst from './itable/IConst'; 
 import IUtils from './itable/IUtils'; 
-import { useStyles } from './itable/styles';
-import { iconButtonStyleGreen, iconButtonStyleRed } from './itable/IStyles';
+
 
 const StyleDialogBackdrop = { style: { 
   backgroundColor: 'rgba(0, 0, 0, 0.2)'  
@@ -477,14 +478,14 @@ class IDialogData_First extends React.Component {
               justifyContent: "flex-start", flex: 1,
               opacity: (!this.state.mainDisabled ? 1 : 0.2)  }}
             onClick={() => this.closeDialog(true)} >
-          <DoneRoundedIcon style={iconButtonStyleGreen}/>Save changes
+          <DoneRoundedIcon className={classes.iconButtonStyleGreen}/>Save changes
           </IconButton>
 
           <IconButton
             className={classes.mainButtons}
             style={{ justifyContent: "flex-end", }}
             onClick={() => this.closeDialog(false)} >
-          <CloseRoundedIcon style={iconButtonStyleRed}/>Cancel
+          <CloseRoundedIcon className={classes.iconButtonStyleRed}/>Cancel
           </IconButton>
           </div>
         </DialogActions>

@@ -35,11 +35,7 @@ import FilterAltRoundedIcon from '@mui/icons-material/FilterAltRounded';
 
 import IConst from './IConst';
 import { getNewSortingList } from './IUtilsSort';
-import { 
-  iconButtonStyleGrey, 
-  iconButtonStyleGrey_Rotate180, 
-  iconButtonStyleRed, 
-  iconButtonStyleGreen } from './IStyles';
+
 
 export default function ITableMenu (props) 
 {
@@ -402,7 +398,7 @@ export default function ITableMenu (props)
         <MenuItem key='ITableMenu_Item1' 
           disabled={actualSorting === IConst.sortingASC}
           onClick={() => sortColumn(IConst.sortingASC)}>
-          <ListItemIcon><StraightRoundedIcon style={iconButtonStyleGrey} /></ListItemIcon>
+          <ListItemIcon><StraightRoundedIcon className={props.classes.iconButtonStyleGrey} /></ListItemIcon>
           <ListItemText>Sort ascending</ListItemText>
         </MenuItem>}
 
@@ -410,7 +406,7 @@ export default function ITableMenu (props)
         <MenuItem key='ITableMenu_Item2' 
           disabled={actualSorting === IConst.sortingDESC}
           onClick={() => sortColumn(IConst.sortingDESC)}>
-          <ListItemIcon><StraightRoundedIcon style={iconButtonStyleGrey_Rotate180} /></ListItemIcon>
+          <ListItemIcon><StraightRoundedIcon className={props.classes.iconButtonStyleGrey_Rotate180} /></ListItemIcon>
           <ListItemText>Sort descending</ListItemText>
         </MenuItem>}
 
@@ -418,7 +414,7 @@ export default function ITableMenu (props)
         <MenuItem key='ITableMenu_Item3' 
           disabled={actualSorting === ''}
           onClick={() => sortColumn('')}>
-          <ListItemIcon><HeightRoundedIcon style={iconButtonStyleGrey} /></ListItemIcon>
+          <ListItemIcon><HeightRoundedIcon className={props.classes.iconButtonStyleGrey} /></ListItemIcon>
           <ListItemText>Remove sorting</ListItemText>
         </MenuItem>}
 
@@ -498,14 +494,14 @@ export default function ITableMenu (props)
 
         <MenuItem key='ITableMenu_Item9' 
           onClick={() => hideColumn()}>
-          <ListItemIcon><VisibilityOffRoundedIcon style={iconButtonStyleGrey}/></ListItemIcon>
+          <ListItemIcon><VisibilityOffRoundedIcon className={props.classes.iconButtonStyleGrey}/></ListItemIcon>
           <ListItemText>Hide this column</ListItemText>
         </MenuItem>
 
         <MenuItem key='ITableMenu_Item10' 
           disabled={noHidedColumnExists}
           onClick={() => unhideAllColumns()}>
-          <ListItemIcon><VisibilityRoundedIcon style={iconButtonStyleGrey}/></ListItemIcon>
+          <ListItemIcon><VisibilityRoundedIcon className={props.classes.iconButtonStyleGrey}/></ListItemIcon>
           <ListItemText>Unhide all columns ({countHidedColumns})</ListItemText>
         </MenuItem>
 
@@ -539,7 +535,7 @@ export default function ITableMenu (props)
               <MenuItem
                 key={`ITableMenu_ItemUnhide_${index}`}
                 onClick={() => unhideOneColumn(header.id)}>
-                <ListItemIcon><VisibilityRoundedIcon style={iconButtonStyleGrey}/></ListItemIcon>
+                <ListItemIcon><VisibilityRoundedIcon className={props.classes.iconButtonStyleGrey}/></ListItemIcon>
                 <ListItemText>Unhide '{header.headerTitle}'</ListItemText>
               </MenuItem>
             );
@@ -568,7 +564,7 @@ export default function ITableMenu (props)
               <Tooltip title="Delete this filter">
               <IconButton
                 onClick={() => removeRowFilter()}
-              ><CloseRoundedIcon style={iconButtonStyleRed}/></IconButton>
+              ><CloseRoundedIcon className={props.classes.iconButtonStyleRed}/></IconButton>
               </Tooltip>
             </Grid>
           </Grid>
@@ -794,7 +790,7 @@ export default function ITableMenu (props)
               <Tooltip title="Add this filter">
               <IconButton
                 onClick={() => addFilterClick()}
-              ><AddCircleRoundedIcon style={iconButtonStyleGreen}/></IconButton>
+              ><AddCircleRoundedIcon className={props.classes.iconButtonStyleGreen}/></IconButton>
               </Tooltip>
             </Grid>
           </Grid>
@@ -805,7 +801,7 @@ export default function ITableMenu (props)
               <Tooltip title="Cancel editing">
               <IconButton
                 onClick={() => cancelFilter()}
-              ><StopCircleRoundedIcon style={iconButtonStyleRed}/></IconButton>
+              ><StopCircleRoundedIcon className={props.classes.iconButtonStyleRed}/></IconButton>
               </Tooltip>
             </Grid>
           </Grid>

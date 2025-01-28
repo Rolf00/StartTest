@@ -4,10 +4,9 @@ import IconButton from '@mui/material/IconButton';
 import CheckBoxOutlineBlankRoundedIcon from '@mui/icons-material/CheckBoxOutlineBlankRounded';
 import CheckBoxRoundedIcon from '@mui/icons-material/CheckBoxRounded';
 
-import { iconButtonStyleGreen } from './IStyles';
-
 export default function IFieldCheckbox (props) {
 
+  const classes = props.classes;
   const editing = props.editing;
   const rowid = props.rowid;
   const value = props.value;
@@ -41,7 +40,7 @@ export default function IFieldCheckbox (props) {
           disabled={disabled}
           onClick={e => handleChange(e)}
           style={{ width: btnHoverWidth, height: btnHoverWidth }} >
-          <CheckboxIcon style={iconButtonStyleGreen} />
+          <CheckboxIcon className={classes.iconButtonStyleCheckbox} />
         </IconButton>
       </div>
     );
@@ -60,7 +59,7 @@ export default function IFieldCheckbox (props) {
           alignItems: props.horizontalAlign,
         }}
       >
-        <CheckboxIcon style={iconButtonStyleGreen} />
+        <CheckboxIcon className={classes.iconButtonStyleCheckbox} />
       </div>
     );
   }
