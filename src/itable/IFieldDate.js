@@ -22,8 +22,8 @@ export default function IFieldDate (props) {
   const disabled = !props.header.isEditable;
 
   const hasError = IUtils.hasErrorDate(value, props.header, props.row);
-  const color = hasError ? this.props.settings.errorColor : 'black';
-  const background = hasError ? this.props.settings.errorColorBackground : 'transparent';
+  const color = hasError ? props.settings.errorColor : 'black';
+  const background = hasError ? props.settings.errorColorBackground : 'transparent';
   const helperText =  hasError ? props.header.helperText : '';
 
 

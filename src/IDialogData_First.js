@@ -23,7 +23,7 @@ import {
 import DoneRoundedIcon from '@mui/icons-material/DoneRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 
-import { useStyles } from './AppStyles';
+import { useStyles } from './ITableStyles';
 
 import IConst from './itable/IConst'; 
 import IUtils from './itable/IUtils'; 

@@ -4,7 +4,7 @@ import { TableRow, } from '@mui/material';
 import { withStyles } from 'tss-react/mui';
 import PropTypes from 'prop-types';
 
-import { useStyles } from '../AppStyles';
+import { useStyles } from '../ITableStyles';
   
 import IConst from './IConst';
 import IUtils from './IUtils';
@@ -313,9 +313,9 @@ class ITableRow  extends React.Component {
               {isSelectionIcon &&
               <IFieldSelection
                 classes={classes}
+                settings={this.props.settings}
                 horizontalAlign={horizontalAlign}
                 verticalAlign={verticalAlign}
-                settings={this.props.settings}
                 header={header}
                 value = {isRowSelected}
                 handleSelectionClickRow={() => this.props.handleSelectionClickRow(rowid)}
@@ -324,6 +324,7 @@ class ITableRow  extends React.Component {
               {isTextfield && 
               <IFieldText
                 classes={classes}
+                settings={this.props.settings}
                 editing={editing}
                 horizontalAlign={horizontalAlign}
                 verticalAlign={verticalAlign}
@@ -337,6 +338,7 @@ class ITableRow  extends React.Component {
               {isNumber &&
               <IFieldNumber
                 classes={classes}
+                settings={this.props.settings}
                 editing={editing}
                 horizontalAlign={horizontalAlign}
                 verticalAlign={verticalAlign}
@@ -350,6 +352,7 @@ class ITableRow  extends React.Component {
               {isDropdown &&
               <IFieldDropDown
                 classes={classes}
+                settings={this.props.settings}
                 editing={editing}
                 horizontalAlign={horizontalAlign}
                 verticalAlign={verticalAlign}
@@ -363,11 +366,11 @@ class ITableRow  extends React.Component {
               {isCheckbox &&
               <IFieldCheckbox
                 classes={classes}
+                settings={this.props.settings}
                 editing={editing}
                 horizontalAlign={horizontalAlign}
                 verticalAlign={verticalAlign}
                 rowsVerticalAlign={this.props.settings.rowsVerticalAlign}
-                settings={this.props.settings}
                 header={header}
                 value={value}
                 handleDataChange= {e => this.handleDataChange(e, field)}
@@ -376,6 +379,7 @@ class ITableRow  extends React.Component {
               {isDate &&
               <IFieldDate
                 classes={classes}
+                settings={this.props.settings}
                 editing={editing}
                 horizontalAlign={horizontalAlign}
                 verticalAlign={verticalAlign}
@@ -391,6 +395,7 @@ class ITableRow  extends React.Component {
               {isChip &&
               <IFieldChipMenu
                 classes={classes}
+                settings={this.props.settings}
                 editing={editing}
                 horizontalAlign={horizontalAlign}
                 verticalAlign={verticalAlign}
@@ -402,6 +407,7 @@ class ITableRow  extends React.Component {
               {isSpecialButton &&
               <IFieldSpecialButton
                 classes={classes}
+                settings={this.props.settings}
                 horizontalAlign={horizontalAlign}
                 verticalAlign={verticalAlign}
                 header = {header}
@@ -412,6 +418,7 @@ class ITableRow  extends React.Component {
               {isStateButton &&
               <IFieldStateButton
                 classes={classes}
+                settings={this.props.settings}
                 horizontalAlign={horizontalAlign}
                 verticalAlign={verticalAlign}
                 header = {header}
@@ -423,6 +430,7 @@ class ITableRow  extends React.Component {
               {isGetter && 
               <IFieldText
                 classes={classes}
+                settings={this.props.settings}
                 editing={editing}
                 horizontalAlign={horizontalAlign}
                 verticalAlign={verticalAlign}
@@ -435,11 +443,11 @@ class ITableRow  extends React.Component {
               {isRowEditButton &&
               <IFieldRowEditButton
                 classes={classes}
+                settings={this.props.settings}
                 editing={editing}
                 saving={saving}
                 horizontalAlign={horizontalAlign}
                 verticalAlign={verticalAlign}
-                settings = {this.props.settings}
                 rowId={rowid}
                 rowState = {rowState}
                 header = {header}

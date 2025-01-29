@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import StraightRoundedIcon from '@mui/icons-material/StraightRounded';
 import HeightRoundedIcon from '@mui/icons-material/HeightRounded';
 
-import { useStyles } from '../AppStyles';
+import { useStyles } from '../ITableStyles';
 
 import IConst from './IConst';
 import ITableMenu from './ITableMenu';
@@ -132,7 +132,7 @@ class ITableCellWidthResizer extends React.Component {
             display: 'flex',
             justifyContent: 'center', 
             alignItems: this.props.verticalAlign, 
-            width: '25px',
+            width: '27px',
           }}>
             <ITableMenu
               classes={classes}
@@ -153,10 +153,10 @@ class ITableCellWidthResizer extends React.Component {
             display: 'flex',
             justifyContent: 'flex_end', 
             alignItems: this.props.verticalAlign, 
-            width: '25px',
+            width: '27px',
           }}>   
           <IconButton 
-            sx={{ width: '25px', height: '40px', borderRadius: '3px' }}
+            sx={{ width: '27px', height: '40px', borderRadius: '3px' }}
             onClick={() => this.changeSortingClick()}>
             {sorting === IConst.sortingASC && <StraightRoundedIcon className={classes.iconButtonStyleGrey}/>}
             {sorting === IConst.sortingDESC && <StraightRoundedIcon className={classes.iconButtonStyleGrey_Rotate180}/>}
@@ -178,13 +178,13 @@ class ITableCellWidthResizer extends React.Component {
             display: 'flex',
             justifyContent: 'flex_start', 
             alignItems: this.props.verticalAlign, 
-            width: '25px',
+            width: '27px',
           }}>   
           <IconButton 
-            sx={{ width: '25px', height: '40px', borderRadius: '3px' }}
+            sx={{ width: '27px', height: '40px', borderRadius: '3px' }}
             onClick={() => this.changeSortingClick()}>
             {sorting === IConst.sortingASC && <StraightRoundedIcon className={classes.iconButtonStyleGrey}/>}
-            {sorting === IConst.sortingDESC && <StraightRoundedIcon className={classes.conButtonStyleGrey_Rotate180}/>}
+            {sorting === IConst.sortingDESC && <StraightRoundedIcon className={classes.iconButtonStyleGrey_Rotate180}/>}
             {sorting === '' && <HeightRoundedIcon className={classes.iconButtonStyleGrey}/>}
           </IconButton>
           </div>}
@@ -194,7 +194,7 @@ class ITableCellWidthResizer extends React.Component {
             display: 'flex',
             justifyContent: 'flex-start', 
             alignItems: this.props.verticalAlign, 
-            width: '25px',
+            width: '27px',
           }}>
             <ITableMenu
               classes={classes}
@@ -207,7 +207,7 @@ class ITableCellWidthResizer extends React.Component {
               setChangedFilters={(newfilters) => this.props.setChangedFilters(newfilters)}
               setChangedSortings={(newsortings, origin) => this.props.setChangedSortings(newsortings, origin)}
               handleOpenDialogSorting={() => this.props.handleOpenDialogSorting()}
-              ></ITableMenu>
+            ></ITableMenu>
           </div>}
 
           {(!this.props.notResizable) &&

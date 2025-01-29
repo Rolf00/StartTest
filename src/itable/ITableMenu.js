@@ -366,12 +366,13 @@ export default function ITableMenu (props)
   return (
     <div>
       <IconButton
+        className={props.classes.iconButtonStyleGrey}
         aria-label="more"
         id="long-button"
         aria-controls={open ? 'long-menu' : undefined}
         aria-expanded={open ? 'true' : undefined}
         aria-haspopup="true"
-        sx={{ width: '25px', height: '40px', borderRadius: '3px' }}
+        sx={{ width: '27px', height: '40px', borderRadius: '3px' }}
         onClick={(e) => handleClick(e)}
       >
         <MoreMenuButton />

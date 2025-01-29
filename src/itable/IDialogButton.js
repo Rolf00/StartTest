@@ -16,7 +16,7 @@ import InfoRoundedIcon from '@mui/icons-material/InfoRounded';
 import HelpRoundedIcon from '@mui/icons-material/HelpRounded';
 import ErrorRoundedIcon from '@mui/icons-material/ErrorRounded';
 
-import { useStyles } from '../AppStyles.js';
+import { useStyles } from '../ITableStyles.js';
 
 import IConst from './IConst';
 

@@ -12,7 +12,7 @@ import CheckBoxOutlineBlankRoundedIcon from '@mui/icons-material/CheckBoxOutline
 import CheckBoxRoundedIcon from '@mui/icons-material/CheckBoxRounded';
 import IndeterminateCheckBoxRoundedIcon from '@mui/icons-material/IndeterminateCheckBoxRounded';
 
-import { useStyles } from '../AppStyles';
+import { useStyles } from '../ITableStyles';
 
 import IConst from './IConst';
 import IUtils from './IUtils';

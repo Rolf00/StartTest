@@ -59,13 +59,12 @@ export default function IFieldStateButton (props)
         borderWidth: hasCaption && (!isHtml) && (!hasOnlyCaption) ?  '1px' : '0px',
         borderStyle: hasCaption && (!isHtml) && (!hasOnlyCaption) ? 'solid' : '',
         width: hasOnlyCaption ? '100%' : hasCaption ? buttonWidth : isImage || isMuiIcon ? iconSize : '', 
-        height: buttonHeight, 
+        height: hasCaption ? buttonHeight : isImage || isMuiIcon ? iconSize : '', 
         textAlign: hasOnlyCaption ? 'center' : '',
       }}
       sx={{
         display: 'flex', 
         justifyContent: hasCaption ? 'flex-start' : hasOnlyCaption ? 'center' : 'center',
-        justifyContent: 'center',
         borderColor: hasCaption && (!isHtml) ? buttonBackgroundHover : '',
         backgroundColor: hasCaption && (!isHtml) ? buttonBackgroundColor : '',
         '&:Hover': {
@@ -89,7 +88,7 @@ export default function IFieldStateButton (props)
         borderWidth: hasCaption && (!isHtml) && (!hasOnlyCaption) ?  '1px' : '0px',
         borderStyle: hasCaption && (!isHtml) && (!hasOnlyCaption) ? 'solid' : '',
         width: hasOnlyCaption ? '100%' : hasCaption ? buttonWidth : isImage || isMuiIcon ? iconSize : '', 
-        height: hasCaption ? '' : isImage ? iconSize : '', 
+        height: hasCaption ? '' : isImage || isMuiIcon ? iconSize : '', 
         textAlign: hasOnlyCaption ? 'center' : '',
       }}
       sx={{

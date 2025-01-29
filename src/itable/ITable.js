@@ -24,7 +24,7 @@ import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
 import ContentCopyRoundedIcon from '@mui/icons-material/ContentCopyRounded';
 import DoneRoundedIcon from '@mui/icons-material/DoneRounded';
 
-import { useStyles } from '../AppStyles.js';
+import { useStyles } from '../ITableStyles.js';
 
 import IConst from './IConst';
 import IUtils from './IUtils';

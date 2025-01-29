@@ -20,7 +20,7 @@ import HeightRoundedIcon from '@mui/icons-material/HeightRounded';
 import DoneRoundedIcon from '@mui/icons-material/DoneRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 
-import { useStyles } from '../AppStyles.js';
+import { useStyles } from '../ITableStyles.js';
 
 import IConst from './IConst';
 
@@ -35,7 +35,7 @@ const StyleDialogPaper = { style: {
 
 const StyleDialogContent = {
   width: "420px",
-  border: '3px solid #444444', // Set border color
+  border: '2px solid #444444', // Set border color
   borderRadius: '10px',  
   backgroundColor: 'white',
 };

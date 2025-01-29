@@ -58,7 +58,7 @@ const headersWaldo = [
     isRequired: true,
     isVisible: true,
     isSortable: true,
-    defaultSorting: 'asc',
+    defaultSorting: '',
     width: 180,
     minWidth: 140,
     maxWidth: 300,
@@ -77,7 +77,7 @@ const headersWaldo = [
     isRequired: true,
     isVisible: true,
     isSortable: true,
-    defaultSorting: 'asc',
+    defaultSorting: '',
     width: 180,
     minWidth: 80,
     maxWidth: 300,
@@ -617,7 +617,6 @@ const headersWaldo = [
     },
   ];
 
-  /*
   
 headersWaldo[4].isVisible = false;
 headersWaldo[5].isVisible = false;
@@ -625,19 +624,18 @@ headersWaldo[6].isVisible = false;
 headersWaldo[7].isVisible = false;
 headersWaldo[8].isVisible = false;
 headersWaldo[9].isVisible = false;
-//headersWaldo[10].isVisible = false;
-//headersWaldo[11].isVisible = false;
+headersWaldo[10].isVisible = false;
+headersWaldo[11].isVisible = false;
 headersWaldo[12].isVisible = false;
 headersWaldo[13].isVisible = false;
 headersWaldo[14].isVisible = false;
 headersWaldo[15].isVisible = false;
-
-//headersWaldo[16].isVisible = false;
-//headersWaldo[17].isVisible = false;
-//headersWaldo[18].isVisible = false;
+headersWaldo[16].isVisible = false;
+headersWaldo[17].isVisible = false;
+headersWaldo[18].isVisible = false;
 //headersWaldo[19].isVisible = false;
 //headersWaldo[20].isVisible = false;
-*/
+
 
 
 // data Waldo

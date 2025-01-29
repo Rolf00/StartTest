@@ -15,8 +15,8 @@ export default function IFieldText (props) {
   const horizontalAlign = props.header.horizontalAlign
 
   const hasError = IUtils.hasError(value, props.header);
-  const color = hasError ? this.props.settings.errorColor : 'black';
-  const background = hasError ? this.props.settings.errorColorBackground : 'transparent';
+  const color = hasError ? props.settings.errorColor : 'black';
+  const background = hasError ? props.settings.errorColorBackground : 'transparent';
   const helperText = hasError ? props.header.helperText : '';
 
   const handleChange = (e) =>
