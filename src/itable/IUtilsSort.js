@@ -44,30 +44,7 @@ export const getCellValue = (header, row, sort = false) =>
   const { dataFieldName, valueGetter, editType } = header;
   if (valueGetter)
   {
-    if (sort) 
-    {
-      if (isDateTime(editType, dataFieldName)) 
-      {
-        try { 
-          //return parseInt(row[dataFieldName]);
-          return Date.parse(row[dataFieldName]);
-        } 
-        catch (error) { return row[dataFieldName]; }
-      }
-    }
-    
-    const params = {...row, getValue: name => 
-      {
-        if (row[name] === undefined) return '';
-        return row[name];
-      },
-      getHeader: name => 
-      {
-        if (header[name] === undefined) return '';
-        return header[name];
-      },
-    };
-    return valueGetter(params);
+    return eval(valueGetter);
   } 
   else 
   {

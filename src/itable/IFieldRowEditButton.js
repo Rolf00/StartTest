@@ -3,13 +3,6 @@ import {
   IconButton,
   Tooltip } from '@mui/material';
 
-import EditRoundedIcon from '@mui/icons-material/EditRounded';
-import EditNoteRoundedIcon from '@mui/icons-material/EditNoteRounded';
-import SaveRoundedIcon from '@mui/icons-material/SaveRounded';
-import UndoRoundedIcon from '@mui/icons-material/UndoRounded';
-import StopCircleRoundedIcon from '@mui/icons-material/StopCircleRounded';
-import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
-
 import IConst from './IConst';
 
   
@@ -61,7 +54,15 @@ export default function IFieldRowEditButton (props) {
     props.header.editType === IConst.editType_ButtonSave ? "Save this row" :
     props.header.editType === IConst.editType_ButtonUndo ? "Undo this row" :
     props.header.editType === IConst.editType_ButtonDelete ? "Delete this row" : "";
-  
+
+  const MuiIcon = 
+    props.header.editType === IConst.editType_ButtonEditRow ? 
+      editing ? props.settings.rowEditStopIcon : props.settings.rowEditIcon :
+    props.header.editType === IConst.editType_ButtonEdit ? props.settings.rowEditDialogIcon :
+    props.header.editType === IConst.editType_ButtonSave ? props.settings.rowSaveIcon :
+    props.header.editType === IConst.editType_ButtonUndo ? props.settings.rowUndoIcon :
+    props.header.editType === IConst.editType_ButtonDelete ? props.settings.rowDeleteIcon : props.settings.rowEditIcon;
+    
   return (
     <div
       style={{
@@ -74,6 +75,7 @@ export default function IFieldRowEditButton (props) {
         alignItems: props.horizontalAlign,
       }}
     >
+
       <IconButton
         onClick={() => props.handleRowEditButtonClick(dataFieldName)}
         disabled={disabled}
@@ -81,32 +83,32 @@ export default function IFieldRowEditButton (props) {
       >
       {props.header.editType === IConst.editType_ButtonEditRow && !editing &&
       <Tooltip title={title} arrow>
-      <EditRoundedIcon className={classes.iconButtonStyleEditRow} sx={{ opacity: disabled ? 0.2 : 1 }} />
+      <MuiIcon className={classes.iconButtonStyleEditRow} sx={{ opacity: disabled ? 0.2 : 1 }} />
       </Tooltip>}
 
       {props.header.editType === IConst.editType_ButtonEditRow && editing &&
       <Tooltip title={title} arrow>
-      <StopCircleRoundedIcon className={classes.iconButtonStyleEditRowStop} sx={{ opacity: disabled ? 0.2 : 1 }} />
+      <MuiIcon className={classes.iconButtonStyleEditRowStop} sx={{ opacity: disabled ? 0.2 : 1 }} />
       </Tooltip>}
 
       {props.header.editType === IConst.editType_ButtonEdit && 
       <Tooltip title={title} arrow>
-      <EditNoteRoundedIcon className={classes.iconButtonStyleEditRow} sx={{ opacity: disabled ? 0.2 : 1 }} />
+      <MuiIcon className={classes.iconButtonStyleEditRow} sx={{ opacity: disabled ? 0.2 : 1 }} />
       </Tooltip>}
 
       {props.header.editType === IConst.editType_ButtonSave && 
       <Tooltip title={title} arrow>
-      <SaveRoundedIcon className={classes.iconButtonStyleSave} sx={{ opacity: disabled ? 0.2 : 1 }} />
+      <MuiIcon className={classes.iconButtonStyleSave} sx={{ opacity: disabled ? 0.2 : 1 }} />
       </Tooltip>}
 
       {props.header.editType === IConst.editType_ButtonUndo && 
       <Tooltip title={title} arrow>
-      <UndoRoundedIcon className={classes.iconButtonStyleUndo} sx={{ opacity: disabled ? 0.2 : 1 }} />
+      <MuiIcon className={classes.iconButtonStyleUndo} sx={{ opacity: disabled ? 0.2 : 1 }} />
       </Tooltip>}
 
       {props.header.editType === IConst.editType_ButtonDelete && 
       <Tooltip title={title} arrow>
-      <DeleteOutlineRoundedIcon className={classes.iconButtonStyleDelete} sx={{ opacity: disabled ? 0.2 : 1 }} />
+      <MuiIcon className={classes.iconButtonStyleDelete} sx={{ opacity: disabled ? 0.2 : 1 }} />
       </Tooltip>}
 
       </IconButton>

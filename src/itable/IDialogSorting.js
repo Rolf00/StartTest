@@ -162,6 +162,8 @@ class IDialogSorting extends Component {
 
   getItems = (sortings, headers) => {
     const newitems = [];
+
+    // first we add all columns which are sorted already ...
     for (let s = 0; s < sortings.length; s++) {
       const index = headers.findIndex(h => h.dataFieldName === sortings[s].orderByField);
       const oneSort = {
@@ -176,6 +178,7 @@ class IDialogSorting extends Component {
       newitems.push(oneSort);
     }
 
+    // ... then all other columns
     let keyIndex = newitems.length;
     for (let h = 0; h < headers.length; h++) {
       const index = newitems.findIndex((i) => i.headerId === headers[h].id);

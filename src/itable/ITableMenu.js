@@ -366,7 +366,6 @@ export default function ITableMenu (props)
   return (
     <div>
       <IconButton
-        className={props.classes.iconButtonStyleGrey}
         aria-label="more"
         id="long-button"
         aria-controls={open ? 'long-menu' : undefined}
@@ -375,7 +374,7 @@ export default function ITableMenu (props)
         sx={{ width: '27px', height: '40px', borderRadius: '3px' }}
         onClick={(e) => handleClick(e)}
       >
-        <MoreMenuButton />
+        <MoreMenuButton className={props.classes.iconButtonStyleGrey}/>
       </IconButton>
       <Menu
         id="long-menu"
@@ -428,7 +427,9 @@ export default function ITableMenu (props)
 
         <MenuItem key='ITableMenu_Item5' 
           onClick={() => manageSortings()}>
-          <ListItemIcon></ListItemIcon>
+          <ListItemIcon>
+            <props.settings.iconMainButtonManageSorting className={props.classes.iconButtonStyleManageSorting}/>
+          </ListItemIcon>
           <ListItemText>Manage sortings ...</ListItemText>
         </MenuItem>
 
@@ -450,7 +451,7 @@ export default function ITableMenu (props)
         <MenuItem key='ITableMenu_Item8' 
           disabled={noFilterExists}
           onClick={() => removeAllFilters()}>
-          <ListItemIcon></ListItemIcon>
+          <ListItemIcon><props.settings.iconMainButtonDeleteFilters className={props.classes.iconButtonStyleDeleteFilters}/></ListItemIcon>
           <ListItemText>Remove all filters ({countFilters})</ListItemText>
         </MenuItem>
 
@@ -487,7 +488,7 @@ export default function ITableMenu (props)
         <MenuItem key='ITableMenu_ItemState5' 
           disabled={hasNoStateFilter}
           onClick={() => removeRowStateFilter()}>
-          <ListItemIcon></ListItemIcon>
+          <ListItemIcon><props.settings.iconMainButtonDeleteFilters className={props.classes.iconButtonStyleDeleteFilters}/></ListItemIcon>
           <ListItemText>Remove state filter</ListItemText>
         </MenuItem>
 

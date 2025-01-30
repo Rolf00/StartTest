@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes, { func } from 'prop-types';
+import PropTypes from 'prop-types';
 import { withStyles } from 'tss-react/mui';
 import 'react-resizable/css/styles.css';
 
@@ -7,10 +7,8 @@ import {
   IconButton,
   Table,
   TableBody,
-  TableCell,
   TableContainer,
   TablePagination,
-  TableRow,
   Grid,
   Tooltip,
   Snackbar,
@@ -42,12 +40,7 @@ class ITable extends React.Component {
     super(props);
 
     const {
-      classes,
-      settings, 
       headers, 
-      primaryKey,
-      data,
-      dialogName
     } = this.props;
 
     this.state = {
@@ -89,7 +82,6 @@ class ITable extends React.Component {
 
       // filtering
       filters: [],
-
       rowInfoList: this.setRowInfoList(),
 
       openSnackbar: false,
@@ -507,6 +499,8 @@ class ITable extends React.Component {
           const isDropdown = eType === IConst.editType_Dropdown;
           const isChipMenu = eType === IConst.editType_Chip;
           const isGetter = eType === IConst.editType_Getter;
+          const isStateButton = eType === IConst.editType_StateButton;
+          const isCheckbox = eType === IConst.editType_Checkbox;
           const isDate = eType === IConst.editType_Date;
           const datetimeformat = this.props.headers[h].datetimeFormat;
 
@@ -515,11 +509,21 @@ class ITable extends React.Component {
           if (isDate) value = IUtils.formatDateTime(value, datetimeformat, this.props.settings.localization);
           const isString = typeof value === 'string' || value instanceof String;
           if (value === null || value === undefined || !value) value = "";
+
           if (isGetter) 
           {
             // "row" is used to evaluate the getter, don't delete it here
             const row = this.state.data[rowIndex];
             value = eval(this.props.headers[h].valueGetter);
+          }
+
+          if (isStateButton)
+          {
+            value = this.state.data[rowIndex][this.props.headers[h].dataFieldName];
+          }
+          if (isCheckbox)
+          {
+            value = this.state.data[rowIndex][this.props.headers[h].dataFieldName] ? "Yes" : "No";
           }
 
           try
@@ -959,6 +963,7 @@ class ITable extends React.Component {
       const ok = newparams[r].success;
       const dataIndex = newData.findIndex(r => r[this.props.primaryKey] === oldRowId);
       const infoIndex = newInfo.findIndex(i => i.id === oldRowId);
+      const propsIndex = this.props.data.findIndex(i => i[this.props.primaryKey] === oldRowId);
 
       if (dataIndex !== -1 && infoIndex !== -1)
       {
@@ -971,6 +976,13 @@ class ITable extends React.Component {
           newInfo[infoIndex].saving = false;
           newInfo[infoIndex].editing = false;
           newInfo[infoIndex].forceUpdate = true;
+
+          if (propsIndex !== -1)
+          {
+            // here we also update the old rows in props.data
+            // in order to have updated values in a later UNDO of rows
+            IUtils.copyOneRow(rows[r], this.props.data[propsIndex]);
+          }
         }
         else if (ok && oldState === IConst.rowStateDeleted)
         {
@@ -1139,7 +1151,6 @@ class ITable extends React.Component {
     const mainIndeterminated = this.state.mainIndeterminated;
     const mainButtonsDisabled = this.state.mainButtonsDisabled;
     const cntChangedRows = this.state.countChangedRows;
-    const sizeMainButton = this.props.settings.buttonSizeMain;
 
     return (
       <div style={{ overflowX: 'none' }} >
@@ -1148,9 +1159,7 @@ class ITable extends React.Component {
           className={classes.itable_container}
           onKeyUp={this.handleTableMainKeyUp}
           style={{
-            //height: 650, // Set the max height to allow scrolling after 5 items
             overflowY: 'auto', // Enables vertical scrolling
-            //overflowX: 'auto',
             '&::WebkitScrollbar': {
               width: '12px',
               height: '12px',
@@ -1241,7 +1250,7 @@ class ITable extends React.Component {
               <IconButton
                 className={classes.mainButtons}
                 onClick={e => this.handleNewRow()}>
-              <AddCircleRoundedIcon className={classes.iconMainButtonNewRow}/>
+              <this.props.settings.iconMainButtonNewRow className={classes.iconMainButtonNewRow}/>
               New row</IconButton></Tooltip>}
 
               {/* save all */}
@@ -1251,7 +1260,7 @@ class ITable extends React.Component {
                 className={classes.mainButtons}
                 disabled={mainButtonsDisabled}
                 onClick={e => this.handleSaveAll(e)}>
-                <SaveRoundedIcon 
+                <this.props.settings.iconMainButtonSaveAll 
                   className={classes.iconButtonStyleSaveAll}
                   sx={{ opacity: mainButtonsDisabled ? 0.2 : 1 }}/>
               Save all ({cntChangedRows})</IconButton></span></Tooltip>}
@@ -1263,7 +1272,7 @@ class ITable extends React.Component {
                 className={classes.mainButtons}
                 disabled={mainButtonsDisabled}
                 onClick={e => this.handleUndoAll(e)}>
-              <UndoRoundedIcon 
+              <this.props.settings.iconMainButtonUndoAll 
                 className={classes.iconButtonStyleUndoAll} 
                 sx={{ opacity: mainButtonsDisabled ? 0.2 : 1 }}/>
               Undo all ({cntChangedRows})</IconButton></span></Tooltip>}
@@ -1274,7 +1283,7 @@ class ITable extends React.Component {
               <IconButton
                 className={classes.mainButtons}
                 onClick={e => this.handleCopyForExcel(true)}>
-              <ContentCopyRoundedIcon className={classes.iconButtonStyleExcelExport}/>
+              <this.props.settings.iconMainButtonCopyToExcel className={classes.iconButtonStyleExcelExport}/>
               Copy all rows</IconButton></Tooltip>}
 
               {/* export for excel only selected rows */}
@@ -1283,7 +1292,7 @@ class ITable extends React.Component {
               <IconButton
                 className={classes.mainButtons}
                 onClick={e => this.handleCopyForExcel(false)}>
-              <ContentCopyRoundedIcon className={classes.iconButtonStyleExcelExport}/>
+              <this.props.settings.iconMainButtonCopyToExcel className={classes.iconButtonStyleExcelExport}/>
               Copy selected rows</IconButton></Tooltip>}
 
               {/* manage the sortings of rows */}
@@ -1292,6 +1301,7 @@ class ITable extends React.Component {
               <IconButton
                 className={classes.mainButtons}
                 onClick={() => this.handleOpenDialogSorting(true)}>
+              <this.props.settings.iconMainButtonManageSorting className={classes.iconButtonStyleManageSorting}/>
               Manage sorting ...</IconButton></Tooltip>}
 
               {/* delete all filters */}
@@ -1300,6 +1310,7 @@ class ITable extends React.Component {
               <IconButton
                 className={classes.mainButtons}
                 onClick={() => this.deleteAllFilters()}>
+              <this.props.settings.iconMainButtonDeleteFilters className={classes.iconButtonStyleDeleteFilters}/>
               Delete all filters</IconButton></Tooltip>}
 
               {this.props.settings.menuButtonList &&

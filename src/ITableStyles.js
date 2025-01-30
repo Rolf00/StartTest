@@ -189,7 +189,7 @@ export const useStyles = () => ({
   iconButtonStyleCheckbox: {
     width: '28px',
     height: '28px',
-    color: '#66BB66',
+    color: '#999999',
     marginLeft: '4px',
     marginRight: '4px',
   },
@@ -272,6 +272,20 @@ export const useStyles = () => ({
     marginLeft: '4px',
     marginRight: '4px',
   },
+  iconButtonStyleManageSorting: {
+    width: '28px',
+    height: '28px',
+    color: '#AAAAAA',
+    marginLeft: '4px',
+    marginRight: '4px',
+  },
+  iconButtonStyleDeleteFilters: {
+    width: '28px',
+    height: '28px',
+    color: '#AAAAAA',
+    marginLeft: '4px',
+    marginRight: '4px',
+  },
   iconButtonStyleGrey: {
     width: '28px',
     height: '28px',
@@ -286,7 +300,8 @@ export const useStyles = () => ({
     transform: 'rotate(180deg)',
     marginLeft: '4px',
     marginRight: '4px',
-  }
+  },
+
   
 
 });

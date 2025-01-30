@@ -43,7 +43,7 @@ class ITableCellWidthResizer extends React.Component {
       order === IConst.sortingASC ? IConst.sortingDESC :
       order === IConst.sortingDESC ? '' : IConst.sortingASC;
 
-    const newSortingList = getNewSortingList(this.props.sortings, neworder, field)
+    const newSortingList = getNewSortingList(this.props.sortings, neworder, field);
     this.props.setChangedSortings(newSortingList, "menu");
   }
 

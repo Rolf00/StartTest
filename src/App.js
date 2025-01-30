@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import { Alert, Grid, Snackbar } from '@mui/material';
 
 import AdjustRoundedIcon from '@mui/icons-material/AdjustRounded';
@@ -6,7 +6,17 @@ import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
 import ArrowCircleRightRoundedIcon from '@mui/icons-material/ArrowCircleRightRounded';
 import ArrowCircleLeftRoundedIcon from '@mui/icons-material/ArrowCircleLeftRounded';
 import DoneRoundedIcon from '@mui/icons-material/DoneRounded';
+
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
+import EditNoteRoundedIcon from '@mui/icons-material/EditNoteRounded';
+import SaveRoundedIcon from '@mui/icons-material/SaveRounded';
+import UndoRoundedIcon from '@mui/icons-material/UndoRounded';
+import StopCircleRoundedIcon from '@mui/icons-material/StopCircleRounded';
+import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
+import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
+import ContentCopyRoundedIcon from '@mui/icons-material/ContentCopyRounded';
+import HeightRoundedIcon from '@mui/icons-material/HeightRounded';
+import FilterAltOffRoundedIcon from '@mui/icons-material/FilterAltOffRounded';
 
 import IConst from './itable/IConst';
 import ITable from './itable/ITable';
@@ -542,8 +552,8 @@ const headersWaldo = [
   },
   {
     id: 24,
-    databaseField: "",
-    headerTitle: "Getter",
+    dataFieldName: 'getterName',
+    headerTitle: "Fullname",
     isResizable: true,
     isEditable: false,
     isRequired: false,
@@ -555,14 +565,13 @@ const headersWaldo = [
     maxWidth: 300,
     editType: IConst.editType_Getter,
     defaultValue: '',
-    dataFieldName: '',
     horizontalAlign: 'left',
     hasHeaderMenu: true,
     valueGetter: "`${row.lastName} ${row.firstName}`",
   },
   { 
     id: 25,
-    headerTitle: " Date From",
+    headerTitle: "Date From",
     helperText: "not after 'Date To'",
     isResizable: true,
     isEditable: true,
@@ -714,7 +723,7 @@ const App = ()=> {
 
     // error colors
     errorColor: "#FF0000",
-    errorColorBackground: "#FFCCCC",
+    errorColorBackground: "#FFDDDD",
 
     // dialog
     dialogName: 'InselDialog_MainData',
@@ -730,6 +739,22 @@ const App = ()=> {
     hasButtonExcelSelected: true,
     hasButtonManageSorting: true,
     hasButtonDeleteAllFilters: true,
+
+    // icons on row
+    rowEditIcon: EditRoundedIcon,
+    rowEditStopIcon: StopCircleRoundedIcon,
+    rowEditDialogIcon: EditNoteRoundedIcon,
+    rowSaveIcon: SaveRoundedIcon,
+    rowUndoIcon: UndoRoundedIcon,
+    rowDeleteIcon: DeleteOutlineRoundedIcon,
+
+    // icons on footer row
+    iconMainButtonNewRow: AddCircleRoundedIcon,
+    iconMainButtonSaveAll: SaveRoundedIcon,
+    iconMainButtonUndoAll: UndoRoundedIcon,
+    iconMainButtonCopyToExcel: ContentCopyRoundedIcon,
+    iconMainButtonManageSorting: HeightRoundedIcon,
+    iconMainButtonDeleteFilters: FilterAltOffRoundedIcon,
 
     // localization
     localization: IConst.datetimeLocalization_deCH,
